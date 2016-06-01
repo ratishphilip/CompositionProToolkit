@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>CompositionProToolkit</id>
-    <version>0.1.0.0</version>
+    <version>0.1.0.2</version>
     <title>CompositionProToolkit</title>
     <authors>Ratish Philip</authors>
     <owners>Ratish Philip</owners>
@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/ratishphilip/CompositionProToolkit</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Collection of Helper classes (using Win2d) for Windows.UI.Composition</description>
-    <releaseNotes>Initial version</releaseNotes>
+    <releaseNotes>Contains ICompositionMask, ICompositionMaskGenerator and CompositionMaskFactory.</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <dependencies>
         <dependency id="Win2D.uwp" version="1.18.0" />
