@@ -1,6 +1,16 @@
 # CompositionProToolkit
 **CompositionProToolkit** is a collection of helper classes for Windows.UI.Composition. The main difference between **CompositionProToolkit** and [**CompositionProToolkit**](https://github.com/ratishphilip/CompositionExpressionToolkit) is that **CompositionProToolkit** has a dependency on **Win2D** library.
 
+# Installing from NuGet
+
+To install **CompositionProToolkit**, run the following command in the **Package Manager Console**
+
+```
+Install-Package CompositionProToolkit
+```
+
+More details available [here](https://www.nuget.org/packages/CompositionProToolkit/).
+
 # CompositionProToolkit Internals
 
 ## 1. Creating custom shaped `Visual` using `CanvasGeometry`
@@ -47,4 +57,3 @@ creates the following output.
 **ICompositionMask** provides a **RedrawAsync** API which allows you to update the geometry of the mask (and thus the shape of the Visual). Here is an example of a **CanvasAnimatedControl** having two visuals - A blue rectangular visual in the background and a red visual in the foreground. The red visual's mask is redrawn periodically to give an impression of animation. (_see the **Sample** project for more details on how it is implemented_)
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/15728986/1baeab9c-2815-11e6-8e93-846b70a2a3ea.gif" />
-
