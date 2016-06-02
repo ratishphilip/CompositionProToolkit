@@ -15,6 +15,7 @@ More details available [here](https://www.nuget.org/packages/CompositionProToolk
 
 ## 1. Creating custom shaped `Visual` using `CanvasGeometry`
 As of now, you can customize the shape of Visuals by applying a mask on the Visual. The mask is defined using a **CompositionMaskBrush**. In the **CompositionMaskBrush** the `Mask` is defined by a **CompositionSurfaceBrush**. Into the **CompositionSurfaceBrush** an image, which defines the mask, is loaded. In this image, the areas which are to masked in the Visual are transparent whereas the areas to be shown in the Visual are white.  
+
 Using **CompositionProToolkit** you can now define a mask for the **Visual** using **Win2D**'s **CanvasGeometry**. It provides two interfaces **ICompositionMask** and **ICompositionMaskGenerator** and a static class **CompositionMaskFactory** which provides an object implementing the **ICompositionMaskGenerator**. Using the **ICompositionMaskGenerator** an object implementing the **ICompositionMask** can be created. This object represents the mask that needs to be applied to the Visual using a **CompositionMaskBrush**.
 
 ### Example
@@ -54,6 +55,24 @@ creates the following output.
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/15728977/0f9f397a-2815-11e6-9df2-65b9ad1f5e9f.PNG" />
 
-**ICompositionMask** provides a **RedrawAsync** API which allows you to update the geometry of the mask (and thus the shape of the Visual). Here is an example of a **CanvasAnimatedControl** having two visuals - A blue rectangular visual in the background and a red visual in the foreground. The red visual's mask is redrawn periodically to give an impression of animation. (_see the **Sample** project for more details on how it is implemented_)
+**ICompositionMask** provides a **RedrawAsync** API which allows you to update the geometry of the mask (and thus the shape of the Visual).  
+
+Here is an example of a **CanvasAnimatedControl** having two visuals - A blue rectangular visual in the background and a red visual in the foreground. The red visual's mask is redrawn periodically to give an impression of animation. (_see the **Sample** project for more details on how it is implemented_)
+
+```C#
+private async void AnimatedCanvasCtrl_OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
+{
+    angle = (float)((angle + 1) % 360);
+    var radians = (float)((angle * Math.PI) / 180);
+    
+    // Calculate the new geometry based on the angle
+    var updatedGeometry = outerGeometry.CombineWith(combinedGeometry, 
+                                Matrix3x2.CreateRotation(radians, new Vector2(200, 200)),
+                                CanvasGeometryCombine.Exclude);
+        
+    // Update the geometry in the Composition Mask
+    await animatedCompositionMask.RedrawAsync(updatedGeometry);
+}
+```
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/15728986/1baeab9c-2815-11e6-8e93-846b70a2a3ea.gif" />
