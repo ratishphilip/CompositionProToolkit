@@ -31,15 +31,15 @@ visual.Size = new Vector2(400, 400);
 visual.Offset = new Vector3(200, 0, 0);
 
 // Create the combined geometry
-var ellipse1 = CanvasGeometry.CreateEllipse(_generator.Device, 200, 200, 150, 75);
-var ellipse2 = CanvasGeometry.CreateEllipse(_generator.Device, 200, 200, 75, 150);
+var ellipse1 = CanvasGeometry.CreateEllipse(generator.Device, 200, 200, 150, 75);
+var ellipse2 = CanvasGeometry.CreateEllipse(generator.Device, 200, 200, 75, 150);
 var combinedGeometry = ellipse1.CombineWith(ellipse2, Matrix3x2.Identity, CanvasGeometryCombine.Union);
 
 // Create the CompositionMask
 ICompositionMask compositionMask = await generator.CreateMaskAsync(visual.Size.ToSize(), combinedGeometry);
 
 // Create SurfaceBrush from CompositionMask
-var mask = compositor.CreateSurfaceBrush(_compositionMask.Surface);
+var mask = compositor.CreateSurfaceBrush(compositionMask.Surface);
 var source = compositor.CreateColorBrush(Colors.Blue);
 
 // Create mask brush
