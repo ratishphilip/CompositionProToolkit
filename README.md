@@ -88,3 +88,5 @@ public static CompositionEffectBrush CreateMaskedBackdropBrush(this Compositor c
 Using this method, you can apply a BackdropBrush with a custom shape to a visual. You can provide a **Color** to blend with the BackdropBrush, the amount by which the BackdropBrush should be blurred and an optional *CompositionBackdropBrush**. If no **CompositionBackdropBrush** is provided by the user then this method creates one.
 
 **Note** : _Create only one instance of **CompositionBackdropBrush** and reuse it within your application. It provides a better performance._
+
+<img src="https://cloud.githubusercontent.com/assets/7021835/16091854/562d255c-32ea-11e6-8952-424a513741ea.gif" />
