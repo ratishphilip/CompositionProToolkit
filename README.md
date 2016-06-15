@@ -76,3 +76,15 @@ private async void AnimatedCanvasCtrl_OnDraw(ICanvasAnimatedControl sender, Canv
 ```
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/15728986/1baeab9c-2815-11e6-8e93-846b70a2a3ea.gif" />
+
+## 2. Creating Masked Backdrop Brush using `ICompositionMask`
+**CompositionProToolkit** now provides the following extension method for **Compositor** to create a masked Backdrop brush.
+
+```C#
+public static CompositionEffectBrush CreateMaskedBackdropBrush(this Compositor compositor, ICompositionMask mask,
+            Color blendColor, float blurAmount, CompositionBackdropBrush backdropBrush = null)
+```  
+
+Using this method, you can apply a BackdropBrush with a custom shape to a visual. You can provide a **Color** to blend with the BackdropBrush, the amount by which the BackdropBrush should be blurred and an optional *CompositionBackdropBrush**. If no **CompositionBackdropBrush** is provided by the user then this method creates one.
+
+**Note** : _Create only one instance of **CompositionBackdropBrush** and reuse it within your application. It provides a better performance._
