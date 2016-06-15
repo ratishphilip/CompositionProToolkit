@@ -7,11 +7,14 @@
       xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
       mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="Wheat">
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
+        <Image Grid.RowSpan="2"
+               Source="ms-appx:///Assets/Win10_Land.jpg"
+               Stretch="UniformToFill"></Image>
         <win2d:CanvasControl x:Name="CanvasCtrl"></win2d:CanvasControl>
         <win2d:CanvasAnimatedControl x:Name="AnimatedCanvasCtrl"
                                      Grid.Row="1"

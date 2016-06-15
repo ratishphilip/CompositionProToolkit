@@ -42,6 +42,7 @@ namespace Sample
         private ICompositionMaskGenerator _generator;
         private ICompositionMask _compositionMask;
         private ICompositionMask _animatedCompositionMask;
+        private CompositionBackdropBrush _backdropBrush;
 
         public MainPage()
         {
@@ -53,6 +54,8 @@ namespace Sample
         {
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
             _generator = CompositionMaskFactory.GetCompositionMaskGenerator(_compositor);
+            _backdropBrush = _compositor.CreateBackdropBrush();
+
             //Create the visual
             _visual = _compositor.CreateSpriteVisual();
             _visual.Size = new Vector2(400, 400);
@@ -94,15 +97,15 @@ namespace Sample
                 CanvasGeometryCombine.Exclude);
             // Create the CompositionMask
             _animatedCompositionMask = await _generator.CreateMaskAsync(_animatedVisual.Size.ToSize(), excludedGeometry);
-            // Create SurfaceBrush from CompositionMask
-            var animatedMask = _compositor.CreateSurfaceBrush(_animatedCompositionMask.Surface);
-            var source2 = _compositor.CreateColorBrush(Colors.Red);
-            // Create mask brush
-            var animatedMaskBrush = _compositor.CreateMaskBrush();
-            animatedMaskBrush.Mask = animatedMask;
-            animatedMaskBrush.Source = source2;
+            //// Create SurfaceBrush from CompositionMask
+            //var animatedMask = _compositor.CreateSurfaceBrush(_animatedCompositionMask.Surface);
+            //var source2 = _compositor.CreateColorBrush(Colors.Red);
+            //// Create mask brush
+            //var animatedMaskBrush = _compositor.CreateMaskBrush();
+            //animatedMaskBrush.Mask = animatedMask;
+            //animatedMaskBrush.Source = source2;
 
-            _animatedVisual.Brush = animatedMaskBrush;
+            _animatedVisual.Brush = _compositor.CreateMaskedBackdropBrush(_animatedCompositionMask, Color.FromArgb(240, 232,232,232), 20f, _backdropBrush);
             container.Children.InsertAtTop(_animatedVisual);
 
             ElementCompositionPreview.SetElementChildVisual(AnimatedCanvasCtrl, container);
