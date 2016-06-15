@@ -110,6 +110,7 @@
     <Compile Include="CompositionMask.cs" />
     <Compile Include="CompositionMaskGenerator.cs" />
     <Compile Include="CompositionMaskFactory.cs" />
+    <Compile Include="CompositorExtensions.cs" />
     <Compile Include="ICompositionMaskGenerator.cs" />
     <Compile Include="ICompositionMask.cs" />
     <Compile Include="ICompositionMaskGeneratorInternal.cs" />
