@@ -1,5 +1,5 @@
 # CompositionProToolkit
-**CompositionProToolkit** is a collection of helper classes for Windows.UI.Composition. The main difference between **CompositionProToolkit** and [**CompositionProToolkit**](https://github.com/ratishphilip/CompositionExpressionToolkit) (_another project of mine_) is that **CompositionProToolkit** has a dependency on **Win2D** library.
+**CompositionProToolkit** is a collection of helper classes for Windows.UI.Composition. The main difference between **CompositionProToolkit** and [**CompositionExpressionToolkit**](https://github.com/ratishphilip/CompositionExpressionToolkit) (_another project of mine_) is that **CompositionProToolkit** has a dependency on **Win2D** library.
 
 # Installing from NuGet
 
