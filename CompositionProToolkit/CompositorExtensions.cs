@@ -1,6 +1,5 @@
 ﻿using Windows.UI;
 using Windows.UI.Composition;
-using CompositionProToolkit;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 

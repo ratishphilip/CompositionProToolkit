@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.UI;
 using Windows.UI.Composition;
 using Microsoft.Graphics.Canvas.Geometry;
 
@@ -47,12 +48,22 @@ namespace CompositionProToolkit
 
         /// <summary>
         /// Resizes the Mask with the given size and redraws the mask
-        /// with the new geometry.
+        /// with the new geometry and fills it with white color.
         /// </summary>
         /// <param name="size">New size of the mask</param>
         /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
         /// <returns></returns>
         Task RedrawAsync(Size size, CanvasGeometry geometry);
+
+        /// <summary>
+        /// Resizes the Mask with the given size and redraws the mask
+        /// with the new geometry and fills it with the given color.
+        /// </summary>
+        /// <param name="size">New size of the mask</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
+        /// <param name="color">Fill color for the geometry</param>
+        /// <returns></returns>
+        Task RedrawAsync(Size size, CanvasGeometry geometry, Color color);
 
         /// <summary>
         /// Resizes the mask to the new size.

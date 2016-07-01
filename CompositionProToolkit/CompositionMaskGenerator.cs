@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics.DirectX;
 using Windows.Graphics.Display;
@@ -82,7 +83,8 @@ namespace CompositionProToolkit
 
             // Subscribe to events
             _graphicsDevice.RenderingDeviceReplaced += RenderingDeviceReplaced;
-            DisplayInformation.DisplayContentsInvalidated += OnDisplayContentsInvalidated;
+            if (!DesignMode.DesignModeEnabled)
+                DisplayInformation.DisplayContentsInvalidated += OnDisplayContentsInvalidated;
         }
 
         #endregion
@@ -97,6 +99,22 @@ namespace CompositionProToolkit
         /// <returns></returns>
         public Task<ICompositionMask> CreateMaskAsync(Size size, CanvasGeometry geometry)
         {
+            // If the geometry is not null then fill the geometry area
+            // with white. The rest of the area on the surface will be transparent.
+            // When this mask is applied to a visual, only the area that is white
+            // will be visible.
+            return CreateMaskAsync(size, geometry, Colors.White);
+        }
+
+        /// <summary>
+        /// Creates the CompositionMask having the given size, geometry & color
+        /// </summary>
+        /// <param name="size">Size of the mask</param>
+        /// <param name="geometry">Geometry of the mask</param>
+        /// <param name="color">Fill color of the geometry.</param>
+        /// <returns>ICompositionMask</returns>
+        public Task<ICompositionMask> CreateMaskAsync(Size size, CanvasGeometry geometry, Color color)
+        {
             return Task.Run(() =>
             {
                 //
@@ -106,25 +124,23 @@ namespace CompositionProToolkit
                 //
                 lock (_drawingLock)
                 {
-                    ICompositionMask mask = new CompositionMask(this, size, geometry);
+                    ICompositionMask mask = new CompositionMask(this, size, geometry, color);
 
                     // Render the mask to the surface
                     using (var session = CanvasComposition.CreateDrawingSession((CompositionDrawingSurface)mask.Surface))
                     {
                         // If the geometry is not null then fill the geometry area
-                        // with white. The rest of the area on the surface will be transparent.
-                        // When this mask is applied to a visual, only the area that is white
-                        // will be visible.
+                        // with the given color. The rest of the area on the surface will be transparent.
                         if (geometry != null)
                         {
                             session.Clear(Colors.Transparent);
-                            session.FillGeometry(geometry, Colors.White);
+                            session.FillGeometry(geometry, color);
                         }
                         else
                         {
-                            // If the geometry is null, then the entire mask should be filled white
-                            // so that the masked visual can be seen completely.
-                            session.Clear(Colors.White);
+                            // If the geometry is null, then the entire mask should be filled with
+                            // the given color
+                            session.Clear(color);
                         }
                     }
 
@@ -165,8 +181,9 @@ namespace CompositionProToolkit
         /// <param name="surface">CompositionDrawingSurface</param>
         /// <param name="size">Size ofthe Mask Surface</param>
         /// <param name="geometry">Geometry of the Mask Surface</param>
+        /// <param name="color">Fill color of the geometry.</param>
         /// <returns>Task</returns>
-        public Task RedrawMaskSurfaceAsync(CompositionDrawingSurface surface, Size size, CanvasGeometry geometry)
+        public Task RedrawMaskSurfaceAsync(CompositionDrawingSurface surface, Size size, CanvasGeometry geometry, Color color)
         {
             return Task.Run(() =>
             {
@@ -181,19 +198,19 @@ namespace CompositionProToolkit
                     using (var session = CanvasComposition.CreateDrawingSession(surface))
                     {
                         // If the geometry is not null then fill the geometry area
-                        // with white. The rest of the area on the surface will be transparent.
-                        // When this mask is applied to a visual, only the area that is white
+                        // with the given color. The rest of the area on the surface will be transparent.
+                        // If the color is white and this mask is applied to a visual, only the area that is white
                         // will be visible.
                         if (geometry != null)
                         {
                             session.Clear(Colors.Transparent);
-                            session.FillGeometry(geometry, Colors.White);
+                            session.FillGeometry(geometry, color);
                         }
                         else
                         {
-                            // If the geometry is null, then the entire mask should be filled white
-                            // so that the masked visual can be seen completely.
-                            session.Clear(Colors.White);
+                            // If the geometry is null, then the entire mask should be filled the 
+                            // the given color. If the color is white, then the masked visual will be seen completely.
+                            session.Clear(color);
                         }
                     }
                 }
