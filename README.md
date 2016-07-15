@@ -153,6 +153,12 @@ You can also change the **Width** and **Height** properties of **FluidProgressRi
 
 **FluidWrapPanel** is a wrap panel which allows you to rearrange the children simply by dragging and placing them in the desired location. The remaining children will automatically reposition themselves to accommodate the dragged item in the new location. The children can be instances of any class which derives from **UIElement** (or its subclasses). Check out the [SampleGallery](https://github.com/ratishphilip/CompositionProToolkit/tree/master/SampleGallery) code to know how you can add your own custom controls to the FluidWrapPanel
 
+Here is a demo of the **FluidWrapPanel** in action
+
+<img src="https://cloud.githubusercontent.com/assets/7021835/16889802/077dc724-4a9e-11e6-8475-7693138f0b39.gif" alt="FluidWrapPanel demo"></img>
+
+**FluidWrapPanel** has the following Dependency Properties
+
 | Dependency Property | Type | Description | Default Value |
 |---|---|---|---|
 | **DragOpacity** | `Double` | Gets or sets the Opacity of the element when it is being dragged by the user. _**Range: 0.1 - 1.0 inclusive.**_ | **0.7** |
@@ -165,14 +171,11 @@ You can also change the **Width** and **Height** properties of **FluidProgressRi
 | **OptimizeChildPlacement** | `Boolean` | Gets or sets the property that indicates whether the placement of the children is optimized. If set to true, the child is placed at the first available position from the beginning of the FluidWrapPanel. If set to false, each child occupies the same (or greater) row and/or column than the previous child. | **True** |
 | **Orientation** | `System.Windows.Controls.Orientation` | Gets or sets the different orientations the FluidWrapPanel can have. _Possible values are **Horizontal** and **Vertical**_. | **Horizontal** | 
 
-Here is a demo of the **FluidWrapPanel** in action
-
-<img src="https://cloud.githubusercontent.com/assets/7021835/16889802/077dc724-4a9e-11e6-8475-7693138f0b39.gif" alt="FluidWrapPanel demo"></img>
 
 
 # Updates Chronology
 ## v0.3.0
-(**Friday, July 15, 2016**) - Added `FluidWrapPanel` Control.
+(**Friday, July 15, 2016**) - Added `FluidWrapPanel` Control. **SampleGalley** added.
 
 ## v0.2.0
 (**Friday, July 1, 2016**) - Added `FluidProgressRing` Control..
