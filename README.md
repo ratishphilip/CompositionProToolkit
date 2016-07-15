@@ -2,12 +2,13 @@
 
 # Table of Contents
 
+- [Installing from NuGet](#installing-from-nuget)
 - [CompositionProToolkit Internals](#compositionprotoolkit-internals)
-  - [Creating custom shaped `Visual` using `CanvasGeometry`]()
-  - [Creating Masked Backdrop Brush using `ICompositionMask`]()
-- [CompositionProToolkit Controls]()
-  - [FluidProgressRing](#fluidprogressring)
-  - [FluidWrapPanel](#fluidwrappanel)
+  - [Creating custom shaped `Visual` using `CanvasGeometry`](#1-creating-custom-shaped-visual-using-canvasgeometry)
+  - [Creating Masked Backdrop Brush using `ICompositionMask`](#2-creating-masked-backdrop-brush-using-icompositionmask)
+- [CompositionProToolkit Controls](#compositionprotoolkit-controls)
+  - [FluidProgressRing](#1-fluidprogressring)
+  - [FluidWrapPanel](#2-fluidwrappanel)
 
 **CompositionProToolkit** is a collection of helper classes for Windows.UI.Composition. The main difference between **CompositionProToolkit** and [**CompositionExpressionToolkit**](https://github.com/ratishphilip/CompositionExpressionToolkit) (_another project of mine_) is that **CompositionProToolkit** has a dependency on **Win2D** library.
 
