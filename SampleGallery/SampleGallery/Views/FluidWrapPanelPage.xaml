@@ -1,0 +1,65 @@
+﻿<Page x:Class="SampleGallery.Views.FluidWrapPanelPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:SampleGallery.Views"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:controls="using:CompositionProToolkit.Controls"
+      x:Name="window"
+      mc:Ignorable="d">
+
+    <Grid Background="#ffe5e7d0">
+        <ScrollViewer x:Name="scrollViewer"
+                      Margin="100"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <controls:FluidWrapPanel x:Name="panel"
+                                     IsComposing="True"
+                                     Background="White"
+                                     ItemHeight="100"
+                                     ItemWidth="100"
+                                     Orientation="Horizontal">
+            </controls:FluidWrapPanel>
+        </ScrollViewer>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Margin="0,-30,0,30">
+            <TextBlock Margin="0,0,0,0"
+                       Text="Orientation:"
+                       VerticalAlignment="Center"
+                       FontSize="14"></TextBlock>
+            <ComboBox x:Name="OrientationCB"
+                      Width="110"
+                      Margin="10,0"
+                      VerticalContentAlignment="Center"
+                      SelectionChanged="OnOrientationChanged"
+                      FontSize="14"></ComboBox>
+            <CheckBox Content="Optimize Child Placement"
+                      IsChecked="{Binding ElementName=panel, Path=OptimizeChildPlacement, Mode=TwoWay}"
+                      Margin="20,0"
+                      Foreground="Black"
+                      VerticalAlignment="Center"
+                      FontSize="14"></CheckBox>
+            <CheckBox Content="Randomize Child Size"
+                      IsChecked="{Binding ElementName=window, Path=UseRandomChildSize, Mode=TwoWay}"
+                      Margin="20,0"
+                      Foreground="Black"
+                      VerticalAlignment="Center"
+                      FontSize="14"></CheckBox>
+            <Button Width="100"
+                    Height="30"
+                    Content="Refresh"
+                    Margin="20,0,0,0"
+                    Click="OnRefresh"
+                    FontSize="14"></Button>
+            <Button Width="100"
+                    Height="30"
+                    Content="Add"
+                    Margin="20,0,0,0"
+                    Click="OnAdd"
+                    FontSize="14"></Button>
+        </StackPanel>
+    </Grid>
+</Page>
+
