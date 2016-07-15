@@ -177,7 +177,7 @@ Here is a demo of the **FluidWrapPanel** in action
 
 # Updates Chronology
 ## v0.3.0
-(**Friday, July 15, 2016**) - Added `FluidWrapPanel` Control. **SampleGalley** added.
+(**Friday, July 15, 2016**) - Added `FluidWrapPanel` Control. **SampleGallery** added.
 
 ## v0.2.0
 (**Friday, July 1, 2016**) - Added `FluidProgressRing` Control..
