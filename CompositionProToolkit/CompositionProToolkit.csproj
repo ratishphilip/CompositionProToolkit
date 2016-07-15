@@ -11,8 +11,8 @@
     <AssemblyName>CompositionProToolkit</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.14366.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.14388.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -106,12 +106,19 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <None Include="project.json" />
   </ItemGroup>
+  <PropertyGroup>
+    <GenAPIAdditionalParameters>$(GenAPIAdditionalParameters) -excludeApiList "$(MSBuildProjectDirectory)\GenAPI_ExcludeAPIs.txt"</GenAPIAdditionalParameters>
+  </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Common\Utils.cs" />
     <Compile Include="CompositionMask.cs" />
     <Compile Include="CompositionMaskGenerator.cs" />
     <Compile Include="CompositionMaskFactory.cs" />
     <Compile Include="CompositorExtensions.cs" />
-    <Compile Include="Controls\FluidProgressRing.cs" />
+    <Compile Include="Controls\FluidProgressRing\FluidProgressRing.cs" />
+    <Compile Include="Controls\FluidWrapPanel\FluidBitMatrix.cs" />
+    <Compile Include="Controls\FluidWrapPanel\FluidPointerDragBehavior.cs" />
+    <Compile Include="Controls\FluidWrapPanel\FluidWrapPanel.cs" />
     <Compile Include="ICompositionMaskGenerator.cs" />
     <Compile Include="ICompositionMask.cs" />
     <Compile Include="ICompositionMaskGeneratorInternal.cs" />
