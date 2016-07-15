@@ -151,7 +151,9 @@ You can also change the **Width** and **Height** properties of **FluidProgressRi
 
 ## 2. FluidWrapPanel
 
-**FluidWrapPanel** is a wrap panel which allows you to rearrange the children simply by dragging and placing them in the desired location. The remaining children will automatically reposition themselves to accommodate the dragged item in the new location. The children can be instances of any class which derives from **UIElement** (or its subclasses). Check out the [SampleGallery](https://github.com/ratishphilip/CompositionProToolkit/tree/master/SampleGallery) code to know how you can add your own custom controls to the FluidWrapPanel
+**FluidWrapPanel** is a wrap panel which allows you to rearrange the children simply by dragging and placing them in the desired location. The remaining children will automatically reposition themselves to accommodate the dragged item in the new location. The children can be instances of any class which derives from **UIElement** (or its subclasses). Check out the [SampleGallery](https://github.com/ratishphilip/CompositionProToolkit/tree/master/SampleGallery) code to know how you can add your own custom controls to the FluidWrapPanel.
+
+**FluidWrapPanel** internally uses *Composition** APIs to make the animation really smooth. The children of the **FluidWrapPanel** can all be of same size or varying size. If they are varying size, ensure that their width and height are multiples of **ItemWidth** and **ItemHeight** respectively.
 
 Here is a demo of the **FluidWrapPanel** in action
 
