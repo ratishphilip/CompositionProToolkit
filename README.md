@@ -9,6 +9,7 @@
 - [CompositionProToolkit Controls](#compositionprotoolkit-controls)
   - [FluidProgressRing](#1-fluidprogressring)
   - [FluidWrapPanel](#2-fluidwrappanel)
+- [Updates Chronology](updates-chronology)
 
 **CompositionProToolkit** is a collection of helper classes for Windows.UI.Composition. The main difference between **CompositionProToolkit** and [**CompositionExpressionToolkit**](https://github.com/ratishphilip/CompositionExpressionToolkit) (_another project of mine_) is that **CompositionProToolkit** has a dependency on **Win2D** library.
 
@@ -150,4 +151,35 @@ You can also change the **Width** and **Height** properties of **FluidProgressRi
 
 ## 2. FluidWrapPanel
 
+**FluidWrapPanel** is a wrap panel which allows you to rearrange the children simply by dragging and placing them in the desired location. The remaining children will automatically reposition themselves to accommodate the dragged item in the new location. The children can be instances of any class which derives from **UIElement** (or its subclasses). Check out the [SampleGallery](https://github.com/ratishphilip/CompositionProToolkit/tree/master/SampleGallery) code to know how you can add your own custom controls to the FluidWrapPanel
+
+| Dependency Property | Type | Description | Default Value |
+|---|---|---|---|
+| **DragOpacity** | `Double` | Gets or sets the Opacity of the element when it is being dragged by the user. _**Range: 0.1 - 1.0 inclusive.**_ | **0.7** |
+| **DragScale** | `Double` | Gets or sets the Scale Factor of the element when it is being dragged by the user. | **1.2** |
+| **FluidItems** | `ObservableCollection<UIElement>` | Indicates the Observable Collection of the rearranged children | **null** |
+| **IsComposing** | `Boolean` | Flag to indicate whether the children in the FluidWrapPanel can be rearranged or not. | **False** |
+| **ItemHeight** | `Double` | Gets or sets the minimum height each child can have in the FluidWrapPanel. _The child's height should be a multiple of the **ItemHeight**_. | **0** |
+| **ItemWidth** | `Double` | Gets or sets the minimum width each child can have in the FluidWrapPanel. _The child's width should be a multiple of the **ItemWidth**_. | **0** |
+| **ItemsSource** | `IEnumerable` | Bindable property to which a collection of UIElement can be bound. | **null** |
+| **OptimizeChildPlacement** | `Boolean` | Gets or sets the property that indicates whether the placement of the children is optimized. If set to true, the child is placed at the first available position from the beginning of the FluidWrapPanel. If set to false, each child occupies the same (or greater) row and/or column than the previous child. | **True** |
+| **Orientation** | `System.Windows.Controls.Orientation` | Gets or sets the different orientations the FluidWrapPanel can have. _Possible values are **Horizontal** and **Vertical**_. | **Horizontal** | 
+
+Here is a demo of the **FluidWrapPanel** in action
+
 <img src="https://cloud.githubusercontent.com/assets/7021835/16889802/077dc724-4a9e-11e6-8475-7693138f0b39.gif" alt="FluidWrapPanel demo"></img>
+
+
+# Updates Chronology
+## v0.3.0
+(**Friday, July 15, 2016**) - Added `FluidWrapPanel` Control.
+
+## v0.2.0
+(**Friday, July 1, 2016**) - Added `FluidProgressRing` Control..
+
+## v0.1.1
+(**Wednesday, June 15, 2016**) - Added Compositor Extension method to create Masked Backdrop Brush..
+
+## v0.1.0
+(**Wednesday, June 1, 2016**) - Initial Version.
+
