@@ -84,7 +84,8 @@ var ellipse2 = CanvasGeometry.CreateEllipse(generator.Device, 200, 200, 75, 150)
 var combinedGeometry = ellipse1.CombineWith(ellipse2, Matrix3x2.Identity, CanvasGeometryCombine.Union);
 
 // Create the CompositionMask
-ICompositionMask compositionMask = await generator.CreateMaskAsync(visual.Size.ToSize(), combinedGeometry, Colors.Blue);
+ICompositionMask compositionMask = 
+                  await generator.CreateMaskAsync(visual.Size.ToSize(), combinedGeometry, Colors.Blue);
 
 // Create SurfaceBrush from CompositionMask
 var surfaceBrush = compositor.CreateSurfaceBrush(compositionMask.Surface);
@@ -95,7 +96,7 @@ visual.Brush = surfaceBrush;
 
 **ICompositionMask** provides a **RedrawAsync** API which allows you to update the geometry of the mask (and thus the shape of the Visual).  
 
-Here is an example of a **CanvasAnimatedControl** having two visuals - A blue rectangular visual in the background and a red visual in the foreground. The red visual's mask is redrawn periodically to give an impression of animation. (_see the [SampleGallery](https://github.com/ratishphilip/CompositionProToolkit/tree/master/SampleGallery) project for more details on how it is implemented_)
+Here is an example of a **CanvasAnimatedControl** having two visuals - A blue rectangular visual in the background and a red visual in the foreground. The red visual's mask is redrawn periodically to give an impression of animation. (_see the **[SampleGallery](https://github.com/ratishphilip/CompositionProToolkit/tree/master/SampleGallery)** project for more details on how it is implemented_)
 
 ```C#
 private async void AnimatedCanvasCtrl_OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
@@ -153,7 +154,7 @@ You can also change the **Width** and **Height** properties of **FluidProgressRi
 
 **FluidWrapPanel** is a wrap panel which allows you to rearrange the children simply by dragging and placing them in the desired location. The remaining children will automatically reposition themselves to accommodate the dragged item in the new location. The children can be instances of any class which derives from **UIElement** (or its subclasses). Check out the [SampleGallery](https://github.com/ratishphilip/CompositionProToolkit/tree/master/SampleGallery) code to know how you can add your own custom controls to the FluidWrapPanel.
 
-**FluidWrapPanel** internally uses *Composition** APIs to make the animation really smooth. The children of the **FluidWrapPanel** can all be of same size or varying size. _If they are varying size, ensure that their width and height are multiples of **ItemWidth** and **ItemHeight** respectively._
+**FluidWrapPanel** internally uses **Composition** APIs to make the animation really smooth. The children of the **FluidWrapPanel** can all be of same size or varying size. _If they are varying size, ensure that their width and height are multiples of **ItemWidth** and **ItemHeight**, respectively._
 
 Here is a demo of the **FluidWrapPanel** in action
 
