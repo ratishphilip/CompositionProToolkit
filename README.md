@@ -95,7 +95,7 @@ visual.Brush = surfaceBrush;
 
 **ICompositionMask** provides a **RedrawAsync** API which allows you to update the geometry of the mask (and thus the shape of the Visual).  
 
-Here is an example of a **CanvasAnimatedControl** having two visuals - A blue rectangular visual in the background and a red visual in the foreground. The red visual's mask is redrawn periodically to give an impression of animation. (_see the **Sample** project for more details on how it is implemented_)
+Here is an example of a **CanvasAnimatedControl** having two visuals - A blue rectangular visual in the background and a red visual in the foreground. The red visual's mask is redrawn periodically to give an impression of animation. (_see the [SampleGallery](https://github.com/ratishphilip/CompositionProToolkit/tree/master/SampleGallery) project for more details on how it is implemented_)
 
 ```C#
 private async void AnimatedCanvasCtrl_OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
