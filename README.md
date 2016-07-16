@@ -11,7 +11,7 @@
   - [FluidWrapPanel](#2-fluidwrappanel)
 - [Updates Chronology](updates-chronology)
 
-**CompositionProToolkit** is a collection of helper classes for Windows.UI.Composition. The main difference between **CompositionProToolkit** and [**CompositionExpressionToolkit**](https://github.com/ratishphilip/CompositionExpressionToolkit) (_another project of mine_) is that **CompositionProToolkit** has a dependency on **Win2D** library.
+**CompositionProToolkit** is a collection of helper classes for Windows.UI.Composition. It has dependency on the **Win2D** and the  [**CompositionExpressionToolkit**](https://github.com/ratishphilip/CompositionExpressionToolkit) libraries.
 
 # Installing from NuGet
 
