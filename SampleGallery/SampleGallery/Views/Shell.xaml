@@ -16,7 +16,8 @@
                             HamburgerForeground="Black"
                             NavButtonCheckedIndicatorBrush="#ffe5e7d0"
                             NavButtonCheckedForeground="Black"
-                            NavButtonCheckedBackground="#ffe5e7d0">
+                            NavButtonCheckedBackground="#ffe5e7d0"
+                            PaneWidth="260">
 
         <controls:HamburgerMenu.PrimaryButtons>
             <!--  Home button  -->
@@ -82,6 +83,32 @@
                     <TextBlock Margin="12,0,0,0"
                                VerticalAlignment="Center"
                                Text="FluidWrapPanel" />
+                </StackPanel>
+            </controls:HamburgerButtonInfo>
+            <!--  Surface Image button  -->
+            <controls:HamburgerButtonInfo ClearHistory="True"
+                                          PageType="local:CompositionSurfaceImagePage">
+                <StackPanel Orientation="Horizontal">
+                    <localControls:GlyphIcon Width="48"
+                                             Height="48"
+                                             Foreground="White"
+                                             Glyph="{StaticResource SurfaceImage.Glyph}"></localControls:GlyphIcon>
+                    <TextBlock Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               Text="Composition SurfaceImage" />
+                </StackPanel>
+            </controls:HamburgerButtonInfo>
+            <!--  Custom Shape button  -->
+            <controls:HamburgerButtonInfo ClearHistory="True"
+                                          PageType="local:VisualReflectionPage">
+                <StackPanel Orientation="Horizontal">
+                    <localControls:GlyphIcon Width="48"
+                                             Height="48"
+                                             Foreground="White"
+                                             Glyph="{StaticResource Reflection.Glyph}"></localControls:GlyphIcon>
+                    <TextBlock Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               Text="Visual Reflection" />
                 </StackPanel>
             </controls:HamburgerButtonInfo>
         </controls:HamburgerMenu.PrimaryButtons>

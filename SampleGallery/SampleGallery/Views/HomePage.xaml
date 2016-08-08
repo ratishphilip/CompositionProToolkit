@@ -20,10 +20,10 @@
                                 Value="600"></Setter>
                         <Setter Target="LogoVB.Height"
                                 Value="300"></Setter>
-                        <Setter Target="HorzRule.Margin"
+                        <!--<Setter Target="HorzRule.Margin"
                                 Value="50,280,50,50"></Setter>
                         <Setter Target="IntroSV.Margin"
-                                Value="50,340,50,50" />
+                                Value="50,340,50,50" />-->
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="VisualStateLandscapeNormal">
@@ -36,10 +36,10 @@
                                 Value="300"></Setter>
                         <Setter Target="LogoVB.Height"
                                 Value="150"></Setter>
-                        <Setter Target="HorzRule.Margin"
+                        <!--<Setter Target="HorzRule.Margin"
                                 Value="20,140,20,20"></Setter>
                         <Setter Target="IntroSV.Margin"
-                                Value="20,170,20,20" />
+                                Value="20,170,20,20" />-->
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="VisualStateNarrow">
@@ -52,10 +52,10 @@
                                 Value="300"></Setter>
                         <Setter Target="LogoVB.Height"
                                 Value="150"></Setter>
-                        <Setter Target="HorzRule.Margin"
+                        <!--<Setter Target="HorzRule.Margin"
                                 Value="20,140,20,20"></Setter>
                         <Setter Target="IntroSV.Margin"
-                                Value="20,170,20,20" />
+                                Value="20,170,20,20" />-->
                     </VisualState.Setters>
                 </VisualState>
                 <!--<VisualState x:Name="VisualStateNormal">

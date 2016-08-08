@@ -24,13 +24,14 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.3
+// CompositionProToolkit v0.4
 // 
 
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
+using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Geometry;
 
 namespace CompositionProToolkit
@@ -44,10 +45,10 @@ namespace CompositionProToolkit
     {
         #region Fields
 
-        private ICompositionMaskGeneratorInternal _generator;
+        private ICompositionGeneratorInternal _generator;
         private CompositionDrawingSurface _surface;
         private CanvasGeometry _geometry;
-        private Color _color;
+        private ICanvasBrush _brush;
 
         #endregion
 
@@ -56,7 +57,7 @@ namespace CompositionProToolkit
         /// <summary>
         /// Mask Generator
         /// </summary>
-        public ICompositionMaskGenerator Generator => _generator;
+        public ICompositionGenerator Generator => _generator;
         /// <summary>
         /// Mask Surface
         /// </summary>
@@ -81,14 +82,33 @@ namespace CompositionProToolkit
         /// <param name="size">Size of the mask</param>
         /// <param name="geometry">Geometry of the mask</param>
         /// <param name="color">Fill color of the geometry</param>
-        public CompositionMask(ICompositionMaskGeneratorInternal generator, Size size, CanvasGeometry geometry, Color color)
+        public CompositionMask(ICompositionGeneratorInternal generator, Size size, CanvasGeometry geometry, Color color)
         {
             _generator = generator;
             // Create Mask Surface
-            _surface = _generator.CreateMaskSurface(size);
+            _surface = _generator.CreateDrawingSurface(size);
             Size = _surface?.Size ?? Size.Empty;
             _geometry = geometry;
-            _color = color;
+            _brush = new CanvasSolidColorBrush(_generator.Device, color);
+            // Subscribe to DeviceReplaced event
+            _generator.DeviceReplaced += OnDeviceReplaced;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="generator">ICompositionMaskGeneratorInternal object</param>
+        /// <param name="size">Size of the mask</param>
+        /// <param name="geometry">Geometry of the mask</param>
+        /// <param name="brush">Brush to fill the geometry.</param>
+        public CompositionMask(ICompositionGeneratorInternal generator, Size size, CanvasGeometry geometry, ICanvasBrush brush)
+        {
+            _generator = generator;
+            // Create Mask Surface
+            _surface = _generator.CreateDrawingSurface(size);
+            Size = _surface?.Size ?? Size.Empty;
+            _geometry = geometry;
+            _brush = brush;
             // Subscribe to DeviceReplaced event
             _generator.DeviceReplaced += OnDeviceReplaced;
         }
@@ -126,11 +146,11 @@ namespace CompositionProToolkit
         /// </summary>
         /// <param name="size">New size of the mask</param>
         /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
-        /// <returns></returns>
+        /// <returns>Task</returns>
         public async Task RedrawAsync(Size size, CanvasGeometry geometry)
         {
-            // ResizeAsync the mask surface
-            await ResizeAsync(size);
+            // Resize the mask surface
+            await ResizeInternalAsync(size, false);
             // Set the new geometry
             _geometry = geometry;
             // Redraw the mask surface
@@ -144,15 +164,35 @@ namespace CompositionProToolkit
         /// <param name="size">New size of the mask</param>
         /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
         /// <param name="color">Fill color for the geometry</param>
-        /// <returns></returns>
+        /// <returns>Task</returns>
         public async Task RedrawAsync(Size size, CanvasGeometry geometry, Color color)
         {
             // ResizeAsync the mask surface
-            await ResizeAsync(size);
+            await ResizeInternalAsync(size, false);
             // Set the new geometry
             _geometry = geometry;
-            // Set the color
-            _color = color;
+            // Set the brush
+            _brush = new CanvasSolidColorBrush(_generator.Device, color);
+            // Redraw the mask surface
+            await RedrawSurfaceWorkerAsync();
+        }
+
+        /// <summary>
+        /// Resizes the Mask with the given size and redraws the mask
+        /// with the new geometry and fills it with the given color.
+        /// </summary>
+        /// <param name="size">New size of the mask</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
+        /// <param name="brush">Brush to fill the geometry.</param>
+        /// <returns>Task</returns>
+        public async Task RedrawAsync(Size size, CanvasGeometry geometry, ICanvasBrush brush)
+        {
+            // ResizeAsync the mask surface
+            await ResizeInternalAsync(size, false);
+            // Set the new geometry
+            _geometry = geometry;
+            // Set the brush
+            _brush = brush;
             // Redraw the mask surface
             await RedrawSurfaceWorkerAsync();
         }
@@ -161,12 +201,10 @@ namespace CompositionProToolkit
         /// Resizes the mask to the new size.
         /// </summary>
         /// <param name="size">New size of the mask</param>
+        /// <returns>Task</returns>
         public Task ResizeAsync(Size size)
         {
-            _generator.ResizeMaskSurface(_surface, size);
-            Size = size;
-            // Redraw the mask surface
-            return RedrawSurfaceWorkerAsync();
+            return ResizeInternalAsync(size, true);
         }
 
         /// <summary>
@@ -202,12 +240,30 @@ namespace CompositionProToolkit
         #region Helpers
 
         /// <summary>
+        /// Resizes the mask to the new size.
+        /// </summary>
+        /// <param name="size">New size of the mask</param>
+        /// <param name="redraw">Flag to indicate whether the mask surface should be redrawn</param>
+        /// <returns>Task</returns>
+        private async Task ResizeInternalAsync(Size size, bool redraw)
+        {
+            // resize the mask surface
+            _generator.ResizeDrawingSurface(_surface, size);
+            Size = size;
+            if (redraw)
+            {
+                // Redraw the mask surface
+                await RedrawSurfaceWorkerAsync();
+            }
+        }
+
+        /// <summary>
         /// Helper class to redraw
         /// </summary>
         /// <returns>Task</returns>
         private async Task RedrawSurfaceWorkerAsync()
         {
-            await _generator.RedrawMaskSurfaceAsync(_surface, Size, _geometry, _color);
+            await _generator.RedrawMaskSurfaceAsync(_surface, Size, _geometry, _brush);
         }
 
         #endregion

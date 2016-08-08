@@ -32,7 +32,7 @@ namespace SampleGallery.Views
     public sealed partial class MaskedBackdropPage : Page
     {
         private Compositor _compositor;
-        private ICompositionMaskGenerator _generator;
+        private ICompositionGenerator _generator;
         private ICompositionMask _animatedCompositionMask;
         private CompositionBackdropBrush _backdropBrush;
         private CanvasGeometry _outerGeometry;
@@ -59,7 +59,7 @@ namespace SampleGallery.Views
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
-            _generator = CompositionMaskFactory.GetCompositionMaskGenerator(_compositor);
+            _generator = CompositionGeneratorFactory.GetCompositionGenerator(_compositor);
             _backdropBrush = _compositor.CreateBackdropBrush();
 
             _width = 300f;

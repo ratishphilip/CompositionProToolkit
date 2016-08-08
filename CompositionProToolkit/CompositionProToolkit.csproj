@@ -11,7 +11,7 @@
     <AssemblyName>CompositionProToolkit</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.14388.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.14393.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -110,18 +110,21 @@
     <GenAPIAdditionalParameters>$(GenAPIAdditionalParameters) -excludeApiList "$(MSBuildProjectDirectory)\GenAPI_ExcludeAPIs.txt"</GenAPIAdditionalParameters>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CompositionDefinitions.cs" />
     <Compile Include="Common\Utils.cs" />
     <Compile Include="CompositionMask.cs" />
-    <Compile Include="CompositionMaskGenerator.cs" />
-    <Compile Include="CompositionMaskFactory.cs" />
+    <Compile Include="CompositionGenerator.cs" />
+    <Compile Include="CompositionGeneratorFactory.cs" />
+    <Compile Include="CompositionSurfaceImage.cs" />
     <Compile Include="CompositorExtensions.cs" />
     <Compile Include="Controls\FluidProgressRing\FluidProgressRing.cs" />
     <Compile Include="Controls\FluidWrapPanel\FluidBitMatrix.cs" />
     <Compile Include="Controls\FluidWrapPanel\FluidPointerDragBehavior.cs" />
     <Compile Include="Controls\FluidWrapPanel\FluidWrapPanel.cs" />
-    <Compile Include="ICompositionMaskGenerator.cs" />
+    <Compile Include="ICompositionGenerator.cs" />
+    <Compile Include="ICompositionSurfaceImage.cs" />
     <Compile Include="ICompositionMask.cs" />
-    <Compile Include="ICompositionMaskGeneratorInternal.cs" />
+    <Compile Include="ICompositionGeneratorInternal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\CompositionProToolkit.rd.xml" />
   </ItemGroup>

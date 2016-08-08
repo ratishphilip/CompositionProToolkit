@@ -30,86 +30,84 @@
 using System;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.UI;
 using Windows.UI.Composition;
-using Microsoft.Graphics.Canvas.Brushes;
-using Microsoft.Graphics.Canvas.Geometry;
 
 namespace CompositionProToolkit
 {
     /// <summary>
-    /// Interface for creating custom shaped 
-    /// masks for Composition Visuals.
+    /// Interface for loading an image onto a ICompositionSurface
     /// </summary>
-    public interface ICompositionMask : IDisposable
+    public interface ICompositionSurfaceImage : IDisposable
     {
         /// <summary>
-        /// Mask Generator
+        /// SurfaceImage Generator
         /// </summary>
         ICompositionGenerator Generator { get; }
 
         /// <summary>
-        /// Mask Surface
+        /// Surface of the SurfaceImage
         /// </summary>
         ICompositionSurface Surface { get; }
 
         /// <summary>
-        /// Mask Geometry
+        /// Uri of the image to be loaded onto the SurfaceImage
         /// </summary>
-        CanvasGeometry Geometry { get; }
+        Uri Uri { get; }
 
         /// <summary>
-        /// Mask Size
+        /// SurfaceImage Size
         /// </summary>
         Size Size { get; }
 
         /// <summary>
-        /// Redraws the Mask surface
+        /// Describes the image's resize and alignment options in the allocated space.
+        /// </summary>
+        CompositionSurfaceImageOptions Options{ get; }
+
+        /// <summary>
+        /// Redraws the SurfaceImage
         /// </summary>
         /// <returns>Task</returns>
         Task RedrawAsync();
 
         /// <summary>
-        /// Redraws the Mask surface with the new geometry
+        /// Redraws the SurfaceImage with the given stretch mode
         /// </summary>
-        /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
+        /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <returns>Task</returns>
-        Task RedrawAsync(CanvasGeometry geometry);
+        Task RedrawAsync(CompositionSurfaceImageOptions options);
 
         /// <summary>
-        /// Resizes the Mask with the given size and redraws the mask
-        /// with the new geometry and fills it with white color.
+        /// Redraws the SurfaceImage by loading image from the new Uri
         /// </summary>
-        /// <param name="size">New size of the mask</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
+        /// <param name="uri">Uri of the image to be loaded on to the image surface.</param>
+        /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <returns>Task</returns>
-        Task RedrawAsync(Size size, CanvasGeometry geometry);
+        Task RedrawAsync(Uri uri, CompositionSurfaceImageOptions options);
 
         /// <summary>
-        /// Resizes the Mask with the given size and redraws the mask
-        /// with the new geometry and fills it with the given color.
+        /// Resizes the SurfaceImage with the given size and redraws the SurfaceImage by loading 
+        /// image from the new Uri.
         /// </summary>
-        /// <param name="size">New size of the mask</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
-        /// <param name="color">Fill color for the geometry</param>
+        /// <param name="uri">Uri of the image to be loaded onto the SurfaceImage.</param>
+        /// <param name="size">New size of the SurfaceImage</param>
+        /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <returns>Task</returns>
-        Task RedrawAsync(Size size, CanvasGeometry geometry, Color color);
+        Task RedrawAsync(Uri uri, Size size, CompositionSurfaceImageOptions options);
 
         /// <summary>
-        /// Resizes the Mask with the given size and redraws the mask
-        /// with the new geometry and fills it with the given brush.
+        /// Resizes the SurfaceImage to the new size.
         /// </summary>
-        /// <param name="size">New size of the mask</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
-        /// <param name="brush">Brush to fill the geometry</param>
-        /// <returns>Task</returns>
-        Task RedrawAsync(Size size, CanvasGeometry geometry, ICanvasBrush brush);
-
-        /// <summary>
-        /// Resizes the mask to the new size.
-        /// </summary>
-        /// <param name="size">New size of the mask</param>
+        /// <param name="size">New size of the SurfaceImage</param>
         /// <returns>Task</returns>
         Task ResizeAsync(Size size);
+
+        /// <summary>
+        /// Resizes the SurfaceImage to the new size.
+        /// </summary>
+        /// <param name="size">New size of the SurfaceImage</param>
+        /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
+        /// <returns>Task</returns>
+        Task ResizeAsync(Size size, CompositionSurfaceImageOptions options);
     }
 }

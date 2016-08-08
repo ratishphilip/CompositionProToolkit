@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>CompositionProToolkit</id>
-    <version>0.3.0.0</version>
+    <version>0.4.0.0</version>
     <title>CompositionProToolkit</title>
     <authors>Ratish Philip</authors>
     <owners>Ratish Philip</owners>
@@ -11,12 +11,12 @@
     <iconUrl>https://cloud.githubusercontent.com/assets/7021835/16889815/17851c12-4a9e-11e6-87d6-9b00282011b3.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Collection of Helper classes (using Win2d &amp; CompositionExpressionToolkit) for Windows.UI.Composition and some UI controls.</description>
-    <releaseNotes>Added FluidWrapPanel Control.</releaseNotes>
+    <releaseNotes>Added ICompositionSurfaceImage interface which allows loading of images on a Visual and CreateReflectionAsync method which creates the reflection of a ContainerVisual.</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <dependencies>
         <dependency id="Win2D.uwp" version="1.18.0" />
         <dependency id="Microsoft.Xaml.Behaviors.Uwp.Managed" version="1.1.0" />
-        <dependency id="CompositionExpressionToolkit" version="0.2.3" />
+        <dependency id="CompositionExpressionToolkit" version="0.2.4" />
     </dependencies>
   </metadata>
 </package>

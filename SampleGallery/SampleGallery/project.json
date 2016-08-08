@@ -1,6 +1,5 @@
 ﻿{
   "dependencies": {
-    "CompositionProToolkit": "0.3.0",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "Template10": "1.1.11",
     "Win2D.uwp": "1.18.0"

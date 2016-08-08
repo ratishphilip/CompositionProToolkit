@@ -24,44 +24,29 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.3
+// CompositionProToolkit v0.4
 // 
 
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.UI;
 using Windows.UI.Composition;
-using Microsoft.Graphics.Canvas.Geometry;
 
 namespace CompositionProToolkit
 {
     /// <summary>
-    /// Internal interface for the CompositionMaskGenerator
+    /// Factory class to instantiate the CompositionMaskGenerator
     /// </summary>
-    internal interface ICompositionMaskGeneratorInternal : ICompositionMaskGenerator
+    public static class CompositionGeneratorFactory
     {
         /// <summary>
-        /// Creates the Mask Surface for the given size
+        /// Instantiates a MaskGenerator object
         /// </summary>
-        /// <param name="size">Size ofthe Mask Surface</param>
-        /// <returns>CompositionDrawingSurface</returns>
-        CompositionDrawingSurface CreateMaskSurface(Size size);
-
-        /// <summary>
-        /// Redraws the mask surface with the given size and geometry
-        /// </summary>
-        /// <param name="surface">CompositionDrawingSurface</param>
-        /// <param name="size">Size ofthe Mask Surface</param>
-        /// <param name="geometry">Geometry of the Mask Surface</param>
-        /// <param name="color">Fill color of the geometry.</param>
-        /// <returns>Task</returns>
-        Task RedrawMaskSurfaceAsync(CompositionDrawingSurface surface, Size size, CanvasGeometry geometry, Color color);
-
-        /// <summary>
-        /// Resizes the Mask Surface to the given size
-        /// </summary>
-        /// <param name="surface">CompositionDrawingSurface</param>
-        /// <param name="size">New size of the Mask Surface</param>
-        void ResizeMaskSurface(CompositionDrawingSurface surface, Size size);
+        /// <param name="compositor">Compositor</param>
+        /// <param name="graphicsDevice">CompositionGraphics device (optional)</param>
+        /// <param name="sharedLock">shared lock (optional)</param>
+        /// <returns>ICompositionMaskGenerator</returns>
+        public static ICompositionGenerator GetCompositionGenerator(Compositor compositor, 
+            CompositionGraphicsDevice graphicsDevice = null, object sharedLock = null)
+        {
+            return new CompositionGenerator(compositor, graphicsDevice, sharedLock);
+        }
     }
 }

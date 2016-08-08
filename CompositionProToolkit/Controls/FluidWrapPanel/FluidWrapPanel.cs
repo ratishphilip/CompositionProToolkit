@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.3
+// CompositionProToolkit v0.4
 // 
 
 using System;
@@ -342,17 +342,15 @@ namespace CompositionProToolkit.Controls
         private static void OnItemsSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var panel = (FluidWrapPanel)d;
-            var oldItemsSource = (ObservableCollection<UIElement>)e.OldValue;
             var newItemsSource = panel.ItemsSource;
-            panel.OnItemsSourceChanged(oldItemsSource, newItemsSource);
+            panel.OnItemsSourceChanged(newItemsSource);
         }
 
         /// <summary>
         /// Provides derived classes an opportunity to handle changes to the ItemsSource property.
         /// </summary>
-        /// <param name="oldItemsSource">Old Value</param>
         /// <param name="newItemsSource">New Value</param>
-        private void OnItemsSourceChanged(IEnumerable oldItemsSource, IEnumerable newItemsSource)
+        private void OnItemsSourceChanged(IEnumerable newItemsSource)
         {
             // Clear the previous items in the Children property
             ClearItemsSource();
@@ -427,18 +425,15 @@ namespace CompositionProToolkit.Controls
         private static void OnOrientationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var panel = (FluidWrapPanel)d;
-            var oldOrientation = (Orientation)e.OldValue;
-            var newOrientation = panel.Orientation;
-            panel.OnOrientationChanged(oldOrientation, newOrientation);
+            panel.OnOrientationChanged();
         }
 
         /// <summary>
         /// Provides derived classes an opportunity to handle changes to the Orientation property.
         /// </summary>
-        /// <param name="oldOrientation">Old Value</param>
-        /// <param name="newOrientation">New Value</param>
-        private void OnOrientationChanged(Orientation oldOrientation, Orientation newOrientation)
+        private void OnOrientationChanged()
         {
+            // Refresh the layout
             InvalidateMeasure();
         }
 
@@ -779,7 +774,7 @@ namespace CompositionProToolkit.Controls
             var scaleAnimation = _compositor.CreateKeyFrameAnimation<Vector3>()
                                             .HavingDuration(DefaultFluidAnimationDuration)
                                             .ForTarget(() => rootVisual.Scale);
-            offsetAnimation.InsertExpressionKeyFrame(1f, vector3Expr);
+            scaleAnimation.InsertExpressionKeyFrame(1f, vector3Expr);
 
             // ImplicitAnimation
             _implicitAnimationCollection = _compositor.CreateImplicitAnimationCollection();

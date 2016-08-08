@@ -30,7 +30,7 @@ namespace SampleGallery.Views
     public sealed partial class CompositionMaskPage : Page
     {
         private Compositor _compositor;
-        private ICompositionMaskGenerator _generator;
+        private ICompositionGenerator _generator;
         private ICompositionMask _animatedCompositionMask;
         private CanvasGeometry _outerGeometry;
         private CanvasGeometry _combinedGeometry;
@@ -54,7 +54,7 @@ namespace SampleGallery.Views
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
-            _generator = CompositionMaskFactory.GetCompositionMaskGenerator(_compositor);
+            _generator = CompositionGeneratorFactory.GetCompositionGenerator(_compositor);
 
             _width = 300f;
             _height = 300f;

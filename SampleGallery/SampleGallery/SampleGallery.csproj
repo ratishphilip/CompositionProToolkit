@@ -11,7 +11,7 @@
     <AssemblyName>SampleGallery</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.14388.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.14393.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -111,6 +111,9 @@
     <Compile Include="Views\CompositionMaskPage.xaml.cs">
       <DependentUpon>CompositionMaskPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CompositionSurfaceImagePage.xaml.cs">
+      <DependentUpon>CompositionSurfaceImagePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FluidProgressRingPage.xaml.cs">
       <DependentUpon>FluidProgressRingPage.xaml</DependentUpon>
     </Compile>
@@ -126,6 +129,9 @@
     <Compile Include="Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\VisualReflectionPage.xaml.cs">
+      <DependentUpon>VisualReflectionPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -134,6 +140,8 @@
     <None Include="SampleGallery_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Images\Image3.jpg" />
+    <Content Include="Assets\Images\Image4.jpg" />
     <Content Include="Assets\Win10_Land.jpg" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -177,6 +185,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\CompositionSurfaceImagePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\FluidProgressRingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -197,8 +209,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\VisualReflectionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\CompositionProToolkit\CompositionProToolkit.csproj">
+      <Project>{9300e54c-338c-4ad7-baac-bcbd32a660cf}</Project>
+      <Name>CompositionProToolkit</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.3
+// CompositionProToolkit v0.4
 // 
 
 using System;
@@ -56,7 +56,7 @@ namespace CompositionProToolkit.Controls
         #region Fields
 
         private readonly Compositor _compositor;
-        private readonly ICompositionMaskGenerator _generator;
+        private readonly ICompositionGenerator _generator;
         private ICompositionMask _nodeMask;
         private ContainerVisual _container;
 
@@ -111,18 +111,15 @@ namespace CompositionProToolkit.Controls
         private static void OnMaxNodesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var progressRing = (FluidProgressRing)d;
-            var oldMaxNodes = (int)e.OldValue;
-            var newMaxNodes = progressRing.MaxNodes;
-            progressRing.OnMaxNodesChanged(oldMaxNodes, newMaxNodes);
+            progressRing.OnMaxNodesChanged();
         }
 
         /// <summary>
         /// Provides derived classes an opportunity to handle changes to the MaxNodes property.
         /// </summary>
-		/// <param name="oldMaxNodes">Old Value</param>
-		/// <param name="newMaxNodes">New Value</param>
-        void OnMaxNodesChanged(int oldMaxNodes, int newMaxNodes)
+		void OnMaxNodesChanged()
         {
+            // Refresh the layout
             InvalidateArrange();
         }
 
@@ -157,18 +154,15 @@ namespace CompositionProToolkit.Controls
         private static void OnActiveNodesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var progressRing = (FluidProgressRing)d;
-            var oldActiveNodes = (int)e.OldValue;
-            var newActiveNodes = progressRing.ActiveNodes;
-            progressRing.OnActiveNodesChanged(oldActiveNodes, newActiveNodes);
+            progressRing.OnActiveNodesChanged();
         }
 
         /// <summary>
         /// Provides derived classes an opportunity to handle changes to the ActiveNodes property.
         /// </summary>
-		/// <param name="oldActiveNodes">Old Value</param>
-		/// <param name="newActiveNodes">New Value</param>
-        void OnActiveNodesChanged(int oldActiveNodes, int newActiveNodes)
+		void OnActiveNodesChanged()
         {
+            // Refresh the layout
             InvalidateArrange();
         }
 
@@ -201,18 +195,15 @@ namespace CompositionProToolkit.Controls
         private static void OnNodeDurationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var progressRing = (FluidProgressRing)d;
-            var oldNodeDuration = (TimeSpan)e.OldValue;
-            var newNodeDuration = progressRing.NodeDuration;
-            progressRing.OnNodeDurationChanged(oldNodeDuration, newNodeDuration);
+            progressRing.OnNodeDurationChanged();
         }
 
         /// <summary>
         /// Provides derived classes an opportunity to handle changes to the NodeDuration property.
         /// </summary>
-		/// <param name="oldNodeDuration">Old Value</param>
-		/// <param name="newNodeDuration">New Value</param>
-        void OnNodeDurationChanged(TimeSpan oldNodeDuration, TimeSpan newNodeDuration)
+		void OnNodeDurationChanged()
         {
+            // Refresh the layout
             InvalidateArrange();
         }
 
@@ -245,19 +236,16 @@ namespace CompositionProToolkit.Controls
         private static void OnRingDurationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var progressRing = (FluidProgressRing)d;
-            var oldRingDuration = (TimeSpan)e.OldValue;
-            var newRingDuration = progressRing.RingDuration;
-            progressRing.OnRingDurationChanged(oldRingDuration, newRingDuration);
+            progressRing.OnRingDurationChanged();
         }
 
         /// <summary>
         /// Provides derived classes an opportunity to handle changes to the RingDuration property.
         /// </summary>
-		/// <param name="oldRingDuration">Old Value</param>
-		/// <param name="newRingDuration">New Value</param>
-        void OnRingDurationChanged(TimeSpan oldRingDuration, TimeSpan newRingDuration)
+		void OnRingDurationChanged()
         {
-
+            // Refresh the layout
+            InvalidateArrange();
         }
 
         #endregion
@@ -289,18 +277,15 @@ namespace CompositionProToolkit.Controls
         private static void OnNodeSizeFactorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var progressRing = (FluidProgressRing)d;
-            var oldNodeSizeFactor = (double)e.OldValue;
-            var newNodeSizeFactor = progressRing.NodeSizeFactor;
-            progressRing.OnNodeSizeFactorChanged(oldNodeSizeFactor, newNodeSizeFactor);
+            progressRing.OnNodeSizeFactorChanged();
         }
 
         /// <summary>
         /// Provides derived classes an opportunity to handle changes to the NodeSizeFactor property.
         /// </summary>
-		/// <param name="oldNodeSizeFactor">Old Value</param>
-		/// <param name="newNodeSizeFactor">New Value</param>
-        void OnNodeSizeFactorChanged(double oldNodeSizeFactor, double newNodeSizeFactor)
+		void OnNodeSizeFactorChanged()
         {
+            // Refresh the layout
             InvalidateArrange();
         }
 
@@ -333,18 +318,15 @@ namespace CompositionProToolkit.Controls
         private static void OnNodeColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var progressRing = (FluidProgressRing)d;
-            var oldNodeColor = (Color)e.OldValue;
-            var newNodeColor = progressRing.NodeColor;
-            progressRing.OnNodeColorChanged(oldNodeColor, newNodeColor);
+            progressRing.OnNodeColorChanged();
         }
 
         /// <summary>
         /// Provides derived classes an opportunity to handle changes to the NodeColor property.
         /// </summary>
-		/// <param name="oldNodeColor">Old Value</param>
-		/// <param name="newNodeColor">New Value</param>
-        void OnNodeColorChanged(Color oldNodeColor, Color newNodeColor)
+		void OnNodeColorChanged()
         {
+            // Refresh the layout
             InvalidateArrange();
         }
 
@@ -360,7 +342,7 @@ namespace CompositionProToolkit.Controls
         public FluidProgressRing()
         {
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
-            _generator = CompositionMaskFactory.GetCompositionMaskGenerator(_compositor);
+            _generator = CompositionGeneratorFactory.GetCompositionGenerator(_compositor);
             _isAnimationStarted = false;
             // Default Values
             Width = 70;

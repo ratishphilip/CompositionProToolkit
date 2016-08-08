@@ -1,31 +1,68 @@
 namespace CompositionProToolkit
 {
-    public static partial class CompositionMaskFactory
+    public static partial class CompositionGeneratorFactory
     {
-        public static CompositionProToolkit.ICompositionMaskGenerator GetCompositionMaskGenerator(Windows.UI.Composition.Compositor compositor, Windows.UI.Composition.CompositionGraphicsDevice graphicsDevice=null, object sharedLock=null) { return default(CompositionProToolkit.ICompositionMaskGenerator); }
+        public static CompositionProToolkit.ICompositionGenerator GetCompositionGenerator(Windows.UI.Composition.Compositor compositor, Windows.UI.Composition.CompositionGraphicsDevice graphicsDevice=null, object sharedLock=null) { return default(CompositionProToolkit.ICompositionGenerator); }
+    }
+    public partial class CompositionSurfaceImageOptions
+    {
+        public CompositionSurfaceImageOptions(Windows.UI.Xaml.Media.Stretch stretch, Windows.UI.Xaml.Media.AlignmentX hAlign, Windows.UI.Xaml.Media.AlignmentY vAlign, float opacity=1f, Microsoft.Graphics.Canvas.CanvasImageInterpolation interpolation=(Microsoft.Graphics.Canvas.CanvasImageInterpolation)(5)) { }
+        public static CompositionProToolkit.CompositionSurfaceImageOptions Default { get { return default(CompositionProToolkit.CompositionSurfaceImageOptions); } }
+        public Windows.UI.Xaml.Media.AlignmentX HorizontalAlignment { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(Windows.UI.Xaml.Media.AlignmentX); } }
+        public Microsoft.Graphics.Canvas.CanvasImageInterpolation Interpolation { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(Microsoft.Graphics.Canvas.CanvasImageInterpolation); } }
+        public float Opacity { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(float); } }
+        public Windows.UI.Xaml.Media.Stretch Stretch { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(Windows.UI.Xaml.Media.Stretch); } }
+        public Windows.UI.Color SurfaceBackgroundColor { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(Windows.UI.Color); } [System.Runtime.CompilerServices.CompilerGeneratedAttribute]set { } }
+        public static CompositionProToolkit.CompositionSurfaceImageOptions UniformCenter { get { return default(CompositionProToolkit.CompositionSurfaceImageOptions); } }
+        public Windows.UI.Xaml.Media.AlignmentY VerticalAlignment { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(Windows.UI.Xaml.Media.AlignmentY); } }
     }
     public static partial class CompositorExtensions
     {
         public static Windows.UI.Composition.CompositionEffectBrush CreateMaskedBackdropBrush(this Windows.UI.Composition.Compositor compositor, CompositionProToolkit.ICompositionMask mask, Windows.UI.Color blendColor, float blurAmount, Windows.UI.Composition.CompositionBackdropBrush backdropBrush=null) { return default(Windows.UI.Composition.CompositionEffectBrush); }
     }
+    public partial interface ICompositionGenerator : System.IDisposable
+    {
+        Microsoft.Graphics.Canvas.CanvasDevice Device { get; }
+        event System.EventHandler<object> DeviceReplaced;
+        System.Threading.Tasks.Task<CompositionProToolkit.ICompositionMask> CreateMaskAsync(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry);
+        System.Threading.Tasks.Task<CompositionProToolkit.ICompositionMask> CreateMaskAsync(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush brush);
+        System.Threading.Tasks.Task<CompositionProToolkit.ICompositionMask> CreateMaskAsync(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Windows.UI.Color color);
+        System.Threading.Tasks.Task CreateReflectionAsync(Windows.UI.Composition.ContainerVisual visual, float reflectionDistance=0f, float reflectionLength=0.7f, CompositionProToolkit.ReflectionLocation location=(CompositionProToolkit.ReflectionLocation)(0));
+        System.Threading.Tasks.Task<CompositionProToolkit.ICompositionSurfaceImage> CreateSurfaceImageAsync(System.Uri uri, Windows.Foundation.Size size, CompositionProToolkit.CompositionSurfaceImageOptions options);
+    }
     public partial interface ICompositionMask : System.IDisposable
     {
-        CompositionProToolkit.ICompositionMaskGenerator Generator { get; }
+        CompositionProToolkit.ICompositionGenerator Generator { get; }
         Microsoft.Graphics.Canvas.Geometry.CanvasGeometry Geometry { get; }
         Windows.Foundation.Size Size { get; }
         Windows.UI.Composition.ICompositionSurface Surface { get; }
         System.Threading.Tasks.Task RedrawAsync();
         System.Threading.Tasks.Task RedrawAsync(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry);
         System.Threading.Tasks.Task RedrawAsync(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry);
+        System.Threading.Tasks.Task RedrawAsync(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush brush);
         System.Threading.Tasks.Task RedrawAsync(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Windows.UI.Color color);
         System.Threading.Tasks.Task ResizeAsync(Windows.Foundation.Size size);
     }
-    public partial interface ICompositionMaskGenerator : System.IDisposable
+    public partial interface ICompositionSurfaceImage : System.IDisposable
     {
-        Microsoft.Graphics.Canvas.CanvasDevice Device { get; }
-        event System.EventHandler<object> DeviceReplaced;
-        System.Threading.Tasks.Task<CompositionProToolkit.ICompositionMask> CreateMaskAsync(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry);
-        System.Threading.Tasks.Task<CompositionProToolkit.ICompositionMask> CreateMaskAsync(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Windows.UI.Color color);
+        CompositionProToolkit.ICompositionGenerator Generator { get; }
+        CompositionProToolkit.CompositionSurfaceImageOptions Options { get; }
+        Windows.Foundation.Size Size { get; }
+        Windows.UI.Composition.ICompositionSurface Surface { get; }
+        System.Uri Uri { get; }
+        System.Threading.Tasks.Task RedrawAsync();
+        System.Threading.Tasks.Task RedrawAsync(CompositionProToolkit.CompositionSurfaceImageOptions options);
+        System.Threading.Tasks.Task RedrawAsync(System.Uri uri, CompositionProToolkit.CompositionSurfaceImageOptions options);
+        System.Threading.Tasks.Task RedrawAsync(System.Uri uri, Windows.Foundation.Size size, CompositionProToolkit.CompositionSurfaceImageOptions options);
+        System.Threading.Tasks.Task ResizeAsync(Windows.Foundation.Size size);
+        System.Threading.Tasks.Task ResizeAsync(Windows.Foundation.Size size, CompositionProToolkit.CompositionSurfaceImageOptions options);
+    }
+    public enum ReflectionLocation
+    {
+        Bottom = 0,
+        Left = 2,
+        Right = 3,
+        Top = 1,
     }
 }
 namespace CompositionProToolkit.Common

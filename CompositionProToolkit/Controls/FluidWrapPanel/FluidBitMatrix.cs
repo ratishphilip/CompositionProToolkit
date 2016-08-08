@@ -24,8 +24,9 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.3
-// 
+// CompositionProToolkit v0.4
+//
+ 
 using System;
 using System.Linq;
 using Windows.Foundation;
@@ -38,20 +39,34 @@ namespace CompositionProToolkit.Controls
     /// </summary>
     internal struct MatrixCell
     {
+        // Row location
         internal long Row;
+        // Column location
         internal long Col;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="row">Row location</param>
+        /// <param name="col">Column location</param>
         internal MatrixCell(long row, long col)
         {
             Row = row;
             Col = col;
         }
 
+        /// <summary>
+        /// Checks if the location is valid
+        /// </summary>
+        /// <returns></returns>
         internal bool IsValid()
         {
             return (Row >= 0) && (Col >= 0);
         }
 
+        /// <summary>
+        /// Invalid Cell
+        /// </summary>
         internal static MatrixCell InvalidCell => new MatrixCell(-1, -1);
     }
 
