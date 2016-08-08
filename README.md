@@ -6,6 +6,8 @@
 - [CompositionProToolkit Internals](#compositionprotoolkit-internals)
   - [Creating custom shaped `Visual` using `CanvasGeometry`](#1-creating-custom-shaped-visual-using-canvasgeometry)
   - [Creating Masked Backdrop Brush using `ICompositionMask`](#2-creating-masked-backdrop-brush-using-icompositionmask)
+  - [Loading Images on Visual using `ICompositionSurfaceImage`](#3-loading-images-on-visual-using-icompositionsurfaceimage)
+  - [Creating the Reflection of a `ContainerVisual`](#4-creating-the-reflection-of-a-containervisual)
 - [CompositionProToolkit Controls](#compositionprotoolkit-controls)
   - [FluidProgressRing](#1-fluidprogressring)
   - [FluidWrapPanel](#2-fluidwrappanel)
@@ -28,7 +30,15 @@ More details available [here](https://www.nuget.org/packages/CompositionProToolk
 ## 1. Creating custom shaped `Visual` using `CanvasGeometry`
 As of now, you can customize the shape of Visuals by applying a mask on the Visual. The mask is defined using a **CompositionMaskBrush**. In the **CompositionMaskBrush** the `Mask` is defined by a **CompositionSurfaceBrush**. Into the **CompositionSurfaceBrush** an image, which defines the mask, is loaded. In this image, the areas which are to masked in the Visual are transparent whereas the areas to be shown in the Visual are white.  
 
-Using **CompositionProToolkit** you can now define a mask for the **Visual** using **Win2D**'s **CanvasGeometry**. It provides two interfaces **ICompositionMask** and **ICompositionMaskGenerator** and a static class **CompositionMaskFactory** which provides an object implementing the **ICompositionMaskGenerator**. Using the **ICompositionMaskGenerator** an object implementing the **ICompositionMask** can be created. This object represents the mask that needs to be applied to the Visual using a **CompositionMaskBrush**.
+Using **CompositionProToolkit** you can now define a mask for the **Visual** using **Win2D**'s **CanvasGeometry**. It provides two interfaces **ICompositionMask** and **ICompositionGenerator** and a static class **CompositionGeneratorFactory** which provides an object implementing the **ICompositionGenerator**. Using the **ICompositionGenerator** an object implementing the **ICompositionMask** can be created. This object represents the mask that needs to be applied to the Visual using a **CompositionMaskBrush**.
+
+The following APIs are provided in **ICompositionGenerator** to create a **ICompositionMask**
+
+```C#
+Task<ICompositionMask> CreateMaskAsync(Size size, CanvasGeometry geometry);
+Task<ICompositionMask> CreateMaskAsync(Size size, CanvasGeometry geometry, Color color);
+Task<ICompositionMask> CreateMaskAsync(Size size, CanvasGeometry geometry, ICanvasBrush brush);
+```
 
 ### Example
 
@@ -36,7 +46,7 @@ The following code
 
 ```C#
 // Get the Generator
-ICompositionMaskGenerator generator = CompositionMaskFactory.GetCompositionMaskGenerator(compositor);
+ICompositionGenerator generator = CompositionGeneratorFactory.GetCompositionGenerator(compositor);
 
 //Create the visual
 SpriteVisual visual = compositor.CreateSpriteVisual();
@@ -71,7 +81,7 @@ You can also provide a fill color while creating a **ICompositionMask**. You can
 
 ```C#
 // Get the Generator
-ICompositionMaskGenerator generator = CompositionMaskFactory.GetCompositionMaskGenerator(compositor);
+ICompositionGenerator generator = CompositionGeneratorFactory.GetCompositionGenerator(compositor);
 
 //Create the visual
 SpriteVisual visual = compositor.CreateSpriteVisual();
@@ -129,6 +139,94 @@ Using this method, you can apply a BackdropBrush with a custom shape to a visual
 **Note** : _Create only one instance of **CompositionBackdropBrush** and reuse it within your application. It provides a better performance._
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/16091854/562d255c-32ea-11e6-8952-424a513741ea.gif" />
+
+## 3. Loading Images on Visual using `ICompositionSurfaceImage`
+**ICompositionSurfaceImage** is an interface which encapsulates a **CompositionDrawingSurface** onto which an image can be loaded by providing a **Uri**. You can then use the **CompositionDrawingSurface** to create a **CompositionSurfaceBrush** which can be applied to any **Visual**.
+
+**ICompositionGenerator** provides the following API which allows you to create a **CompositionSurfaceImage**
+
+```C#
+Task<ICompositionSurfaceImage> CreateSurfaceImageAsync(Uri uri, Size size, 
+    CompositionSurfaceImageOptions options);
+```
+
+This API requires the **Uri** of the image to be loaded, the **size** of the CompositionDrawingSurface (_usually the same size as the **Visual** on which it is finally applied_) and the **CompositionSurfaceImageOptions**.
+
+### CompositionSurfaceImageOptions
+
+The **CompositionSurfaceImageOptions** class encapsulates a set of properties which influence the rendering of the image on the *CompositionSurfaceImage*. The following table shows the list of these properties.  
+
+
+| Property | Type | Description | Possible Values |
+|---|---|---|---|
+| **`Stretch`**| `Stretch` | Describes how image is resized to fill its allocated space. | **`None`**, **`Uniform`**, **`Fill`**, **`UniformToFill`** |
+| **`HorizontalAlignment`** | `AlignmentX` | Describes how image is positioned horizontally in the **`CompositionSurfaceImage`**. | **`Left`**, **`Center`**, **`Right`** |
+| **`VerticalAlignment`** | `AlignmentY` | Describes how image is positioned vertically in the **`CompositionSurfaceImage`**. | **`Top`**, **`Center`**, **`Bottom`** |
+| **`Opacity`** | `float` | Specifies the opacity of the rendered image. | **`0 - 1f`** inclusive |
+| **`Interpolation`** | `CanvasImageInterpolation` | Specifies the interpolation used to render the image on the **`CompositionSurfaceImage`**.  | **`NearestNeighbor`**, **`Linear`**, **`Cubic`**, **`MultiSampleLinear`**, **`Anisotropic`**, **`HighQualityCubic`** |
+| **`SurfaceBackgroundColor`** | `Color` | Specifies the color which will be used to fill the **`CompositionSurfaceImage`** before rendering the image. | All possible values that can be created. |
+
+### Example
+
+The following example shows how you can load an image onto a **Visual**
+
+
+```C#
+var compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
+var generator = CompositionGeneratorFactory.GetCompositionGenerator(compositor);
+
+var visual = compositor.CreateSpriteVisual();
+visual.Size = new Vector2(this.ActualWidth.Single(), this.ActualHeight.Single());
+visual.Offset = Vector3.Zero;
+
+var options = new CompositionSurfaceImageOptions(Stretch.Uniform, AlignmentX.Center, AlignmentY.Center, 0.9f,
+                CanvasImageInterpolation.Cubic)
+    {
+        SurfaceBackgroundColor = Colors.Maroon
+    };
+
+var surfaceImage =
+    await generator.CreateSurfaceImageAsync(new Uri("ms-appx:///Assets/Images/Image3.jpg"), visual.Size.ToSize(), options);
+
+visual.Brush = compositor.CreateSurfaceBrush(_surfaceImage.Surface);
+```
+
+Once you create a **CompositionSurfaceBrush** from the **ICompositionSurfaceImage** and apply it to a **Visual**, you can use the following **ICompositionSurfaceImage** APIs to resize, provide a new Uri or change the rendering options
+
+```C#
+Task RedrawAsync();
+
+Task RedrawAsync(CompositionSurfaceImageOptions options);
+
+Task RedrawAsync(Uri uri, CompositionSurfaceImageOptions options);
+
+Task RedrawAsync(Uri uri, Size size, CompositionSurfaceImageOptions options);
+
+Task ResizeAsync(Size size);
+
+Task ResizeAsync(Size size, CompositionSurfaceImageOptions options);
+```
+
+Once you call any of the above methods, the Visual's brush is also updated.
+
+## 4. Creating the Reflection of a `ContainerVisual`
+**CompositionProToolkit** provides the following API which allows you to create the reflection of any **ContainerVisual**
+
+```C#
+Task CreateReflectionAsync(ContainerVisual visual, float reflectionDistance = 0f,
+    float reflectionLength = 0.7f, ReflectionLocation location = ReflectionLocation.Bottom);
+```
+
+The parameters required for this API are
+- **visual** - A **ContainerVisual** whose reflection has to be created.
+- **reflectionDistance** - The distance between the visual and its reflection.
+- **reflectionLength** - The normalized length (**0 - 1f**, inclusive) of the visual that must be visible in the reflection. _Default value is **0.7f**_.
+- **location** - Specifies the location of the reflection with respect to the visual - Bottom, Top, Left or Right. _Default value is **ReflectionLocation.Bottom**_.
+
+This API will create a reflection even if an effect is applied to the Visual.
+
+If the visual has multiple other visuals in its visual tree, then the entire visual tree is reflected.
+
 
 # CompositionProToolkit Controls
 
@@ -188,4 +286,5 @@ Here is a demo of the **FluidWrapPanel** in action
 
 ## v0.1.0
 (**Wednesday, June 1, 2016**) - Initial Version.
+
 
