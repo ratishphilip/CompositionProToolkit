@@ -40,6 +40,8 @@ Task<ICompositionMask> CreateMaskAsync(Size size, CanvasGeometry geometry, Color
 Task<ICompositionMask> CreateMaskAsync(Size size, CanvasGeometry geometry, ICanvasBrush brush);
 ```
 
+In the first API, the provided geometry is filled with **White** color, whereas in the second API it is filled with the given color. The third API allows you to specify the **ICanvasBrush** derivative (like **CanvasImageBrush**, **CanvasLinearGradientBrush**, **CanvasRadialGradientBrush** and CanvasSolidColorBrush**) which will be used to fill the geometry.
+
 ### Example
 
 The following code
@@ -156,7 +158,7 @@ This API requires the **Uri** of the image to be loaded, the **size** of the Com
 
 ### CompositionSurfaceImageOptions
 
-The **CompositionSurfaceImageOptions** class encapsulates a set of properties which influence the rendering of the image on the *CompositionSurfaceImage*. The following table shows the list of these properties.  
+The **CompositionSurfaceImageOptions** class encapsulates a set of properties which influence the rendering of the image on the **CompositionSurfaceImage**. The following table shows the list of these properties.  
 
 
 | Property | Type | Description | Possible Values |
