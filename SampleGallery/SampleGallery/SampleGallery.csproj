@@ -214,12 +214,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\CompositionProToolkit\CompositionProToolkit.csproj">
-      <Project>{9300e54c-338c-4ad7-baac-bcbd32a660cf}</Project>
-      <Name>CompositionProToolkit</Name>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
