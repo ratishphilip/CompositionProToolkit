@@ -143,6 +143,8 @@ Using this method, you can apply a BackdropBrush with a custom shape to a visual
 ## 3. Loading Images on Visual using `ICompositionSurfaceImage`
 **ICompositionSurfaceImage** is an interface which encapsulates a **CompositionDrawingSurface** onto which an image can be loaded by providing a **Uri**. You can then use the **CompositionDrawingSurface** to create a **CompositionSurfaceBrush** which can be applied to any **Visual**.
 
+<img src="https://cloud.githubusercontent.com/assets/7021835/17491822/0f3c390a-5d5e-11e6-89de-772c786fb2e2.png" />
+
 **ICompositionGenerator** provides the following API which allows you to create a **CompositionSurfaceImage**
 
 ```C#
@@ -165,6 +167,10 @@ The **CompositionSurfaceImageOptions** class encapsulates a set of properties wh
 | **`Opacity`** | `float` | Specifies the opacity of the rendered image. | **`0 - 1f`** inclusive |
 | **`Interpolation`** | `CanvasImageInterpolation` | Specifies the interpolation used to render the image on the **`CompositionSurfaceImage`**.  | **`NearestNeighbor`**, **`Linear`**, **`Cubic`**, **`MultiSampleLinear`**, **`Anisotropic`**, **`HighQualityCubic`** |
 | **`SurfaceBackgroundColor`** | `Color` | Specifies the color which will be used to fill the **`CompositionSurfaceImage`** before rendering the image. | All possible values that can be created. |
+
+Here is how the image is aligned on the Visual's surface based on the **HorizontalAlignment** and **VerticalAlignment** properties
+
+<img src="https://cloud.githubusercontent.com/assets/7021835/17491824/0f3e71ca-5d5e-11e6-805d-368df799d68b.PNG" />
 
 ### Example
 
@@ -223,10 +229,15 @@ The parameters required for this API are
 - **reflectionLength** - The normalized length (**0 - 1f**, inclusive) of the visual that must be visible in the reflection. _Default value is **0.7f**_.
 - **location** - Specifies the location of the reflection with respect to the visual - Bottom, Top, Left or Right. _Default value is **ReflectionLocation.Bottom**_.
 
+<img src="https://cloud.githubusercontent.com/assets/7021835/17491821/0f3c2384-5d5e-11e6-9e8e-7b5a196d4ef5.png" />
+
 This API will create a reflection even if an effect is applied to the Visual.
+
+<img src="https://cloud.githubusercontent.com/assets/7021835/17491820/0f398c14-5d5e-11e6-9ab6-5cf8bf1d7683.png" />
 
 If the visual has multiple other visuals in its visual tree, then the entire visual tree is reflected.
 
+<img src="https://cloud.githubusercontent.com/assets/7021835/17491823/0f3e67fc-5d5e-11e6-9116-91fb3fb55b83.png" />
 
 # CompositionProToolkit Controls
 
@@ -275,6 +286,9 @@ Here is a demo of the **FluidWrapPanel** in action
 
 
 # Updates Chronology
+## v0.4.0
+(**Monday, August 8, 2016**) - Added `ICompositionSurfaceImage` interface which allows loading of images on a `Visual` and `CreateReflectionAsync` method which creates the reflection of a `ContainerVisual`.
+
 ## v0.3.0
 (**Friday, July 15, 2016**) - Added `FluidWrapPanel` Control. **SampleGallery** added.
 
