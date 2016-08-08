@@ -192,7 +192,8 @@ var options = new CompositionSurfaceImageOptions(Stretch.Uniform, AlignmentX.Cen
     };
 
 var surfaceImage =
-    await generator.CreateSurfaceImageAsync(new Uri("ms-appx:///Assets/Images/Image3.jpg"), visual.Size.ToSize(), options);
+    await generator.CreateSurfaceImageAsync(new Uri("ms-appx:///Assets/Images/Image3.jpg"), 
+        visual.Size.ToSize(), options);
 
 visual.Brush = compositor.CreateSurfaceBrush(_surfaceImage.Surface);
 ```
