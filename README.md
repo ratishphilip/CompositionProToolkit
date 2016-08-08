@@ -195,7 +195,7 @@ var surfaceImage =
     await generator.CreateSurfaceImageAsync(new Uri("ms-appx:///Assets/Images/Image3.jpg"), 
         visual.Size.ToSize(), options);
 
-visual.Brush = compositor.CreateSurfaceBrush(_surfaceImage.Surface);
+visual.Brush = compositor.CreateSurfaceBrush(surfaceImage.Surface);
 ```
 
 Once you create a **CompositionSurfaceBrush** from the **ICompositionSurfaceImage** and apply it to a **Visual**, you can use the following **ICompositionSurfaceImage** APIs to resize, provide a new Uri or change the rendering options
