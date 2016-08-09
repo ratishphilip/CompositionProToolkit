@@ -32,7 +32,6 @@ namespace SampleGallery.Views
     {
         private ICompositionSurfaceImage _surfaceImage;
         private SpriteVisual _visual;
-        private Timer _timer;
         private Compositor compositor;
         private ICompositionGenerator generator;
 
@@ -42,21 +41,6 @@ namespace SampleGallery.Views
 
             Loaded += OnLoaded;
             SizeChanged += CompositionSurfaceImagePage_SizeChanged;
-            _timer = new Timer(OnTimerTick, null, TimeSpan.FromMilliseconds(-1), TimeSpan.FromMilliseconds(-1));
-        }
-
-        private async void OnTimerTick(object info)
-        {
-            var options = new CompositionSurfaceImageOptions(Stretch.Uniform, AlignmentX.Center, AlignmentY.Center, 1f,
-                CanvasImageInterpolation.HighQualityCubic)
-            {
-                SurfaceBackgroundColor = Colors.Maroon
-            };
-
-            _surfaceImage =
-                await generator.CreateSurfaceImageAsync(new Uri("ms-appx:///Assets/Images/Image3.jpg"), _visual.Size.ToSize(), options);
-
-            _visual.Brush = compositor.CreateSurfaceBrush(_surfaceImage.Surface);
         }
 
         private async void CompositionSurfaceImagePage_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -66,7 +50,6 @@ namespace SampleGallery.Views
 
             _visual.Size = new Vector2(this.ActualWidth.Single(), this.ActualHeight.Single());
             await _surfaceImage.ResizeAsync(new Size(this.ActualWidth, this.ActualHeight));
-            //await _surfaceImage.RedrawAsync();
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
@@ -78,11 +61,18 @@ namespace SampleGallery.Views
             _visual.Size = new Vector2(this.ActualWidth.Single(), this.ActualHeight.Single());
             _visual.Offset = new Vector3();
 
-            _visual.Brush = compositor.CreateColorBrush(Colors.Maroon);
+            var options = new CompositionSurfaceImageOptions(Stretch.Uniform, AlignmentX.Center, AlignmentY.Center, 1f,
+                CanvasImageInterpolation.HighQualityCubic)
+            {
+                SurfaceBackgroundColor = Colors.Maroon
+            };
+
+            _surfaceImage =
+                await generator.CreateSurfaceImageAsync(new Uri("ms-appx:///Assets/Images/Image3.jpg"), _visual.Size.ToSize(), options);
+
+            _visual.Brush = compositor.CreateSurfaceBrush(_surfaceImage.Surface);
 
             ElementCompositionPreview.SetElementChildVisual(this, _visual);
-
-            _timer.Change(TimeSpan.FromMilliseconds(1000), TimeSpan.FromMilliseconds(-1));
         }
     }
 }
