@@ -408,15 +408,6 @@ namespace CompositionProToolkit
                 // Load the image from the Uri if it is not already loaded
                 if (canvasBitmap == null)
                 {
-                    // Draw the preloader while the image is loaded from Uri
-                    using (var session = CanvasComposition.CreateDrawingSession(surface))
-                    {
-                        // Clear the surface with the SurfaceBackgroundColor
-                        session.Clear(options.SurfaceBackgroundColor);
-                        // Render the image
-                        session.FillCircle(200, 200, 50, Colors.Wheat);
-                    }
-
                     canvasBitmap = await CanvasBitmap.LoadAsync(_canvasDevice, uri);
                 }
 

@@ -4,7 +4,7 @@
     "Microsoft.DotNet.BuildTools.GenAPI": "1.0.0-beta-00081",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "Microsoft.Xaml.Behaviors.Uwp.Managed": "1.1.0",
-    "Win2D.uwp": "1.18.0"
+    "Win2D.uwp": "1.19.0"
   },
   "frameworks": {
     "uap10.0": {}
