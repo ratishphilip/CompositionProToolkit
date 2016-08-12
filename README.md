@@ -287,7 +287,7 @@ Here is a demo of the **FluidWrapPanel** in action
 | **Orientation** | `System.Windows.Controls.Orientation` | Gets or sets the different orientations the FluidWrapPanel can have. _Possible values are **Horizontal** and **Vertical**_. | **Horizontal** | 
 
 ## 3. CompositionImageFrame
-**CompositionImageFrame** is a control which can be used for displaying images. It encapsulates a **CompositionSurfaceImage** object which is used for loading and rendering the images. It also supports Pointer interactions and raises events accordingly.
+**CompositionImageFrame** is a control which can be used for displaying images asynchronously. It encapsulates a **CompositionSurfaceImage** object which is used for loading and rendering the images. It also supports Pointer interactions and raises events accordingly.
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/17625499/07c82d84-605e-11e6-9b67-592312a9b845.gif" />
 
