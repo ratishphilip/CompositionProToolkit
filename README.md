@@ -286,9 +286,30 @@ Here is a demo of the **FluidWrapPanel** in action
 | **OptimizeChildPlacement** | `Boolean` | Gets or sets the property that indicates whether the placement of the children is optimized. If set to true, the child is placed at the first available position from the beginning of the FluidWrapPanel. If set to false, each child occupies the same (or greater) row and/or column than the previous child. | **True** |
 | **Orientation** | `System.Windows.Controls.Orientation` | Gets or sets the different orientations the FluidWrapPanel can have. _Possible values are **Horizontal** and **Vertical**_. | **Horizontal** | 
 
+## 3. CompositionImageFrame
+**CompositionImageFrame** is a control which can be used for displaying images. It encapsulates a **CompositionSurfaceImage** object which is used for loading and rendering the images. It also supports Pointer interactions and raises events accordingly.
 
+<img src="https://cloud.githubusercontent.com/assets/7021835/17625499/07c82d84-605e-11e6-9b67-592312a9b845.gif" />
+
+In order to configure the rendering of the image, **CompositionImageFrame** has the following properties
+
+| Dependency Property | Type | Description | Default Value |  
+|----|----|----|----|
+| **AlignX** | `AlignmentX` | Specifies how the image is positioned horizontally in the **CompositionImageFrame**. | **AlignmentX.Center** |
+| **AlignY** | `AlignmentY` | Specifies how the image is positioned vertically in the **CompositionImageFrame**. | **AlignmentY.Center** |
+| **FrameBackground** | `Color` | Specifies the background color of the **CompositionImageFrame** to fill the area where image is not rendered. | **Colors.Black** |
+| **Interpolation** | `CanvasImageInterpolation` | Specifies the interpolation used for rendering the image. | **HighQualityCubic** |
+| **Source** | `Uri` | Specifies the Uri of the image to be loaded into the **CompositionImageFrame**. | **null** |
+| **Stretch** | `Stretch` | Specifies how the image is resized to fill its allocated space in the **CompositionImageFrame**. | **Uniform** |
+
+**CompositionImageFrame** raises the following events  
+- **ImageOpened** - when the image has been successfully loaded from the Uri and rendered.
+- **ImageFailed** - when there is an error loading the image from the Uri.
 
 # Updates Chronology
+## v0.4.1
+(**Friday, August 12, 2016**) - `CompositionImageFrame` Control added. `CompositionSurfaceImage` and `CompositionMask` optimized. Bug Fixes.
+
 ## v0.4.0
 (**Monday, August 8, 2016**) - Added `ICompositionSurfaceImage` interface which allows loading of images on a `Visual` and `CreateReflectionAsync` method which creates the reflection of a `ContainerVisual`.
 
@@ -296,10 +317,10 @@ Here is a demo of the **FluidWrapPanel** in action
 (**Friday, July 15, 2016**) - Added `FluidWrapPanel` Control. **SampleGallery** added.
 
 ## v0.2.0
-(**Friday, July 1, 2016**) - Added `FluidProgressRing` Control..
+(**Friday, July 1, 2016**) - Added `FluidProgressRing` Control.
 
 ## v0.1.1
-(**Wednesday, June 15, 2016**) - Added Compositor Extension method to create Masked Backdrop Brush..
+(**Wednesday, June 15, 2016**) - Added Compositor Extension method to create Masked Backdrop Brush.
 
 ## v0.1.0
 (**Wednesday, June 1, 2016**) - Initial Version.
