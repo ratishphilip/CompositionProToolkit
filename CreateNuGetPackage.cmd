@@ -27,6 +27,11 @@
 @echo.
 @msbuild CompositionProToolkit.Ref\CompositionProToolkit.Ref.csproj /p:Configuration="Release" /p:Platform="AnyCPU"
 
+@copy /Y CompositionProToolkit\bin\x86\Release\*.pri NuGet\ref\uap10.0
+@copy /Y CompositionProToolkit\bin\x86\Release\*.xr.xml NuGet\ref\uap10.0\CompositionProToolkit
+
+@copy /Y CompositionProToolkit\Themes\*.xaml NuGet\ref\uap10.0\CompositionProToolkit\Themes
+
 @echo.
 @echo ===== Creating NuGet package =====
 @echo.

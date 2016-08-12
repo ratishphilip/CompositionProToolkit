@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4
+// CompositionProToolkit v0.4.1
 // 
 
 using System;
@@ -539,6 +539,17 @@ namespace CompositionProToolkit.Common
             }
 
             return false;
+        }
+
+        #endregion
+
+        #region Uri
+
+        public static bool IsEqualTo(this Uri uri, Uri otherUri)
+        {
+            return
+                Uri.Compare(uri, otherUri, UriComponents.AbsoluteUri, UriFormat.SafeUnescaped,
+                    StringComparison.OrdinalIgnoreCase) == 0;
         }
 
         #endregion

@@ -117,6 +117,7 @@
     <Compile Include="CompositionGeneratorFactory.cs" />
     <Compile Include="CompositionSurfaceImage.cs" />
     <Compile Include="CompositorExtensions.cs" />
+    <Compile Include="Controls\CompositionImageFrame\CompositionImageFrame.cs" />
     <Compile Include="Controls\FluidProgressRing\FluidProgressRing.cs" />
     <Compile Include="Controls\FluidWrapPanel\FluidBitMatrix.cs" />
     <Compile Include="Controls\FluidWrapPanel\FluidPointerDragBehavior.cs" />
@@ -128,14 +129,24 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\CompositionProToolkit.rd.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>@echo Copying '$(TargetFileName)' to $(ProjectDir)..\Nuget\runtimes\win10-$(PlatformName)\lib\uap10.0
-copy /Y $(TargetPath) $(ProjectDir)..\Nuget\runtimes\win10-$(PlatformName)\lib\uap10.0</PostBuildEvent>
+copy /Y $(TargetPath) $(ProjectDir)..\Nuget\runtimes\win10-$(PlatformName)\lib\uap10.0
+@echo Copying Theme files
+copy /Y $(ProjectDir)Themes\*.xaml $(ProjectDir)..\Nuget\runtimes\win10-$(PlatformName)\lib\uap10.0\$(TargetName)\Themes
+copy /Y $(TargetDir)*.xr.xml $(ProjectDir)..\Nuget\runtimes\win10-$(PlatformName)\lib\uap10.0\$(TargetName)
+copy /Y $(TargetDir)*.pri $(ProjectDir)..\Nuget\runtimes\win10-$(PlatformName)\lib\uap10.0
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

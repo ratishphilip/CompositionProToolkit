@@ -8,13 +8,13 @@ namespace CompositionProToolkit
     {
         public CompositionSurfaceImageOptions(Windows.UI.Xaml.Media.Stretch stretch, Windows.UI.Xaml.Media.AlignmentX hAlign, Windows.UI.Xaml.Media.AlignmentY vAlign, float opacity=1f, Microsoft.Graphics.Canvas.CanvasImageInterpolation interpolation=(Microsoft.Graphics.Canvas.CanvasImageInterpolation)(5)) { }
         public static CompositionProToolkit.CompositionSurfaceImageOptions Default { get { return default(CompositionProToolkit.CompositionSurfaceImageOptions); } }
-        public Windows.UI.Xaml.Media.AlignmentX HorizontalAlignment { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(Windows.UI.Xaml.Media.AlignmentX); } }
-        public Microsoft.Graphics.Canvas.CanvasImageInterpolation Interpolation { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(Microsoft.Graphics.Canvas.CanvasImageInterpolation); } }
-        public float Opacity { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(float); } }
-        public Windows.UI.Xaml.Media.Stretch Stretch { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(Windows.UI.Xaml.Media.Stretch); } }
+        public Windows.UI.Xaml.Media.AlignmentX HorizontalAlignment { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(Windows.UI.Xaml.Media.AlignmentX); } [System.Runtime.CompilerServices.CompilerGeneratedAttribute]set { } }
+        public Microsoft.Graphics.Canvas.CanvasImageInterpolation Interpolation { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(Microsoft.Graphics.Canvas.CanvasImageInterpolation); } [System.Runtime.CompilerServices.CompilerGeneratedAttribute]set { } }
+        public float Opacity { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(float); } [System.Runtime.CompilerServices.CompilerGeneratedAttribute]set { } }
+        public Windows.UI.Xaml.Media.Stretch Stretch { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(Windows.UI.Xaml.Media.Stretch); } [System.Runtime.CompilerServices.CompilerGeneratedAttribute]set { } }
         public Windows.UI.Color SurfaceBackgroundColor { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(Windows.UI.Color); } [System.Runtime.CompilerServices.CompilerGeneratedAttribute]set { } }
         public static CompositionProToolkit.CompositionSurfaceImageOptions UniformCenter { get { return default(CompositionProToolkit.CompositionSurfaceImageOptions); } }
-        public Windows.UI.Xaml.Media.AlignmentY VerticalAlignment { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(Windows.UI.Xaml.Media.AlignmentY); } }
+        public Windows.UI.Xaml.Media.AlignmentY VerticalAlignment { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(Windows.UI.Xaml.Media.AlignmentY); } [System.Runtime.CompilerServices.CompilerGeneratedAttribute]set { } }
     }
     public static partial class CompositorExtensions
     {
@@ -76,6 +76,7 @@ namespace CompositionProToolkit.Common
         public static bool IsCloseTo(this Windows.Foundation.Point point1, Windows.Foundation.Point point2) { return default(bool); }
         public static bool IsCloseTo(this Windows.Foundation.Rect rect1, Windows.Foundation.Rect rect2) { return default(bool); }
         public static bool IsCloseTo(this Windows.Foundation.Size size1, Windows.Foundation.Size size2) { return default(bool); }
+        public static bool IsEqualTo(this System.Uri uri, System.Uri otherUri) { return default(bool); }
         public static bool IsEqualTo(this Windows.UI.Xaml.Media.Brush brush, Windows.UI.Xaml.Media.Brush otherBrush) { return default(bool); }
         public static bool IsGreaterThan(this double value1, double value2) { return default(bool); }
         public static bool IsLessThan(double value1, double value2) { return default(bool); }
@@ -92,8 +93,46 @@ namespace CompositionProToolkit.Common
         public static double RoundLayoutValue(double value, double dpiScale) { return default(double); }
     }
 }
+namespace CompositionProToolkit.CompositionProToolkit_XamlTypeInfo
+{
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Windows.UI.Xaml.Build.Tasks", "14.0.0.0")]
+    public sealed partial class XamlMetaDataProvider : Windows.UI.Xaml.Markup.IXamlMetadataProvider
+    {
+        public XamlMetaDataProvider() { }
+        public Windows.UI.Xaml.Markup.IXamlType GetXamlType(string fullName) { return default(Windows.UI.Xaml.Markup.IXamlType); }
+        public Windows.UI.Xaml.Markup.IXamlType GetXamlType(System.Type type) { return default(Windows.UI.Xaml.Markup.IXamlType); }
+        public Windows.UI.Xaml.Markup.XmlnsDefinition[] GetXmlnsDefinitions() { return default(Windows.UI.Xaml.Markup.XmlnsDefinition[]); }
+    }
+}
 namespace CompositionProToolkit.Controls
 {
+    public partial class CompositionImageEventArgs : Windows.UI.Xaml.RoutedEventArgs
+    {
+        public CompositionImageEventArgs(System.Uri source, string message) { }
+        public string Message { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(string); } }
+        public System.Uri Source { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { return default(System.Uri); } }
+    }
+    public sealed partial class CompositionImageFrame : Windows.UI.Xaml.Controls.Control
+    {
+        public static readonly Windows.UI.Xaml.DependencyProperty AlignXProperty;
+        public static readonly Windows.UI.Xaml.DependencyProperty AlignYProperty;
+        public static readonly Windows.UI.Xaml.DependencyProperty FrameBackgroundProperty;
+        public static readonly Windows.UI.Xaml.DependencyProperty InterpolationProperty;
+        public static readonly Windows.UI.Xaml.DependencyProperty SourceProperty;
+        public static readonly Windows.UI.Xaml.DependencyProperty StretchProperty;
+        public CompositionImageFrame() { }
+        public Windows.UI.Xaml.Media.AlignmentX AlignX { get { return default(Windows.UI.Xaml.Media.AlignmentX); } set { } }
+        public Windows.UI.Xaml.Media.AlignmentY AlignY { get { return default(Windows.UI.Xaml.Media.AlignmentY); } set { } }
+        public Windows.UI.Color FrameBackground { get { return default(Windows.UI.Color); } set { } }
+        public Microsoft.Graphics.Canvas.CanvasImageInterpolation Interpolation { get { return default(Microsoft.Graphics.Canvas.CanvasImageInterpolation); } set { } }
+        public System.Uri Source { get { return default(System.Uri); } set { } }
+        public Windows.UI.Xaml.Media.Stretch Stretch { get { return default(Windows.UI.Xaml.Media.Stretch); } set { } }
+        public event Windows.UI.Xaml.RoutedEventHandler ImageFailed { add { } remove { } }
+        public event Windows.UI.Xaml.RoutedEventHandler ImageOpened { add { } remove { } }
+        protected override Windows.Foundation.Size ArrangeOverride(Windows.Foundation.Size finalSize) { return default(Windows.Foundation.Size); }
+        protected override Windows.Foundation.Size MeasureOverride(Windows.Foundation.Size availableSize) { return default(Windows.Foundation.Size); }
+        public void OnImageLoadTimerTick(object info) { }
+    }
     public partial class FluidPointerDragBehavior : Microsoft.Xaml.Interactivity.Behavior<Windows.UI.Xaml.UIElement>
     {
         public static readonly Windows.UI.Xaml.DependencyProperty DragButtonProperty;

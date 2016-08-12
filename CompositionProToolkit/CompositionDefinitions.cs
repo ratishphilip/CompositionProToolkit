@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4
+// CompositionProToolkit v0.4.1
 // 
 
 using Windows.UI;
@@ -56,25 +56,25 @@ namespace CompositionProToolkit
         /// <summary>
         /// Describes how image is resized to fill its allocated space.
         /// </summary>
-        public Stretch Stretch { get; private set; }
+        public Stretch Stretch { get; set; }
         /// <summary>
         /// Describes how image is positioned horizontally in 
         /// the CompositionSurfaceImage
         /// </summary>
-        public AlignmentX HorizontalAlignment { get; private set; }
+        public AlignmentX HorizontalAlignment { get; set; }
         /// <summary>
         /// Describes how image is positioned vertically in 
         /// the CompositionSurfaceImage
         /// </summary>
-        public AlignmentY VerticalAlignment { get; private set; }
+        public AlignmentY VerticalAlignment { get; set; }
         /// <summary>
         /// Specifies the opacity of the rendered image
         /// </summary>
-        public float Opacity { get; private set; }
+        public float Opacity { get; set; }
         /// <summary>
         /// Specifies the interpolation used to render the image
         /// </summary>
-        public CanvasImageInterpolation Interpolation { get; private set; }
+        public CanvasImageInterpolation Interpolation { get; set; }
         /// <summary>
         /// Color which will be used to fill the SurfaceImage 
         /// before rendering the image

@@ -108,11 +108,11 @@
     <Compile Include="Views\BusyControl.xaml.cs">
       <DependentUpon>BusyControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CompositionImageFramePage.xaml.cs">
+      <DependentUpon>CompositionImageFramePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CompositionMaskPage.xaml.cs">
       <DependentUpon>CompositionMaskPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\CompositionSurfaceImagePage.xaml.cs">
-      <DependentUpon>CompositionSurfaceImagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FluidProgressRingPage.xaml.cs">
       <DependentUpon>FluidProgressRingPage.xaml</DependentUpon>
@@ -140,6 +140,8 @@
     <None Include="SampleGallery_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Images\Image1.jpg" />
+    <Content Include="Assets\Images\Image2.jpg" />
     <Content Include="Assets\Images\Image3.jpg" />
     <Content Include="Assets\Images\Image4.jpg" />
     <Content Include="Assets\Win10_Land.jpg" />
@@ -181,11 +183,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CompositionMaskPage.xaml">
+    <Page Include="Views\CompositionImageFramePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CompositionSurfaceImagePage.xaml">
+    <Page Include="Views\CompositionMaskPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4
+// CompositionProToolkit v0.4.1
 // 
 
 using System;
@@ -39,6 +39,7 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml.Media;
 using CompositionExpressionToolkit;
+using CompositionProToolkit.Common;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Effects;
@@ -337,6 +338,10 @@ namespace CompositionProToolkit
             if (size.IsEmpty)
                 return;
 
+            // Ensuring that the size contains positive values
+            size.Width = Math.Max(0, size.Width);
+            size.Height = Math.Max(0, size.Height);
+
             //
             // Since the drawing is done asynchronously and multiple threads could
             // be trying to get access to the device/surface at the same time, we need
@@ -360,6 +365,10 @@ namespace CompositionProToolkit
         {
             return Task.Run(() =>
             {
+                // No need to render if the width and/or height of the surface is zero
+                if (surface.Size.Width.IsZero() || surface.Size.Height.IsZero())
+                    return;
+
                 //
                 // Since the drawing is done asynchronously and multiple threads could
                 // be trying to get access to the device/surface at the same time, we need
@@ -590,6 +599,14 @@ namespace CompositionProToolkit
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         private void RenderBitmap(CompositionDrawingSurface surface, CanvasBitmap canvasBitmap, Size surfaceSize, CompositionSurfaceImageOptions options)
         {
+            // Ensuring that the surfaceSize contains positive values
+            surfaceSize.Width = Math.Max(0, surfaceSize.Width);
+            surfaceSize.Height = Math.Max(0, surfaceSize.Height);
+
+            // No need to render if the width and/or height of the surface is zero
+            if (surfaceSize.IsEmpty || surface.Size.Width.IsZero() || surface.Size.Height.IsZero())
+                return;
+
             //
             // Because the drawing is done asynchronously and multiple threads could
             // be trying to get access to the device/surface at the same time, we need
@@ -598,14 +615,6 @@ namespace CompositionProToolkit
             lock (_drawingLock)
             {
                 var bitmapSize = canvasBitmap.Size;
-
-                if (surfaceSize.IsEmpty)
-                {
-                    // Resize the surface to the size of the image
-                    CanvasComposition.Resize(surface, bitmapSize);
-                    surfaceSize = bitmapSize;
-                }
-
                 var sourceWidth = bitmapSize.Width;
                 var sourceHeight = bitmapSize.Height;
                 var ratio = sourceWidth / sourceHeight;

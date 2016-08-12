@@ -24,13 +24,14 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4
+// CompositionProToolkit v0.4.1
 // 
 
 using System;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Composition;
+using CompositionProToolkit.Common;
 using Microsoft.Graphics.Canvas;
 
 namespace CompositionProToolkit
@@ -137,9 +138,9 @@ namespace CompositionProToolkit
         {
             // If the given Uri differs from the previously stored Uri
             // dispose the existing canvasBitmap
-            if (!ReferenceEquals(_uri, uri))
+            if (!_uri.IsEqualTo(uri))
             {
-                _canvasBitmap.Dispose();
+                _canvasBitmap?.Dispose();
                 _canvasBitmap = null;
             }
 
@@ -159,9 +160,9 @@ namespace CompositionProToolkit
         {
             // If the given Uri differs from the previously stored Uri
             // dispose the existing canvasBitmap
-            if (!ReferenceEquals(_uri, uri))
+            if (!_uri.IsEqualTo(uri))
             {
-                _canvasBitmap.Dispose();
+                _canvasBitmap?.Dispose();
                 _canvasBitmap = null;
             }
 
@@ -185,9 +186,9 @@ namespace CompositionProToolkit
         {
             // If the given Uri differs from the previously stored Uri
             // dispose the existing canvasBitmap
-            if (!ReferenceEquals(_uri, uri))
+            if (!_uri.IsEqualTo(uri))
             {
-                _canvasBitmap.Dispose();
+                _canvasBitmap?.Dispose();
                 _canvasBitmap = null;
             }
 
@@ -231,9 +232,9 @@ namespace CompositionProToolkit
         /// </summary>
         public void Dispose()
         {
-            _surface.Dispose();
+            _surface?.Dispose();
             _generator.DeviceReplaced -= OnDeviceReplaced;
-            _canvasBitmap.Dispose();
+            _canvasBitmap?.Dispose();
             _canvasBitmap = null;
             _surface = null;
             _generator = null;

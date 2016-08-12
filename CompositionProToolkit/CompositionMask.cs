@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4
+// CompositionProToolkit v0.4.1
 // 
 
 using System.Threading.Tasks;
@@ -212,8 +212,8 @@ namespace CompositionProToolkit
         /// </summary>
         public void Dispose()
         {
-            _surface.Dispose();
-            _geometry.Dispose();
+            _surface?.Dispose();
+            _geometry?.Dispose();
             _generator.DeviceReplaced -= OnDeviceReplaced;
             _surface = null;
             _generator = null;
