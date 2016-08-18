@@ -1,6 +1,6 @@
 <img src="https://cloud.githubusercontent.com/assets/7021835/16889814/1784ed78-4a9e-11e6-80d0-7c2084d6c960.png" alt="CompositionProToolkit"></img>
 
->  **CompositionProToolkit has undergone some breaking API changes in v0.4.2. Look [here](https://wpfspark.wordpress.com/2016/08/18/compositionprotoolkit-v0-4-2-released/) for more details.**
+>  IMPORTANT: **CompositionProToolkit has undergone some breaking API changes in v0.4.2. Look [here](https://wpfspark.wordpress.com/2016/08/18/compositionprotoolkit-v0-4-2-released/) for more details.**
 
 
 # Table of Contents
@@ -336,10 +336,10 @@ It provides the following properties which can be used to customize the **FluidB
 | **`AlignY`** | `AlignmentY` | Indicates how the image is positioned vertically in the **FluidBanner** items. | **Center** |
 | **`DecodeHeight`** | `int` | The height, in pixels, that the images are decoded to. (<em>**Optional**</em>) | **0** |
 | **`DecodeWidth`** | `int` | The width, in pixels, that the images are decoded to. (<em>**Optional**</em>) | **0** |
-| **`ItemBackground`** | `Color` | The background color of each item in the FluidBanner | **Black** |
-| **`ItemGap`** | `double` | The gap between adjacent items in the banner. | **30** |
-| **`ItemsSource`** | `IEnumerable&lt;Uri&gt;` | The collection of Uris of images to be shown in the FluidBanner | **null** |
-| **`Padding`** | `Thickness` | The padding inside the FluidBanner | **Thickness(0)** |
+| **`ItemBackground`** | `Color` | The background color of each item in the **FluidBanner** | **Black** |
+| **`ItemGap`** | `double` | The gap between adjacent items in the **FluidBanner**. | **30** |
+| **`ItemsSource`** | `IEnumerable&lt;Uri&gt;` | The collection of Uris of images to be shown in the **FluidBanner** | **null** |
+| **`Padding`** | `Thickness` | The padding inside the **FluidBanner** | **Thickness(0)** |
 | **`Stretch`** | `Stretch` | Indicates how the image is resized to fill its allocated space within each **FluidBanner** item. | **Uniform** |
 
 # Updates Chronology
