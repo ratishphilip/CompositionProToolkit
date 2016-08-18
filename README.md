@@ -322,7 +322,7 @@ In order to configure the rendering of the image, **CompositionImageFrame** has 
 - **ImageOpened** - when the image has been successfully loaded from the Uri and rendered.
 - **ImageFailed** - when there is an error loading the image from the Uri.
 
-## 4. FluidWrapPanel
+## 4. FluidBanner
 
 **FluidBanner** control is banner control created using Windows Composition. It allows for displaying multiple images in a unique interactive format.  It internally uses **CompositionSurfaceImage** to host the images. 
 
