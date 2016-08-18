@@ -296,7 +296,7 @@ Here is a demo of the **FluidWrapPanel** in action
 ## 3. CompositionImageFrame
 **CompositionImageFrame** is a control which can be used for displaying images asynchronously. It encapsulates a **CompositionSurfaceImage** object which is used for loading and rendering the images. It also supports Pointer interactions and raises events accordingly.
 
-<img src="https://wpfspark.files.wordpress.com/2016/08/cpt6.gif" />
+<img src="https://cloud.githubusercontent.com/assets/7021835/17792516/f105a99e-6555-11e6-8a72-b9665baac6cf.gif" />
 
 In order to configure the rendering of the image, **CompositionImageFrame** has the following properties
 
