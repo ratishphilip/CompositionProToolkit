@@ -24,13 +24,12 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.1
+// CompositionProToolkit v0.4.2
 // 
 
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -470,19 +469,19 @@ namespace CompositionProToolkit.Controls
             var color = NodeColor;
             if (_nodeMask == null)
             {
-                Task.Run(async () =>
-                        {
-                            _nodeMask = await _generator.CreateMaskAsync(_nodeSize.ToSize(), geometry, color);
-                        })
-                    .Wait();
+                //Task.Run(async () =>
+                //        {
+                            _nodeMask = _generator.CreateMask(_nodeSize.ToSize(), geometry, color);
+                    //    })
+                    //.Wait();
             }
             else
             {
-                Task.Run(async () =>
-                        {
-                            await _nodeMask.RedrawAsync(_nodeSize.ToSize(), geometry, color);
-                        })
-                    .Wait();
+                //Task.Run(async () =>
+                //        {
+                             _nodeMask.Redraw(_nodeSize.ToSize(), geometry, color);
+                    //    })
+                    //.Wait();
             }
 
             // Create the SurfaceBrush for the nodes

@@ -98,7 +98,7 @@
                                Text="CompositionImageFrame" />
                 </StackPanel>
             </controls:HamburgerButtonInfo>
-            <!--  Custom Shape button  -->
+            <!--  Visual Reflection button  -->
             <controls:HamburgerButtonInfo ClearHistory="True"
                                           PageType="local:VisualReflectionPage">
                 <StackPanel Orientation="Horizontal">
@@ -109,6 +109,19 @@
                     <TextBlock Margin="12,0,0,0"
                                VerticalAlignment="Center"
                                Text="Visual Reflection" />
+                </StackPanel>
+            </controls:HamburgerButtonInfo>
+            <!--  FluidBanner button  -->
+            <controls:HamburgerButtonInfo ClearHistory="True"
+                                          PageType="local:FluidBannerPage">
+                <StackPanel Orientation="Horizontal">
+                    <localControls:GlyphIcon Width="48"
+                                             Height="48"
+                                             Foreground="White"
+                                             Glyph="{StaticResource FluidBanner.Glyph}"></localControls:GlyphIcon>
+                    <TextBlock Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               Text="Fluid Banner" />
                 </StackPanel>
             </controls:HamburgerButtonInfo>
         </controls:HamburgerMenu.PrimaryButtons>

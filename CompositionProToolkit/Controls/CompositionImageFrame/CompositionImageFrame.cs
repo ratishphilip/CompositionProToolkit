@@ -24,13 +24,12 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.1
+// CompositionProToolkit v0.4.2
 // 
 
 using System;
 using System.IO;
 using System.Numerics;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI;
@@ -43,6 +42,7 @@ using Windows.UI.Xaml.Media;
 using CompositionExpressionToolkit;
 using CompositionProToolkit.Common;
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
 
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 
@@ -98,15 +98,32 @@ namespace CompositionProToolkit.Controls
 
         #endregion
 
+        #region Constants
+
+        public static TimeSpan MinimumTransitionDuration = TimeSpan.FromMilliseconds(1);
+        public static TimeSpan DefaultTransitionDuration = TimeSpan.FromMilliseconds(700);
+
+        #endregion
+
         #region Fields
 
         private Compositor _compositor;
         private ICompositionGenerator _generator;
         private ICompositionSurfaceImage _surfaceImage;
-        private SpriteVisual _frameVisual;
-        private Uri _currentUri;
-        private readonly Timer _imageLoadTimer;
+        private ICompositionSurfaceImage _nextSurfaceImage;
+        private ICompositionMask _frameLayerMask;
+        private ContainerVisual _rootContainer;
+        private SpriteVisual _shadowVisual;
+        private LayerVisual _frameLayer;
+        private SpriteVisual _frameBackgroundVisual;
+        private SpriteVisual _frameContentVisual;
+        private SpriteVisual _nextVisualContent;
+        private DropShadow _shadow;
+        private CompositionEffectBrush _layerEffectBrush;
         private CompositionSurfaceImageOptions _imageOptions;
+        private ScalarKeyFrameAnimation _fadeOutAnimation;
+        private ScalarKeyFrameAnimation _fadeInAnimation;
+        private ColorKeyFrameAnimation _colorAnimation;
 
         #endregion
 
@@ -187,6 +204,89 @@ namespace CompositionProToolkit.Controls
         /// Provides the class instance an opportunity to handle changes to the AlignY property.
         /// </summary>
         private void OnAlignYChanged()
+        {
+            // Refresh Layout
+            InvalidateArrange();
+        }
+
+        #endregion
+
+        #region CornerRadius
+
+        /// <summary>
+        /// CornerRadius Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty CornerRadiusProperty =
+            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(CompositionImageFrame),
+                new PropertyMetadata(new CornerRadius(0.0), OnCornerRadiusChanged));
+
+        /// <summary>
+        /// Gets or sets the CornerRadius property. This dependency property 
+        /// indicates the corner radius of the the ImageFrame. The image will
+        /// be rendered with rounded corners.
+        /// </summary>
+        public CornerRadius CornerRadius
+        {
+            get { return (CornerRadius)GetValue(CornerRadiusProperty); }
+            set { SetValue(CornerRadiusProperty, value); }
+        }
+
+        /// <summary>
+        /// Handles changes to the CornerRadius property.
+        /// </summary>
+        /// <param name="d">CompositionImageFrame</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnCornerRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var frame = (CompositionImageFrame)d;
+            frame.OnCornerRadiusChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the CornerRadius property.
+        /// </summary>
+        private void OnCornerRadiusChanged()
+        {
+            // Refresh Layout
+            InvalidateArrange();
+        }
+
+        #endregion
+
+        #region DisplayShadow
+
+        /// <summary>
+        /// DisplayShadow Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty DisplayShadowProperty =
+            DependencyProperty.Register("DisplayShadow", typeof(bool), typeof(CompositionImageFrame),
+                new PropertyMetadata(false, OnDisplayShadowChanged));
+
+        /// <summary>
+        /// Gets or sets the DisplayShadow property. This dependency property 
+        /// indicates whether the shadow for this image should be displayed.
+        /// </summary>
+        public bool DisplayShadow
+        {
+            get { return (bool)GetValue(DisplayShadowProperty); }
+            set { SetValue(DisplayShadowProperty, value); }
+        }
+
+        /// <summary>
+        /// Handles changes to the DisplayShadow property.
+        /// </summary>
+        /// <param name="d">CompositionImageFrame</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnDisplayShadowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var frame = (CompositionImageFrame)d;
+            frame.OnDisplayShadowChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the DisplayShadow property.
+        /// </summary>
+        private void OnDisplayShadowChanged()
         {
             // Refresh Layout
             InvalidateArrange();
@@ -277,6 +377,291 @@ namespace CompositionProToolkit.Controls
 
         #endregion
 
+        #region RenderOptimized
+
+        /// <summary>
+        /// RenderOptimized Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty RenderOptimizedProperty =
+            DependencyProperty.Register("RenderOptimized", typeof(bool), typeof(CompositionImageFrame),
+                new PropertyMetadata(false, OnRenderOptimizedChanged));
+
+        /// <summary>
+        /// Gets or sets the RenderOptimized property. This dependency property 
+        /// indicates whether optimization must be used to render the image.
+        /// Set this property to True if the CompositionImageFrame is very small
+        /// compared to the actual image size. This will optimize memory usage.
+        /// </summary>
+        public bool RenderOptimized
+        {
+            get { return (bool)GetValue(RenderOptimizedProperty); }
+            set { SetValue(RenderOptimizedProperty, value); }
+        }
+
+        /// <summary>
+        /// Handles changes to the RenderOptimized property.
+        /// </summary>
+        /// <param name="d">CompositionImageFrame</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnRenderOptimizedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var frame = (CompositionImageFrame)d;
+            frame.OnRenderOptimizedChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the RenderOptimized property.
+        /// </summary>
+        private void OnRenderOptimizedChanged()
+        {
+            // Refresh Layout
+            InvalidateArrange();
+        }
+
+        #endregion
+
+        #region ShadowBlurRadius
+
+        /// <summary>
+        /// ShadowBlurRadius Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty ShadowBlurRadiusProperty =
+            DependencyProperty.Register("ShadowBlurRadius", typeof(double), typeof(CompositionImageFrame),
+                new PropertyMetadata(0.0, OnShadowBlurRadiusChanged));
+
+        /// <summary>
+        /// Gets or sets the ShadowBlurRadius property. This dependency property 
+        /// indicates the blur radius of the CompositionImageFrame shadow.
+        /// </summary>
+        public double ShadowBlurRadius
+        {
+            get { return (double)GetValue(ShadowBlurRadiusProperty); }
+            set { SetValue(ShadowBlurRadiusProperty, CoerceShadowBlurRadius(value)); }
+        }
+
+        /// <summary>
+        /// Coerces the ShadowBlurRadius to a more acceptable value
+        /// </summary>
+        /// <param name="newShadowBlurRadius">ShadowBlurRadius value to be coerced.</param>
+        /// <returns>Coerced ShadowBlurRadius value</returns>
+        private object CoerceShadowBlurRadius(double newShadowBlurRadius)
+        {
+            return Math.Max(0.0, newShadowBlurRadius);
+        }
+
+        /// <summary>
+        /// Handles changes to the ShadowBlurRadius property.
+        /// </summary>
+        /// <param name="d">CompositionImageFrame</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnShadowBlurRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var frame = (CompositionImageFrame)d;
+            frame.OnShadowBlurRadiusChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the ShadowBlurRadius property.
+        /// </summary>
+        private void OnShadowBlurRadiusChanged()
+        {
+            // Refresh Layout if shadow is displayed
+            if (DisplayShadow)
+            {
+                InvalidateArrange();
+            }
+        }
+
+        #endregion
+
+        #region ShadowColor
+
+        /// <summary>
+        /// ShadowColor Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty ShadowColorProperty =
+            DependencyProperty.Register("ShadowColor", typeof(Color), typeof(CompositionImageFrame),
+                new PropertyMetadata(Colors.Transparent, OnShadowColorChanged));
+
+        /// <summary>
+        /// Gets or sets the ShadowColor property. This dependency property 
+        /// indicates the color of the CompositionImageFrame shadow.
+        /// </summary>
+        public Color ShadowColor
+        {
+            get { return (Color)GetValue(ShadowColorProperty); }
+            set { SetValue(ShadowColorProperty, value); }
+        }
+
+        /// <summary>
+        /// Handles changes to the ShadowColor property.
+        /// </summary>
+        /// <param name="d">CompositionImageFrame</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnShadowColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var frame = (CompositionImageFrame)d;
+            frame.OnShadowColorChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the ShadowColor property.
+        /// </summary>
+        private void OnShadowColorChanged()
+        {
+            // Refresh Layout if shadow is displayed
+            if (DisplayShadow)
+            {
+                InvalidateArrange();
+            }
+        }
+
+        #endregion
+
+        #region ShadowOffsetX
+
+        /// <summary>
+        /// ShadowOffsetX Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty ShadowOffsetXProperty =
+            DependencyProperty.Register("ShadowOffsetX", typeof(double), typeof(CompositionImageFrame),
+                new PropertyMetadata(0.0, OnShadowOffsetXChanged));
+
+        /// <summary>
+        /// Gets or sets the ShadowOffsetX property. This dependency property 
+        /// indicates the horizontal offset of the CompositionImageFrame shadow.
+        /// </summary>
+        public double ShadowOffsetX
+        {
+            get { return (double)GetValue(ShadowOffsetXProperty); }
+            set { SetValue(ShadowOffsetXProperty, value); }
+        }
+
+        /// <summary>
+        /// Handles changes to the ShadowOffsetX property.
+        /// </summary>
+        /// <param name="d">CompositionImageFrame</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnShadowOffsetXChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var frame = (CompositionImageFrame)d;
+            frame.OnShadowOffsetXChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the ShadowOffsetX property.
+        /// </summary>
+        private void OnShadowOffsetXChanged()
+        {
+            // Refresh Layout if shadow is displayed
+            if (DisplayShadow)
+            {
+                InvalidateArrange();
+            }
+        }
+
+        #endregion
+
+        #region ShadowOffsetY
+
+        /// <summary>
+        /// ShadowOffsetY Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty ShadowOffsetYProperty =
+            DependencyProperty.Register("ShadowOffsetY", typeof(double), typeof(CompositionImageFrame),
+                new PropertyMetadata(0.0, OnShadowOffsetYChanged));
+
+        /// <summary>
+        /// Gets or sets the ShadowOffsetY property. This dependency property 
+        /// indicates the vertical offset of the CompositionImageFrame shadow.
+        /// </summary>
+        public double ShadowOffsetY
+        {
+            get { return (double)GetValue(ShadowOffsetYProperty); }
+            set { SetValue(ShadowOffsetYProperty, value); }
+        }
+
+        /// <summary>
+        /// Handles changes to the ShadowOffsetY property.
+        /// </summary>
+        /// <param name="d">CompositionImageFrame</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnShadowOffsetYChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var frame = (CompositionImageFrame)d;
+            frame.OnShadowOffsetYChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the ShadowOffsetY property.
+        /// </summary>
+        private void OnShadowOffsetYChanged()
+        {
+            // Refresh Layout if shadow is displayed
+            if (DisplayShadow)
+            {
+                InvalidateArrange();
+            }
+        }
+
+        #endregion
+
+        #region ShadowOpacity
+
+        /// <summary>
+        /// ShadowOpacity Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty ShadowOpacityProperty =
+            DependencyProperty.Register("ShadowOpacity", typeof(double), typeof(CompositionImageFrame),
+                new PropertyMetadata(1.0, OnShadowOpacityChanged));
+
+        /// <summary>
+        /// Gets or sets the ShadowOpacity property. This dependency property 
+        /// indicates the opacity of the CompositionImageFrame shadow.
+        /// </summary>
+        public double ShadowOpacity
+        {
+            get { return (double)GetValue(ShadowOpacityProperty); }
+            set { SetValue(ShadowOpacityProperty, CoerceShadowOpacity(value)); }
+        }
+
+        /// <summary>
+        /// Coerces the ShadowOpacity to a more acceptable value.
+        /// </summary>
+        /// <param name="newShadowOpacity">ShadowOpacity value to be coerced.</param>
+        /// <returns>Coerced ShadowOpacity value</returns>
+        private object CoerceShadowOpacity(double newShadowOpacity)
+        {
+            // Opacity value should be between 0 and 1 inclusive
+            var opacity = Math.Max(0, newShadowOpacity);
+            return Math.Min(1.0, opacity);
+        }
+
+        /// <summary>
+        /// Handles changes to the ShadowOpacity property.
+        /// </summary>
+        /// <param name="d">CompositionImageFrame</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnShadowOpacityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var frame = (CompositionImageFrame)d;
+            frame.OnShadowOpacityChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the ShadowOpacity property.
+        /// </summary>
+        private void OnShadowOpacityChanged()
+        {
+            // Refresh Layout if shadow is displayed
+            if (DisplayShadow)
+            {
+                InvalidateArrange();
+            }
+        }
+
+        #endregion
+        
         #region Source
 
         /// <summary>
@@ -360,6 +745,73 @@ namespace CompositionProToolkit.Controls
 
         #endregion
 
+        #region TransitionDuration
+
+        /// <summary>
+        /// TransitionDuration Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty TransitionDurationProperty =
+            DependencyProperty.Register("TransitionDuration", typeof(TimeSpan), typeof(CompositionImageFrame),
+                new PropertyMetadata(DefaultTransitionDuration, OnTransitionDurationChanged));
+
+        /// <summary>
+        /// Gets or sets the TransitionDuration property. This dependency property 
+        /// indicates the duration of the crossfade animation for transitioning 
+        /// from one image to another.
+        /// </summary>
+        public TimeSpan TransitionDuration
+        {
+            get { return (TimeSpan)GetValue(TransitionDurationProperty); }
+            set { SetValue(TransitionDurationProperty, CoerceTransitionDuration(value)); }
+        }
+
+        /// <summary>
+        /// Coerces the TransitionDuration to a more acceptable value
+        /// </summary>
+        /// <param name="duration">Transition Duration</param>
+        /// <returns>Coerced Transition Duration</returns>
+        private object CoerceTransitionDuration(TimeSpan duration)
+        {
+            return (duration.TotalMilliseconds.IsZero() || (duration.TotalMilliseconds < 0)) ? MinimumTransitionDuration : duration;
+        }
+
+        /// <summary>
+        /// Handles changes to the TransitionDuration property.
+        /// </summary>
+        /// <param name="d">CompositionImageFrame</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnTransitionDurationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var target = (CompositionImageFrame)d;
+            var newTransitionDuration = target.TransitionDuration;
+            target.OnTransitionDurationChanged(newTransitionDuration);
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the TransitionDuration property.
+        /// </summary>
+		/// <param name="newTransitionDuration">New Value</param>
+        private void OnTransitionDurationChanged(TimeSpan newTransitionDuration)
+        {
+            // Update the animations if they are already created
+            if (_fadeOutAnimation != null)
+            {
+                _fadeOutAnimation.Duration = newTransitionDuration;
+            }
+
+            if (_fadeInAnimation != null)
+            {
+                _fadeInAnimation.Duration = newTransitionDuration;
+            }
+
+            if (_colorAnimation != null)
+            {
+                _colorAnimation.Duration = newTransitionDuration;
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region Construction / Initialization
@@ -376,9 +828,7 @@ namespace CompositionProToolkit.Controls
             // receive Pointer events
             Background = new SolidColorBrush(Colors.Transparent);
             // Initialize the ImageOptions
-            _imageOptions = CompositionSurfaceImageOptions.UniformCenter;
-            // Initialize the imageLoadTimer
-            _imageLoadTimer = new Timer(OnImageLoadTimerTick, null, TimeSpan.FromMilliseconds(-1), TimeSpan.FromMilliseconds(-1));
+            _imageOptions = CompositionSurfaceImageOptions.Default;
         }
 
         #endregion
@@ -408,74 +858,113 @@ namespace CompositionProToolkit.Controls
         /// <returns>Total size occupied by the Children</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            // If the frameVisual has not been created yet, create it
-            if (_frameVisual == null)
-            {
-                _frameVisual = _compositor.CreateSpriteVisual();
-                _frameVisual.Brush = _compositor.CreateColorBrush(FrameBackground);
-                ElementCompositionPreview.SetElementChildVisual(this, _frameVisual);
-            }
-
             // Taking into account the BorderThickness and Padding
             var borders = BorderThickness;
             var padding = Padding;
+            var corners = CornerRadius;
             var borderSize = borders.CollapseThickness();
             var paddingSize = padding.CollapseThickness();
 
             // Calculate the Offset for the frameVisual
             var left = (borders.Left + padding.Left).Single();
             var top = (borders.Top + padding.Top).Single();
+
             // Calculate the Dimensions of the frameVisual
             var width = Math.Max(0, finalSize.Width - borderSize.Width - paddingSize.Width).Single();
             var height = Math.Max(0, finalSize.Height - borderSize.Height - paddingSize.Height).Single();
 
-            // Set the frameVisual's Size and Offset
-            _frameVisual.Size = new Vector2(width, height);
-            _frameVisual.Offset = new Vector3(left, top, 0);
+            // Set the Size and Offset of visuals in the ImageFrame
+            var frameSize = new Vector2(width, height);
+            _rootContainer.Size = frameSize;
+            _frameLayer.Size = frameSize;
+            _frameBackgroundVisual.Size = frameSize;
+            _frameContentVisual.Size = frameSize;
+            _shadowVisual.Size = frameSize;
+            _rootContainer.Offset = new Vector3(left, top, 0);
+
+            // Update the frameLayerMask in case the CornerRadius or 
+            // BorderThickness or Padding has changed
+            var pathInfo = new CompositionPathInfo(corners, borders, padding, true);
+            using (var geometry =
+                CompositionGenerator.GenerateGeometry(_generator.Device, frameSize.ToSize(),
+                    pathInfo, Vector2.Zero))
+            {
+                _frameLayerMask.Redraw(_frameLayer.Size.ToSize(), geometry);
+            }
+
+            // If the FrameBackground has changed since the last time it was
+            // applied to the frameBackgroundVisual, then animate the brush's
+            // color to the new color.
+            var brush = _frameBackgroundVisual.Brush as CompositionColorBrush;
+            if (brush != null)
+            {
+                if (!brush.Color.Equals(FrameBackground))
+                {
+                    _colorAnimation.InsertKeyFrame(1f, FrameBackground);
+                    brush.StartAnimation("Color", _colorAnimation);
+                }
+            }
 
             // Update the imageOptions
-            _imageOptions.Stretch = Stretch;
-            _imageOptions.HorizontalAlignment = AlignX;
-            _imageOptions.VerticalAlignment = AlignY;
             _imageOptions.Interpolation = Interpolation;
-            _imageOptions.SurfaceBackgroundColor = FrameBackground;
+            _imageOptions.SurfaceBackgroundColor = Colors.Transparent;
+            _imageOptions.AutoResize = !RenderOptimized;
 
             // If Source is valid then try loading/refreshing the surfaceImage
             if (Source != null)
             {
-                _currentUri = Source;
-                // Loading/Refreshing the surfaceImage happens on a separate thread
-                _imageLoadTimer.Change(TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(-1));
+                // Load/Refresh the image
+                LoadImage();
             }
             else
             {
-                // Clear the previous brush of the frameVisual
-                _frameVisual.Brush = _compositor.CreateColorBrush(FrameBackground);
-                // If surfaceImage has any previous value, dispose it
-                _surfaceImage?.Dispose();
-                _surfaceImage = null;
+                // If the frameContentVisual had any previous brush, fade it out
+                if (_surfaceImage != null)
+                {
+                    _compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
+                        () =>
+                        {
+                            _frameContentVisual.StartAnimation("Opacity", _fadeOutAnimation);
+                        },
+                        () =>
+                        {
+                            // Make the frameVisualContent transparent
+                            _frameContentVisual.Brush = _compositor.CreateColorBrush(Colors.Transparent);
+                            _frameContentVisual.Opacity = 1;
+                            // Dispose the surfaceImage
+                            _surfaceImage.Dispose();
+                            _surfaceImage = null;
+                        });
+                }
+                else
+                {
+                    // Make the frameVisualContent transparent
+                    _frameContentVisual.Brush = _compositor.CreateColorBrush(Colors.Transparent);
+                }
+            }
+
+            // Handle shadow
+            if (DisplayShadow)
+            {
+                if (_shadow == null)
+                {
+                    _shadow = _compositor.CreateDropShadow();
+                }
+
+                _shadow.BlurRadius = ShadowBlurRadius.Single();
+                _shadow.Color = ShadowColor;
+                _shadow.Offset = new Vector3(ShadowOffsetX.Single(), ShadowOffsetY.Single(), 0);
+                _shadow.Opacity = ShadowOpacity.Single();
+                _shadow.Mask = _layerEffectBrush.GetSourceParameter("mask");
+
+                _shadowVisual.Shadow = _shadow;
+            }
+            else
+            {
+                _shadowVisual.Shadow = null;
             }
 
             return base.ArrangeOverride(finalSize);
-        }
-
-        #endregion
-
-        #region Event Handlers
-
-        /// <summary>
-        /// Handles the tick event of the ImageLoadTimer
-        /// </summary>
-        /// <param name="info">object</param>
-        public async void OnImageLoadTimerTick(object info)
-        {
-            // Get the Uri to load the image
-            var uri = _currentUri;
-            if (uri == null)
-                return;
-
-            // Load the image
-            await LoadImage(uri, _frameVisual.Size.ToSize());
         }
 
         #endregion
@@ -491,6 +980,68 @@ namespace CompositionProToolkit.Controls
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
             // CompositionGenerator
             _generator = CompositionGeneratorFactory.GetCompositionGenerator(_compositor);
+            // Fade Out Animation
+            _fadeOutAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            _fadeOutAnimation.InsertKeyFrame(1f, 0);
+            _fadeOutAnimation.Duration = TransitionDuration;
+            // Fade In Animation
+            _fadeInAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            _fadeInAnimation.InsertKeyFrame(1f, 1);
+            _fadeInAnimation.Duration = TransitionDuration;
+            // Color Animation
+            _colorAnimation = _compositor.CreateColorKeyFrameAnimation();
+            _colorAnimation.Duration = TransitionDuration;
+
+            // Visuals
+            _rootContainer = _compositor.CreateContainerVisual();
+            _frameLayer = _compositor.CreateLayerVisual();
+            _frameContentVisual = _compositor.CreateSpriteVisual();
+            _frameBackgroundVisual = _compositor.CreateSpriteVisual();
+
+            _frameLayer.Children.InsertAtBottom(_frameBackgroundVisual);
+            _frameLayer.Children.InsertAtTop(_frameContentVisual);
+
+            // Shadow visual
+            _shadowVisual = _compositor.CreateSpriteVisual();
+
+            _rootContainer.Children.InsertAtBottom(_shadowVisual);
+            _rootContainer.Children.InsertAtTop(_frameLayer);
+
+            _frameBackgroundVisual.Brush = _compositor.CreateColorBrush(FrameBackground);
+
+            // Create the effect to create the opacity mask
+            var layerEffect = new CompositeEffect
+            {
+                // CanvasComposite.DestinationIn - Intersection of source and mask. 
+                // Equation: O = MA * S
+                // where O - Output pixel, MA - Mask Alpha, S - Source pixel.
+                Mode = CanvasComposite.DestinationIn,
+                Sources =
+                        {
+                            new CompositionEffectSourceParameter("source"),
+                            new CompositionEffectSourceParameter("mask")
+                        }
+            };
+
+            var layerEffectFactory = _compositor.CreateEffectFactory(layerEffect);
+            _layerEffectBrush = layerEffectFactory.CreateBrush();
+
+            // The mask for the imageFrame
+            _frameLayerMask = _generator.CreateMask(new Size(0, 0), null);
+            _layerEffectBrush.SetSourceParameter("mask", _compositor.CreateSurfaceBrush(_frameLayerMask.Surface));
+            // Apply the mask effect to the frameLayer
+            _frameLayer.Effect = _layerEffectBrush;
+
+            ElementCompositionPreview.SetElementChildVisual(this, _rootContainer);
+        }
+
+        /// <summary>
+        /// Loads the image from the Uri specified in the Source property
+        /// </summary>
+        private async void LoadImage()
+        {
+            // Load the image
+            await LoadImageAsync(Source, _frameLayer.Size.ToSize());
         }
 
         /// <summary>
@@ -499,51 +1050,98 @@ namespace CompositionProToolkit.Controls
         /// <param name="uri">Uri of the image to load</param>
         /// <param name="size">Render size of the image</param>
         /// <returns>Task</returns>
-        private Task LoadImage(Uri uri, Size size)
+        private async Task LoadImageAsync(Uri uri, Size size)
         {
-            return Task.Run(async () =>
+            try
             {
-                try
+                bool raiseEvent;
+                // Does the CompositionImageFrame contain no previously
+                // rendered image?
+                if (_surfaceImage == null)
                 {
-                    bool raiseEvent;
-                    if (_surfaceImage == null)
+                    // Since a new Uri is being loaded, ImageOpened event
+                    // must be raised on successful load 
+                    raiseEvent = true;
+                    // Create the surfaceImage
+                    _surfaceImage = await _generator.CreateSurfaceImageAsync(uri, size, _imageOptions);
+                    // Set initial opacity to 0 so that the contentVisual can be faded in
+                    _frameContentVisual.Opacity = 0;
+                    // Apply the surfaceBrush to the visual
+                    var surfaceBrush = _compositor.CreateSurfaceBrush(_surfaceImage.Surface);
+                    // Update the surface brush based on the Stretch and Alignment options
+                    surfaceBrush.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY);
+                    _frameContentVisual.Brush = surfaceBrush;
+                    // Fade in the frameVisualContent
+                    _frameContentVisual.StartAnimation(() => _frameContentVisual.Opacity, _fadeInAnimation);
+                }
+                else
+                {
+                    // Check whether the Uri to load is same as the existing image's Uri
+                    if (uri.IsEqualTo(_surfaceImage.Uri))
                     {
-                        // Since a new Uri is being loaded, ImageOpened event
-                        // must be raised on successful load 
-                        raiseEvent = true;
-                        // Create the surfaceImage
-                        _surfaceImage = await _generator.CreateSurfaceImageAsync(uri, size, _imageOptions);
-                        // Apply the surfaceBrush to the visual
-                        _frameVisual.Brush = _compositor.CreateSurfaceBrush(_surfaceImage.Surface);
+                        // Since the Uri has not changed, no need to raise the ImageOpened event
+                        // Just resize the surfaceImage with the given imageOptions and
+                        // update the frameContentVisual's brush
+                        raiseEvent = false;
+                        _surfaceImage.Resize(size, _imageOptions);
+                        // Update the surface brush based on the Stretch and Alignment options
+                        (_frameContentVisual.Brush as CompositionSurfaceBrush)?.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY);
                     }
                     else
                     {
-                        // If a different Uri is being loaded, then ImageOpened event
+                        // Since a different Uri is being loaded, then ImageOpened event
                         // must be raised on successful load
-                        raiseEvent = !uri.IsEqualTo(_surfaceImage.Uri);
-                        // Redraw the surfaceImage (frameVisual will be automatically refreshed)
-                        await _surfaceImage.RedrawAsync(uri, size, _imageOptions);
-                    }
+                        raiseEvent = true;
 
-                    if (raiseEvent)
-                    {
-                        // Notify to subscribers that the image has been successfully loaded
-                        await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                        // Create a temporary visual which loads the new Uri
+                        _nextSurfaceImage = await _generator.CreateSurfaceImageAsync(uri, size, _imageOptions);
+                        _nextVisualContent = _compositor.CreateSpriteVisual();
+                        _nextVisualContent.Size = _frameContentVisual.Size;
+                        _nextVisualContent.Opacity = 0;
+                        // Create the surface brush for the next image
+                        var nextSurfaceBrush = _compositor.CreateSurfaceBrush(_nextSurfaceImage.Surface);
+                        // Update the surface brush based on the Stretch and Alignment options
+                        nextSurfaceBrush.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY);
+                        _nextVisualContent.Brush = nextSurfaceBrush;
+                        // Place it at the top of frameVisualContainer's Children
+                        _frameLayer.Children.InsertAtTop(_nextVisualContent);
+
+                        // Commence crossfade animation
+                        _compositor.CreateScopedBatch(CompositionBatchTypes.Animation, () => // Action
                         {
-                            ImageOpened?.Invoke(this, new CompositionImageEventArgs(_surfaceImage.Uri, string.Empty));
+                            _frameContentVisual.StartAnimation(() => _frameContentVisual.Opacity, _fadeOutAnimation);
+                            _nextVisualContent.StartAnimation(() => _nextVisualContent.Opacity, _fadeInAnimation);
+                        }, () => // PostAction
+                        {
+                            // Now that the crossfade animation has ended, apply the new brush 
+                            // to the  frameVisualContent
+                            _frameContentVisual.Brush = _nextVisualContent.Brush;
+                            // Discard the old surface image
+                            _surfaceImage.Dispose();
+                            _surfaceImage = _nextSurfaceImage;
+                            // Make the frameVisualContent visible again
+                            _frameContentVisual.Opacity = 1;
+                            // Remove and dispose the temporary visual
+                            _frameLayer.Children.Remove(_nextVisualContent);
+                            _nextVisualContent.Dispose();
+                            _nextSurfaceImage = null;
                         });
                     }
+                }
 
-                }
-                catch (IOException ex)
+                if (raiseEvent)
                 {
-                    // Notify to subscribers that loading of the image failed
-                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    {
-                        ImageFailed?.Invoke(this, new CompositionImageEventArgs(uri, ex.ToString()));
-                    });
+                    // Notify to subscribers that the image has been successfully loaded
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, 
+                        () => { ImageOpened?.Invoke(this, new CompositionImageEventArgs(_surfaceImage.Uri, string.Empty)); });
                 }
-            });
+            }
+            catch (IOException ex)
+            {
+                // Notify to subscribers that loading of the image failed
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, 
+                    () => { ImageFailed?.Invoke(this, new CompositionImageEventArgs(uri, ex.ToString())); });
+            }
         }
 
         #endregion

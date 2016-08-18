@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.1
+// CompositionProToolkit v0.4.2
 // 
 
 using System;
@@ -42,11 +42,12 @@ namespace CompositionProToolkit.Common
     {
         #region Double
 
-        // Const values 
-        // Smallest double value such that 1.0+DBL_EPSILON != 1.0
-        internal const double DBL_EPSILON = 2.2204460492503131e-016; 
+        // Constant values 
+
+        // Smallest double value such that 1.0 + DoubleEpsilon != 1.0
+        internal const double DoubleEpsilon = 2.2204460492503131e-016; 
         // Number close to zero, where float.MinValue is -float.MaxValue
-        internal const float FLT_MIN = 1.175494351e-38F;
+        internal const float FloatMin = 1.175494351e-38F;
 
         /// <summary>
         /// Returns whether or not two doubles are "close". 
@@ -60,8 +61,8 @@ namespace CompositionProToolkit.Common
         {
             //in case they are Infinities (then epsilon check does not work)
             if (value1 == value2) return true;
-            // This computes (|value1-value2| / (|value1| + |value2| + 10.0)) < DBL_EPSILON
-            var eps = (Math.Abs(value1) + Math.Abs(value2) + 10.0) * DBL_EPSILON;
+            // This computes (|value1-value2| / (|value1| + |value2| + 10.0)) < DoubleEpsilon
+            var eps = (Math.Abs(value1) + Math.Abs(value2) + 10.0) * DoubleEpsilon;
             var delta = value1 - value2;
             return (-eps < delta) && (eps > delta);
         }
@@ -102,7 +103,7 @@ namespace CompositionProToolkit.Common
         /// </returns>
         public static bool IsOne(this double value)
         {
-            return Math.Abs(value - 1.0) < 10.0 * DBL_EPSILON;
+            return Math.Abs(value - 1.0) < 10.0 * DoubleEpsilon;
         }
 
         /// <summary>
@@ -115,7 +116,77 @@ namespace CompositionProToolkit.Common
         /// </returns>
         public static bool IsZero(this double value)
         {
-            return Math.Abs(value) < 10.0 * DBL_EPSILON;
+            return Math.Abs(value) < 10.0 * DoubleEpsilon;
+        }
+
+        /// <summary>
+        /// Returns whether or not two floats are "close". 
+        /// </summary>
+        /// <param name="value1"> The first float to compare. </param>
+        /// <param name="value2"> The second float to compare. </param>
+        /// <returns>
+        /// bool - the result of the AreClose comparision.
+        /// </returns>
+        public static bool IsCloseTo(this float value1, float value2)
+        {
+            //in case they are Infinities (then epsilon check does not work)
+            if (value1 == value2) return true;
+            // This computes (|value1-value2| / (|value1| + |value2| + 10.0)) < FloatMin
+            var eps = (Math.Abs(value1) + Math.Abs(value2) + 10.0) * FloatMin;
+            var delta = value1 - value2;
+            return (-eps < delta) && (eps > delta);
+        }
+
+        /// <summary>
+        /// Returns whether or not the first float is less than the second float.
+        /// </summary>
+        /// <param name="value1"> The first float to compare. </param>
+        /// <param name="value2"> The second float to compare. </param>
+        /// <returns>
+        /// bool - the result of the LessThan comparision.
+        /// </returns>
+        public static bool IsLessThan(float value1, float value2)
+        {
+            return (value1 < value2) && !value1.IsCloseTo(value2);
+        }
+
+        /// <summary>
+        /// Returns whether or not the first float is greater than the second float.
+        /// </summary>
+        /// <param name="value1"> The first float to compare. </param>
+        /// <param name="value2"> The second float to compare. </param>
+        /// <returns>
+        /// bool - the result of the GreaterThan comparision.
+        /// </returns>
+        public static bool IsGreaterThan(this float value1, float value2)
+        {
+            return (value1 > value2) && !value1.IsCloseTo(value2);
+        }
+
+        /// <summary>
+        /// Returns whether or not the float is "close" to 1.  Same as AreClose(float, 1),
+        /// but this is faster.
+        /// </summary>
+        /// <param name="value"> The float to compare to 1. </param>
+        /// <returns>
+        /// bool - the result of the AreClose comparision.
+        /// </returns>
+        public static bool IsOne(this float value)
+        {
+            return Math.Abs(value - 1.0) < 10.0 * FloatMin;
+        }
+
+        /// <summary>
+        /// IsZero - Returns whether or not the float is "close" to 0.  Same as AreClose(float, 0),
+        /// but this is faster.
+        /// </summary>
+        /// <param name="value"> The float to compare to 0. </param>
+        /// <returns>
+        /// bool - the result of the AreClose comparision.
+        /// </returns>
+        public static bool IsZero(this float value)
+        {
+            return Math.Abs(value) < 10.0 * FloatMin;
         }
 
         /// <summary>
@@ -226,6 +297,7 @@ namespace CompositionProToolkit.Common
 
             return newValue;
         }
+
         #endregion
 
         #region Thickness
@@ -389,6 +461,24 @@ namespace CompositionProToolkit.Common
             return topLeft.IsCloseTo(corner.TopRight) &&
                    topLeft.IsCloseTo(corner.BottomLeft) &&
                    topLeft.IsCloseTo(corner.BottomRight);
+        }
+
+        /// <summary>
+        /// Converts the given corner value to a valid positive value.
+        /// Returns zero if the corner value is Infinity or NaN or 0.
+        /// </summary>
+        /// <param name="corner">Corner value</param>
+        /// <returns>Valid Corner value</returns>
+        public static double ConvertToValidCornerValue(double corner)
+        {
+            if (IsNaN(corner) ||
+                Double.IsInfinity(corner) ||
+                (corner < 0d))
+            {
+                return 0d;
+            }
+
+            return corner;
         }
 
         #endregion

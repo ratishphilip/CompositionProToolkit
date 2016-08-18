@@ -115,9 +115,11 @@
     <Compile Include="CompositionMask.cs" />
     <Compile Include="CompositionGenerator.cs" />
     <Compile Include="CompositionGeneratorFactory.cs" />
+    <Compile Include="CompositionPathInfo.cs" />
     <Compile Include="CompositionSurfaceImage.cs" />
-    <Compile Include="CompositorExtensions.cs" />
+    <Compile Include="CompositionExtensions.cs" />
     <Compile Include="Controls\CompositionImageFrame\CompositionImageFrame.cs" />
+    <Compile Include="Controls\FluidBanner\FluidBanner.cs" />
     <Compile Include="Controls\FluidProgressRing\FluidProgressRing.cs" />
     <Compile Include="Controls\FluidWrapPanel\FluidBitMatrix.cs" />
     <Compile Include="Controls\FluidWrapPanel\FluidPointerDragBehavior.cs" />

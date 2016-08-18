@@ -37,7 +37,7 @@ namespace SampleGallery.Views
             ImageFrame.ImageOpened += OnImageOpened;
 
             _images = new List<string>();
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 6; i++)
             {
                 _images.Add($"Image{i + 1}");
             }
@@ -130,6 +130,19 @@ namespace SampleGallery.Views
         {
             if (AlignYCB.SelectedIndex >= 0)
                 ImageFrame.AlignY = _alignYModes[AlignYCB.SelectedIndex];
+        }
+
+        private async void OnCornerRadiusChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            var radius = (sender as Slider)?.Value;
+
+            if (!radius.HasValue)
+                return;
+
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                ImageFrame.CornerRadius = new CornerRadius(radius.Value);
+            });
         }
     }
 }

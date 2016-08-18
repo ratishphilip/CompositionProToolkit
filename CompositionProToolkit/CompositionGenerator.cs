@@ -24,10 +24,11 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.1
+// CompositionProToolkit v0.4.2
 // 
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -68,7 +69,7 @@ namespace CompositionProToolkit
         private Compositor _compositor;
         private CanvasDevice _canvasDevice;
         private CompositionGraphicsDevice _graphicsDevice;
-        private readonly object _drawingLock;
+        private readonly object _disposingLock;
         private readonly bool _isDeviceCreator;
 
         #endregion
@@ -89,15 +90,14 @@ namespace CompositionProToolkit
         /// </summary>
         /// <param name="compositor">Compositor</param>
         /// <param name="graphicsDevice">CompositionGraphicsDevice</param>
-        /// <param name="sharedLock">shared lock</param>
-        public CompositionGenerator(Compositor compositor, CompositionGraphicsDevice graphicsDevice = null,
-                    object sharedLock = null)
+        public CompositionGenerator(Compositor compositor, CompositionGraphicsDevice graphicsDevice = null)
         {
             if (compositor == null)
                 throw new ArgumentNullException(nameof(compositor), "Compositor cannot be null!");
 
             _compositor = compositor;
-            _drawingLock = sharedLock ?? new object();
+
+            _disposingLock = new object();
 
             if (_canvasDevice == null)
             {
@@ -132,14 +132,14 @@ namespace CompositionProToolkit
         /// </summary>
         /// <param name="size">Size of the mask</param>
         /// <param name="geometry">Geometry of the mask</param>
-        /// <returns></returns>
-        public Task<ICompositionMask> CreateMaskAsync(Size size, CanvasGeometry geometry)
+        /// <returns>ICompositionMask</returns>
+        public ICompositionMask CreateMask(Size size, CanvasGeometry geometry)
         {
             // If the geometry is not null then fill the geometry area
             // with white. The rest of the area on the surface will be transparent.
             // When this mask is applied to a visual, only the area that is white
             // will be visible.
-            return CreateMaskAsync(size, geometry, Colors.White);
+            return CreateMask(size, geometry, Colors.White);
         }
 
         /// <summary>
@@ -149,18 +149,15 @@ namespace CompositionProToolkit
         /// <param name="geometry">Geometry of the mask</param>
         /// <param name="color">Fill color of the geometry.</param>
         /// <returns>ICompositionMask</returns>
-        public Task<ICompositionMask> CreateMaskAsync(Size size, CanvasGeometry geometry, Color color)
+        public ICompositionMask CreateMask(Size size, CanvasGeometry geometry, Color color)
         {
-            return Task.Run(async () =>
-            {
-                // Initialize the mask
-                ICompositionMask mask = new CompositionMask(this, size, geometry, color);
+            // Initialize the mask
+            ICompositionMask mask = new CompositionMask(this, size, geometry, color);
 
-                // Render the mask
-                await mask.RedrawAsync();
+            // Render the mask
+            mask.Redraw();
 
-                return mask;
-            });
+            return mask;
         }
 
         /// <summary>
@@ -170,18 +167,15 @@ namespace CompositionProToolkit
         /// <param name="geometry">Geometry of the mask</param>
         /// <param name="brush">Brush to fill the geometry.</param>
         /// <returns>ICompositionMask</returns>
-        public Task<ICompositionMask> CreateMaskAsync(Size size, CanvasGeometry geometry, ICanvasBrush brush)
+        public ICompositionMask CreateMask(Size size, CanvasGeometry geometry, ICanvasBrush brush)
         {
-            return Task.Run(async () =>
-           {
-               // Initialize the mask
-               ICompositionMask mask = new CompositionMask(this, size, geometry, brush);
+            // Initialize the mask
+            ICompositionMask mask = new CompositionMask(this, size, geometry, brush);
 
-               // Render the mask
-               await mask.RedrawAsync();
+            // Render the mask
+            mask.Redraw();
 
-               return mask;
-           });
+            return mask;
         }
 
         /// <summary>
@@ -192,18 +186,15 @@ namespace CompositionProToolkit
         /// <param name="size">New size of the SurfaceImage</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <returns>ICompositionSurfaceImage</returns>
-        public Task<ICompositionSurfaceImage> CreateSurfaceImageAsync(Uri uri, Size size, CompositionSurfaceImageOptions options)
+        public async Task<ICompositionSurfaceImage> CreateSurfaceImageAsync(Uri uri, Size size, CompositionSurfaceImageOptions options)
         {
-            return Task.Run(async () =>
-            {
-                // Initialize the SurfaceImage
-                ICompositionSurfaceImage surfaceImage = new CompositionSurfaceImage(this, uri, size, options);
+            // Initialize the SurfaceImage
+            ICompositionSurfaceImage surfaceImage = new CompositionSurfaceImage(this, uri, size, options);
 
-                // Render the image onto the surface
-                await surfaceImage.RedrawAsync();
+            // Render the image onto the surface
+            await surfaceImage.RedrawAsync();
 
-                return surfaceImage;
-            });
+            return surfaceImage;
         }
 
         /// <summary>
@@ -214,102 +205,92 @@ namespace CompositionProToolkit
         /// <param name="reflectionLength">Normalized Length of the reflected visual that will be visible.</param>
         /// <param name="location"> <see cref="ReflectionLocation"/> - Location of the reflection with respect 
         /// to the Visual - Bottom, Top, Left or Right</param>
-        /// <returns>Task</returns>
-        public Task CreateReflectionAsync(ContainerVisual visual, float reflectionDistance = 0f,
+        public void CreateReflection(ContainerVisual visual, float reflectionDistance = 0f,
             float reflectionLength = 0.7f, ReflectionLocation location = ReflectionLocation.Bottom)
         {
-            return Task.Run(async () =>
-            {
-                // Create the visual layer that will contained the visual's reflection
-                var reflectionLayer = _compositor.CreateLayerVisual();
-                reflectionLayer.Size = visual.Size;
-                reflectionLayer.CenterPoint = new Vector3(visual.Size * 0.5f, 0);
+            // Create the visual layer that will contained the visual's reflection
+            var reflectionLayer = _compositor.CreateLayerVisual();
+            reflectionLayer.Size = visual.Size;
+            reflectionLayer.CenterPoint = new Vector3(visual.Size * 0.5f, 0);
 
-                // Create the effect to create the opacity mask
-                var effect = new CompositeEffect
-                {
-                    // CanvasComposite.DestinationIn - Intersection of source and mask. 
-                    // Equation: O = MA * S
-                    // where O - Output pixel, MA - Mask Alpha, S - Source pixel.
-                    Mode = CanvasComposite.DestinationIn,
-                    Sources =
+            // Create the effect to create the opacity mask
+            var effect = new CompositeEffect
+            {
+                // CanvasComposite.DestinationIn - Intersection of source and mask. 
+                // Equation: O = MA * S
+                // where O - Output pixel, MA - Mask Alpha, S - Source pixel.
+                Mode = CanvasComposite.DestinationIn,
+                Sources =
                         {
                             new CompositionEffectSourceParameter("source"),
                             new CompositionEffectSourceParameter("mask")
                         }
-                };
+            };
 
-                var effectFactory = _compositor.CreateEffectFactory(effect);
-                var effectBrush = effectFactory.CreateBrush();
+            var effectFactory = _compositor.CreateEffectFactory(effect);
+            var effectBrush = effectFactory.CreateBrush();
 
-                // Create the gradient brush for the effect
-                //
-                // Since the drawing is done asynchronously and multiple threads could
-                // be trying to get access to the device/surface at the same time, we need
-                // to do any device/surface work under a lock.
-                //
-                CanvasLinearGradientBrush gradientBrush;
-                lock (_drawingLock)
-                {
-                    gradientBrush = new CanvasLinearGradientBrush(_canvasDevice, Colors.White, Colors.Transparent);
-                }
+            // Create the gradient brush for the effect
+            CanvasLinearGradientBrush gradientBrush = new CanvasLinearGradientBrush(_canvasDevice,
+                                                                Colors.White, Colors.Transparent);
 
-                // Based on the reflection location,
-                // Set the Offset, RotationAxis and RotationAngleInDegrees of the reflectionLayer and
-                // set the StartPoint and EndPoint of the gradientBrush
-                switch (location)
-                {
-                    case ReflectionLocation.Bottom:
-                        reflectionLayer.RotationAxis = new Vector3(1, 0, 0);
-                        reflectionLayer.RotationAngleInDegrees = 180;
-                        reflectionLayer.Offset = new Vector3(0, visual.Size.Y + reflectionDistance, 0);
-                        gradientBrush.StartPoint = new Vector2(visual.Size.X * 0.5f, 0);
-                        gradientBrush.EndPoint = new Vector2(visual.Size.X * 0.5f, visual.Size.Y * reflectionLength);
-                        break;
-                    case ReflectionLocation.Top:
-                        reflectionLayer.RotationAxis = new Vector3(1, 0, 0);
-                        reflectionLayer.RotationAngleInDegrees = -180;
-                        reflectionLayer.Offset = new Vector3(0, -visual.Size.Y - reflectionDistance, 0);
-                        gradientBrush.StartPoint = new Vector2(visual.Size.X * 0.5f, visual.Size.Y);
-                        gradientBrush.EndPoint = new Vector2(visual.Size.X * 0.5f, visual.Size.Y * (1f - reflectionLength));
-                        break;
-                    case ReflectionLocation.Left:
-                        reflectionLayer.RotationAxis = new Vector3(0, 1, 0);
-                        reflectionLayer.RotationAngleInDegrees = -180;
-                        reflectionLayer.Offset = new Vector3(-visual.Size.X - reflectionDistance, 0, 0);
-                        gradientBrush.StartPoint = new Vector2(visual.Size.X, visual.Size.Y * 0.5f);
-                        gradientBrush.EndPoint = new Vector2(visual.Size.X * (1f - reflectionLength), visual.Size.Y * 0.5f);
-                        break;
-                    case ReflectionLocation.Right:
-                        reflectionLayer.RotationAxis = new Vector3(0, 1, 0);
-                        reflectionLayer.RotationAngleInDegrees = 180;
-                        reflectionLayer.Offset = new Vector3(visual.Size.X + reflectionDistance, 0, 0);
-                        gradientBrush.StartPoint = new Vector2(0, visual.Size.Y * 0.5f);
-                        gradientBrush.EndPoint = new Vector2(visual.Size.X * reflectionLength, visual.Size.Y * 0.5f);
-                        break;
-                }
+            // Based on the reflection location,
+            // Set the Offset, RotationAxis and RotationAngleInDegrees of the reflectionLayer and
+            // set the StartPoint and EndPoint of the gradientBrush
+            switch (location)
+            {
+                case ReflectionLocation.Bottom:
+                    reflectionLayer.RotationAxis = new Vector3(1, 0, 0);
+                    reflectionLayer.RotationAngleInDegrees = 180;
+                    reflectionLayer.Offset = new Vector3(0, visual.Size.Y + reflectionDistance, 0);
+                    gradientBrush.StartPoint = new Vector2(visual.Size.X * 0.5f, 0);
+                    gradientBrush.EndPoint = new Vector2(visual.Size.X * 0.5f, visual.Size.Y * reflectionLength);
+                    break;
+                case ReflectionLocation.Top:
+                    reflectionLayer.RotationAxis = new Vector3(1, 0, 0);
+                    reflectionLayer.RotationAngleInDegrees = -180;
+                    reflectionLayer.Offset = new Vector3(0, -visual.Size.Y - reflectionDistance, 0);
+                    gradientBrush.StartPoint = new Vector2(visual.Size.X * 0.5f, visual.Size.Y);
+                    gradientBrush.EndPoint = new Vector2(visual.Size.X * 0.5f, visual.Size.Y * (1f - reflectionLength));
+                    break;
+                case ReflectionLocation.Left:
+                    reflectionLayer.RotationAxis = new Vector3(0, 1, 0);
+                    reflectionLayer.RotationAngleInDegrees = -180;
+                    reflectionLayer.Offset = new Vector3(-visual.Size.X - reflectionDistance, 0, 0);
+                    gradientBrush.StartPoint = new Vector2(visual.Size.X, visual.Size.Y * 0.5f);
+                    gradientBrush.EndPoint = new Vector2(visual.Size.X * (1f - reflectionLength), visual.Size.Y * 0.5f);
+                    break;
+                case ReflectionLocation.Right:
+                    reflectionLayer.RotationAxis = new Vector3(0, 1, 0);
+                    reflectionLayer.RotationAngleInDegrees = 180;
+                    reflectionLayer.Offset = new Vector3(visual.Size.X + reflectionDistance, 0, 0);
+                    gradientBrush.StartPoint = new Vector2(0, visual.Size.Y * 0.5f);
+                    gradientBrush.EndPoint = new Vector2(visual.Size.X * reflectionLength, visual.Size.Y * 0.5f);
+                    break;
+            }
 
-                // Create a mask filled with gradientBrush
-                var mask = await CreateMaskAsync(visual.Size.ToSize(), null, gradientBrush);
-                // Set the 'mask' parameter of the effectBrush
-                effectBrush.SetSourceParameter("mask", _compositor.CreateSurfaceBrush(mask.Surface));
+            // Create a mask filled with gradientBrush
+            var mask = CreateMask(visual.Size.ToSize(), null, gradientBrush);
+            // Set the 'mask' parameter of the effectBrush
+            effectBrush.SetSourceParameter("mask", _compositor.CreateSurfaceBrush(mask.Surface));
 
-                // Set the effect for the reflection layer
-                reflectionLayer.Effect = effectBrush;
+            // Set the effect for the reflection layer
+            reflectionLayer.Effect = effectBrush;
 
-                // Now we need to duplicate the visual tree of the visual
-                ArrangeVisualReflection(visual, reflectionLayer, true);
+            // Now we need to duplicate the visual tree of the visual
+            ArrangeVisualReflection(visual, reflectionLayer, true);
 
-                visual.Children.InsertAtTop(reflectionLayer);
-            });
+            visual.Children.InsertAtTop(reflectionLayer);
         }
 
         /// <summary>
         /// Creates a CompositionDrawingSurface of given size
         /// </summary>
+        /// <param name="surfaceLock">The object to lock to prevent multiple threads
+        /// from accessing the surface at the same time.</param>
         /// <param name="size">Size of the CompositionDrawingSurface</param>
         /// <returns>CompositionDrawingSurface</returns>
-        public CompositionDrawingSurface CreateDrawingSurface(Size size)
+        public CompositionDrawingSurface CreateDrawingSurface(object surfaceLock, Size size)
         {
             var surfaceSize = size;
             if (surfaceSize.IsEmpty)
@@ -321,7 +302,11 @@ namespace CompositionProToolkit
                 surfaceSize = new Size(0, 0);
             }
 
-            lock (_drawingLock)
+            //
+            // Since multiple threads could be trying to get access to the device/surface 
+            // at the same time, we need to do any device/surface work under a lock.
+            //
+            lock (surfaceLock)
             {
                 return _graphicsDevice.CreateDrawingSurface(surfaceSize, DirectXPixelFormat.B8G8R8A8UIntNormalized, DirectXAlphaMode.Premultiplied);
             }
@@ -330,9 +315,11 @@ namespace CompositionProToolkit
         /// <summary>
         /// Resizes the Mask Surface to the given size
         /// </summary>
+        /// <param name="surfaceLock">The object to lock to prevent multiple threads
+        /// from accessing the surface at the same time.</param>
         /// <param name="surface">CompositionDrawingSurface</param>
         /// <param name="size">New size of the Mask Surface</param>
-        public void ResizeDrawingSurface(CompositionDrawingSurface surface, Size size)
+        public void ResizeDrawingSurface(object surfaceLock, CompositionDrawingSurface surface, Size size)
         {
             // Cannot resize to Size.Empty. Will throw exception!
             if (size.IsEmpty)
@@ -343,11 +330,10 @@ namespace CompositionProToolkit
             size.Height = Math.Max(0, size.Height);
 
             //
-            // Since the drawing is done asynchronously and multiple threads could
-            // be trying to get access to the device/surface at the same time, we need
-            // to do any device/surface work under a lock.
+            // Since multiple threads could be trying to get access to the device/surface 
+            // at the same time, we need to do any device/surface work under a lock.
             //
-            lock (_drawingLock)
+            lock (surfaceLock)
             {
                 CanvasComposition.Resize(surface, size);
             }
@@ -356,75 +342,95 @@ namespace CompositionProToolkit
         /// <summary>
         /// Redraws the mask surface with the given size, geometry and brush
         /// </summary>
+        /// <param name="surfaceLock">The object to lock to prevent multiple threads
+        /// from accessing the surface at the same time.</param>
         /// <param name="surface">CompositionDrawingSurface</param>
         /// <param name="size">Size ofthe Mask Surface</param>
         /// <param name="geometry">Geometry of the Mask Surface</param>
         /// <param name="brush">Brush to fill the geometry.</param>
-        /// <returns>Task</returns>
-        public Task RedrawMaskSurfaceAsync(CompositionDrawingSurface surface, Size size, CanvasGeometry geometry, ICanvasBrush brush)
+        public void RedrawMaskSurface(object surfaceLock, CompositionDrawingSurface surface,
+            Size size, CanvasGeometry geometry, ICanvasBrush brush)
         {
-            return Task.Run(() =>
-            {
-                // No need to render if the width and/or height of the surface is zero
-                if (surface.Size.Width.IsZero() || surface.Size.Height.IsZero())
-                    return;
+            // No need to render if the width and/or height of the surface is zero
+            if (surface.Size.Width.IsZero() || surface.Size.Height.IsZero())
+                return;
 
-                //
-                // Since the drawing is done asynchronously and multiple threads could
-                // be trying to get access to the device/surface at the same time, we need
-                // to do any device/surface work under a lock.
-                //
-                lock (_drawingLock)
+            //
+            // Since multiple threads could be trying to get access to the device/surface 
+            // at the same time, we need to do any device/surface work under a lock.
+            //
+            lock (surfaceLock)
+            {
+                // Render the mask to the surface
+                using (var session = CanvasComposition.CreateDrawingSession(surface))
                 {
-                    // Render the mask to the surface
-                    using (var session = CanvasComposition.CreateDrawingSession(surface))
+                    // If the geometry is not null then fill the geometry area
+                    // with the given color. The rest of the area on the surface will be transparent.
+                    // If the color is white and this mask is applied to a visual, only the area that is white
+                    // will be visible.
+                    if (geometry != null)
                     {
-                        // If the geometry is not null then fill the geometry area
-                        // with the given color. The rest of the area on the surface will be transparent.
-                        // If the color is white and this mask is applied to a visual, only the area that is white
-                        // will be visible.
-                        if (geometry != null)
-                        {
-                            session.Clear(Colors.Transparent);
-                            session.FillGeometry(geometry, brush);
-                        }
-                        else
-                        {
-                            // If the geometry is null, then the entire mask should be filled the 
-                            // the given color. If the color is white, then the masked visual will be seen completely.
-                            session.FillRectangle(0, 0, size.Width.Single(), size.Height.Single(), brush);
-                        }
+                        session.Clear(Colors.Transparent);
+                        session.FillGeometry(geometry, brush);
+                    }
+                    else
+                    {
+                        // If the geometry is null, then the entire mask should be filled the 
+                        // the given color. If the color is white, then the masked visual will be seen completely.
+                        session.FillRectangle(0, 0, size.Width.Single(), size.Height.Single(), brush);
                     }
                 }
-            });
+            }
         }
 
         /// <summary>
-        /// Resizes the SurfaceImage with the given size and redraws the SurfaceImage by loading 
+        /// Resizes the SurfaceImage to the given size and redraws the SurfaceImage
+        /// by resizing the existing canvasBitmap
+        /// </summary>
+        /// <param name="surfaceLock">The object to lock to prevent multiple threads
+        /// from accessing the surface at the same time.</param>
+        /// <param name="surface">CompositionDrawingSurface</param>
+        /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
+        /// <param name="canvasBitmap">The CanvasBitmap on which the image is loaded.</param>
+        public void RedrawSurfaceImage(object surfaceLock, CompositionDrawingSurface surface,
+            CompositionSurfaceImageOptions options, CanvasBitmap canvasBitmap)
+        {
+            // Render the image to the surface
+            RenderBitmap(surfaceLock, surface, canvasBitmap, options);
+        }
+
+        /// <summary>
+        /// Resizes the SurfaceImage to the given size and redraws the SurfaceImage by loading 
         /// image from the new Uri. It returns the CanvasBitmap so that it can be cached for efficiency.
         /// </summary>
+        /// <param name="surfaceLock">The object to lock to prevent multiple threads
+        /// from accessing the surface at the same time.</param>
         /// <param name="surface">CompositionDrawingSurface</param>
-        /// <param name="size">Size ofthe SurfaceImage</param>
         /// <param name="uri">Uri of the image to be loaded onto the SurfaceImage.</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <param name="canvasBitmap">The CanvasBitmap on which the image is loaded.</param>
         /// <returns>CanvasBitmap</returns>
-        public Task<CanvasBitmap> ReloadSurfaceImageAsync(CompositionDrawingSurface surface, Size size, Uri uri,
-            CompositionSurfaceImageOptions options, CanvasBitmap canvasBitmap)
+        public async Task<CanvasBitmap> RedrawSurfaceImageAsync(object surfaceLock, CompositionDrawingSurface surface,
+            Uri uri, CompositionSurfaceImageOptions options, CanvasBitmap canvasBitmap)
         {
-            return Task.Run(async () =>
+            if ((canvasBitmap == null) && (uri != null))
             {
-                // Load the image from the Uri if it is not already loaded
-                if (canvasBitmap == null)
+                try
                 {
                     canvasBitmap = await CanvasBitmap.LoadAsync(_canvasDevice, uri);
                 }
+                catch (IOException)
+                {
+                    // Do nothing here as RenderBitmap method will fill the surface
+                    // with options.SurfaceBackgroundColor as the image failed to load
+                    // from Uri
+                }
+            }
 
-                // Render the image to the surface
-                RenderBitmap(surface, canvasBitmap, size, options);
+            // Render the image to the surface
+            RenderBitmap(surfaceLock, surface, canvasBitmap, options);
 
-                return canvasBitmap;
-            });
+            return canvasBitmap;
         }
 
         /// <summary>
@@ -432,7 +438,7 @@ namespace CompositionProToolkit
         /// </summary>
         public void Dispose()
         {
-            lock (_drawingLock)
+            lock (_disposingLock)
             {
                 _compositor = null;
                 DisplayInformation.DisplayContentsInvalidated -= OnDisplayContentsInvalidated;
@@ -464,6 +470,141 @@ namespace CompositionProToolkit
 
                 _graphicsDevice = null;
             }
+        }
+
+        #endregion
+
+        #region Static APIs
+
+        internal static CanvasGeometry GenerateGeometry(CanvasDevice device, Size size, CompositionPathInfo info, Vector2 offset)
+        {
+            //
+            //   |--LeftTop----------------------RightTop--|
+            //   |                                         |
+            // TopLeft                                TopRight
+            //   |                                         |
+            //   |                                         |
+            //   |                                         |
+            //   |                                         |
+            //   |                                         |
+            //   |                                         |
+            // BottomLeft                          BottomRight
+            //   |                                         |
+            //   |--LeftBottom----------------RightBottom--|
+            //
+            //  compute the coordinates of the key points
+            var leftTop = new Vector2(info.LeftTop.Single(), 0);
+            var rightTop = new Vector2((size.Width - info.RightTop).Single(), 0);
+            var topRight = new Vector2(size.Width.Single(), info.TopRight.Single());
+            var bottomRight = new Vector2(size.Width.Single(), (size.Height - info.BottomRight).Single());
+            var rightBottom = new Vector2((size.Width - info.RightBottom).Single(), size.Height.Single());
+            var leftBottom = new Vector2(info.LeftBottom.Single(), size.Height.Single());
+            var bottomLeft = new Vector2(0, (size.Height - info.BottomLeft).Single());
+            var topLeft = new Vector2(0, info.TopLeft.Single());
+
+            //  check keypoints for overlap and resolve by partitioning corners according to
+            //  the percentage of each one.  
+
+            //  top edge
+            if (leftTop.X > rightTop.X)
+            {
+                var v = ((info.LeftTop) / (info.LeftTop + info.RightTop) * size.Width).Single();
+                leftTop.X = v;
+                rightTop.X = v;
+            }
+
+            //  right edge
+            if (topRight.Y > bottomRight.Y)
+            {
+                var v = ((info.TopRight) / (info.TopRight + info.BottomRight) * size.Height).Single();
+                topRight.Y = v;
+                bottomRight.Y = v;
+            }
+
+            //  bottom edge
+            if (leftBottom.X > rightBottom.X)
+            {
+                var v = ((info.LeftBottom) / (info.LeftBottom + info.RightBottom) * size.Width).Single();
+                rightBottom.X = v;
+                leftBottom.X = v;
+            }
+
+            // left edge
+            if (topLeft.Y > bottomLeft.Y)
+            {
+                var v = ((info.TopLeft) / (info.TopLeft + info.BottomLeft) * size.Height).Single();
+                bottomLeft.Y = v;
+                topLeft.Y = v;
+            }
+
+            // Apply offset
+            leftTop += offset;
+            rightTop += offset;
+            topRight += offset;
+            bottomRight += offset;
+            rightBottom += offset;
+            leftBottom += offset;
+            bottomLeft += offset;
+            topLeft += offset;
+
+            //  create the border geometry
+            var pathBuilder = new CanvasPathBuilder(device);
+
+            // Begin path
+            pathBuilder.BeginFigure(leftTop);
+
+            // Top line
+            pathBuilder.AddLine(rightTop);
+
+            // Upper-right corners
+            var radiusX = size.Width - rightTop.X;
+            var radiusY = (double)topRight.Y;
+            if (!radiusX.IsZero() || !radiusY.IsZero())
+            {
+                pathBuilder.AddArc(topRight, radiusX.Single(), radiusY.Single(), (Math.PI / 2f).Single(),
+                    CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
+            }
+
+            // Right line
+            pathBuilder.AddLine(bottomRight);
+
+            // Lower-right corners
+            radiusX = size.Width - rightBottom.X;
+            radiusY = size.Height - bottomRight.Y;
+            if (!radiusX.IsZero() || !radiusY.IsZero())
+            {
+                pathBuilder.AddArc(rightBottom, radiusX.Single(), radiusY.Single(), (Math.PI / 2f).Single(),
+                    CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
+            }
+
+            // Bottom line
+            pathBuilder.AddLine(leftBottom);
+
+            // Lower-left corners
+            radiusX = leftBottom.X;
+            radiusY = size.Height - bottomLeft.Y;
+            if (!radiusX.IsZero() || !radiusY.IsZero())
+            {
+                pathBuilder.AddArc(bottomLeft, radiusX.Single(), radiusY.Single(), (Math.PI / 2f).Single(),
+                    CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
+            }
+
+            // Left line
+            pathBuilder.AddLine(topLeft);
+
+            // Upper-left corners
+            radiusX = leftTop.X;
+            radiusY = topLeft.Y;
+            if (!radiusX.IsZero() || !radiusY.IsZero())
+            {
+                pathBuilder.AddArc(leftTop, radiusX.Single(), radiusY.Single(), (Math.PI / 2f).Single(),
+                    CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
+            }
+
+            // End path
+            pathBuilder.EndFigure(CanvasFigureLoop.Closed);
+
+            return CanvasGeometry.CreatePath(pathBuilder);
         }
 
         #endregion
@@ -593,114 +734,171 @@ namespace CompositionProToolkit
         /// <summary>
         /// Renders the CanvasBitmap on the CompositionDrawingSurface based on the given options.
         /// </summary>
+        /// <param name="surfaceLock">The object to lock to prevent multiple threads
+        /// from accessing the surface at the same time.</param>
         /// <param name="surface">CompositionDrawingSurface on which the CanvasBitmap has to be rendered.</param>
         /// <param name="canvasBitmap">CanvasBitmap created by loading the image from the Uri</param>
-        /// <param name="surfaceSize">Size of the CompositionDrawingSurface</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
-        private void RenderBitmap(CompositionDrawingSurface surface, CanvasBitmap canvasBitmap, Size surfaceSize, CompositionSurfaceImageOptions options)
+        private static void RenderBitmap(object surfaceLock, CompositionDrawingSurface surface, CanvasBitmap canvasBitmap,
+            CompositionSurfaceImageOptions options)
         {
-            // Ensuring that the surfaceSize contains positive values
-            surfaceSize.Width = Math.Max(0, surfaceSize.Width);
-            surfaceSize.Height = Math.Max(0, surfaceSize.Height);
+            var surfaceSize = surface.Size;
 
-            // No need to render if the width and/or height of the surface is zero
-            if (surfaceSize.IsEmpty || surface.Size.Width.IsZero() || surface.Size.Height.IsZero())
-                return;
-
-            //
-            // Because the drawing is done asynchronously and multiple threads could
-            // be trying to get access to the device/surface at the same time, we need
-            // to do any device/surface work under a lock.
-            //
-            lock (_drawingLock)
+            // If the canvasBitmap is null, then just fill the surface with the SurfaceBackgroundColor
+            if (canvasBitmap == null)
             {
-                var bitmapSize = canvasBitmap.Size;
-                var sourceWidth = bitmapSize.Width;
-                var sourceHeight = bitmapSize.Height;
-                var ratio = sourceWidth / sourceHeight;
-                var targetWidth = 0d;
-                var targetHeight = 0d;
-                var left = 0d;
-                var top = 0d;
+                // No need to render if the width and/or height of the surface is zero
+                if (surfaceSize.IsEmpty || surfaceSize.Width.IsZero() || surfaceSize.Height.IsZero())
+                    return;
 
-                // Stretch Mode
-                switch (options.Stretch)
+                //
+                // Since multiple threads could be trying to get access to the device/surface 
+                // at the same time, we need to do any device/surface work under a lock.
+                //
+                lock (surfaceLock)
                 {
-                    case Stretch.None:
-                        targetWidth = sourceWidth;
-                        targetHeight = sourceHeight;
-                        break;
-                    case Stretch.Fill:
-                        targetWidth = surfaceSize.Width;
-                        targetHeight = surfaceSize.Height;
-                        break;
-                    case Stretch.Uniform:
-                        // If width is greater than height
-                        if (ratio > 1.0)
-                        {
-                            targetHeight = Math.Min(surfaceSize.Width / ratio, surfaceSize.Height);
-                            targetWidth = targetHeight * ratio;
-                        }
-                        else
-                        {
-                            targetWidth = Math.Min(surfaceSize.Height * ratio, surfaceSize.Width);
-                            targetHeight = targetWidth / ratio;
-                        }
-                        break;
-                    case Stretch.UniformToFill:
-                        // If width is greater than height
-                        if (ratio > 1.0)
-                        {
-                            targetHeight = Math.Max(surfaceSize.Width / ratio, surfaceSize.Height);
-                            targetWidth = targetHeight * ratio;
-                        }
-                        else
-                        {
-                            targetWidth = Math.Max(surfaceSize.Height * ratio, surfaceSize.Width);
-                            targetHeight = targetWidth / ratio;
-                        }
-                        break;
+                    using (var session = CanvasComposition.CreateDrawingSession(surface))
+                    {
+                        // Clear the surface with the SurfaceBackgroundColor
+                        session.Clear(options.SurfaceBackgroundColor);
+                    }
+
+                    // No need to proceed further
+                    return;
                 }
+            }
 
-                // Horizontal Alignment
-                switch (options.HorizontalAlignment)
+            //
+            // Since multiple threads could be trying to get access to the device/surface 
+            // at the same time, we need to do any device/surface work under a lock.
+            //
+            lock (surfaceLock)
+            {
+                // Is AutoResize Enabled?
+                if (options.AutoResize)
                 {
-                    case AlignmentX.Left:
-                        left = 0;
-                        break;
-                    case AlignmentX.Center:
-                        left = (surfaceSize.Width - targetWidth) / 2.0;
-                        break;
-                    case AlignmentX.Right:
-                        left = surfaceSize.Width - targetWidth;
-                        break;
+                    // If AutoResize is allowed and the canvasBitmap size and surface size are 
+                    // not matching then resize the surface to match the canvasBitmap size.
+                    //
+                    // NOTE: HorizontalAlignment, Vertical Alignment and Stretch will be
+                    // handled by the CompositionSurfaceBrush created using this surface.
+                    //
+                    if (canvasBitmap.Size != surfaceSize)
+                    {
+                        // Resize the surface
+                        CanvasComposition.Resize(surface, canvasBitmap.Size);
+                        surfaceSize = canvasBitmap.Size;
+                    }
+
+                    // No need to render if the width and/or height of the surface is zero
+                    if (surfaceSize.IsEmpty || surface.Size.Width.IsZero() || surface.Size.Height.IsZero())
+                        return;
+
+                    // Draw the image to the surface
+                    using (var session = CanvasComposition.CreateDrawingSession(surface))
+                    {
+                        // Render the image
+                        session.DrawImage(canvasBitmap,                                         // CanvasBitmap
+                            new Rect(0, 0, surfaceSize.Width, surfaceSize.Height),              // Target Rectangle
+                            new Rect(0, 0, canvasBitmap.Size.Width, canvasBitmap.Size.Height),  // Source Rectangle
+                            options.Opacity,                                                    // Opacity
+                            options.Interpolation);                                             // Interpolation
+                    }
                 }
-
-                // Vertical Alignment
-                switch (options.VerticalAlignment)
+                else
                 {
-                    case AlignmentY.Top:
-                        top = 0;
-                        break;
-                    case AlignmentY.Center:
-                        top = (surfaceSize.Height - targetHeight) / 2.0;
-                        break;
-                    case AlignmentY.Bottom:
-                        top = surfaceSize.Height - targetHeight;
-                        break;
-                }
+                    // No need to render if the width and/or height of the surface is zero
+                    if (surfaceSize.IsEmpty || surface.Size.Width.IsZero() || surface.Size.Height.IsZero())
+                        return;
 
-                // Draw the image to the surface
-                using (var session = CanvasComposition.CreateDrawingSession(surface))
-                {
-                    // Clear the surface with the SurfaceBackgroundColor
-                    session.Clear(options.SurfaceBackgroundColor);
-                    // Render the image
-                    session.DrawImage(canvasBitmap,                         // CanvasBitmap
-                        new Rect(left, top, targetWidth, targetHeight),     // Target Rectangle
-                        new Rect(0, 0, sourceWidth, sourceHeight),          // Source Rectangle
-                        options.Opacity,                                    // Opacity
-                        options.Interpolation);                             // Interpolation
+                    var bitmapSize = canvasBitmap.Size;
+                    var sourceWidth = bitmapSize.Width;
+                    var sourceHeight = bitmapSize.Height;
+                    var ratio = sourceWidth / sourceHeight;
+                    var targetWidth = 0d;
+                    var targetHeight = 0d;
+                    var left = 0d;
+                    var top = 0d;
+
+                    // Stretch Mode
+                    switch (options.Stretch)
+                    {
+                        case Stretch.None:
+                            targetWidth = sourceWidth;
+                            targetHeight = sourceHeight;
+                            break;
+                        case Stretch.Fill:
+                            targetWidth = surfaceSize.Width;
+                            targetHeight = surfaceSize.Height;
+                            break;
+                        case Stretch.Uniform:
+                            // If width is greater than height
+                            if (ratio > 1.0)
+                            {
+                                targetHeight = Math.Min(surfaceSize.Width / ratio, surfaceSize.Height);
+                                targetWidth = targetHeight * ratio;
+                            }
+                            else
+                            {
+                                targetWidth = Math.Min(surfaceSize.Height * ratio, surfaceSize.Width);
+                                targetHeight = targetWidth / ratio;
+                            }
+                            break;
+                        case Stretch.UniformToFill:
+                            // If width is greater than height
+                            if (ratio > 1.0)
+                            {
+                                targetHeight = Math.Max(surfaceSize.Width / ratio, surfaceSize.Height);
+                                targetWidth = targetHeight * ratio;
+                            }
+                            else
+                            {
+                                targetWidth = Math.Max(surfaceSize.Height * ratio, surfaceSize.Width);
+                                targetHeight = targetWidth / ratio;
+                            }
+                            break;
+                    }
+
+                    // Horizontal Alignment
+                    switch (options.HorizontalAlignment)
+                    {
+                        case AlignmentX.Left:
+                            left = 0;
+                            break;
+                        case AlignmentX.Center:
+                            left = (surfaceSize.Width - targetWidth) / 2.0;
+                            break;
+                        case AlignmentX.Right:
+                            left = surfaceSize.Width - targetWidth;
+                            break;
+                    }
+
+                    // Vertical Alignment
+                    switch (options.VerticalAlignment)
+                    {
+                        case AlignmentY.Top:
+                            top = 0;
+                            break;
+                        case AlignmentY.Center:
+                            top = (surfaceSize.Height - targetHeight) / 2.0;
+                            break;
+                        case AlignmentY.Bottom:
+                            top = surfaceSize.Height - targetHeight;
+                            break;
+                    }
+
+                    // Draw the image to the surface
+                    using (var session = CanvasComposition.CreateDrawingSession(surface))
+                    {
+                        // Clear the surface with the SurfaceBackgroundColor
+                        session.Clear(options.SurfaceBackgroundColor);
+                        // Render the image
+                        session.DrawImage(canvasBitmap,                         // CanvasBitmap
+                            new Rect(left, top, targetWidth, targetHeight),     // Target Rectangle
+                            new Rect(0, 0, sourceWidth, sourceHeight),          // Source Rectangle
+                            options.Opacity,                                    // Opacity
+                            options.Interpolation);                             // Interpolation
+                    }
                 }
             }
         }

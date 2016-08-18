@@ -24,11 +24,12 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.1
+// CompositionProToolkit v0.4.2
 // 
 
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Xaml.Media;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 
@@ -37,7 +38,7 @@ namespace CompositionProToolkit
     /// <summary>
     /// Extension Methods for Compositor
     /// </summary>
-    public static class CompositorExtensions
+    public static class CompositionExtensions
     {
         /// <summary>
         /// Creates a custom shaped Effect Brush using BackdropBrush and a Mask
@@ -100,7 +101,61 @@ namespace CompositionProToolkit
             brush.SetSourceParameter("mask", maskBrush);
 
             return brush;
+        }
 
+        /// <summary>
+        /// Updates the CompositionSurfaceBrush's Stretch and Alignment options
+        /// </summary>
+        /// <param name="surfaceBrush">CompositionSurfaceBrush</param>
+        /// <param name="stretch">Stretch mode</param>
+        /// <param name="alignX">Horizontal Alignment</param>
+        /// <param name="alignY">Vertical Alignment</param>
+        public static void UpdateSurfaceBrushOptions(this CompositionSurfaceBrush surfaceBrush, Stretch stretch, AlignmentX alignX, AlignmentY alignY)
+        {
+            // Stretch Mode
+            switch (stretch)
+            {
+                case Stretch.None:
+                    surfaceBrush.Stretch = CompositionStretch.None;
+                    break;
+                case Stretch.Fill:
+                    surfaceBrush.Stretch = CompositionStretch.Fill;
+                    break;
+                case Stretch.Uniform:
+                    surfaceBrush.Stretch = CompositionStretch.Uniform;
+                    break;
+                case Stretch.UniformToFill:
+                    surfaceBrush.Stretch = CompositionStretch.UniformToFill;
+                    break;
+            }
+
+            // Horizontal Alignment
+            switch (alignX)
+            {
+                case AlignmentX.Left:
+                    surfaceBrush.HorizontalAlignmentRatio = 0;
+                    break;
+                case AlignmentX.Center:
+                    surfaceBrush.HorizontalAlignmentRatio = 0.5f;
+                    break;
+                case AlignmentX.Right:
+                    surfaceBrush.HorizontalAlignmentRatio = 1;
+                    break;
+            }
+
+            // Vertical Alignment
+            switch (alignY)
+            {
+                case AlignmentY.Top:
+                    surfaceBrush.VerticalAlignmentRatio = 0;
+                    break;
+                case AlignmentY.Center:
+                    surfaceBrush.VerticalAlignmentRatio = 0.5f;
+                    break;
+                case AlignmentY.Bottom:
+                    surfaceBrush.VerticalAlignmentRatio = 1;
+                    break;
+            }
         }
     }
 }

@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.1
+// CompositionProToolkit v0.4.2
 // 
 
 using System;
@@ -45,38 +45,57 @@ namespace CompositionProToolkit
         /// <summary>
         /// Creates a CompositionDrawingSurface for the given size
         /// </summary>
+        /// <param name="surfaceLock">The object to lock to prevent multiple threads
+        /// from accessing the surface at the same time.</param>
         /// <param name="size">Size of the Mask Surface</param>
         /// <returns>CompositionDrawingSurface</returns>
-        CompositionDrawingSurface CreateDrawingSurface(Size size);
+        CompositionDrawingSurface CreateDrawingSurface(object surfaceLock, Size size);
 
         /// <summary>
         /// Resizes the Mask Surface to the given size
         /// </summary>
+        /// <param name="surfaceLock">The object to lock to prevent multiple threads
+        /// from accessing the surface at the same time.</param>
         /// <param name="surface">CompositionDrawingSurface</param>
         /// <param name="size">New size of the Mask Surface</param>
-        void ResizeDrawingSurface(CompositionDrawingSurface surface, Size size);
+        void ResizeDrawingSurface(object surfaceLock, CompositionDrawingSurface surface, Size size);
 
         /// <summary>
         /// Redraws the mask surface with the given size, geometry and brush
         /// </summary>
+        /// <param name="surfaceLock">The object to lock to prevent multiple threads
+        /// from accessing the surface at the same time.</param>
         /// <param name="surface">CompositionDrawingSurface</param>
         /// <param name="size">Size ofthe Mask Surface</param>
         /// <param name="geometry">Geometry of the Mask Surface</param>
         /// <param name="brush">Brush to fill the geometry.</param>
-        /// <returns>Task</returns>
-        Task RedrawMaskSurfaceAsync(CompositionDrawingSurface surface, Size size, CanvasGeometry geometry, ICanvasBrush brush);
+        void RedrawMaskSurface(object surfaceLock, CompositionDrawingSurface surface, Size size, 
+            CanvasGeometry geometry, ICanvasBrush brush);
+
+        /// <summary>
+        /// Resizes the SurfaceImage to the given size and redraws the SurfaceImage
+        /// by resizing the existing canvasBitmap
+        /// </summary>
+        /// <param name="surfaceLock">The object to lock to prevent multiple threads
+        /// from accessing the surface at the same time.</param>
+        /// <param name="surface">CompositionDrawingSurface</param>
+        /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
+        /// <param name="canvasBitmap">The CanvasBitmap on which the image is loaded.</param>
+        void RedrawSurfaceImage(object surfaceLock, CompositionDrawingSurface surface,
+            CompositionSurfaceImageOptions options, CanvasBitmap canvasBitmap);
 
         /// <summary>
         /// Resizes the SurfaceImage with the given size and redraws the SurfaceImage by loading 
         /// image from the new Uri.
         /// </summary>
+        /// <param name="surfaceLock">The object to lock to prevent multiple threads
+        /// from accessing the surface at the same time.</param>
         /// <param name="surface">CompositionDrawingSurface</param>
-        /// <param name="size">Size ofthe SurfaceImage</param>
         /// <param name="uri">Uri of the image to be loaded onto the SurfaceImage.</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <param name="canvasBitmap">The CanvasBitmap on which the image is loaded.</param>
         /// <returns>CanvasBitmap</returns>
-        Task<CanvasBitmap> ReloadSurfaceImageAsync(CompositionDrawingSurface surface, Size size, Uri uri, 
+        Task<CanvasBitmap> RedrawSurfaceImageAsync(object surfaceLock, CompositionDrawingSurface surface, Uri uri, 
             CompositionSurfaceImageOptions options, CanvasBitmap canvasBitmap);
     }
 }

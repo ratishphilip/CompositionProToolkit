@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.1
+// CompositionProToolkit v0.4.2
 // 
 
 using Windows.UI;
@@ -54,17 +54,25 @@ namespace CompositionProToolkit
         #region Properties
 
         /// <summary>
+        /// Specifies whether the surface should resize itself
+        /// automatically to match the loaded image size
+        /// </summary>
+        public bool AutoResize { get; set; }
+        /// <summary>
         /// Describes how image is resized to fill its allocated space.
+        /// NOTE: This property is taken into consideration only if AutoResize is False.
         /// </summary>
         public Stretch Stretch { get; set; }
         /// <summary>
         /// Describes how image is positioned horizontally in 
         /// the CompositionSurfaceImage
+        /// NOTE: This property is taken into consideration only if AutoResize is False.
         /// </summary>
         public AlignmentX HorizontalAlignment { get; set; }
         /// <summary>
         /// Describes how image is positioned vertically in 
         /// the CompositionSurfaceImage
+        /// NOTE: This property is taken into consideration only if AutoResize is False.
         /// </summary>
         public AlignmentY VerticalAlignment { get; set; }
         /// <summary>
@@ -77,50 +85,45 @@ namespace CompositionProToolkit
         public CanvasImageInterpolation Interpolation { get; set; }
         /// <summary>
         /// Color which will be used to fill the SurfaceImage 
-        /// before rendering the image
+        /// in case the image is not rendered
         /// </summary>
         public Color SurfaceBackgroundColor { get; set; }
-
-        #endregion
-
-        #region Construction / Initialization
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="stretch">Stretch Mode</param>
-        /// <param name="hAlign">Horizontal Alignment</param>
-        /// <param name="vAlign">Vertical Alignment</param>
-        /// <param name="opacity">Opacity at which image should be rendered</param>
-        /// <param name="interpolation">Render Interpolation</param>
-        public CompositionSurfaceImageOptions(Stretch stretch,
-                    AlignmentX hAlign, AlignmentY vAlign, float opacity = 1f,
-                    CanvasImageInterpolation interpolation = CanvasImageInterpolation.HighQualityCubic)
-        {
-            Stretch = stretch;
-            HorizontalAlignment = hAlign;
-            VerticalAlignment = vAlign;
-            Opacity = opacity;
-            Interpolation = interpolation;
-            SurfaceBackgroundColor = Colors.Transparent;
-        }
 
         #endregion
 
         #region Static Properties
 
         /// <summary>
-        /// Default CompositionSurfaceImageOptions
-        /// Uniform Stretch and Left-Top alignment
-        /// </summary>
-        public static CompositionSurfaceImageOptions Default =>
-                    new CompositionSurfaceImageOptions(Stretch.Uniform, AlignmentX.Left, AlignmentY.Top);
-
-        /// <summary>
+        /// Default CompositionSurfaceImageOptions when AutoResize is True
         /// Uniform Stretch and Center alignment
         /// </summary>
-        public static CompositionSurfaceImageOptions UniformCenter =>
-            new CompositionSurfaceImageOptions(Stretch.Uniform, AlignmentX.Center, AlignmentY.Center);
+        public static CompositionSurfaceImageOptions Default =>
+                    new CompositionSurfaceImageOptions()
+                    {
+                        AutoResize = true,
+                        Interpolation = CanvasImageInterpolation.HighQualityCubic,
+                        Opacity = 1f,
+                        Stretch = Stretch.Uniform,
+                        HorizontalAlignment = AlignmentX.Center,
+                        VerticalAlignment = AlignmentY.Center,
+                        SurfaceBackgroundColor = Colors.Transparent
+                    };
+
+        /// <summary>
+        /// Default CompositionSurfaceImageOptions when AutoResize is False
+        /// Uniform Stretch and Center alignment
+        /// </summary>
+        public static CompositionSurfaceImageOptions DefaultOptimized =>
+                    new CompositionSurfaceImageOptions()
+                    {
+                        AutoResize = false,
+                        Interpolation = CanvasImageInterpolation.HighQualityCubic,
+                        Opacity = 1f,
+                        Stretch = Stretch.Uniform,
+                        HorizontalAlignment = AlignmentX.Center,
+                        VerticalAlignment = AlignmentY.Center,
+                        SurfaceBackgroundColor = Colors.Transparent
+                    };
 
         #endregion
     }

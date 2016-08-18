@@ -24,11 +24,10 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.1
+// CompositionProToolkit v0.4.2
 // 
 
 using System;
-using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -66,15 +65,13 @@ namespace CompositionProToolkit
         /// <summary>
         /// Redraws the Mask surface
         /// </summary>
-        /// <returns>Task</returns>
-        Task RedrawAsync();
+        void Redraw();
 
         /// <summary>
         /// Redraws the Mask surface with the new geometry
         /// </summary>
         /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
-        /// <returns>Task</returns>
-        Task RedrawAsync(CanvasGeometry geometry);
+        void Redraw(CanvasGeometry geometry);
 
         /// <summary>
         /// Resizes the Mask with the given size and redraws the mask
@@ -82,8 +79,7 @@ namespace CompositionProToolkit
         /// </summary>
         /// <param name="size">New size of the mask</param>
         /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
-        /// <returns>Task</returns>
-        Task RedrawAsync(Size size, CanvasGeometry geometry);
+        void Redraw(Size size, CanvasGeometry geometry);
 
         /// <summary>
         /// Resizes the Mask with the given size and redraws the mask
@@ -92,8 +88,7 @@ namespace CompositionProToolkit
         /// <param name="size">New size of the mask</param>
         /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
         /// <param name="color">Fill color for the geometry</param>
-        /// <returns>Task</returns>
-        Task RedrawAsync(Size size, CanvasGeometry geometry, Color color);
+        void Redraw(Size size, CanvasGeometry geometry, Color color);
 
         /// <summary>
         /// Resizes the Mask with the given size and redraws the mask
@@ -102,14 +97,12 @@ namespace CompositionProToolkit
         /// <param name="size">New size of the mask</param>
         /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
         /// <param name="brush">Brush to fill the geometry</param>
-        /// <returns>Task</returns>
-        Task RedrawAsync(Size size, CanvasGeometry geometry, ICanvasBrush brush);
+        void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush brush);
 
         /// <summary>
         /// Resizes the mask to the new size.
         /// </summary>
         /// <param name="size">New size of the mask</param>
-        /// <returns>Task</returns>
-        Task ResizeAsync(Size size);
+        void Resize(Size size);
     }
 }

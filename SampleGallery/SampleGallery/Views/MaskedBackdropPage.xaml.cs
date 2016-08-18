@@ -90,7 +90,7 @@ namespace SampleGallery.Views
                                          ((CompositionGrid1.ActualHeight - _height) / 2).Single(), 0);
             // Create the CompositionMask
             var ellipseGeometry = CanvasGeometry.CreateEllipse(_generator.Device, _width / 2, _height / 2, 0.4f * _width, 0.4f * _height);
-            var compositionMask = await _generator.CreateMaskAsync(_visual1.Size.ToSize(), ellipseGeometry);
+            var compositionMask = _generator.CreateMask(_visual1.Size.ToSize(), ellipseGeometry);
             // Create Masked BackdropBrush from CompositionMask
             _visual1.Brush = _compositor.CreateMaskedBackdropBrush(compositionMask, Colors.AntiqueWhite, 30f, _backdropBrush);
 
@@ -126,7 +126,7 @@ namespace SampleGallery.Views
             _outerGeometry = CanvasGeometry.CreateRectangle(_generator.Device, 0, 0, _width, _height);
             var excludedGeometry = _outerGeometry.CombineWith(_combinedGeometry, Matrix3x2.Identity, CanvasGeometryCombine.Exclude);
             // Create the CompositionMask
-            _animatedCompositionMask = await _generator.CreateMaskAsync(_animatedVisual.Size.ToSize(), excludedGeometry);
+            _animatedCompositionMask = _generator.CreateMask(_animatedVisual.Size.ToSize(), excludedGeometry);
             var animBrush = _compositor.CreateMaskedBackdropBrush(_animatedCompositionMask, Colors.AntiqueWhite, 10f, _backdropBrush);
             _animatedVisual.Brush = animBrush;
 
@@ -147,7 +147,7 @@ namespace SampleGallery.Views
                                                              Matrix3x2.CreateRotation(radians, new Vector2(_width / 2, _height / 2)),
                                                              CanvasGeometryCombine.Exclude);
             // Update the geometry in the Composition Mask
-            await _animatedCompositionMask.RedrawAsync(updatedGeometry);
+             _animatedCompositionMask.Redraw(updatedGeometry);
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)

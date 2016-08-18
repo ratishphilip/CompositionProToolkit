@@ -33,9 +33,9 @@
                     <VisualState.Setters>
                         <!--TODO: change properties for normal view-->
                         <Setter Target="LogoVB.Width"
-                                Value="300"></Setter>
+                                Value="500"></Setter>
                         <Setter Target="LogoVB.Height"
-                                Value="150"></Setter>
+                                Value="250"></Setter>
                         <!--<Setter Target="HorzRule.Margin"
                                 Value="20,140,20,20"></Setter>
                         <Setter Target="IntroSV.Margin"
@@ -49,9 +49,9 @@
                     <VisualState.Setters>
                         <!--  TODO: change properties for narrow view  -->
                         <Setter Target="LogoVB.Width"
-                                Value="300"></Setter>
+                                Value="500"></Setter>
                         <Setter Target="LogoVB.Height"
-                                Value="150"></Setter>
+                                Value="250"></Setter>
                         <!--<Setter Target="HorzRule.Margin"
                                 Value="20,140,20,20"></Setter>
                         <Setter Target="IntroSV.Margin"

@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.1
+// CompositionProToolkit v0.4.2
 // 
 
 using System;
@@ -60,7 +60,7 @@ namespace CompositionProToolkit
         /// <param name="size">Size of the mask</param>
         /// <param name="geometry">Geometry of the mask</param>
         /// <returns>ICompositionMask</returns>
-        Task<ICompositionMask> CreateMaskAsync(Size size, CanvasGeometry geometry);
+        ICompositionMask CreateMask(Size size, CanvasGeometry geometry);
 
         /// <summary>
         /// Creates the CompositionMask having the given size, geometry & color
@@ -69,7 +69,7 @@ namespace CompositionProToolkit
         /// <param name="geometry">Geometry of the mask</param>
         /// <param name="color">Fill color of the geometry.</param>
         /// <returns>ICompositionMask</returns>
-        Task<ICompositionMask> CreateMaskAsync(Size size, CanvasGeometry geometry, Color color);
+        ICompositionMask CreateMask(Size size, CanvasGeometry geometry, Color color);
 
         /// <summary>
         /// Creates the CompositionMask having the given size, geometry & brush
@@ -78,7 +78,7 @@ namespace CompositionProToolkit
         /// <param name="geometry">Geometry of the mask</param>
         /// <param name="brush">The brush to fill the geometry with</param>
         /// <returns>ICompositionMask</returns>
-        Task<ICompositionMask> CreateMaskAsync(Size size, CanvasGeometry geometry, ICanvasBrush brush);
+        ICompositionMask CreateMask(Size size, CanvasGeometry geometry, ICanvasBrush brush);
 
         /// <summary>
         /// Creates a CompositionSurfaceImage having the given size onto which an image (based on the Uri
@@ -98,8 +98,7 @@ namespace CompositionProToolkit
         /// <param name="reflectionLength">Normalized Length of the reflected visual that will be visible.</param>
         /// <param name="location"> <see cref="ReflectionLocation"/> - Location of the reflection with respect 
         /// to the Visual - Bottom, Top, Left or Right</param>
-        /// <returns>Task</returns>
-        Task CreateReflectionAsync(ContainerVisual visual, float reflectionDistance = 0f,
+        void CreateReflection(ContainerVisual visual, float reflectionDistance = 0f,
             float reflectionLength = 0.7f, ReflectionLocation location = ReflectionLocation.Bottom);
     }
 }

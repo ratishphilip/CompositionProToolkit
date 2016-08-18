@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.1
+// CompositionProToolkit v0.4.2
 // 
 
 using Windows.UI.Composition;
@@ -41,12 +41,11 @@ namespace CompositionProToolkit
         /// </summary>
         /// <param name="compositor">Compositor</param>
         /// <param name="graphicsDevice">CompositionGraphics device (optional)</param>
-        /// <param name="sharedLock">shared lock (optional)</param>
         /// <returns>ICompositionMaskGenerator</returns>
         public static ICompositionGenerator GetCompositionGenerator(Compositor compositor, 
-            CompositionGraphicsDevice graphicsDevice = null, object sharedLock = null)
+            CompositionGraphicsDevice graphicsDevice = null)
         {
-            return new CompositionGenerator(compositor, graphicsDevice, sharedLock);
+            return new CompositionGenerator(compositor, graphicsDevice);
         }
     }
 }

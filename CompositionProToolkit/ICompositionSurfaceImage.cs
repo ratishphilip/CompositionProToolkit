@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.1
+// CompositionProToolkit v0.4.2
 // 
 
 using System;
@@ -71,11 +71,10 @@ namespace CompositionProToolkit
         Task RedrawAsync();
 
         /// <summary>
-        /// Redraws the SurfaceImage with the given stretch mode
+        /// Redraws the SurfaceImage with the given image options
         /// </summary>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
-        /// <returns>Task</returns>
-        Task RedrawAsync(CompositionSurfaceImageOptions options);
+        void Redraw(CompositionSurfaceImageOptions options);
 
         /// <summary>
         /// Redraws the SurfaceImage by loading image from the new Uri
@@ -99,15 +98,13 @@ namespace CompositionProToolkit
         /// Resizes the SurfaceImage to the new size.
         /// </summary>
         /// <param name="size">New size of the SurfaceImage</param>
-        /// <returns>Task</returns>
-        Task ResizeAsync(Size size);
+        void Resize(Size size);
 
         /// <summary>
         /// Resizes the SurfaceImage to the new size.
         /// </summary>
         /// <param name="size">New size of the SurfaceImage</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
-        /// <returns>Task</returns>
-        Task ResizeAsync(Size size, CompositionSurfaceImageOptions options);
+        void Resize(Size size, CompositionSurfaceImageOptions options);
     }
 }

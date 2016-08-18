@@ -53,8 +53,8 @@ namespace SampleGallery.Views
             var hRefLeft = (float)(CompositionGrid1.ActualWidth - hRefWidth) / 2f;
             var hRefTop = (float)(CompositionGrid1.ActualHeight - visualSize.Y) / 2f;
 
-            var surfaceImage = await _generator.CreateSurfaceImageAsync(new Uri("ms-appx:///Assets/Images/Image4.jpg"),
-                visualSize.ToSize(), CompositionSurfaceImageOptions.UniformCenter);
+            var surfaceImage = await _generator.CreateSurfaceImageAsync(new Uri("ms-appx:///Assets/Images/Car.jpg"),
+                visualSize.ToSize(), CompositionSurfaceImageOptions.Default);
             var surfaceBrush = _compositor.CreateSurfaceBrush(surfaceImage.Surface);
 
             var visual1 = _compositor.CreateSpriteVisual();
@@ -62,7 +62,7 @@ namespace SampleGallery.Views
             visual1.Offset = new Vector3(vRefLeft, vRefTop, 0);
             visual1.Brush = surfaceBrush;
 
-            await _generator.CreateReflectionAsync(visual1, distance);
+            _generator.CreateReflection(visual1, distance);
 
             ElementCompositionPreview.SetElementChildVisual(CompositionGrid1, visual1);
 
@@ -80,7 +80,7 @@ namespace SampleGallery.Views
             visual2.Offset = new Vector3(hRefLeft, hRefTop, 0);
             visual2.Brush = invertBrush;
 
-            await _generator.CreateReflectionAsync(visual2, distance, 0.7f, ReflectionLocation.Right);
+            _generator.CreateReflection(visual2, distance, 0.7f, ReflectionLocation.Right);
 
             ElementCompositionPreview.SetElementChildVisual(CompositionGrid2, visual2);
 
@@ -96,12 +96,12 @@ namespace SampleGallery.Views
 
             var inVisual2 = _compositor.CreateSpriteVisual();
             inVisual2.Size = new Vector2(80, 80);
-            inVisual2.Offset = new Vector3(60, 40, 0);
+            inVisual2.Offset = new Vector3(60, 60, 0);
             inVisual2.Brush = _compositor.CreateColorBrush(Colors.Blue);
             visual3.Children.InsertAtTop(inVisual2);
             visual3.Children.InsertAtTop(inVisual);
 
-            await _generator.CreateReflectionAsync(visual3, distance, 0.7f, ReflectionLocation.Bottom);
+            _generator.CreateReflection(visual3, distance, 0.7f, ReflectionLocation.Bottom);
 
             ElementCompositionPreview.SetElementChildVisual(CompositionGrid3, visual3);
 
@@ -123,7 +123,7 @@ namespace SampleGallery.Views
             visual4.Children.InsertAtTop(inVisual4);
 
 
-            await _generator.CreateReflectionAsync(visual4, distance, 0.7f, ReflectionLocation.Right);
+            _generator.CreateReflection(visual4, distance, 0.7f, ReflectionLocation.Right);
 
             ElementCompositionPreview.SetElementChildVisual(CompositionGrid4, visual4);
 
