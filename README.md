@@ -1,5 +1,8 @@
 <img src="https://cloud.githubusercontent.com/assets/7021835/16889814/1784ed78-4a9e-11e6-80d0-7c2084d6c960.png" alt="CompositionProToolkit"></img>
 
+>  **CompositionProToolkit has undergone some breaking API changes in v0.4.2. Look [here](https://wpfspark.wordpress.com/2016/08/18/compositionprotoolkit-v0-4-2-released/) for more details.**
+
+
 # Table of Contents
 
 - [Installing from NuGet](#installing-from-nuget)
@@ -12,6 +15,7 @@
   - [FluidProgressRing](#1-fluidprogressring)
   - [FluidWrapPanel](#2-fluidwrappanel)
   - [CompositionImageFrame](#3-compositionimageframe)
+  - [FluidBanner](#4-fluidbanner)
 - [Updates Chronology](#updates-chronology)
 
 **CompositionProToolkit** is a collection of helper classes for Windows.UI.Composition. It also contains controls which can be used in UWP applications. It has dependency on the **Win2D** and the  [**CompositionExpressionToolkit**](https://github.com/ratishphilip/CompositionExpressionToolkit) libraries.
@@ -36,12 +40,12 @@ Using **CompositionProToolkit** you can now define a mask for the **Visual** usi
 The following APIs are provided in **ICompositionGenerator** to create a **ICompositionMask**
 
 ```C#
-Task<ICompositionMask> CreateMaskAsync(Size size, CanvasGeometry geometry);
-Task<ICompositionMask> CreateMaskAsync(Size size, CanvasGeometry geometry, Color color);
-Task<ICompositionMask> CreateMaskAsync(Size size, CanvasGeometry geometry, ICanvasBrush brush);
+ICompositionMask CreateMask(Size size, CanvasGeometry geometry);
+ICompositionMask CreateMask(Size size, CanvasGeometry geometry, ICanvasBrush brush);
+ICompositionMask CreateMask(Size size, CanvasGeometry geometry, Color color);
 ```
 
-In the first API, the provided geometry is filled with **White** color, whereas in the second API it is filled with the given color. The third API allows you to specify the **ICanvasBrush** derivative (like **CanvasImageBrush**, **CanvasLinearGradientBrush**, **CanvasRadialGradientBrush** and CanvasSolidColorBrush**) which will be used to fill the geometry.
+In the first API, the provided geometry is filled with **White** color, whereas in the second API it is filled with the given color. The third API allows you to specify the **ICanvasBrush** derivative (like **CanvasImageBrush**, **CanvasLinearGradientBrush**, **CanvasRadialGradientBrush** and **CanvasSolidColorBrush**) which will be used to fill the geometry.
 
 ### Example
 
@@ -62,7 +66,7 @@ var ellipse2 = CanvasGeometry.CreateEllipse(generator.Device, 200, 200, 75, 150)
 var combinedGeometry = ellipse1.CombineWith(ellipse2, Matrix3x2.Identity, CanvasGeometryCombine.Union);
 
 // Create the CompositionMask
-ICompositionMask compositionMask = await generator.CreateMaskAsync(visual.Size.ToSize(), combinedGeometry);
+ICompositionMask compositionMask = generator.CreateMask(visual.Size.ToSize(), combinedGeometry);
 
 // Create SurfaceBrush from CompositionMask
 var mask = compositor.CreateSurfaceBrush(compositionMask.Surface);
@@ -98,7 +102,7 @@ var combinedGeometry = ellipse1.CombineWith(ellipse2, Matrix3x2.Identity, Canvas
 
 // Create the CompositionMask
 ICompositionMask compositionMask = 
-                  await generator.CreateMaskAsync(visual.Size.ToSize(), combinedGeometry, Colors.Blue);
+                  generator.CreateMask(visual.Size.ToSize(), combinedGeometry, Colors.Blue);
 
 // Create SurfaceBrush from CompositionMask
 var surfaceBrush = compositor.CreateSurfaceBrush(compositionMask.Surface);
@@ -123,7 +127,7 @@ private async void AnimatedCanvasCtrl_OnDraw(ICanvasAnimatedControl sender, Canv
                                 CanvasGeometryCombine.Exclude);
         
     // Update the geometry in the Composition Mask
-    await animatedCompositionMask.RedrawAsync(updatedGeometry);
+    animatedCompositionMask.Redraw(updatedGeometry);
 }
 ```
 
@@ -164,12 +168,14 @@ The **CompositionSurfaceImageOptions** class encapsulates a set of properties wh
 
 | Property | Type | Description | Possible Values |
 |---|---|---|---|
-| **`Stretch`**| `Stretch` | Describes how image is resized to fill its allocated space. | **`None`**, **`Uniform`**, **`Fill`**, **`UniformToFill`** |
+| **`AutoResize`** | `Boolean` | Specifies whether the surface should resize itself automatically to match the loaded image size. When set to **True**, the Stretch, HorizontalAlignment and VerticalAlignment options are ignored. | **False** |
 | **`HorizontalAlignment`** | `AlignmentX` | Describes how image is positioned horizontally in the **`CompositionSurfaceImage`**. | **`Left`**, **`Center`**, **`Right`** |
-| **`VerticalAlignment`** | `AlignmentY` | Describes how image is positioned vertically in the **`CompositionSurfaceImage`**. | **`Top`**, **`Center`**, **`Bottom`** |
-| **`Opacity`** | `float` | Specifies the opacity of the rendered image. | **`0 - 1f`** inclusive |
 | **`Interpolation`** | `CanvasImageInterpolation` | Specifies the interpolation used to render the image on the **`CompositionSurfaceImage`**.  | **`NearestNeighbor`**, **`Linear`**, **`Cubic`**, **`MultiSampleLinear`**, **`Anisotropic`**, **`HighQualityCubic`** |
+| **`Opacity`** | `float` | Specifies the opacity of the rendered image. | **`0 - 1f`** inclusive |
+| **`Stretch`**| `Stretch` | Describes how image is resized to fill its allocated space. | **`None`**, **`Uniform`**, **`Fill`**, **`UniformToFill`** |
 | **`SurfaceBackgroundColor`** | `Color` | Specifies the color which will be used to fill the **`CompositionSurfaceImage`** before rendering the image. | All possible values that can be created. |
+| **`VerticalAlignment`** | `AlignmentY` | Describes how image is positioned vertically in the **`CompositionSurfaceImage`**. | **`Top`**, **`Center`**, **`Bottom`** |
+
 
 Here is how the image is aligned on the Visual's surface based on the **HorizontalAlignment** and **VerticalAlignment** properties
 
@@ -206,15 +212,15 @@ Once you create a **CompositionSurfaceBrush** from the **ICompositionSurfaceImag
 ```C#
 Task RedrawAsync();
 
-Task RedrawAsync(CompositionSurfaceImageOptions options);
+Task Redraw(CompositionSurfaceImageOptions options);
 
 Task RedrawAsync(Uri uri, CompositionSurfaceImageOptions options);
 
 Task RedrawAsync(Uri uri, Size size, CompositionSurfaceImageOptions options);
 
-Task ResizeAsync(Size size);
+Task Resize(Size size);
 
-Task ResizeAsync(Size size, CompositionSurfaceImageOptions options);
+Task Resize(Size size, CompositionSurfaceImageOptions options);
 ```
 
 Once you call any of the above methods, the Visual's brush is also updated.
@@ -223,7 +229,7 @@ Once you call any of the above methods, the Visual's brush is also updated.
 **CompositionProToolkit** provides the following API which allows you to create the reflection of any **ContainerVisual**
 
 ```C#
-Task CreateReflectionAsync(ContainerVisual visual, float reflectionDistance = 0f,
+void CreateReflection(ContainerVisual visual, float reflectionDistance = 0f,
     float reflectionLength = 0.7f, ReflectionLocation location = ReflectionLocation.Bottom);
 ```
 
@@ -290,24 +296,57 @@ Here is a demo of the **FluidWrapPanel** in action
 ## 3. CompositionImageFrame
 **CompositionImageFrame** is a control which can be used for displaying images asynchronously. It encapsulates a **CompositionSurfaceImage** object which is used for loading and rendering the images. It also supports Pointer interactions and raises events accordingly.
 
-<img src="https://cloud.githubusercontent.com/assets/7021835/17625499/07c82d84-605e-11e6-9b67-592312a9b845.gif" />
+<img src="https://wpfspark.files.wordpress.com/2016/08/cpt6.gif" />
 
 In order to configure the rendering of the image, **CompositionImageFrame** has the following properties
 
 | Dependency Property | Type | Description | Default Value |  
 |----|----|----|----|
-| **AlignX** | `AlignmentX` | Specifies how the image is positioned horizontally in the **CompositionImageFrame**. | **AlignmentX.Center** |
-| **AlignY** | `AlignmentY` | Specifies how the image is positioned vertically in the **CompositionImageFrame**. | **AlignmentY.Center** |
+| **`AlignX`** | `AlignmentX` | Specifies how the image is positioned horizontally in the **CompositionImageFrame**. | **AlignmentX.Center** |
+| **`AlignY`** | `AlignmentY` | Specifies how the image is positioned vertically in the **CompositionImageFrame**. | **AlignmentY.Center** |
+| **`CornerRadius`** | `CornerRadius` | Indicates the corner radius of the the ImageFrame. The image will be rendered with rounded corners. | **(0, 0, 0, 0)** |
+| **`DisplayShadow`** | `Boolean` | Indicates whether the shadow for this image should be displayed. | **False** |
 | **FrameBackground** | `Color` | Specifies the background color of the **CompositionImageFrame** to fill the area where image is not rendered. | **Colors.Black** |
 | **Interpolation** | `CanvasImageInterpolation` | Specifies the interpolation used for rendering the image. | **HighQualityCubic** |
-| **Source** | `Uri` | Specifies the Uri of the image to be loaded into the **CompositionImageFrame**. | **null** |
-| **Stretch** | `Stretch` | Specifies how the image is resized to fill its allocated space in the **CompositionImageFrame**. | **Uniform** |
+| **`RenderOptimized`** | `Boolean` | Indicates whether optimization must be used to render the image.Set this property to True if the CompositionImageFrame is very small compared to the actual image size. This will optimize memory usage. | **False** |
+| **`ShadowBlurRadius`** | `Double` | Specifies the Blur radius of the shadow. | **0.0** |
+| **`ShadowColor`** | `Color` | Specifies the color of the shadow. | **Colors.Transparent** |
+| **`ShadowOffsetX`** | `Double` | Specifies the horizontal offset of the shadow. | **0.0** |
+| **`ShadowOffsetY`** | `Double` | Specifies the vertical offset of the shadow. | **0.0** |
+| **`ShadowOpacity`** | `Double` | Specifies the opacity of the shadow. | **1** |
+| **`Source`** | `Uri` | Specifies the Uri of the image to be loaded into the **CompositionImageFrame**. | **null** |
+| **`Stretch`** | `Stretch` | Specifies how the image is resized to fill its allocated space in the **CompositionImageFrame**. | **Stretch.Uniform** |
+| **`TransitionDuration`** | `Double` | Indicates the duration of the crossfade animation while transitioning from one image to another. | **700ms** |
 
 **CompositionImageFrame** raises the following events  
 - **ImageOpened** - when the image has been successfully loaded from the Uri and rendered.
 - **ImageFailed** - when there is an error loading the image from the Uri.
 
+## 4. FluidWrapPanel
+
+**FluidBanner** control is banner control created using Windows Composition. It allows for displaying multiple images in a unique interactive format.  It internally uses **CompositionSurfaceImage** to host the images. 
+
+<img src="https://cloud.githubusercontent.com/assets/7021835/17262223/03be56de-558f-11e6-809d-7bc8ae2e2fdd.gif" />
+
+It provides the following properties which can be used to customize the **FluidBanner**.
+
+| Dependency Property | Type | Description | Default Value |  
+|----|----|----|----|
+| **`AlignX`** | `AlignmentX` | Indicates how the image is positioned horizontally in the **FluidBanner** items. | **Center** |
+| **`AlignY`** | `AlignmentY` | Indicates how the image is positioned vertically in the **FluidBanner** items. | **Center** |
+| **`DecodeHeight`** | `int` | The height, in pixels, that the images are decoded to. (<em>**Optional**</em>) | **0** |
+| **`DecodeWidth`** | `int` | The width, in pixels, that the images are decoded to. (<em>**Optional**</em>) | **0** |
+| **`ItemBackground`** | `Color` | The background color of each item in the FluidBanner | **Black** |
+| **`ItemGap`** | `double` | The gap between adjacent items in the banner. | **30** |
+| **`ItemsSource`** | `IEnumerable&lt;Uri&gt;` | The collection of Uris of images to be shown in the FluidBanner | **null** |
+| **`Padding`** | `Thickness` | The padding inside the FluidBanner | **Thickness(0)** |
+| **`Stretch`** | `Stretch` | Indicates how the image is resized to fill its allocated space within each **FluidBanner** item. | **Uniform** |
+
 # Updates Chronology
+
+## v0.4.2
+(**Thursday, August 18, 2016**) - `FluidBanner` Control Added. CornerRadius and Shadow features added in `CompositionImageFrame`. Major refactoring of code. Breaking changes.
+
 ## v0.4.1
 (**Friday, August 12, 2016**) - `CompositionImageFrame` Control added. `CompositionSurfaceImage` and `CompositionMask` optimized. Bug Fixes.
 
