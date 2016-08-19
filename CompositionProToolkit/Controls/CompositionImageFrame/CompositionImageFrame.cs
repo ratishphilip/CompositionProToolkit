@@ -884,7 +884,7 @@ namespace CompositionProToolkit.Controls
 
             // Update the frameLayerMask in case the CornerRadius or 
             // BorderThickness or Padding has changed
-            var pathInfo = new CompositionPathInfo(corners, borders, padding, true);
+            var pathInfo = new CompositionPathInfo(corners, borders, padding, false);
             using (var geometry =
                 CompositionGenerator.GenerateGeometry(_generator.Device, frameSize.ToSize(),
                     pathInfo, Vector2.Zero))

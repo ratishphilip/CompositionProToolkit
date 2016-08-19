@@ -18,6 +18,7 @@
       <RootProperty Name="Background" />
       <RootProperty Name="BorderBrush" />
       <RootProperty Name="BorderThickness" />
+      <RootProperty Name="CornerRadius" />
     </RootType>
     <RootType FullName="Microsoft.Xaml.DirectUI.ProxyTypes.TemplateBindingExtension" />
   </Roots.RootTypes>

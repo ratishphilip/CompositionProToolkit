@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>CompositionProToolkit</id>
-    <version>0.4.2.0</version>
+    <version>0.4.2.1</version>
     <title>CompositionProToolkit</title>
     <authors>Ratish Philip</authors>
     <owners>Ratish Philip</owners>
@@ -11,7 +11,7 @@
     <iconUrl>https://cloud.githubusercontent.com/assets/7021835/16889815/17851c12-4a9e-11e6-87d6-9b00282011b3.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Collection of Helper classes (using Win2d &amp; CompositionExpressionToolkit) for Windows.UI.Composition and some UI controls.</description>
-    <releaseNotes>FluidBanner Control Added. New features added in CompositionImageFrame. Major refactoring of code. Breaking changes. Refer https://wpfspark.wordpress.com/ for details.</releaseNotes>
+    <releaseNotes>FluidBanner Control Added. New features added in CompositionImageFrame. Major refactoring of code. Breaking changes. Refer https://wpfspark.wordpress.com/ for details. Fixed corner radius for CompositionImageFrame.</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <dependencies>
         <dependency id="Win2D.uwp" version="1.19.0" />
