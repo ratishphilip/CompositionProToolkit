@@ -35,7 +35,18 @@ More details available [here](https://www.nuget.org/packages/CompositionProToolk
 ## 1. Creating custom shaped `Visual` using `CanvasGeometry`
 As of now, you can customize the shape of Visuals by applying a mask on the Visual. The mask is defined using a **CompositionMaskBrush**. In the **CompositionMaskBrush** the `Mask` is defined by a **CompositionSurfaceBrush**. Into the **CompositionSurfaceBrush** an image, which defines the mask, is loaded. In this image, the areas which are to masked in the Visual are transparent whereas the areas to be shown in the Visual are white.  
 
-Using **CompositionProToolkit** you can now define a mask for the **Visual** using **Win2D**'s **CanvasGeometry**. It provides two interfaces **ICompositionMask** and **ICompositionGenerator** and a static class **CompositionGeneratorFactory** which provides an object implementing the **ICompositionGenerator**. Using the **ICompositionGenerator** an object implementing the **ICompositionMask** can be created. This object represents the mask that needs to be applied to the Visual using a **CompositionMaskBrush**.
+Using **CompositionProToolkit** you can now define a mask for the **Visual** using **Win2D**'s **CanvasGeometry**. It provides two interfaces **ICompositionMask** and **ICompositionGenerator** and a static class **CompositionGeneratorFactory** which provides an object implementing the **ICompositionGenerator**. There are two APIS to obtain the **CompositionGenerator** - by providing a **Compositor** or by providing a **CompositionGraphicDevice**.
+
+```C#
+public static ICompositionGenerator GetCompositionGenerator(Compositor compositor,
+    bool useSharedCanvasDevice = true, bool useSoftwareRenderer = false
+public static ICompositionGenerator GetCompositionGenerator(CompositionGraphicsDevice graphicsDevice)
+```
+The first API also has couple of **optional** parameters
+- **useSharedCanvasDevice** - indicates whether the **CompositionGenerator** should use a shared **CanvasDevice** or creates a new one.
+- **useSoftwareRenderer** - this parameter is provided as a argument when creating a new **CanvasDevice** (i.e. when **usedSharedCanvasDevice** is **false**).
+
+Using the **ICompositionGenerator** an object implementing the **ICompositionMask** can be created. This object represents the mask that needs to be applied to the Visual using a **CompositionMaskBrush**.
 
 The following APIs are provided in **ICompositionGenerator** to create a **ICompositionMask**
 
@@ -111,7 +122,18 @@ visual.Brush = surfaceBrush;
 ```
 
 
-**ICompositionMask** provides a **RedrawAsync** API which allows you to update the geometry of the mask (and thus the shape of the Visual).  
+**ICompositionMask** provides several overloaded **Redraw** APIs which allow you to update the geometry, size and fill of the mask (and thus the shape of the Visual).
+
+```C#
+void Redraw();
+void Redraw(ICanvasBrush brush);
+void Redraw(Color color);
+void Redraw(Geometry.CanvasGeometry geometry);
+void Redraw(Size size, Geometry.CanvasGeometry geometry);
+void Redraw(Size size, Geometry.CanvasGeometry geometry, ICanvasBrush brush);
+void Redraw(Size size, Geometry.CanvasGeometry geometry, Color color);
+void Resize(Size size);
+```
 
 Here is an example of a **CanvasAnimatedControl** having two visuals - A blue rectangular visual in the background and a red visual in the foreground. The red visual's mask is redrawn periodically to give an impression of animation. (_see the **[SampleGallery](https://github.com/ratishphilip/CompositionProToolkit/tree/master/SampleGallery)** project for more details on how it is implemented_)
 
@@ -296,7 +318,7 @@ Here is a demo of the **FluidWrapPanel** in action
 ## 3. CompositionImageFrame
 **CompositionImageFrame** is a control which can be used for displaying images asynchronously. It encapsulates a **CompositionSurfaceImage** object which is used for loading and rendering the images. It also supports Pointer interactions and raises events accordingly.
 
-<img src="https://cloud.githubusercontent.com/assets/7021835/17792516/f105a99e-6555-11e6-8a72-b9665baac6cf.gif" />
+<img src="https://cloud.githubusercontent.com/assets/7021835/17950778/43912a38-6a12-11e6-8877-7c3bf92da86d.gif" />
 
 In order to configure the rendering of the image, **CompositionImageFrame** has the following properties
 
@@ -308,19 +330,41 @@ In order to configure the rendering of the image, **CompositionImageFrame** has 
 | **`DisplayShadow`** | `Boolean` | Indicates whether the shadow for this image should be displayed. | **False** |
 | **FrameBackground** | `Color` | Specifies the background color of the **CompositionImageFrame** to fill the area where image is not rendered. | **Colors.Black** |
 | **Interpolation** | `CanvasImageInterpolation` | Specifies the interpolation used for rendering the image. | **HighQualityCubic** |
+| **`PlaceholderBackground`** | Color| Indicates the background color of the Placeholder. | **Colors.Black** |
+| **`PlaceholderColor`** | Color | Indicates the color with which the rendered placeholder geometry should be filled | **RGB(192, 192, 192)** |
 | **`RenderOptimized`** | `Boolean` | Indicates whether optimization must be used to render the image.Set this property to True if the CompositionImageFrame is very small compared to the actual image size. This will optimize memory usage. | **False** |
 | **`ShadowBlurRadius`** | `Double` | Specifies the Blur radius of the shadow. | **0.0** |
 | **`ShadowColor`** | `Color` | Specifies the color of the shadow. | **Colors.Transparent** |
 | **`ShadowOffsetX`** | `Double` | Specifies the horizontal offset of the shadow. | **0.0** |
 | **`ShadowOffsetY`** | `Double` | Specifies the vertical offset of the shadow. | **0.0** |
 | **`ShadowOpacity`** | `Double` | Specifies the opacity of the shadow. | **1** |
+| **`ShowPlaceHolder`** | Boolean| Indicates whether the placeholder needs to be displayed during image load or when no image is loaded in the CompositionImageFrame. | **False** |
 | **`Source`** | `Uri` | Specifies the Uri of the image to be loaded into the **CompositionImageFrame**. | **null** |
 | **`Stretch`** | `Stretch` | Specifies how the image is resized to fill its allocated space in the **CompositionImageFrame**. | **Stretch.Uniform** |
 | **`TransitionDuration`** | `Double` | Indicates the duration of the crossfade animation while transitioning from one image to another. | **700ms** |
+| **`UseImageCache`** | Boolean | Indicates whether the images should be cached before rendering them. | **True** |
 
 **CompositionImageFrame** raises the following events  
 - **ImageOpened** - when the image has been successfully loaded from the Uri and rendered.
 - **ImageFailed** - when there is an error loading the image from the Uri.
+
+### Using CompositionImageFrame with FilePicker
+If you have a **CompostionImageFrame** control in  you application and your want to use the **FilePicker** to select an image file to be displayed on the **CompostionImageFrame**, then you must do the following
+
+```C#
+var picker = new Windows.Storage.Pickers.FileOpenPicker
+{
+    ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail,
+    SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary
+};
+picker.FileTypeFilter.Add(".jpg");
+picker.FileTypeFilter.Add(".jpeg");
+picker.FileTypeFilter.Add(".png");
+var file = await picker.PickSingleFileAsync();
+ImageFrame.Source = await ImageCache.GetCachedUriAsync(file);
+```
+Since the **CompositionImageFrame**'s **Source** property expects a **Uri**, while the **FilePicker** provides a **StorageFile**. So in order to obtain a **Uri** from the **StorageFile**, you must first cache it using the **ImageCache.GetCachedUriAsync()** method.
+
 
 ## 4. FluidBanner
 
@@ -343,6 +387,9 @@ It provides the following properties which can be used to customize the **FluidB
 | **`Stretch`** | `Stretch` | Indicates how the image is resized to fill its allocated space within each **FluidBanner** item. | **Uniform** |
 
 # Updates Chronology
+
+## v0.4.2
+(**Wednesday, August 24, 2016**) - New features in `CompositionImageFrame` - Placeholder, ImageCache, Load progress, animations. Bug fixes.
 
 ## v0.4.2
 (**Thursday, August 18, 2016**) - `FluidBanner` Control Added. CornerRadius and Shadow features added in `CompositionImageFrame`. Major refactoring of code. Breaking changes.
