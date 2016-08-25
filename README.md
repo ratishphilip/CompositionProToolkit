@@ -15,6 +15,7 @@
   - [FluidProgressRing](#1-fluidprogressring)
   - [FluidWrapPanel](#2-fluidwrappanel)
   - [CompositionImageFrame](#3-compositionimageframe)
+    - [Using CompositionImageFrame with FilePicker](#using-compositionimageframe-with-filepicker)   
   - [FluidBanner](#4-fluidbanner)
 - [Updates Chronology](#updates-chronology)
 
