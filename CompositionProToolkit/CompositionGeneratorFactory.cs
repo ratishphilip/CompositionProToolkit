@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.2
+// CompositionProToolkit v0.4.3
 // 
 
 using Windows.UI.Composition;
@@ -32,20 +32,31 @@ using Windows.UI.Composition;
 namespace CompositionProToolkit
 {
     /// <summary>
-    /// Factory class to instantiate the CompositionMaskGenerator
+    /// Factory class to instantiate the CompositionGenerator
     /// </summary>
     public static class CompositionGeneratorFactory
     {
         /// <summary>
-        /// Instantiates a MaskGenerator object
+        /// Instantiates a CompositionGenerator object
         /// </summary>
         /// <param name="compositor">Compositor</param>
-        /// <param name="graphicsDevice">CompositionGraphics device (optional)</param>
-        /// <returns>ICompositionMaskGenerator</returns>
+        /// <param name="useSharedCanvasDevice">Whether to use a shared CanvasDevice or to create a new one.</param>
+        /// <param name="useSoftwareRenderer">Whether to use Software Renderer when creating a new CanvasDevice.</param>
+        /// <returns>ICompositionGenerator</returns>
         public static ICompositionGenerator GetCompositionGenerator(Compositor compositor, 
-            CompositionGraphicsDevice graphicsDevice = null)
+            bool useSharedCanvasDevice = true, bool useSoftwareRenderer = false)
         {
-            return new CompositionGenerator(compositor, graphicsDevice);
+            return new CompositionGenerator(compositor, useSharedCanvasDevice, useSoftwareRenderer);
+        }
+
+        /// <summary>
+        /// Instantiates a CompositionGenerator object
+        /// </summary>
+        /// <param name="graphicsDevice">Composition Graphics Device</param>
+        /// <returns>ICompositionGenerator</returns>
+        public static ICompositionGenerator GetCompositionGenerator(CompositionGraphicsDevice graphicsDevice)
+        {
+            return new CompositionGenerator(graphicsDevice);
         }
     }
 }

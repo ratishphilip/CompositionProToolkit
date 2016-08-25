@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.2
+// CompositionProToolkit v0.4.3
 // 
 
 using System;
@@ -258,7 +258,8 @@ namespace CompositionProToolkit
         public void Dispose()
         {
             _surface?.Dispose();
-            _generator.DeviceReplaced -= OnDeviceReplaced;
+            if (_generator != null)
+                _generator.DeviceReplaced -= OnDeviceReplaced;
             _canvasBitmap?.Dispose();
             _canvasBitmap = null;
             _surface = null;

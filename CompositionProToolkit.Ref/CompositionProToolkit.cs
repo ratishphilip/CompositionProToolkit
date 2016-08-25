@@ -1,13 +1,15 @@
 namespace CompositionProToolkit
 {
+    public delegate void CacheProgressHandler(int progress);
     public static partial class CompositionExtensions
     {
         public static Windows.UI.Composition.CompositionEffectBrush CreateMaskedBackdropBrush(this Windows.UI.Composition.Compositor compositor, CompositionProToolkit.ICompositionMask mask, Windows.UI.Color blendColor, float blurAmount, Windows.UI.Composition.CompositionBackdropBrush backdropBrush=null) { return default(Windows.UI.Composition.CompositionEffectBrush); }
-        public static void UpdateSurfaceBrushOptions(this Windows.UI.Composition.CompositionSurfaceBrush surfaceBrush, Windows.UI.Xaml.Media.Stretch stretch, Windows.UI.Xaml.Media.AlignmentX alignX, Windows.UI.Xaml.Media.AlignmentY alignY) { }
+        public static void UpdateSurfaceBrushOptions(this Windows.UI.Composition.CompositionSurfaceBrush surfaceBrush, Windows.UI.Xaml.Media.Stretch stretch, Windows.UI.Xaml.Media.AlignmentX alignX, Windows.UI.Xaml.Media.AlignmentY alignY, Windows.UI.Composition.ScalarKeyFrameAnimation alignXAnimation=null, Windows.UI.Composition.ScalarKeyFrameAnimation alignYAnimation=null) { }
     }
     public static partial class CompositionGeneratorFactory
     {
-        public static CompositionProToolkit.ICompositionGenerator GetCompositionGenerator(Windows.UI.Composition.Compositor compositor, Windows.UI.Composition.CompositionGraphicsDevice graphicsDevice=null) { return default(CompositionProToolkit.ICompositionGenerator); }
+        public static CompositionProToolkit.ICompositionGenerator GetCompositionGenerator(Windows.UI.Composition.CompositionGraphicsDevice graphicsDevice) { return default(CompositionProToolkit.ICompositionGenerator); }
+        public static CompositionProToolkit.ICompositionGenerator GetCompositionGenerator(Windows.UI.Composition.Compositor compositor, bool useSharedCanvasDevice=true, bool useSoftwareRenderer=false) { return default(CompositionProToolkit.ICompositionGenerator); }
     }
     public partial class CompositionSurfaceImageOptions
     {
@@ -39,10 +41,12 @@ namespace CompositionProToolkit
         Windows.Foundation.Size Size { get; }
         Windows.UI.Composition.ICompositionSurface Surface { get; }
         void Redraw();
+        void Redraw(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush brush);
         void Redraw(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry);
         void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry);
         void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush brush);
         void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Windows.UI.Color color);
+        void Redraw(Windows.UI.Color color);
         void Resize(Windows.Foundation.Size size);
     }
     public partial interface ICompositionSurfaceImage : System.IDisposable
@@ -58,6 +62,11 @@ namespace CompositionProToolkit
         System.Threading.Tasks.Task RedrawAsync(System.Uri uri, Windows.Foundation.Size size, CompositionProToolkit.CompositionSurfaceImageOptions options);
         void Resize(Windows.Foundation.Size size);
         void Resize(Windows.Foundation.Size size, CompositionProToolkit.CompositionSurfaceImageOptions options);
+    }
+    public static partial class ImageCache
+    {
+        public static System.Threading.Tasks.Task<System.Uri> GetCachedUriAsync(System.Uri uri, CompositionProToolkit.CacheProgressHandler progressHandler=null) { return default(System.Threading.Tasks.Task<System.Uri>); }
+        public static System.Threading.Tasks.Task<System.Uri> GetCachedUriAsync(Windows.Storage.StorageFile file, CompositionProToolkit.CacheProgressHandler progressHandler=null) { return default(System.Threading.Tasks.Task<System.Uri>); }
     }
     public enum ReflectionLocation
     {
@@ -125,20 +134,22 @@ namespace CompositionProToolkit.Controls
         public static readonly Windows.UI.Xaml.DependencyProperty AlignXProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty AlignYProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty CornerRadiusProperty;
-        public static System.TimeSpan DefaultTransitionDuration;
         public static readonly Windows.UI.Xaml.DependencyProperty DisplayShadowProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty FrameBackgroundProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty InterpolationProperty;
-        public static System.TimeSpan MinimumTransitionDuration;
+        public static readonly Windows.UI.Xaml.DependencyProperty PlaceholderBackgroundProperty;
+        public static readonly Windows.UI.Xaml.DependencyProperty PlaceholderColorProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty RenderOptimizedProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty ShadowBlurRadiusProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty ShadowColorProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty ShadowOffsetXProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty ShadowOffsetYProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty ShadowOpacityProperty;
+        public static readonly Windows.UI.Xaml.DependencyProperty ShowPlaceholderProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty SourceProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty StretchProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty TransitionDurationProperty;
+        public static readonly Windows.UI.Xaml.DependencyProperty UseImageCacheProperty;
         public CompositionImageFrame() { }
         public Windows.UI.Xaml.Media.AlignmentX AlignX { get { return default(Windows.UI.Xaml.Media.AlignmentX); } set { } }
         public Windows.UI.Xaml.Media.AlignmentY AlignY { get { return default(Windows.UI.Xaml.Media.AlignmentY); } set { } }
@@ -146,15 +157,19 @@ namespace CompositionProToolkit.Controls
         public bool DisplayShadow { get { return default(bool); } set { } }
         public Windows.UI.Color FrameBackground { get { return default(Windows.UI.Color); } set { } }
         public Microsoft.Graphics.Canvas.CanvasImageInterpolation Interpolation { get { return default(Microsoft.Graphics.Canvas.CanvasImageInterpolation); } set { } }
+        public Windows.UI.Color PlaceholderBackground { get { return default(Windows.UI.Color); } set { } }
+        public Windows.UI.Color PlaceholderColor { get { return default(Windows.UI.Color); } set { } }
         public bool RenderOptimized { get { return default(bool); } set { } }
         public double ShadowBlurRadius { get { return default(double); } set { } }
         public Windows.UI.Color ShadowColor { get { return default(Windows.UI.Color); } set { } }
         public double ShadowOffsetX { get { return default(double); } set { } }
         public double ShadowOffsetY { get { return default(double); } set { } }
         public double ShadowOpacity { get { return default(double); } set { } }
+        public bool ShowPlaceholder { get { return default(bool); } set { } }
         public System.Uri Source { get { return default(System.Uri); } set { } }
         public Windows.UI.Xaml.Media.Stretch Stretch { get { return default(Windows.UI.Xaml.Media.Stretch); } set { } }
         public System.TimeSpan TransitionDuration { get { return default(System.TimeSpan); } set { } }
+        public bool UseImageCache { get { return default(bool); } set { } }
         public event Windows.UI.Xaml.RoutedEventHandler ImageFailed { add { } remove { } }
         public event Windows.UI.Xaml.RoutedEventHandler ImageOpened { add { } remove { } }
         protected override Windows.Foundation.Size ArrangeOverride(Windows.Foundation.Size finalSize) { return default(Windows.Foundation.Size); }

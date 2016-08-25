@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.2
+// CompositionProToolkit v0.4.3
 // 
 
 using System;
@@ -70,7 +70,9 @@ namespace CompositionProToolkit
         private CanvasDevice _canvasDevice;
         private CompositionGraphicsDevice _graphicsDevice;
         private readonly object _disposingLock;
-        private readonly bool _isDeviceCreator;
+
+        private readonly bool _isGraphicsDeviceCreator;
+        private readonly bool _isCanvasDeviceCreator;
 
         #endregion
 
@@ -89,38 +91,58 @@ namespace CompositionProToolkit
         /// Constructor
         /// </summary>
         /// <param name="compositor">Compositor</param>
-        /// <param name="graphicsDevice">CompositionGraphicsDevice</param>
-        public CompositionGenerator(Compositor compositor, CompositionGraphicsDevice graphicsDevice = null)
+        /// <param name="useSharedCanvasDevice">Whether to use a shared CanvasDevice or to create a new one.</param>
+        /// <param name="useSoftwareRenderer">Whether to use Software Renderer when creating a new CanvasDevice.</param>
+        public CompositionGenerator(Compositor compositor, bool useSharedCanvasDevice = true, bool useSoftwareRenderer = false)
         {
             if (compositor == null)
                 throw new ArgumentNullException(nameof(compositor), "Compositor cannot be null!");
 
+            // Compositor
             _compositor = compositor;
 
+            // Disposing Lock
             _disposingLock = new object();
 
-            if (_canvasDevice == null)
-            {
-                _canvasDevice = CanvasDevice.GetSharedDevice();
-                _canvasDevice.DeviceLost += DeviceLost;
-            }
+            // Canvas Device
+            _canvasDevice = useSharedCanvasDevice ? 
+                CanvasDevice.GetSharedDevice() : new CanvasDevice(useSoftwareRenderer);
+            _isCanvasDeviceCreator = !useSharedCanvasDevice;
 
-            if (graphicsDevice == null)
-            {
-                // Create the Composition Graphics Device
-                _graphicsDevice = CanvasComposition.CreateCompositionGraphicsDevice(_compositor, _canvasDevice);
-                _isDeviceCreator = true;
-            }
-            else
-            {
-                _graphicsDevice = graphicsDevice;
-                _isDeviceCreator = false;
-            }
+            _canvasDevice.DeviceLost += DeviceLost;
 
-            // Subscribe to events
+            // Composition Graphics Device
+            _graphicsDevice = CanvasComposition.CreateCompositionGraphicsDevice(_compositor, _canvasDevice);
+            _isGraphicsDeviceCreator = true;
+
             _graphicsDevice.RenderingDeviceReplaced += RenderingDeviceReplaced;
             if (!DesignMode.DesignModeEnabled)
                 DisplayInformation.DisplayContentsInvalidated += OnDisplayContentsInvalidated;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="graphicsDevice">Composition Graphics Device</param>
+        public CompositionGenerator(CompositionGraphicsDevice graphicsDevice)
+        {
+            if (graphicsDevice == null)
+                throw new ArgumentNullException(nameof(graphicsDevice), "GraphicsDevice cannot be null!");
+
+            // Composition Graphics Device
+            _graphicsDevice = graphicsDevice;
+            _isGraphicsDeviceCreator = false;
+            _graphicsDevice.RenderingDeviceReplaced += RenderingDeviceReplaced;
+            if (!DesignMode.DesignModeEnabled)
+                DisplayInformation.DisplayContentsInvalidated += OnDisplayContentsInvalidated;
+
+            // Compositor
+            _compositor = _graphicsDevice.Compositor;
+
+            // Canvas Device
+            _canvasDevice = CanvasComposition.GetCanvasDevice(_graphicsDevice);
+            _isCanvasDeviceCreator = false;
+            _canvasDevice.DeviceLost += DeviceLost;
         }
 
         #endregion
@@ -449,7 +471,7 @@ namespace CompositionProToolkit
                     //
                     // Only dispose the canvas device if we own the device.
                     //
-                    if (_isDeviceCreator)
+                    if (_isCanvasDeviceCreator)
                     {
                         _canvasDevice.Dispose();
                     }
@@ -463,7 +485,7 @@ namespace CompositionProToolkit
                 //
                 // Only dispose the composition graphics device if we own the device.
                 //
-                if (_isDeviceCreator)
+                if (_isGraphicsDeviceCreator)
                 {
                     _graphicsDevice.Dispose();
                 }
@@ -618,11 +640,15 @@ namespace CompositionProToolkit
         /// <param name="args">event arguments</param>
         private void DeviceLost(CanvasDevice sender, object args)
         {
+            // Unsubscribe from DeviceLost event of the previous Canvas Device
             sender.DeviceLost -= DeviceLost;
 
-            _canvasDevice = CanvasDevice.GetSharedDevice();
-            _canvasDevice.DeviceLost += DeviceLost;
+            _canvasDevice = _isCanvasDeviceCreator ?
+                new CanvasDevice(sender.ForceSoftwareRenderer) : CanvasDevice.GetSharedDevice();
 
+            // Subscribe to DeviceLost event of the new Canvas Device
+            _canvasDevice.DeviceLost += DeviceLost;
+            // Update the CompositionGraphicsDevice
             CanvasComposition.SetCanvasDevice(_graphicsDevice, _canvasDevice);
         }
 
@@ -633,13 +659,10 @@ namespace CompositionProToolkit
         /// <param name="args">RenderingDeviceReplacedEventArgs</param>
         private void RenderingDeviceReplaced(CompositionGraphicsDevice sender, RenderingDeviceReplacedEventArgs args)
         {
-            Task.Run(() =>
+            if (DeviceReplaced != null)
             {
-                if (DeviceReplaced != null)
-                {
-                    RaiseDeviceReplacedEvent();
-                }
-            });
+                RaiseDeviceReplacedEvent();
+            }
         }
 
         /// <summary>
@@ -652,7 +675,7 @@ namespace CompositionProToolkit
             //
             // This will trigger the device lost event
             //
-            CanvasDevice.GetSharedDevice();
+            _canvasDevice.RaiseDeviceLost();
         }
 
         #endregion

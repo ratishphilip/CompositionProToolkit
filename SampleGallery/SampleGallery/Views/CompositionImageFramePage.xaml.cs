@@ -28,7 +28,7 @@ namespace SampleGallery.Views
         private Dictionary<int, Stretch> _stretchModes;
         private Dictionary<int, AlignmentX> _alignXModes;
         private Dictionary<int, AlignmentY> _alignYModes;
-
+        private List<Uri> _uris;
 
         public CompositionImageFramePage()
         {
@@ -89,6 +89,16 @@ namespace SampleGallery.Views
             StretchCB.SelectedIndex = -1;
             AlignXCB.SelectedIndex = -1;
             AlignYCB.SelectedIndex = -1;
+
+            _uris = new List<Uri>()
+            {
+                new Uri($"ms-appx:///Assets/Images/Image3.jpg"),
+                new Uri($"ms-appx:///Assets/Images/Image2.jpg"),
+                new Uri($"ms-appx:///Assets/Images/Image1.jpg"),
+                new Uri("http://umad.com/img/2015/6/black-and-white-cat-wallpaper-5494-5772-hd-wallpapers.jpg"),
+                new Uri("http://66.media.tumblr.com/eb82497094c835e10f0a5e1b31263b01/tumblr_mtumx7AxJh1rwsyzqo1_1280.png"),
+                new Uri("http://www.repairerdrivennews.com/wp-content/uploads/2016/04/tesla-model-3-provided-2016-2-1.png")
+            };
         }
 
         private async void OnImageOpened(object sender, RoutedEventArgs e)
@@ -109,9 +119,9 @@ namespace SampleGallery.Views
 
         private void OnImageSelected(object sender, SelectionChangedEventArgs e)
         {
-            var index = (sender as ComboBox).SelectedIndex + 1;
+            var index = (sender as ComboBox).SelectedIndex;
 
-            ImageFrame.Source = new Uri($"ms-appx:///Assets/Images/Image{index}.jpg");
+            ImageFrame.Source = _uris[index];
         }
 
         private void OnStretchChanged(object sender, SelectionChangedEventArgs e)

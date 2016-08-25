@@ -34,17 +34,20 @@
                     
                     HorizontalAlignment="Center">
             <TextBlock VerticalAlignment="Center"
-                       Margin="10"
+                       Margin="50,-2-30,10"
                        Foreground="Black"
                        Text="CornerRadius"></TextBlock>
-            <Slider Width="300"
+            <Slider Width="200"
                     VerticalAlignment="Center"
                     Minimum="0"
                     Maximum="150"
                     Foreground="Black"
                     Background="Black"
                     ValueChanged="OnCornerRadiusChanged"
-                    Margin="20,0"></Slider>
+                    Margin="50,0,-30,0"></Slider>
+            <ToggleSwitch  Margin="50,0,0,0"
+                           Foreground="Black"
+                           IsOn="{Binding ElementName=ImageFrame, Path=ShowPlaceholder, Mode=TwoWay}">Placeholder</ToggleSwitch>
             <ToggleSwitch  Margin="50,0,0,0"
                            Foreground="Black"
                            IsOn="{Binding ElementName=ImageFrame, Path=DisplayShadow, Mode=TwoWay}">Shadow</ToggleSwitch>

@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.2
+// CompositionProToolkit v0.4.3
 // 
 
 using Windows.UI;
@@ -110,7 +110,11 @@ namespace CompositionProToolkit
         /// <param name="stretch">Stretch mode</param>
         /// <param name="alignX">Horizontal Alignment</param>
         /// <param name="alignY">Vertical Alignment</param>
-        public static void UpdateSurfaceBrushOptions(this CompositionSurfaceBrush surfaceBrush, Stretch stretch, AlignmentX alignX, AlignmentY alignY)
+        /// <param name="alignXAnimation">The animation to use to update the horizontal alignment of the surface brush</param>
+        /// <param name="alignYAnimation">The animation to use to update the vertical alignment of the surface brush</param>
+        public static void UpdateSurfaceBrushOptions(this CompositionSurfaceBrush surfaceBrush, Stretch stretch, 
+            AlignmentX alignX, AlignmentY alignY, ScalarKeyFrameAnimation alignXAnimation = null,
+            ScalarKeyFrameAnimation alignYAnimation = null)
         {
             // Stretch Mode
             switch (stretch)
@@ -130,31 +134,57 @@ namespace CompositionProToolkit
             }
 
             // Horizontal Alignment
+            var finalAlignX = surfaceBrush.HorizontalAlignmentRatio;
             switch (alignX)
             {
                 case AlignmentX.Left:
-                    surfaceBrush.HorizontalAlignmentRatio = 0;
+                    finalAlignX = 0;
                     break;
                 case AlignmentX.Center:
-                    surfaceBrush.HorizontalAlignmentRatio = 0.5f;
+                    finalAlignX = 0.5f;
                     break;
                 case AlignmentX.Right:
-                    surfaceBrush.HorizontalAlignmentRatio = 1;
+                    finalAlignX = 1;
                     break;
             }
 
+            // If animation is available, animate to the new value
+            // otherwise set it explicitly
+            if (alignXAnimation == null)
+            {
+                surfaceBrush.HorizontalAlignmentRatio = finalAlignX;
+            }
+            else
+            {
+                alignXAnimation.InsertKeyFrame(1f, finalAlignX);
+                surfaceBrush.StartAnimation("HorizontalAlignmentRatio", alignXAnimation);
+            }
+
             // Vertical Alignment
+            var finalAlignY = surfaceBrush.VerticalAlignmentRatio;
             switch (alignY)
             {
                 case AlignmentY.Top:
-                    surfaceBrush.VerticalAlignmentRatio = 0;
+                    finalAlignY = 0;
                     break;
                 case AlignmentY.Center:
-                    surfaceBrush.VerticalAlignmentRatio = 0.5f;
+                    finalAlignY = 0.5f;
                     break;
                 case AlignmentY.Bottom:
-                    surfaceBrush.VerticalAlignmentRatio = 1;
+                    finalAlignY = 1;
                     break;
+            }
+
+            // If animation is available, animate to the new value
+            // otherwise set it explicitly
+            if (alignYAnimation == null)
+            {
+                surfaceBrush.VerticalAlignmentRatio = finalAlignY;
+            }
+            else
+            {
+                alignYAnimation.InsertKeyFrame(1f, finalAlignY);
+                surfaceBrush.StartAnimation("VerticalAlignmentRatio", alignYAnimation);
             }
         }
     }

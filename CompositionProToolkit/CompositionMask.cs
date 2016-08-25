@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.2
+// CompositionProToolkit v0.4.3
 // 
 
 using System;
@@ -145,6 +145,32 @@ namespace CompositionProToolkit
         {
             // Set the new geometry
             _geometry = geometry;
+            // Redraw the mask surface
+            RedrawSurfaceInternal();
+        }
+
+        /// <summary>
+        /// Redraws the Mask surface by filling the existing geometry with
+        /// the new color.
+        /// </summary>
+        /// <param name="color">Color with which the mask geometry is to be filled</param>
+        public void Redraw(Color color)
+        {
+            // Set the brush
+            _brush = new CanvasSolidColorBrush(_generator.Device, color);
+            // Redraw the mask surface
+            RedrawSurfaceInternal();
+        }
+
+        /// <summary>
+        /// Redraws the Mask surface by filling the existing geometry with
+        /// the new brush.
+        /// </summary>
+        /// <param name="brush">Brush with which the mask geometry is to be filled</param>
+        public void Redraw(ICanvasBrush brush)
+        {
+            // Set the brush
+            _brush = brush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Redraw the mask surface
             RedrawSurfaceInternal();
         }

@@ -24,11 +24,12 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.2
+// CompositionProToolkit v0.4.3
 // 
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -43,6 +44,7 @@ using CompositionExpressionToolkit;
 using CompositionProToolkit.Common;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.Graphics.Canvas.Geometry;
 
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 
@@ -85,6 +87,17 @@ namespace CompositionProToolkit.Controls
     /// </summary>
     public sealed class CompositionImageFrame : Control
     {
+        #region Enums
+
+        private enum ImageEngineState
+        {
+            Idle = 0,
+            Loading = 1,
+            Scheduled = 2
+        }
+
+        #endregion
+
         #region Events and Delegates
 
         /// <summary>
@@ -100,8 +113,10 @@ namespace CompositionProToolkit.Controls
 
         #region Constants
 
-        public static TimeSpan MinimumTransitionDuration = TimeSpan.FromMilliseconds(1);
-        public static TimeSpan DefaultTransitionDuration = TimeSpan.FromMilliseconds(700);
+        private static TimeSpan MinimumTransitionDuration = TimeSpan.FromMilliseconds(1);
+        private static TimeSpan DefaultTransitionDuration = TimeSpan.FromMilliseconds(700);
+        private static TimeSpan AlignmentTransitionDuration = TimeSpan.FromMilliseconds(500);
+        private static readonly Size PlaceholderSize = new Size(48, 48);
 
         #endregion
 
@@ -112,10 +127,14 @@ namespace CompositionProToolkit.Controls
         private ICompositionSurfaceImage _surfaceImage;
         private ICompositionSurfaceImage _nextSurfaceImage;
         private ICompositionMask _frameLayerMask;
+        private ICompositionMask _placeholderMask;
+        private CompositionSurfaceBrush _placeholderContentBrush;
+        private CompositionSurfaceBrush _nextSurfaceBrush;
         private ContainerVisual _rootContainer;
         private SpriteVisual _shadowVisual;
         private LayerVisual _frameLayer;
         private SpriteVisual _frameBackgroundVisual;
+        private SpriteVisual _placeholderVisual;
         private SpriteVisual _frameContentVisual;
         private SpriteVisual _nextVisualContent;
         private DropShadow _shadow;
@@ -124,6 +143,11 @@ namespace CompositionProToolkit.Controls
         private ScalarKeyFrameAnimation _fadeOutAnimation;
         private ScalarKeyFrameAnimation _fadeInAnimation;
         private ColorKeyFrameAnimation _colorAnimation;
+        private ScalarKeyFrameAnimation _alignXAnimation;
+        private ScalarKeyFrameAnimation _alignYAnimation;
+
+        private ImageEngineState _engineState;
+        private Uri _scheduledUri;
 
         #endregion
 
@@ -370,6 +394,88 @@ namespace CompositionProToolkit.Controls
         /// Provides the class instance an opportunity to handle changes to the Interpolation property.
         /// </summary>
         private void OnInterpolationChanged()
+        {
+            // Refresh Layout
+            InvalidateArrange();
+        }
+
+        #endregion
+
+        #region PlaceholderColor
+
+        /// <summary>
+        /// PlaceholderColor Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty PlaceholderColorProperty =
+            DependencyProperty.Register("PlaceholderColor", typeof(Color), typeof(CompositionImageFrame),
+                new PropertyMetadata(Color.FromArgb(255, 192, 192, 192), OnPlaceholderColorChanged));
+
+        /// <summary>
+        /// Gets or sets the PlaceholderColor property. This dependency property 
+        /// indicates the color with which the rendered placeholder geometry should be filled.
+        /// </summary>
+        public Color PlaceholderColor
+        {
+            get { return (Color)GetValue(PlaceholderColorProperty); }
+            set { SetValue(PlaceholderColorProperty, value); }
+        }
+
+        /// <summary>
+        /// Handles changes to the PlaceholderColor property.
+        /// </summary>
+        /// <param name="d">CompositionImageFrame</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnPlaceholderColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var frame = (CompositionImageFrame)d;
+            frame.OnPlaceholderColorChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the PlaceholderColor property.
+        /// </summary>
+        private void OnPlaceholderColorChanged()
+        {
+            // Refresh Layout
+            InvalidateArrange();
+        }
+
+        #endregion
+
+        #region PlaceholderBackground
+
+        /// <summary>
+        /// PlaceholderBackground Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty PlaceholderBackgroundProperty =
+            DependencyProperty.Register("PlaceholderBackground", typeof(Color), typeof(CompositionImageFrame),
+                new PropertyMetadata(Colors.Black, OnPlaceholderBackgroundChanged));
+
+        /// <summary>
+        /// Gets or sets the PlaceholderBackground property. This dependency property 
+        /// indicates the background color of the Placeholder.
+        /// </summary>
+        public Color PlaceholderBackground
+        {
+            get { return (Color)GetValue(PlaceholderBackgroundProperty); }
+            set { SetValue(PlaceholderBackgroundProperty, value); }
+        }
+
+        /// <summary>
+        /// Handles changes to the PlaceholderBackground property.
+        /// </summary>
+        /// <param name="d">CompositionImageFrame</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnPlaceholderBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var frame = (CompositionImageFrame)d;
+            frame.OnPlaceholderBackgroundChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the PlaceholderBackground property.
+        /// </summary>
+        private void OnPlaceholderBackgroundChanged()
         {
             // Refresh Layout
             InvalidateArrange();
@@ -661,7 +767,49 @@ namespace CompositionProToolkit.Controls
         }
 
         #endregion
-        
+
+        #region ShowPlaceholder
+
+        /// <summary>
+        /// ShowPlaceholder Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty ShowPlaceholderProperty =
+            DependencyProperty.Register("ShowPlaceholder", typeof(bool), typeof(CompositionImageFrame),
+                new PropertyMetadata(false, OnShowPlaceholderChanged));
+
+        /// <summary>
+        /// Gets or sets the ShowPlaceholder property. This dependency property 
+        /// indicates whether the placeholder needs to be displayed during image load or
+        /// when no image is loaded in the CompositionImageFrame.
+        /// </summary>
+        public bool ShowPlaceholder
+        {
+            get { return (bool)GetValue(ShowPlaceholderProperty); }
+            set { SetValue(ShowPlaceholderProperty, value); }
+        }
+
+        /// <summary>
+        /// Handles changes to the ShowPlaceholder property.
+        /// </summary>
+        /// <param name="d">CompositionImageFrame</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnShowPlaceholderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var frame = (CompositionImageFrame)d;
+            frame.OnShowPlaceholderChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the ShowPlaceholder property.
+        /// </summary>
+        private void OnShowPlaceholderChanged()
+        {
+            // Refresh Layout
+            InvalidateArrange();
+        }
+
+        #endregion
+
         #region Source
 
         /// <summary>
@@ -812,6 +960,48 @@ namespace CompositionProToolkit.Controls
 
         #endregion
 
+        #region UseImageCache
+
+        /// <summary>
+        /// UseImageCache Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty UseImageCacheProperty =
+            DependencyProperty.Register("UseImageCache", typeof(bool), typeof(CompositionImageFrame),
+                new PropertyMetadata(true, OnUseImageCacheChanged));
+
+        /// <summary>
+        /// Gets or sets the UseImageCache property. This dependency property 
+        /// indicates whether the images obtained by loading the Uris should be cached
+        /// for faster reload.
+        /// </summary>
+        public bool UseImageCache
+        {
+            get { return (bool)GetValue(UseImageCacheProperty); }
+            set { SetValue(UseImageCacheProperty, value); }
+        }
+
+        /// <summary>
+        /// Handles changes to the UseImageCache property.
+        /// </summary>
+        /// <param name="d">CompositionImageFrame</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnUseImageCacheChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var frame = (CompositionImageFrame)d;
+            frame.OnUseImageCacheChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the UseImageCache property.
+        /// </summary>
+        private void OnUseImageCacheChanged()
+        {
+            // Refresh Layout
+            InvalidateArrange();
+        }
+
+        #endregion
+
         #endregion
 
         #region Construction / Initialization
@@ -879,7 +1069,10 @@ namespace CompositionProToolkit.Controls
             _frameLayer.Size = frameSize;
             _frameBackgroundVisual.Size = frameSize;
             _frameContentVisual.Size = frameSize;
+            _placeholderVisual.Size = frameSize;
+            _placeholderVisual.Children.ElementAt(0).Size = frameSize;
             _shadowVisual.Size = frameSize;
+            _nextVisualContent.Size = frameSize;
             _rootContainer.Offset = new Vector3(left, top, 0);
 
             // Update the frameLayerMask in case the CornerRadius or 
@@ -905,6 +1098,31 @@ namespace CompositionProToolkit.Controls
                 }
             }
 
+            // If the PlaceholderBackground has changed since the last time it was
+            // applied to the placeholderVisual, then update the brush's
+            // color to the new color.
+            brush = _placeholderVisual.Brush as CompositionColorBrush;
+            if (brush != null)
+            {
+                if (!brush.Color.Equals(PlaceholderBackground))
+                {
+                    brush.Color = PlaceholderBackground;
+                }
+            }
+
+            // Redraw the placeholder content with the latest placeholder color
+            _placeholderMask.Redraw(PlaceholderColor);
+
+            // Set the stretch property of placeholder content's brush according to its size
+            if ((width > PlaceholderSize.Width) && (height > PlaceholderSize.Height))
+            {
+                _placeholderContentBrush.Stretch = CompositionStretch.None;
+            }
+            else
+            {
+                _placeholderContentBrush.Stretch = CompositionStretch.Uniform;
+            }
+
             // Update the imageOptions
             _imageOptions.Interpolation = Interpolation;
             _imageOptions.SurfaceBackgroundColor = Colors.Transparent;
@@ -914,7 +1132,7 @@ namespace CompositionProToolkit.Controls
             if (Source != null)
             {
                 // Load/Refresh the image
-                LoadImage();
+                PreloadImage();
             }
             else
             {
@@ -934,12 +1152,16 @@ namespace CompositionProToolkit.Controls
                             // Dispose the surfaceImage
                             _surfaceImage.Dispose();
                             _surfaceImage = null;
+                            DisplayPlaceHolder();
+                            _engineState = ImageEngineState.Idle;
                         });
                 }
                 else
                 {
                     // Make the frameVisualContent transparent
                     _frameContentVisual.Brush = _compositor.CreateColorBrush(Colors.Transparent);
+                    DisplayPlaceHolder();
+                    _engineState = ImageEngineState.Idle;
                 }
             }
 
@@ -995,11 +1217,26 @@ namespace CompositionProToolkit.Controls
             // Visuals
             _rootContainer = _compositor.CreateContainerVisual();
             _frameLayer = _compositor.CreateLayerVisual();
-            _frameContentVisual = _compositor.CreateSpriteVisual();
             _frameBackgroundVisual = _compositor.CreateSpriteVisual();
+            _frameContentVisual = _compositor.CreateSpriteVisual();
+            _placeholderVisual = _compositor.CreateSpriteVisual();
+            _nextVisualContent = _compositor.CreateSpriteVisual();
 
             _frameLayer.Children.InsertAtBottom(_frameBackgroundVisual);
             _frameLayer.Children.InsertAtTop(_frameContentVisual);
+            _frameLayer.Children.InsertAtTop(_placeholderVisual);
+            _frameLayer.Children.InsertAtTop(_nextVisualContent);
+
+            // Placeholder content
+            _placeholderMask = _generator.CreateMask(PlaceholderSize, GetPlaceHolderGeometry(), PlaceholderColor);
+            _placeholderContentBrush = _compositor.CreateSurfaceBrush(_placeholderMask.Surface);
+            _placeholderVisual.Brush = _compositor.CreateColorBrush(PlaceholderBackground);
+            var placeholderContent = _compositor.CreateSpriteVisual();
+            placeholderContent.Brush = _placeholderContentBrush;
+            _placeholderVisual.Children.InsertAtTop(placeholderContent);
+
+            // By default placeholder visual will not be visible
+            _placeholderVisual.Opacity = 0;
 
             // Shadow visual
             _shadowVisual = _compositor.CreateSpriteVisual();
@@ -1032,16 +1269,106 @@ namespace CompositionProToolkit.Controls
             // Apply the mask effect to the frameLayer
             _frameLayer.Effect = _layerEffectBrush;
 
+            // Alignment animations
+            _alignXAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            _alignXAnimation.Duration = AlignmentTransitionDuration;
+
+            _alignYAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            _alignYAnimation.Duration = AlignmentTransitionDuration;
+
             ElementCompositionPreview.SetElementChildVisual(this, _rootContainer);
         }
 
         /// <summary>
-        /// Loads the image from the Uri specified in the Source property
+        /// Creates the geometry for the placeholder
         /// </summary>
-        private async void LoadImage()
+        /// <param name="progress">Progress percentage</param>
+        /// <returns>CanvasGeometry</returns>
+        private CanvasGeometry GetPlaceHolderGeometry(int progress = -1)
         {
-            // Load the image
-            await LoadImageAsync(Source, _frameLayer.Size.ToSize());
+            using (var pathBuilder = new CanvasPathBuilder(_generator.Device))
+            using (var pathBuilder2 = new CanvasPathBuilder(_generator.Device))
+            {
+                pathBuilder.BeginFigure(33.690f, 18.000f);
+                pathBuilder.AddLine(30.082f, 22.793f);
+                pathBuilder.AddLine(39.174f, 39.616f);
+                pathBuilder.AddLine(28.297f, 25.166f);
+                pathBuilder.AddLine(17.250f, 10.490f);
+                pathBuilder.AddLine(3.750f, 27.596f);
+                pathBuilder.AddLine(3.750f, 3.750f);
+                pathBuilder.AddLine(44.250f, 3.750f);
+                pathBuilder.AddLine(44.250f, 30.523f);
+                pathBuilder.AddLine(33.690f, 18.000f);
+                pathBuilder.EndFigure(CanvasFigureLoop.Closed);
+
+                pathBuilder2.BeginFigure(0.000f, 0.000f);
+                pathBuilder2.AddLine(0.000f, 32.348f);
+                pathBuilder2.AddLine(0.000f, 48.000f);
+                pathBuilder2.AddLine(0.000f, 48.000f);
+                pathBuilder2.AddLine(48.000f, 48.000f);
+                pathBuilder2.AddLine(48.000f, 48.000f);
+                pathBuilder2.AddLine(48.000f, 34.971f);
+                pathBuilder2.AddLine(48.000f, 0.000f);
+                pathBuilder2.AddLine(0.000f, 0.000f);
+                pathBuilder2.EndFigure(CanvasFigureLoop.Closed);
+                using (var geom1 = CanvasGeometry.CreatePath(pathBuilder))
+                using (var geom2 = CanvasGeometry.CreatePath(pathBuilder2))
+                {
+                    var geom3 = geom2.CombineWith(geom1, Matrix3x2.Identity, CanvasGeometryCombine.Exclude);
+                    if ((progress < 0) || (progress >= 100))
+                    {
+                        // No need to display the progress
+                        return geom3;
+                    }
+                    else
+                    {
+                        // Create the progress geometry
+                        using (var geom4 = CanvasGeometry.CreateRectangle(_generator.Device, 2, 40, 44, 6))
+                        {
+                            var geom5 = geom3.CombineWith(geom4, Matrix3x2.Identity, CanvasGeometryCombine.Exclude);
+                            var width = progress * 0.40f;
+                            using (var geom6 = CanvasGeometry.CreateRectangle(_generator.Device, 4, 42, width, 2))
+                            {
+                                return geom5.CombineWith(geom6, Matrix3x2.Identity, CanvasGeometryCombine.Union);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Updates the Placeholder geometry in the PlaceholderMask
+        /// based on the progress value.
+        /// </summary>
+        /// <param name="progress">Progress value</param>
+        private void ProgressHandler(int progress)
+        {
+            if (ShowPlaceholder)
+            {
+                _placeholderMask.Redraw(GetPlaceHolderGeometry(progress));
+            }
+        }
+
+        /// <summary>
+        /// Updates the state of the the ImageLoadEngine before loading an image
+        /// </summary>
+        private async void PreloadImage()
+        {
+            _scheduledUri = Source;
+            switch (_engineState)
+            {
+                case ImageEngineState.Idle:
+                    _engineState = ImageEngineState.Loading;
+                    // Load the image
+                    await LoadImageAsync(_scheduledUri, _frameLayer.Size.ToSize());
+                    break;
+                case ImageEngineState.Loading:
+                    _engineState = ImageEngineState.Scheduled;
+                    break;
+                case ImageEngineState.Scheduled:
+                    break;
+            }
         }
 
         /// <summary>
@@ -1055,15 +1382,49 @@ namespace CompositionProToolkit.Controls
             try
             {
                 bool raiseEvent;
-                // Does the CompositionImageFrame contain no previously
-                // rendered image?
+                // Does the CompositionImageFrame contain no previously rendered image?
                 if (_surfaceImage == null)
                 {
                     // Since a new Uri is being loaded, ImageOpened event
                     // must be raised on successful load 
                     raiseEvent = true;
+                    // Show the placeholder, if required
+                    DisplayPlaceHolder();
                     // Create the surfaceImage
-                    _surfaceImage = await _generator.CreateSurfaceImageAsync(uri, size, _imageOptions);
+                    bool loadNextScheduledUri;
+
+                    do
+                    {
+                        var cachedUri = UseImageCache ? await ImageCache.GetCachedUriAsync(uri, ProgressHandler) : uri;
+
+                        if (!UseImageCache)
+                        {
+                            // Report 25% progress, since we are not caching the image
+                            // 25% progress will indicate that the image is being directly loaded
+                            ProgressHandler(25);
+                        }
+
+                        // Load the new uri
+                        _surfaceImage = await _generator.CreateSurfaceImageAsync(cachedUri, size, _imageOptions);
+
+                        // Report 99% progress
+                        ProgressHandler(99);
+
+                        // Since the loading of the uri takes some time, it could be possible
+                        // that a new Uri has been scheduled for load. In that case, discard
+                        // the current Uri and load the scheduled Uri
+                        if (_engineState == ImageEngineState.Scheduled)
+                        {
+                            loadNextScheduledUri = true;
+                            uri = _scheduledUri;
+                            _engineState = ImageEngineState.Loading;
+                        }
+                        else
+                        {
+                            loadNextScheduledUri = false;
+                        }
+                    } while (loadNextScheduledUri);
+
                     // Set initial opacity to 0 so that the contentVisual can be faded in
                     _frameContentVisual.Opacity = 0;
                     // Apply the surfaceBrush to the visual
@@ -1071,13 +1432,22 @@ namespace CompositionProToolkit.Controls
                     // Update the surface brush based on the Stretch and Alignment options
                     surfaceBrush.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY);
                     _frameContentVisual.Brush = surfaceBrush;
+                    // Report 100% progress
+                    ProgressHandler(100);
+                    // Hide the placeholder
+                    _placeholderVisual.Opacity = 0;
                     // Fade in the frameVisualContent
                     _frameContentVisual.StartAnimation(() => _frameContentVisual.Opacity, _fadeInAnimation);
                 }
                 else
                 {
+                    var hashedUri = UseImageCache ? ImageCache.GetHashedUri(uri) : uri;
                     // Check whether the Uri to load is same as the existing image's Uri
-                    if (uri.IsEqualTo(_surfaceImage.Uri))
+                    // NOTE: Checking against both uri and hashedUri because InvalidateArrange is
+                    // called when ShowPlaceholder property changes which triggers a redraw/reload
+                    // of the surface. We do not want to show the placeholder and reload the same
+                    // image on the surface.
+                    if (_surfaceImage.Uri.IsEqualTo(hashedUri) || _surfaceImage.Uri.IsEqualTo(uri))
                     {
                         // Since the Uri has not changed, no need to raise the ImageOpened event
                         // Just resize the surfaceImage with the given imageOptions and
@@ -1085,62 +1455,140 @@ namespace CompositionProToolkit.Controls
                         raiseEvent = false;
                         _surfaceImage.Resize(size, _imageOptions);
                         // Update the surface brush based on the Stretch and Alignment options
-                        (_frameContentVisual.Brush as CompositionSurfaceBrush)?.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY);
+                        (_frameContentVisual.Brush as CompositionSurfaceBrush)?.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY, _alignXAnimation, _alignYAnimation);
                     }
                     else
                     {
                         // Since a different Uri is being loaded, then ImageOpened event
                         // must be raised on successful load
                         raiseEvent = true;
+                        // Show the placeholder, if required
+                        DisplayPlaceHolder();
 
-                        // Create a temporary visual which loads the new Uri
-                        _nextSurfaceImage = await _generator.CreateSurfaceImageAsync(uri, size, _imageOptions);
-                        _nextVisualContent = _compositor.CreateSpriteVisual();
-                        _nextVisualContent.Size = _frameContentVisual.Size;
+                        //// Create a temporary visual which loads the new Uri
                         _nextVisualContent.Opacity = 0;
-                        // Create the surface brush for the next image
-                        var nextSurfaceBrush = _compositor.CreateSurfaceBrush(_nextSurfaceImage.Surface);
-                        // Update the surface brush based on the Stretch and Alignment options
-                        nextSurfaceBrush.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY);
-                        _nextVisualContent.Brush = nextSurfaceBrush;
-                        // Place it at the top of frameVisualContainer's Children
-                        _frameLayer.Children.InsertAtTop(_nextVisualContent);
+                        bool loadNextScheduledUri;
 
-                        // Commence crossfade animation
-                        _compositor.CreateScopedBatch(CompositionBatchTypes.Animation, () => // Action
+                        do
                         {
-                            _frameContentVisual.StartAnimation(() => _frameContentVisual.Opacity, _fadeOutAnimation);
-                            _nextVisualContent.StartAnimation(() => _nextVisualContent.Opacity, _fadeInAnimation);
-                        }, () => // PostAction
-                        {
-                            // Now that the crossfade animation has ended, apply the new brush 
-                            // to the  frameVisualContent
-                            _frameContentVisual.Brush = _nextVisualContent.Brush;
-                            // Discard the old surface image
-                            _surfaceImage.Dispose();
-                            _surfaceImage = _nextSurfaceImage;
-                            // Make the frameVisualContent visible again
-                            _frameContentVisual.Opacity = 1;
-                            // Remove and dispose the temporary visual
-                            _frameLayer.Children.Remove(_nextVisualContent);
-                            _nextVisualContent.Dispose();
-                            _nextSurfaceImage = null;
-                        });
+                            var cachedUri = UseImageCache ? await ImageCache.GetCachedUriAsync(uri, ProgressHandler) : uri;
+
+                            if (!UseImageCache)
+                            {
+                                // Report 25% progress, since we are not caching the image
+                                // 25% progress will indicate that the image is being directly loaded
+                                ProgressHandler(25);
+                            }
+
+                            // Load the new uri
+                            _nextSurfaceImage = await _generator.CreateSurfaceImageAsync(cachedUri, size, _imageOptions);
+
+                            // Report 99% progress
+                            ProgressHandler(99);
+                            
+                            // Since the loading of the uri takes some time, it could be possible
+                            // that a new Uri has been scheduled for load. In that case, discard
+                            // the current Uri and load the scheduled Uri
+                            if (_engineState == ImageEngineState.Scheduled)
+                            {
+                                loadNextScheduledUri = true;
+                                uri = _scheduledUri;
+                                _engineState = ImageEngineState.Loading;
+                            }
+                            else
+                            {
+                                loadNextScheduledUri = false;
+                            }
+                        } while (loadNextScheduledUri);
+
+                        // Create the surface brush for the next image
+                        _nextSurfaceBrush = _compositor.CreateSurfaceBrush(_nextSurfaceImage.Surface);
+                        // Update the surface brush based on the Stretch and Alignment options
+                        _nextSurfaceBrush.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY);
+                        _nextVisualContent.Brush = _nextSurfaceBrush;
+
+                        // Report 100% progress
+                        ProgressHandler(100);
+
+                        _compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
+                            () =>
+                            {
+                                _frameContentVisual.StartAnimation(() => _frameContentVisual.Opacity, _fadeOutAnimation);
+                                _nextVisualContent.StartAnimation(() => _nextVisualContent.Opacity, _fadeInAnimation);
+                            },
+                            () =>
+                            {
+                                // apply the new brush to the frameVisualContent
+                                _frameContentVisual.Brush = _nextSurfaceBrush;
+                                // Update the surface image
+                                _surfaceImage = _nextSurfaceImage;
+                                // Make the frameVisualContent visible again
+                                _frameContentVisual.Opacity = 1;
+                                // Hide the placeholder
+                                _placeholderVisual.Opacity = 0;
+                                // Hide the nextVisualContent
+                                _nextVisualContent.Opacity = 0;
+                            });
                     }
                 }
 
                 if (raiseEvent)
                 {
                     // Notify to subscribers that the image has been successfully loaded
-                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, 
-                        () => { ImageOpened?.Invoke(this, new CompositionImageEventArgs(_surfaceImage.Uri, string.Empty)); });
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                        () =>
+                        {
+                            ImageOpened?.Invoke(this, new CompositionImageEventArgs(_surfaceImage.Uri, string.Empty));
+                        });
                 }
             }
             catch (IOException ex)
             {
                 // Notify to subscribers that loading of the image failed
-                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, 
-                    () => { ImageFailed?.Invoke(this, new CompositionImageEventArgs(uri, ex.ToString())); });
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    () =>
+                    {
+                        ImageFailed?.Invoke(this, new CompositionImageEventArgs(uri, ex.ToString()));
+                    });
+            }
+
+            // Update the engineState after load is completed
+            PostLoadImage();
+        }
+
+        /// <summary>
+        /// Updates the state of the the ImageLoadEngine after loading an image
+        /// </summary>
+        private async void PostLoadImage()
+        {
+            switch (_engineState)
+            {
+                case ImageEngineState.Idle:
+                    // Do Nothing
+                    _scheduledUri = null;
+                    break;
+                case ImageEngineState.Loading:
+                    // Loading is complete. No image pending load.
+                    _engineState = ImageEngineState.Idle;
+                    _scheduledUri = null;
+                    break;
+                case ImageEngineState.Scheduled:
+                    // New image waiting in the pipeline to be rendered.
+                    _engineState = ImageEngineState.Loading;
+                    // Load the image
+                    await LoadImageAsync(_scheduledUri, _frameLayer.Size.ToSize());
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// If ShowPlaceholder option is enabled then displays the placeholder
+        /// </summary>
+        private void DisplayPlaceHolder()
+        {
+            if (ShowPlaceholder)
+            {
+                _placeholderVisual.Opacity = 1;
             }
         }
 
