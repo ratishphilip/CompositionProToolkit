@@ -1,21 +1,24 @@
 <img src="https://cloud.githubusercontent.com/assets/7021835/16889814/1784ed78-4a9e-11e6-80d0-7c2084d6c960.png" alt="CompositionProToolkit"></img>
 
->  IMPORTANT: **CompositionProToolkit has undergone some breaking API changes in v0.4.2. Look [here](https://wpfspark.wordpress.com/2016/08/18/compositionprotoolkit-v0-4-2-released/) for more details.**
+>  IMPORTANT: **CompositionProToolkit has undergone some breaking API changes in v0.4.4. Look [here](https://wpfspark.wordpress.com/2016/08/18/compositionprotoolkit-v0-4-2-released/) for more details.**
 
 
 # Table of Contents
 
 - [Installing from NuGet](#installing-from-nuget)
 - [CompositionProToolkit Internals](#compositionprotoolkit-internals)
-  - [Creating custom shaped `Visual` using `CanvasGeometry`](#1-creating-custom-shaped-visual-using-canvasgeometry)
-  - [Creating Masked Backdrop Brush using `ICompositionMask`](#2-creating-masked-backdrop-brush-using-icompositionmask)
-  - [Loading Images on Visual using `ICompositionSurfaceImage`](#3-loading-images-on-visual-using-icompositionsurfaceimage)
-  - [Creating the Reflection of a `ContainerVisual`](#4-creating-the-reflection-of-a-containervisual)
+  - [Rendering Surfaces](#1-rendering-surfaces) 
+  - [Creating custom shaped `Visual` using `CanvasGeometry`](#2-creating-custom-shaped-visual-using-canvasgeometry)
+    - [Using IMaskSurface](#using-imasksurface)
+    - [Using IGeometrySurface](#using-igeometrysurface)
+ - [Creating Masked Backdrop Brush using `IMaskSurface`](#3-creating-masked-backdrop-brush-using-imasksurface)
+  - [Loading Images on Visual using `IImageSurface`](#4-loading-images-on-visual-using-iimagesurface)
+  - [Creating the Reflection of a `ContainerVisual`](#5-creating-the-reflection-of-a-containervisual)
 - [CompositionProToolkit Controls](#compositionprotoolkit-controls)
   - [FluidProgressRing](#1-fluidprogressring)
   - [FluidWrapPanel](#2-fluidwrappanel)
-  - [CompositionImageFrame](#3-compositionimageframe)
-    - [Using CompositionImageFrame with FilePicker](#using-compositionimageframe-with-filepicker)   
+  - [ImageFrame](#3-imageframe)
+    - [Using ImageFrame with FilePicker](#using-imageframe-with-filepicker)   
   - [FluidBanner](#4-fluidbanner)
 - [Updates Chronology](#updates-chronology)
 
@@ -33,10 +36,22 @@ More details available [here](https://www.nuget.org/packages/CompositionProToolk
 
 # CompositionProToolkit Internals
 
-## 1. Creating custom shaped `Visual` using `CanvasGeometry`
+## 1. Rendering Surfaces
+**CompositionProToolkit** provides three types of rendering surface interfaces which can be used for creating mask, rendering custom shapes and images.
+
+- _**IRenderSurface**_ - This interface acts as the base interface for interfaces which render to the **ICompositionSurface**. It mainly contains references to an **ICompositionGenerator** object and an **ICompositionSurface** object which are the core objects required for rendering any geometry or image onto a **ICompositionSurface**.
+- _**IMaskSurface**_ - This interface is used for rendering custom shaped geometries onto **ICompositionSurface** so that they can be useds as masks on Composition Visuals.
+- _**IGeometrySurface**_ - This interface is used for rendering custom shaped geometries onto **ICompositionSurface**.
+- _**IImageSurface**_ - This interface is used for rendering images onto **ICompositionSurface**.
+
+**IMaskSurface**, **IGeometrySurface** and **IImageSurface** derive from **IRenderSurface**. Here is the interface hierarchy
+
+<img src="https://cloud.githubusercontent.com/assets/7021835/18028363/a51f2d6a-6c31-11e6-9bcf-fe96d1ca93b6.png">
+
+## 2. Creating custom shaped `Visual` using `CanvasGeometry`
 As of now, you can customize the shape of Visuals by applying a mask on the Visual. The mask is defined using a **CompositionMaskBrush**. In the **CompositionMaskBrush** the `Mask` is defined by a **CompositionSurfaceBrush**. Into the **CompositionSurfaceBrush** an image, which defines the mask, is loaded. In this image, the areas which are to masked in the Visual are transparent whereas the areas to be shown in the Visual are white.  
 
-Using **CompositionProToolkit** you can now define a mask for the **Visual** using **Win2D**'s **CanvasGeometry**. It provides two interfaces **ICompositionMask** and **ICompositionGenerator** and a static class **CompositionGeneratorFactory** which provides an object implementing the **ICompositionGenerator**. There are two APIS to obtain the **CompositionGenerator** - by providing a **Compositor** or by providing a **CompositionGraphicDevice**.
+Using **CompositionProToolkit** you can now define a mask for the **Visual** using **Win2D**'s **CanvasGeometry**. First you need an object implementing the **ICompositionGenerator** interface. It can be obtained by the static class **CompositionGeneratorFactory**. There are two APIS to obtain the **CompositionGenerator** - by providing a **Compositor** or by providing a **CompositionGraphicDevice**.
 
 ```C#
 public static ICompositionGenerator GetCompositionGenerator(Compositor compositor,
@@ -47,19 +62,18 @@ The first API also has couple of **optional** parameters
 - **useSharedCanvasDevice** - indicates whether the **CompositionGenerator** should use a shared **CanvasDevice** or creates a new one.
 - **useSoftwareRenderer** - this parameter is provided as a argument when creating a new **CanvasDevice** (i.e. when **usedSharedCanvasDevice** is **false**).
 
-Using the **ICompositionGenerator** an object implementing the **ICompositionMask** can be created. This object represents the mask that needs to be applied to the Visual using a **CompositionMaskBrush**.
+### Using `IMaskSurface`
+Using the **ICompositionGenerator** an object implementing the **IMaskSurface** can be created. This object represents the mask that needs to be applied to the Visual using a **CompositionMaskBrush**.
 
-The following APIs are provided in **ICompositionGenerator** to create a **ICompositionMask**
+The following API is provided in **ICompositionGenerator** to create a **IMaskSurface**
 
 ```C#
-ICompositionMask CreateMask(Size size, CanvasGeometry geometry);
-ICompositionMask CreateMask(Size size, CanvasGeometry geometry, ICanvasBrush brush);
-ICompositionMask CreateMask(Size size, CanvasGeometry geometry, Color color);
+ICompositionMask CreateMaskSurface(Size size, CanvasGeometry geometry);
 ```
 
-In the first API, the provided geometry is filled with **White** color, whereas in the second API it is filled with the given color. The third API allows you to specify the **ICanvasBrush** derivative (like **CanvasImageBrush**, **CanvasLinearGradientBrush**, **CanvasRadialGradientBrush** and **CanvasSolidColorBrush**) which will be used to fill the geometry.
+In this API, the provided geometry is filled with **White** color.
 
-### Example
+#### Example
 
 The following code
 
@@ -77,11 +91,11 @@ var ellipse1 = CanvasGeometry.CreateEllipse(generator.Device, 200, 200, 150, 75)
 var ellipse2 = CanvasGeometry.CreateEllipse(generator.Device, 200, 200, 75, 150);
 var combinedGeometry = ellipse1.CombineWith(ellipse2, Matrix3x2.Identity, CanvasGeometryCombine.Union);
 
-// Create the CompositionMask
-ICompositionMask compositionMask = generator.CreateMask(visual.Size.ToSize(), combinedGeometry);
+// Create the MaskSurface
+IMaskSurface maskSurface = generator.CreateMask(visual.Size.ToSize(), combinedGeometry);
 
-// Create SurfaceBrush from CompositionMask
-var mask = compositor.CreateSurfaceBrush(compositionMask.Surface);
+// Create SurfaceBrush from MaskSurface
+var mask = compositor.CreateSurfaceBrush(maskSurface.Surface);
 var source = compositor.CreateColorBrush(Colors.Blue);
 
 // Create mask brush
@@ -96,7 +110,34 @@ creates the following output.
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/15728977/0f9f397a-2815-11e6-9df2-65b9ad1f5e9f.PNG" />
 
-You can also provide a fill color while creating a **ICompositionMask**. You can then use this **ICompositionMask** to create a **CompositionSurfaceBrush** which will achieve the same result. The previous example can also be written as
+**IMaskSurface** provides the following APIs which allow you to update its geometry and size (and thus the shape of the Visual).
+```C#
+void Redraw();
+void Redraw(CanvasGeometry geometry);
+void Redraw(Size size, CanvasGeometry geometry);
+void Resize(Size size);
+```
+
+### Using `IGeometrySurface`
+If you want to render CanvasGeometry with a fill color and a background color, you have to use the **ICompositionGenerator** to create an object implementing the **IGeometrySurface**.
+
+The following API is provided in **ICompositionGenerator** to create a **IGeometrySurface**
+
+```C#
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, 
+    Color foregroundColor);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, 
+    Color foregroundColor, Color backgroundColor);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, 
+    ICanvasBrush foregroundBrush);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, 
+    ICanvasBrush foregroundBrush, ICanvasBrush backgroundBrush);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, 
+    ICanvasBrush foregroundBrush, Color backgroundColor);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, 
+    Color foregroundColor, ICanvasBrush backgroundBrush);
+```
+The previous example can also be written as
 
 ```C#
 // Get the Generator
@@ -113,26 +154,37 @@ var ellipse2 = CanvasGeometry.CreateEllipse(generator.Device, 200, 200, 75, 150)
 var combinedGeometry = ellipse1.CombineWith(ellipse2, Matrix3x2.Identity, CanvasGeometryCombine.Union);
 
 // Create the CompositionMask
-ICompositionMask compositionMask = 
-                  generator.CreateMask(visual.Size.ToSize(), combinedGeometry, Colors.Blue);
+IGeometrySurface geometrySurface = 
+                  generator.CreateGeometrySurface(visual.Size.ToSize(), combinedGeometry, Colors.Blue);
 
-// Create SurfaceBrush from CompositionMask
-var surfaceBrush = compositor.CreateSurfaceBrush(compositionMask.Surface);
+// Create SurfaceBrush from GeometrySurface
+var surfaceBrush = compositor.CreateSurfaceBrush(geometrySurface.Surface);
 
 visual.Brush = surfaceBrush;
 ```
 
-
-**ICompositionMask** provides several overloaded **Redraw** APIs which allow you to update the geometry, size and fill of the mask (and thus the shape of the Visual).
+**IGeometrySurface** provides several APIs which allow you to update its geometry, size, fill and background (and thus the shape of the Visual).
 
 ```C#
 void Redraw();
-void Redraw(ICanvasBrush brush);
-void Redraw(Color color);
-void Redraw(Geometry.CanvasGeometry geometry);
-void Redraw(Size size, Geometry.CanvasGeometry geometry);
-void Redraw(Size size, Geometry.CanvasGeometry geometry, ICanvasBrush brush);
-void Redraw(Size size, Geometry.CanvasGeometry geometry, Color color);
+void Redraw(CanvasGeometry geometry);
+void Redraw(Color foregroundColor);
+void Redraw(Color foregroundColor, Color backgroundColor);
+void Redraw(ICanvasBrush foregroundBrush);
+void Redraw(ICanvasBrush foregroundBrush, ICanvasBrush backgroundBrush);
+void Redraw(Color foregroundColor, ICanvasBrush backgroundBrush);
+void Redraw(ICanvasBrush foregroundBrush, Color backgroundColor);
+void Redraw(Size size, CanvasGeometry geometry);
+void Redraw(Size size, CanvasGeometry geometry, Color foregroundColor);
+void Redraw(Size size, CanvasGeometry geometry, Color foregroundColor, 
+    Color backgroundColor);
+void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush);
+void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush,
+    ICanvasBrush backgroundBrush);
+void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush,
+    Color backgroundColor);
+void Redraw(Size size, CanvasGeometry geometry, Color foregroundColor, 
+    ICanvasBrush backgroundBrush);
 void Resize(Size size);
 ```
 
@@ -150,17 +202,17 @@ private async void AnimatedCanvasCtrl_OnDraw(ICanvasAnimatedControl sender, Canv
                                 CanvasGeometryCombine.Exclude);
         
     // Update the geometry in the Composition Mask
-    animatedCompositionMask.Redraw(updatedGeometry);
+    animatedGeometrySurface.Redraw(updatedGeometry);
 }
 ```
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/15728986/1baeab9c-2815-11e6-8e93-846b70a2a3ea.gif" />
 
-## 2. Creating Masked Backdrop Brush using `ICompositionMask`
+## 2. Creating Masked Backdrop Brush using `IMaskSurface`
 **CompositionProToolkit** now provides the following extension method for **Compositor** to create a masked Backdrop brush.
 
 ```C#
-public static CompositionEffectBrush CreateMaskedBackdropBrush(this Compositor compositor, ICompositionMask mask,
+public static CompositionEffectBrush CreateMaskedBackdropBrush(this Compositor compositor, IMaskSurface mask,
             Color blendColor, float blurAmount, CompositionBackdropBrush backdropBrush = null)
 ```  
 
@@ -170,34 +222,34 @@ Using this method, you can apply a BackdropBrush with a custom shape to a visual
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/16091854/562d255c-32ea-11e6-8952-424a513741ea.gif" />
 
-## 3. Loading Images on Visual using `ICompositionSurfaceImage`
-**ICompositionSurfaceImage** is an interface which encapsulates a **CompositionDrawingSurface** onto which an image can be loaded by providing a **Uri**. You can then use the **CompositionDrawingSurface** to create a **CompositionSurfaceBrush** which can be applied to any **Visual**.
+## 3. Loading Images on Visual using `IImageSurface`
+**IImageSurface** is an interface which encapsulates a **CompositionDrawingSurface** onto which an image can be loaded by providing a **Uri**. You can then use the **CompositionDrawingSurface** to create a **CompositionSurfaceBrush** which can be applied to any **Visual**.
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/17491822/0f3c390a-5d5e-11e6-89de-772c786fb2e2.png" />
 
-**ICompositionGenerator** provides the following API which allows you to create a **CompositionSurfaceImage**
+**ICompositionGenerator** provides the following API which allows you to create an object implementing the **IImageSurface**
 
 ```C#
-Task<ICompositionSurfaceImage> CreateSurfaceImageAsync(Uri uri, Size size, 
-    CompositionSurfaceImageOptions options);
+Task<IImageSurface> CreateImageSurfaceAsync(Uri uri, Size size, 
+    ImageSurfaceOptions options);
 ```
 
-This API requires the **Uri** of the image to be loaded, the **size** of the CompositionDrawingSurface (_usually the same size as the **Visual** on which it is finally applied_) and the **CompositionSurfaceImageOptions**.
+This API requires the **Uri** of the image to be loaded, the **size** of the CompositionDrawingSurface (_usually the same size as the **Visual** on which it is finally applied_) and the **ImageSurfaceOptions**.
 
-### CompositionSurfaceImageOptions
+### ImageSurfaceOptions
 
-The **CompositionSurfaceImageOptions** class encapsulates a set of properties which influence the rendering of the image on the **CompositionSurfaceImage**. The following table shows the list of these properties.  
+The **ImageSurfaceOptions** class encapsulates a set of properties which influence the rendering of the image on the **ImageSurface**. The following table shows the list of these properties.  
 
 
 | Property | Type | Description | Possible Values |
 |---|---|---|---|
 | **`AutoResize`** | `Boolean` | Specifies whether the surface should resize itself automatically to match the loaded image size. When set to **True**, the Stretch, HorizontalAlignment and VerticalAlignment options are ignored. | **False** |
-| **`HorizontalAlignment`** | `AlignmentX` | Describes how image is positioned horizontally in the **`CompositionSurfaceImage`**. | **`Left`**, **`Center`**, **`Right`** |
-| **`Interpolation`** | `CanvasImageInterpolation` | Specifies the interpolation used to render the image on the **`CompositionSurfaceImage`**.  | **`NearestNeighbor`**, **`Linear`**, **`Cubic`**, **`MultiSampleLinear`**, **`Anisotropic`**, **`HighQualityCubic`** |
+| **`HorizontalAlignment`** | `AlignmentX` | Describes how image is positioned horizontally in the **`ImageSurface`**. | **`Left`**, **`Center`**, **`Right`** |
+| **`Interpolation`** | `CanvasImageInterpolation` | Specifies the interpolation used to render the image on the **`ImageSurface`**.  | **`NearestNeighbor`**, **`Linear`**, **`Cubic`**, **`MultiSampleLinear`**, **`Anisotropic`**, **`HighQualityCubic`** |
 | **`Opacity`** | `float` | Specifies the opacity of the rendered image. | **`0 - 1f`** inclusive |
 | **`Stretch`**| `Stretch` | Describes how image is resized to fill its allocated space. | **`None`**, **`Uniform`**, **`Fill`**, **`UniformToFill`** |
-| **`SurfaceBackgroundColor`** | `Color` | Specifies the color which will be used to fill the **`CompositionSurfaceImage`** before rendering the image. | All possible values that can be created. |
-| **`VerticalAlignment`** | `AlignmentY` | Describes how image is positioned vertically in the **`CompositionSurfaceImage`**. | **`Top`**, **`Center`**, **`Bottom`** |
+| **`SurfaceBackgroundColor`** | `Color` | Specifies the color which will be used to fill the **`ImageSurface`** before rendering the image. | All possible values that can be created. |
+| **`VerticalAlignment`** | `AlignmentY` | Describes how image is positioned vertically in the **`ImageSurface`**. | **`Top`**, **`Center`**, **`Bottom`** |
 
 
 Here is how the image is aligned on the Visual's surface based on the **HorizontalAlignment** and **VerticalAlignment** properties
@@ -217,33 +269,33 @@ var visual = compositor.CreateSpriteVisual();
 visual.Size = new Vector2(this.ActualWidth.Single(), this.ActualHeight.Single());
 visual.Offset = Vector3.Zero;
 
-var options = new CompositionSurfaceImageOptions(Stretch.Uniform, AlignmentX.Center, AlignmentY.Center, 0.9f,
+var options = new ImageSurfaceOptions(Stretch.Uniform, AlignmentX.Center, AlignmentY.Center, 0.9f,
                 CanvasImageInterpolation.Cubic)
     {
         SurfaceBackgroundColor = Colors.Maroon
     };
 
-var surfaceImage =
-    await generator.CreateSurfaceImageAsync(new Uri("ms-appx:///Assets/Images/Image3.jpg"), 
+var imageSurface =
+    await generator.CreateImageSurfaceAsync(new Uri("ms-appx:///Assets/Images/Image3.jpg"), 
         visual.Size.ToSize(), options);
 
-visual.Brush = compositor.CreateSurfaceBrush(surfaceImage.Surface);
+visual.Brush = compositor.CreateSurfaceBrush(imageSurface.Surface);
 ```
 
-Once you create a **CompositionSurfaceBrush** from the **ICompositionSurfaceImage** and apply it to a **Visual**, you can use the following **ICompositionSurfaceImage** APIs to resize, provide a new Uri or change the rendering options
+Once you create a **CompositionSurfaceBrush** from the **IImageSurface** and apply it to a **Visual**, you can use the following **IImageSurface** APIs to resize, provide a new Uri or change the rendering options
 
 ```C#
-Task RedrawAsync();
+void Redraw();
 
-Task Redraw(CompositionSurfaceImageOptions options);
+Task Redraw(ImageSurfaceOptions options);
 
-Task RedrawAsync(Uri uri, CompositionSurfaceImageOptions options);
+Task RedrawAsync(Uri uri, ImageSurfaceOptions options);
 
-Task RedrawAsync(Uri uri, Size size, CompositionSurfaceImageOptions options);
+Task RedrawAsync(Uri uri, Size size, ImageSurfaceOptions options);
 
-Task Resize(Size size);
+void Resize(Size size);
 
-Task Resize(Size size, CompositionSurfaceImageOptions options);
+Task Resize(Size size, ImageSurfaceOptions options);
 ```
 
 Once you call any of the above methods, the Visual's brush is also updated.
@@ -275,7 +327,7 @@ If the visual has multiple other visuals in its visual tree, then the entire vis
 # CompositionProToolkit Controls
 
 ## 1. FluidProgressRing
-**FluidProgressRing** is a concept design for a modern version of the **ProgressRing** control in UWP.The **ProgressRing** control has remained the same since Windows 8 and it is high time it got a refresh. The **FluidProgressRing** consists of a set of small circles (**nodes**) rotating about a common center. Each node rotates until it hits the adjacent node (then it slows down to a stop). The adjacent node then rotates and hits the next node and this process continues. The animations are done using the **Windows.UI.Composition APIs** and provide a smooth look and feel.
+**FluidProgressRing** is a concept design for a modern version of the **ProgressRing** control in UWP. The **ProgressRing** control has remained the same since Windows 8 and it is high time it got a refresh. The **FluidProgressRing** consists of a set of small circles (**nodes**) rotating about a common center. Each node rotates until it hits the adjacent node (then it slows down to a stop). The adjacent node then rotates and hits the next node and this process continues. The animations are done using the **Windows.UI.Composition APIs** and provide a smooth look and feel.
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/16522118/838f2eec-3f50-11e6-825c-20e07300339c.gif" />
 
@@ -316,40 +368,41 @@ Here is a demo of the **FluidWrapPanel** in action
 | **OptimizeChildPlacement** | `Boolean` | Gets or sets the property that indicates whether the placement of the children is optimized. If set to true, the child is placed at the first available position from the beginning of the FluidWrapPanel. If set to false, each child occupies the same (or greater) row and/or column than the previous child. | **True** |
 | **Orientation** | `System.Windows.Controls.Orientation` | Gets or sets the different orientations the FluidWrapPanel can have. _Possible values are **Horizontal** and **Vertical**_. | **Horizontal** | 
 
-## 3. CompositionImageFrame
-**CompositionImageFrame** is a control which can be used for displaying images asynchronously. It encapsulates a **CompositionSurfaceImage** object which is used for loading and rendering the images. It also supports Pointer interactions and raises events accordingly.
+## 3. ImageFrame
+**ImageFrame** is a control which can be used for displaying images asynchronously. It encapsulates a **ImageSurface** object which is used for loading and rendering the images. It also supports Pointer interactions and raises events accordingly.
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/17950778/43912a38-6a12-11e6-8877-7c3bf92da86d.gif" />
 
-In order to configure the rendering of the image, **CompositionImageFrame** has the following properties
+In order to configure the rendering of the image, **ImageFrame** has the following properties
 
 | Dependency Property | Type | Description | Default Value |  
 |----|----|----|----|
-| **`AlignX`** | `AlignmentX` | Specifies how the image is positioned horizontally in the **CompositionImageFrame**. | **AlignmentX.Center** |
-| **`AlignY`** | `AlignmentY` | Specifies how the image is positioned vertically in the **CompositionImageFrame**. | **AlignmentY.Center** |
+| **`AlignX`** | `AlignmentX` | Specifies how the image is positioned horizontally in the **ImageFrame**. | **AlignmentX.Center** |
+| **`AlignY`** | `AlignmentY` | Specifies how the image is positioned vertically in the **ImageFrame**. | **AlignmentY.Center** |
 | **`CornerRadius`** | `CornerRadius` | Indicates the corner radius of the the ImageFrame. The image will be rendered with rounded corners. | **(0, 0, 0, 0)** |
 | **`DisplayShadow`** | `Boolean` | Indicates whether the shadow for this image should be displayed. | **False** |
-| **FrameBackground** | `Color` | Specifies the background color of the **CompositionImageFrame** to fill the area where image is not rendered. | **Colors.Black** |
+| **FrameBackground** | `Color` | Specifies the background color of the **ImageFrame** to fill the area where image is not rendered. | **Colors.Black** |
 | **Interpolation** | `CanvasImageInterpolation` | Specifies the interpolation used for rendering the image. | **HighQualityCubic** |
 | **`PlaceholderBackground`** | Color| Indicates the background color of the Placeholder. | **Colors.Black** |
 | **`PlaceholderColor`** | Color | Indicates the color with which the rendered placeholder geometry should be filled | **RGB(192, 192, 192)** |
-| **`RenderOptimized`** | `Boolean` | Indicates whether optimization must be used to render the image.Set this property to True if the CompositionImageFrame is very small compared to the actual image size. This will optimize memory usage. | **False** |
+| **`RenderFast`** | Boolean| Indicates whether the animations need to be switched off if the ImageFrame is being used in scenarios where it is being rapidly updated with new Source. | **False** |
+| **`RenderOptimized`** | `Boolean` | Indicates whether optimization must be used to render the image.Set this property to True if the ImageFrame is very small compared to the actual image size. This will optimize memory usage. | **False** |
 | **`ShadowBlurRadius`** | `Double` | Specifies the Blur radius of the shadow. | **0.0** |
 | **`ShadowColor`** | `Color` | Specifies the color of the shadow. | **Colors.Transparent** |
 | **`ShadowOffsetX`** | `Double` | Specifies the horizontal offset of the shadow. | **0.0** |
 | **`ShadowOffsetY`** | `Double` | Specifies the vertical offset of the shadow. | **0.0** |
 | **`ShadowOpacity`** | `Double` | Specifies the opacity of the shadow. | **1** |
-| **`ShowPlaceHolder`** | Boolean| Indicates whether the placeholder needs to be displayed during image load or when no image is loaded in the CompositionImageFrame. | **False** |
-| **`Source`** | `Uri` | Specifies the Uri of the image to be loaded into the **CompositionImageFrame**. | **null** |
-| **`Stretch`** | `Stretch` | Specifies how the image is resized to fill its allocated space in the **CompositionImageFrame**. | **Stretch.Uniform** |
+| **`ShowPlaceHolder`** | Boolean| Indicates whether the placeholder needs to be displayed during image load or when no image is loaded in the ImageFrame. | **False** |
+| **`Source`** | `Uri` | Specifies the Uri of the image to be loaded into the **ImageFrame**. | **null** |
+| **`Stretch`** | `Stretch` | Specifies how the image is resized to fill its allocated space in the **ImageFrame**. | **Stretch.Uniform** |
 | **`TransitionDuration`** | `Double` | Indicates the duration of the crossfade animation while transitioning from one image to another. | **700ms** |
 | **`UseImageCache`** | Boolean | Indicates whether the images should be cached before rendering them. | **True** |
 
-**CompositionImageFrame** raises the following events  
+**ImageFrame** raises the following events  
 - **ImageOpened** - when the image has been successfully loaded from the Uri and rendered.
 - **ImageFailed** - when there is an error loading the image from the Uri.
 
-### Using CompositionImageFrame with FilePicker
+### Using ImageFrame with FilePicker
 If you have a **CompostionImageFrame** control in  you application and your want to use the **FilePicker** to select an image file to be displayed on the **CompostionImageFrame**, then you must do the following
 
 ```C#
@@ -362,14 +415,14 @@ picker.FileTypeFilter.Add(".jpg");
 picker.FileTypeFilter.Add(".jpeg");
 picker.FileTypeFilter.Add(".png");
 var file = await picker.PickSingleFileAsync();
-ImageFrame.Source = await ImageCache.GetCachedUriAsync(file);
+imageFrame.Source = await ImageCache.GetCachedUriAsync(file);
 ```
-Since the **CompositionImageFrame**'s **Source** property expects a **Uri**, while the **FilePicker** provides a **StorageFile**. So in order to obtain a **Uri** from the **StorageFile**, you must first cache it using the **ImageCache.GetCachedUriAsync()** method.
+Since the **ImageFrame**'s **Source** property expects a **Uri**, while the **FilePicker** provides a **StorageFile**. So in order to obtain a **Uri** from the **StorageFile**, you must first cache it using the **ImageCache.GetCachedUriAsync()** method.
 
 
 ## 4. FluidBanner
 
-**FluidBanner** control is banner control created using Windows Composition. It allows for displaying multiple images in a unique interactive format.  It internally uses **CompositionSurfaceImage** to host the images. 
+**FluidBanner** control is banner control created using Windows Composition. It allows for displaying multiple images in a unique interactive format.  It internally uses **ImageSurface** to host the images. 
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/17262223/03be56de-558f-11e6-809d-7bc8ae2e2fdd.gif" />
 
@@ -389,17 +442,20 @@ It provides the following properties which can be used to customize the **FluidB
 
 # Updates Chronology
 
-## v0.4.2
-(**Wednesday, August 24, 2016**) - New features in `CompositionImageFrame` - Placeholder, ImageCache, Load progress, animations. Bug fixes.
+## v0.4.4.1
+(**Saturday, August 27, 2016**) - Improved UX in ImageFrame. Bug fixes. Breaking changes - several classes refactored and renamed.
+
+## v0.4.3
+(**Wednesday, August 24, 2016**) - New features in `ImageFrame` - Placeholder, ImageCache, Load progress, animations. Bug fixes.
 
 ## v0.4.2
-(**Thursday, August 18, 2016**) - `FluidBanner` Control Added. CornerRadius and Shadow features added in `CompositionImageFrame`. Major refactoring of code. Breaking changes.
+(**Thursday, August 18, 2016**) - `FluidBanner` Control Added. CornerRadius and Shadow features added in `ImageFrame`. Major refactoring of code. Breaking changes.
 
 ## v0.4.1
-(**Friday, August 12, 2016**) - `CompositionImageFrame` Control added. `CompositionSurfaceImage` and `CompositionMask` optimized. Bug Fixes.
+(**Friday, August 12, 2016**) - `ImageFrame` Control added. `ImageSurface` and `CompositionMask` optimized. Bug Fixes.
 
 ## v0.4.0
-(**Monday, August 8, 2016**) - Added `ICompositionSurfaceImage` interface which allows loading of images on a `Visual` and `CreateReflectionAsync` method which creates the reflection of a `ContainerVisual`.
+(**Monday, August 8, 2016**) - Added `IImageSurface` interface which allows loading of images on a `Visual` and `CreateReflectionAsync` method which creates the reflection of a `ContainerVisual`.
 
 ## v0.3.0
 (**Friday, July 15, 2016**) - Added `FluidWrapPanel` Control. **SampleGallery** added.
@@ -412,5 +468,3 @@ It provides the following properties which can be used to customize the **FluidB
 
 ## v0.1.0
 (**Wednesday, June 1, 2016**) - Initial Version.
-
-
