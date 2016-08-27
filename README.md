@@ -1,6 +1,6 @@
 <img src="https://cloud.githubusercontent.com/assets/7021835/16889814/1784ed78-4a9e-11e6-80d0-7c2084d6c960.png" alt="CompositionProToolkit"></img>
 
->  IMPORTANT: **CompositionProToolkit has undergone some breaking API changes in v0.4.4. Look [here](https://wpfspark.wordpress.com/2016/08/18/compositionprotoolkit-v0-4-2-released/) for more details.**
+>  IMPORTANT: **CompositionProToolkit has undergone some breaking API changes in v0.4.4. Look [here](https://wpfspark.wordpress.com/2016/08/27/compositionprotoolkit-v0-4-4-released/) for more details.**
 
 
 # Table of Contents
