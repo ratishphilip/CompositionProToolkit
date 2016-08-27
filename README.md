@@ -208,7 +208,7 @@ private async void AnimatedCanvasCtrl_OnDraw(ICanvasAnimatedControl sender, Canv
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/15728986/1baeab9c-2815-11e6-8e93-846b70a2a3ea.gif" />
 
-## 2. Creating Masked Backdrop Brush using `IMaskSurface`
+## 3. Creating Masked Backdrop Brush using `IMaskSurface`
 **CompositionProToolkit** now provides the following extension method for **Compositor** to create a masked Backdrop brush.
 
 ```C#
@@ -222,7 +222,7 @@ Using this method, you can apply a BackdropBrush with a custom shape to a visual
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/16091854/562d255c-32ea-11e6-8952-424a513741ea.gif" />
 
-## 3. Loading Images on Visual using `IImageSurface`
+## 4. Loading Images on Visual using `IImageSurface`
 **IImageSurface** is an interface which encapsulates a **CompositionDrawingSurface** onto which an image can be loaded by providing a **Uri**. You can then use the **CompositionDrawingSurface** to create a **CompositionSurfaceBrush** which can be applied to any **Visual**.
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/17491822/0f3c390a-5d5e-11e6-89de-772c786fb2e2.png" />
@@ -300,7 +300,7 @@ Task Resize(Size size, ImageSurfaceOptions options);
 
 Once you call any of the above methods, the Visual's brush is also updated.
 
-## 4. Creating the Reflection of a `ContainerVisual`
+## 5. Creating the Reflection of a `ContainerVisual`
 **CompositionProToolkit** provides the following API which allows you to create the reflection of any **ContainerVisual**
 
 ```C#
