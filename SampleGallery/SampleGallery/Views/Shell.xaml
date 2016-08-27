@@ -35,7 +35,7 @@
             </controls:HamburgerButtonInfo>
             <!--  Custom Shape button  -->
             <controls:HamburgerButtonInfo ClearHistory="True"
-                                          PageType="local:CompositionMaskPage">
+                                          PageType="local:MaskSurfacePage">
                 <StackPanel Orientation="Horizontal">
                     <localControls:GlyphIcon Width="48"
                                              Height="48"
@@ -87,7 +87,7 @@
             </controls:HamburgerButtonInfo>
             <!--  Surface Image button  -->
             <controls:HamburgerButtonInfo ClearHistory="True"
-                                          PageType="local:CompositionImageFramePage">
+                                          PageType="local:ImageFramePage">
                 <StackPanel Orientation="Horizontal">
                     <localControls:GlyphIcon Width="48"
                                              Height="48"
@@ -95,7 +95,7 @@
                                              Glyph="{StaticResource SurfaceImage.Glyph}"></localControls:GlyphIcon>
                     <TextBlock Margin="12,0,0,0"
                                VerticalAlignment="Center"
-                               Text="CompositionImageFrame" />
+                               Text="ImageFrame" />
                 </StackPanel>
             </controls:HamburgerButtonInfo>
             <!--  Visual Reflection button  -->

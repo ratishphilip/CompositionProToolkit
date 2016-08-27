@@ -1,4 +1,4 @@
-﻿<Page x:Class="SampleGallery.Views.CompositionImageFramePage"
+﻿<Page x:Class="SampleGallery.Views.ImageFramePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:SampleGallery.Views"
@@ -13,7 +13,7 @@
             <RowDefinition Height="50"></RowDefinition>
             <RowDefinition Height="70"></RowDefinition>
         </Grid.RowDefinitions>
-        <controls:CompositionImageFrame x:Name="ImageFrame"
+        <controls:ImageFrame x:Name="ImageFrame"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
                                         Margin="50,30"
@@ -27,14 +27,14 @@
                                         ShadowOffsetX="10"
                                         ShadowOffsetY="10"
                                         ShadowOpacity="0.65"
-                                        Padding="4"></controls:CompositionImageFrame>
+                                        Padding="4"></controls:ImageFrame>
 
         <StackPanel Orientation="Horizontal"
                     Grid.Row="1"
                     
                     HorizontalAlignment="Center">
             <TextBlock VerticalAlignment="Center"
-                       Margin="50,-2-30,10"
+                       Margin="50,-2,-30,10"
                        Foreground="Black"
                        Text="CornerRadius"></TextBlock>
             <Slider Width="200"

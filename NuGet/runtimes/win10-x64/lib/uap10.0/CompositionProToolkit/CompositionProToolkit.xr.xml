@@ -2,7 +2,7 @@
 <Roots >
   <Roots.RootTypes>
     <RootType FullName="Windows.UI.Xaml.ResourceDictionary" />
-    <RootType FullName="CompositionProToolkit.Controls.CompositionImageFrame" />
+    <RootType FullName="CompositionProToolkit.Controls.ImageFrame" />
     <RootType FullName="Windows.UI.Xaml.Controls.Control">
       <RootProperty Name="Template" />
     </RootType>

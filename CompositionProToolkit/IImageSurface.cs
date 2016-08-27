@@ -24,87 +24,66 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.3
+// CompositionProToolkit v0.4.4
 // 
 
 using System;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.UI.Composition;
 
 namespace CompositionProToolkit
 {
     /// <summary>
-    /// Interface for loading an image onto a ICompositionSurface
+    /// Interface for rendering an image onto a ICompositionSurface
     /// </summary>
-    public interface ICompositionSurfaceImage : IDisposable
+    public interface IImageSurface : IRenderSurface
     {
-        /// <summary>
-        /// SurfaceImage Generator
-        /// </summary>
-        ICompositionGenerator Generator { get; }
+        #region Properties
 
         /// <summary>
-        /// Surface of the SurfaceImage
-        /// </summary>
-        ICompositionSurface Surface { get; }
-
-        /// <summary>
-        /// Uri of the image to be loaded onto the SurfaceImage
+        /// Uri of the image to be loaded onto the ImageSurface
         /// </summary>
         Uri Uri { get; }
-
-        /// <summary>
-        /// SurfaceImage Size
-        /// </summary>
-        Size Size { get; }
-
         /// <summary>
         /// Describes the image's resize and alignment options in the allocated space.
         /// </summary>
-        CompositionSurfaceImageOptions Options{ get; }
+        ImageSurfaceOptions Options { get; }
+
+        #endregion
+
+        #region APIs
 
         /// <summary>
-        /// Redraws the SurfaceImage
-        /// </summary>
-        /// <returns>Task</returns>
-        Task RedrawAsync();
-
-        /// <summary>
-        /// Redraws the SurfaceImage with the given image options
+        /// Redraws the ImageSurface with the given image options
         /// </summary>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
-        void Redraw(CompositionSurfaceImageOptions options);
+        void Redraw(ImageSurfaceOptions options);
 
         /// <summary>
-        /// Redraws the SurfaceImage by loading image from the new Uri
+        /// Redraws the ImageSurface by loading image from the new Uri and applying the image options.
         /// </summary>
         /// <param name="uri">Uri of the image to be loaded on to the image surface.</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <returns>Task</returns>
-        Task RedrawAsync(Uri uri, CompositionSurfaceImageOptions options);
+        Task RedrawAsync(Uri uri, ImageSurfaceOptions options);
 
         /// <summary>
-        /// Resizes the SurfaceImage with the given size and redraws the SurfaceImage by loading 
+        /// Resizes the ImageSurface with the given size and redraws the ImageSurface by loading 
         /// image from the new Uri.
         /// </summary>
-        /// <param name="uri">Uri of the image to be loaded onto the SurfaceImage.</param>
-        /// <param name="size">New size of the SurfaceImage</param>
+        /// <param name="uri">Uri of the image to be loaded onto the ImageSurface.</param>
+        /// <param name="size">New size of the ImageSurface</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <returns>Task</returns>
-        Task RedrawAsync(Uri uri, Size size, CompositionSurfaceImageOptions options);
+        Task RedrawAsync(Uri uri, Size size, ImageSurfaceOptions options);
 
         /// <summary>
-        /// Resizes the SurfaceImage to the new size.
+        /// Resizes the ImageSurface to the new size.
         /// </summary>
-        /// <param name="size">New size of the SurfaceImage</param>
-        void Resize(Size size);
-
-        /// <summary>
-        /// Resizes the SurfaceImage to the new size.
-        /// </summary>
-        /// <param name="size">New size of the SurfaceImage</param>
+        /// <param name="size">New size of the ImageSurface</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
-        void Resize(Size size, CompositionSurfaceImageOptions options);
+        void Resize(Size size, ImageSurfaceOptions options);
+
+        #endregion
     }
 }

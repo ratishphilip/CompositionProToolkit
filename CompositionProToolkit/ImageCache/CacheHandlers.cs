@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.3
+// CompositionProToolkit v0.4.4
 // 
 
 using System;
@@ -74,10 +74,10 @@ namespace CompositionProToolkit
         /// <returns>Uri</returns>
         public Task<Uri> GetCachedUriAsync(Uri uri, string cacheFileName, CacheProgressHandler progressHandler = null)
         {
-            // Caching indicates only half of the task completed i.e. 50% progress,
+            // Caching indicates only 80% of the task completed i.e. 80% progress,
             // Progress will be 100% only when the image is loaded successfully on the 
             // CompositionImageFrame
-            progressHandler?.Invoke(50);
+            progressHandler?.Invoke(80);
             return Task.Run(() => uri);
         }
 
@@ -134,7 +134,7 @@ namespace CompositionProToolkit
                 return null;
 
             // Report Progress
-            progressHandler?.Invoke(-1);
+            progressHandler?.Invoke(0);
 
             // Get the cache file corresponding to the cacheFileName
             var cacheFile = await cacheFolder.TryGetItemAsync(cacheFileName) as StorageFile;
@@ -142,9 +142,6 @@ namespace CompositionProToolkit
             // Has the cache file expired or does it not exist?
             if (await cacheFile.IsNullOrExpired(expirationDate))
             {
-                // Report Progress
-                progressHandler?.Invoke(0);
-
                 // Create/Recreate the cache file
                 cacheFile = await cacheFolder.CreateFileAsync(cacheFileName, CreationCollisionOption.ReplaceExisting);
 
@@ -169,8 +166,13 @@ namespace CompositionProToolkit
                                     var totalContentLength = response.Content.Headers.ContentLength ?? 0UL;
                                     if (totalContentLength <= 0UL)
                                     {
-                                        // Report Progress
-                                        progressHandler?.Invoke(-1);
+                                        //// Report Progress
+                                        //// Since we are not able to obtain the totalContentLength,
+                                        //// we will not be able to calculate the accurate progress
+                                        //// so set a progress of 25% to indicate the at least some
+                                        //// download is in progress
+                                        //progressHandler?.Invoke(25);
+                                        prevProgress = 0;
                                     }
                                     while (true)
                                     {
@@ -189,16 +191,23 @@ namespace CompositionProToolkit
                                         totalBytesRead += buffer.Length;
                                         if (totalContentLength > 0UL)
                                         {
-                                            // We will report a progress percent between 0%-50% because caching represents half
-                                            // the task of displaying the image. The other half requires successful loading 
+                                            // We will report a progress percent between 0%-80% because caching represents 80%
+                                            // of the task of displaying the image. The other 20% requires successful loading 
                                             // of the cached image.
-                                            var progress = (int)Math.Round((totalBytesRead * 50) / (double)totalContentLength);
+                                            var progress =
+                                                (int) Math.Round((totalBytesRead*80)/(double) totalContentLength);
                                             if (progress != prevProgress)
                                             {
                                                 // Report Progress
                                                 progressHandler?.Invoke(progress);
                                                 prevProgress = progress;
                                             }
+                                        }
+                                        else
+                                        {
+                                            prevProgress = Math.Min(prevProgress + 1, 80);
+                                            // Report Progress
+                                            progressHandler?.Invoke(prevProgress);
                                         }
 
                                         // Write to cache file
@@ -226,7 +235,7 @@ namespace CompositionProToolkit
             // Caching indicates only half of the task completed i.e. 50% progress,
             // Progress will be 100% only when the image is loaded successfully on the 
             // CompositionImageFrame
-            progressHandler?.Invoke(50);
+            progressHandler?.Invoke(80);
 
             // Now that we have a valid cached file for the Uri, return the Uri of the cached inputFile
             return new Uri($"ms-appdata:///temp/{ImageCache.CacheFolderName}/{cacheFileName}");
@@ -275,7 +284,7 @@ namespace CompositionProToolkit
                 return null;
 
             // Report Progress
-            progressHandler?.Invoke(-1);
+            progressHandler?.Invoke(0);
 
             // Get the cache file corresponding to the cacheFileName
             var cacheFile = await cacheFolder.TryGetItemAsync(cacheFileName) as StorageFile;
@@ -292,10 +301,10 @@ namespace CompositionProToolkit
                     await inputFile.CopyAsync(cacheFolder, cacheFileName, NameCollisionOption.ReplaceExisting);
 
                     // Report Progress
-                    // Caching indicates only half of the task completed i.e. 50% progress,
+                    // Caching indicates only 80% of the task completed i.e. 80% progress,
                     // Progress will be 100% only when the image is loaded successfully on the 
                     // CompositionImageFrame
-                    progressHandler?.Invoke(50);
+                    progressHandler?.Invoke(80);
                 }
                 catch (Exception)
                 {
@@ -315,7 +324,7 @@ namespace CompositionProToolkit
             }
 
             // Report Progress
-            progressHandler?.Invoke(100);
+            progressHandler?.Invoke(80);
 
             // Now that we have a valid cached file for the Uri, return the Uri of the cached inputFile
             return new Uri($"ms-appdata:///temp/{ImageCache.CacheFolderName}/{cacheFileName}");

@@ -24,12 +24,11 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.3
+// CompositionProToolkit v0.4.4
 // 
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -46,14 +45,12 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Geometry;
 
-// The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
-
 namespace CompositionProToolkit.Controls
 {
     /// <summary>
     /// Event Arguments for the ImageOpened and ImageFailed events
     /// </summary>
-    public class CompositionImageEventArgs : RoutedEventArgs
+    public class ImageFrameEventArgs : RoutedEventArgs
     {
         #region Properties
 
@@ -73,7 +70,7 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         /// <param name="source">Uri of the image</param>
         /// <param name="message">Message</param>
-        public CompositionImageEventArgs(Uri source, string message)
+        public ImageFrameEventArgs(Uri source, string message)
         {
             Source = source;
             Message = message;
@@ -85,7 +82,7 @@ namespace CompositionProToolkit.Controls
     /// <summary>
     /// Control which can be used for displaying images
     /// </summary>
-    public sealed class CompositionImageFrame : Control
+    public sealed class ImageFrame : Control
     {
         #region Enums
 
@@ -113,9 +110,9 @@ namespace CompositionProToolkit.Controls
 
         #region Constants
 
-        private static TimeSpan MinimumTransitionDuration = TimeSpan.FromMilliseconds(1);
-        private static TimeSpan DefaultTransitionDuration = TimeSpan.FromMilliseconds(700);
-        private static TimeSpan AlignmentTransitionDuration = TimeSpan.FromMilliseconds(500);
+        private static readonly TimeSpan MinimumTransitionDuration = TimeSpan.FromMilliseconds(1);
+        private static readonly TimeSpan DefaultTransitionDuration = TimeSpan.FromMilliseconds(700);
+        private static readonly TimeSpan AlignmentTransitionDuration = TimeSpan.FromMilliseconds(500);
         private static readonly Size PlaceholderSize = new Size(48, 48);
 
         #endregion
@@ -124,22 +121,23 @@ namespace CompositionProToolkit.Controls
 
         private Compositor _compositor;
         private ICompositionGenerator _generator;
-        private ICompositionSurfaceImage _surfaceImage;
-        private ICompositionSurfaceImage _nextSurfaceImage;
-        private ICompositionMask _frameLayerMask;
-        private ICompositionMask _placeholderMask;
+        private IImageSurface _imageSurface;
+        private IImageSurface _nextImageSurface;
+        private IMaskSurface _frameLayerMask;
+        private IGeometrySurface _placeholderContentMask;
         private CompositionSurfaceBrush _placeholderContentBrush;
         private CompositionSurfaceBrush _nextSurfaceBrush;
         private ContainerVisual _rootContainer;
         private SpriteVisual _shadowVisual;
         private LayerVisual _frameLayer;
         private SpriteVisual _frameBackgroundVisual;
-        private SpriteVisual _placeholderVisual;
+        private SpriteVisual _placeholderBackgroundVisual;
+        private SpriteVisual _placeholderContentVisual;
         private SpriteVisual _frameContentVisual;
         private SpriteVisual _nextVisualContent;
         private DropShadow _shadow;
         private CompositionEffectBrush _layerEffectBrush;
-        private CompositionSurfaceImageOptions _imageOptions;
+        private ImageSurfaceOptions _imageOptions;
         private ScalarKeyFrameAnimation _fadeOutAnimation;
         private ScalarKeyFrameAnimation _fadeInAnimation;
         private ColorKeyFrameAnimation _colorAnimation;
@@ -159,12 +157,12 @@ namespace CompositionProToolkit.Controls
         /// AlignX Dependency Property
         /// </summary>
         public static readonly DependencyProperty AlignXProperty =
-            DependencyProperty.Register("AlignX", typeof(AlignmentX), typeof(CompositionImageFrame),
+            DependencyProperty.Register("AlignX", typeof(AlignmentX), typeof(ImageFrame),
                 new PropertyMetadata(AlignmentX.Center, OnAlignXChanged));
 
         /// <summary>
         /// Gets or sets the AlignX property. This dependency property 
-        /// indicates how the image is positioned horizontally in the CompositionImageFrame.
+        /// indicates how the image is positioned horizontally in the ImageFrame.
         /// </summary>
         public AlignmentX AlignX
         {
@@ -175,11 +173,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the AlignX property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnAlignXChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnAlignXChanged();
         }
 
@@ -200,12 +198,12 @@ namespace CompositionProToolkit.Controls
         /// AlignY Dependency Property
         /// </summary>
         public static readonly DependencyProperty AlignYProperty =
-            DependencyProperty.Register("AlignY", typeof(AlignmentY), typeof(CompositionImageFrame),
+            DependencyProperty.Register("AlignY", typeof(AlignmentY), typeof(ImageFrame),
                 new PropertyMetadata(AlignmentY.Center, OnAlignYChanged));
 
         /// <summary>
         /// Gets or sets the AlignY property. This dependency property 
-        /// indicates how the image is positioned vertically in the CompositionImageFrame.
+        /// indicates how the image is positioned vertically in the ImageFrame.
         /// </summary>
         public AlignmentY AlignY
         {
@@ -216,11 +214,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the AlignY property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnAlignYChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnAlignYChanged();
         }
 
@@ -241,7 +239,7 @@ namespace CompositionProToolkit.Controls
         /// CornerRadius Dependency Property
         /// </summary>
         public static readonly DependencyProperty CornerRadiusProperty =
-            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(CompositionImageFrame),
+            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(ImageFrame),
                 new PropertyMetadata(new CornerRadius(0.0), OnCornerRadiusChanged));
 
         /// <summary>
@@ -258,11 +256,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the CornerRadius property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnCornerRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnCornerRadiusChanged();
         }
 
@@ -283,7 +281,7 @@ namespace CompositionProToolkit.Controls
         /// DisplayShadow Dependency Property
         /// </summary>
         public static readonly DependencyProperty DisplayShadowProperty =
-            DependencyProperty.Register("DisplayShadow", typeof(bool), typeof(CompositionImageFrame),
+            DependencyProperty.Register("DisplayShadow", typeof(bool), typeof(ImageFrame),
                 new PropertyMetadata(false, OnDisplayShadowChanged));
 
         /// <summary>
@@ -299,11 +297,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the DisplayShadow property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnDisplayShadowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnDisplayShadowChanged();
         }
 
@@ -324,12 +322,12 @@ namespace CompositionProToolkit.Controls
         /// FrameBackground Dependency Property
         /// </summary>
         public static readonly DependencyProperty FrameBackgroundProperty =
-            DependencyProperty.Register("FrameBackground", typeof(Color), typeof(CompositionImageFrame),
+            DependencyProperty.Register("FrameBackground", typeof(Color), typeof(ImageFrame),
                 new PropertyMetadata(Colors.Black, OnFrameBackgroundChanged));
 
         /// <summary>
         /// Gets or sets the FrameBackground property. This dependency property 
-        /// indicates the background color of the CompositionImageFrame to fill the area 
+        /// indicates the background color of the ImageFrame to fill the area 
         /// where image is not rendered.
         /// </summary>
         public Color FrameBackground
@@ -341,11 +339,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the FrameBackground property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnFrameBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnFrameBackgroundChanged();
         }
 
@@ -366,7 +364,7 @@ namespace CompositionProToolkit.Controls
         /// Interpolation Dependency Property
         /// </summary>
         public static readonly DependencyProperty InterpolationProperty =
-            DependencyProperty.Register("Interpolation", typeof(CanvasImageInterpolation), typeof(CompositionImageFrame),
+            DependencyProperty.Register("Interpolation", typeof(CanvasImageInterpolation), typeof(ImageFrame),
                 new PropertyMetadata(CanvasImageInterpolation.HighQualityCubic, OnInterpolationChanged));
 
         /// <summary>
@@ -382,11 +380,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the Interpolation property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnInterpolationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnInterpolationChanged();
         }
 
@@ -407,8 +405,8 @@ namespace CompositionProToolkit.Controls
         /// PlaceholderColor Dependency Property
         /// </summary>
         public static readonly DependencyProperty PlaceholderColorProperty =
-            DependencyProperty.Register("PlaceholderColor", typeof(Color), typeof(CompositionImageFrame),
-                new PropertyMetadata(Color.FromArgb(255, 192, 192, 192), OnPlaceholderColorChanged));
+            DependencyProperty.Register("PlaceholderColor", typeof(Color), typeof(ImageFrame),
+                new PropertyMetadata(Color.FromArgb(255, 224, 224, 224), OnPlaceholderColorChanged));
 
         /// <summary>
         /// Gets or sets the PlaceholderColor property. This dependency property 
@@ -423,11 +421,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the PlaceholderColor property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnPlaceholderColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnPlaceholderColorChanged();
         }
 
@@ -448,7 +446,7 @@ namespace CompositionProToolkit.Controls
         /// PlaceholderBackground Dependency Property
         /// </summary>
         public static readonly DependencyProperty PlaceholderBackgroundProperty =
-            DependencyProperty.Register("PlaceholderBackground", typeof(Color), typeof(CompositionImageFrame),
+            DependencyProperty.Register("PlaceholderBackground", typeof(Color), typeof(ImageFrame),
                 new PropertyMetadata(Colors.Black, OnPlaceholderBackgroundChanged));
 
         /// <summary>
@@ -464,11 +462,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the PlaceholderBackground property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnPlaceholderBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnPlaceholderBackgroundChanged();
         }
 
@@ -483,19 +481,43 @@ namespace CompositionProToolkit.Controls
 
         #endregion
 
+        #region RenderFast
+
+        /// <summary>
+        /// RenderFast Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty RenderFastProperty =
+            DependencyProperty.Register("RenderFast", typeof(bool), typeof(ImageFrame),
+                new PropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets the RenderFast property. This dependency property 
+        /// indicates whether some of the transitions need to be switched off
+        /// if the ImageFrame is being used in scenarios where it is 
+        /// being rapidly updated with new Source (for example - like in a ListBox 
+        /// containing numerous ImageFrames which is being scrolled very fast).
+        /// </summary>
+        public bool RenderFast
+        {
+            get { return (bool)GetValue(RenderFastProperty); }
+            set { SetValue(RenderFastProperty, value); }
+        }
+
+        #endregion
+
         #region RenderOptimized
 
         /// <summary>
         /// RenderOptimized Dependency Property
         /// </summary>
         public static readonly DependencyProperty RenderOptimizedProperty =
-            DependencyProperty.Register("RenderOptimized", typeof(bool), typeof(CompositionImageFrame),
+            DependencyProperty.Register("RenderOptimized", typeof(bool), typeof(ImageFrame),
                 new PropertyMetadata(false, OnRenderOptimizedChanged));
 
         /// <summary>
         /// Gets or sets the RenderOptimized property. This dependency property 
         /// indicates whether optimization must be used to render the image.
-        /// Set this property to True if the CompositionImageFrame is very small
+        /// Set this property to True if the ImageFrame is very small
         /// compared to the actual image size. This will optimize memory usage.
         /// </summary>
         public bool RenderOptimized
@@ -507,11 +529,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the RenderOptimized property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnRenderOptimizedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnRenderOptimizedChanged();
         }
 
@@ -532,12 +554,12 @@ namespace CompositionProToolkit.Controls
         /// ShadowBlurRadius Dependency Property
         /// </summary>
         public static readonly DependencyProperty ShadowBlurRadiusProperty =
-            DependencyProperty.Register("ShadowBlurRadius", typeof(double), typeof(CompositionImageFrame),
+            DependencyProperty.Register("ShadowBlurRadius", typeof(double), typeof(ImageFrame),
                 new PropertyMetadata(0.0, OnShadowBlurRadiusChanged));
 
         /// <summary>
         /// Gets or sets the ShadowBlurRadius property. This dependency property 
-        /// indicates the blur radius of the CompositionImageFrame shadow.
+        /// indicates the blur radius of the ImageFrame shadow.
         /// </summary>
         public double ShadowBlurRadius
         {
@@ -558,11 +580,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the ShadowBlurRadius property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnShadowBlurRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnShadowBlurRadiusChanged();
         }
 
@@ -586,12 +608,12 @@ namespace CompositionProToolkit.Controls
         /// ShadowColor Dependency Property
         /// </summary>
         public static readonly DependencyProperty ShadowColorProperty =
-            DependencyProperty.Register("ShadowColor", typeof(Color), typeof(CompositionImageFrame),
+            DependencyProperty.Register("ShadowColor", typeof(Color), typeof(ImageFrame),
                 new PropertyMetadata(Colors.Transparent, OnShadowColorChanged));
 
         /// <summary>
         /// Gets or sets the ShadowColor property. This dependency property 
-        /// indicates the color of the CompositionImageFrame shadow.
+        /// indicates the color of the ImageFrame shadow.
         /// </summary>
         public Color ShadowColor
         {
@@ -602,11 +624,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the ShadowColor property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnShadowColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnShadowColorChanged();
         }
 
@@ -630,12 +652,12 @@ namespace CompositionProToolkit.Controls
         /// ShadowOffsetX Dependency Property
         /// </summary>
         public static readonly DependencyProperty ShadowOffsetXProperty =
-            DependencyProperty.Register("ShadowOffsetX", typeof(double), typeof(CompositionImageFrame),
+            DependencyProperty.Register("ShadowOffsetX", typeof(double), typeof(ImageFrame),
                 new PropertyMetadata(0.0, OnShadowOffsetXChanged));
 
         /// <summary>
         /// Gets or sets the ShadowOffsetX property. This dependency property 
-        /// indicates the horizontal offset of the CompositionImageFrame shadow.
+        /// indicates the horizontal offset of the ImageFrame shadow.
         /// </summary>
         public double ShadowOffsetX
         {
@@ -646,11 +668,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the ShadowOffsetX property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnShadowOffsetXChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnShadowOffsetXChanged();
         }
 
@@ -674,12 +696,12 @@ namespace CompositionProToolkit.Controls
         /// ShadowOffsetY Dependency Property
         /// </summary>
         public static readonly DependencyProperty ShadowOffsetYProperty =
-            DependencyProperty.Register("ShadowOffsetY", typeof(double), typeof(CompositionImageFrame),
+            DependencyProperty.Register("ShadowOffsetY", typeof(double), typeof(ImageFrame),
                 new PropertyMetadata(0.0, OnShadowOffsetYChanged));
 
         /// <summary>
         /// Gets or sets the ShadowOffsetY property. This dependency property 
-        /// indicates the vertical offset of the CompositionImageFrame shadow.
+        /// indicates the vertical offset of the ImageFrame shadow.
         /// </summary>
         public double ShadowOffsetY
         {
@@ -690,11 +712,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the ShadowOffsetY property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnShadowOffsetYChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnShadowOffsetYChanged();
         }
 
@@ -718,12 +740,12 @@ namespace CompositionProToolkit.Controls
         /// ShadowOpacity Dependency Property
         /// </summary>
         public static readonly DependencyProperty ShadowOpacityProperty =
-            DependencyProperty.Register("ShadowOpacity", typeof(double), typeof(CompositionImageFrame),
+            DependencyProperty.Register("ShadowOpacity", typeof(double), typeof(ImageFrame),
                 new PropertyMetadata(1.0, OnShadowOpacityChanged));
 
         /// <summary>
         /// Gets or sets the ShadowOpacity property. This dependency property 
-        /// indicates the opacity of the CompositionImageFrame shadow.
+        /// indicates the opacity of the ImageFrame shadow.
         /// </summary>
         public double ShadowOpacity
         {
@@ -746,11 +768,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the ShadowOpacity property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnShadowOpacityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnShadowOpacityChanged();
         }
 
@@ -774,13 +796,13 @@ namespace CompositionProToolkit.Controls
         /// ShowPlaceholder Dependency Property
         /// </summary>
         public static readonly DependencyProperty ShowPlaceholderProperty =
-            DependencyProperty.Register("ShowPlaceholder", typeof(bool), typeof(CompositionImageFrame),
+            DependencyProperty.Register("ShowPlaceholder", typeof(bool), typeof(ImageFrame),
                 new PropertyMetadata(false, OnShowPlaceholderChanged));
 
         /// <summary>
         /// Gets or sets the ShowPlaceholder property. This dependency property 
         /// indicates whether the placeholder needs to be displayed during image load or
-        /// when no image is loaded in the CompositionImageFrame.
+        /// when no image is loaded in the ImageFrame.
         /// </summary>
         public bool ShowPlaceholder
         {
@@ -791,11 +813,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the ShowPlaceholder property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnShowPlaceholderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnShowPlaceholderChanged();
         }
 
@@ -816,12 +838,12 @@ namespace CompositionProToolkit.Controls
         /// Source Dependency Property
         /// </summary>
         public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(Uri), typeof(CompositionImageFrame),
+            DependencyProperty.Register("Source", typeof(Uri), typeof(ImageFrame),
                 new PropertyMetadata(null, OnSourceChanged));
 
         /// <summary>
         /// Gets or sets the Source property. This dependency property 
-        /// indicates the Uri of the image to be loaded into the CompositionImageFrame.
+        /// indicates the Uri of the image to be loaded into the ImageFrame.
         /// </summary>
         public Uri Source
         {
@@ -832,11 +854,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the Source property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var imageFrame = (CompositionImageFrame)d;
+            var imageFrame = (ImageFrame)d;
             imageFrame.OnSourceChanged();
         }
 
@@ -845,8 +867,16 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         private void OnSourceChanged()
         {
-            // Refresh Layout
-            InvalidateArrange();
+            // When the Source value is obtained from a Binding, often this value is set before
+            // the ImageFrame has done its first Layout pass (in that case compositor will
+            // be null). No need to proceed in this scenario. The Source will be scheduled for loading
+            // during the Arrange Pass.
+            if (_compositor == null)
+                return;
+
+            // If the ImageFrame is properly initialized, then we can schedule this Uri
+            // to be loaded next.
+            ScheduleNextLoad();
         }
 
         #endregion
@@ -857,13 +887,13 @@ namespace CompositionProToolkit.Controls
         /// Stretch Dependency Property
         /// </summary>
         public static readonly DependencyProperty StretchProperty =
-            DependencyProperty.Register("Stretch", typeof(Stretch), typeof(CompositionImageFrame),
+            DependencyProperty.Register("Stretch", typeof(Stretch), typeof(ImageFrame),
                 new PropertyMetadata(Stretch.Uniform, OnStretchChanged));
 
         /// <summary>
         /// Gets or sets the Stretch property. This dependency property 
         /// indicates how the image is resized to fill its allocated space 
-        /// in the CompositionImageFrame.
+        /// in the ImageFrame.
         /// </summary>
         public Stretch Stretch
         {
@@ -874,11 +904,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the Stretch property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnStretchChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnStretchChanged();
         }
 
@@ -899,7 +929,7 @@ namespace CompositionProToolkit.Controls
         /// TransitionDuration Dependency Property
         /// </summary>
         public static readonly DependencyProperty TransitionDurationProperty =
-            DependencyProperty.Register("TransitionDuration", typeof(TimeSpan), typeof(CompositionImageFrame),
+            DependencyProperty.Register("TransitionDuration", typeof(TimeSpan), typeof(ImageFrame),
                 new PropertyMetadata(DefaultTransitionDuration, OnTransitionDurationChanged));
 
         /// <summary>
@@ -926,11 +956,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the TransitionDuration property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnTransitionDurationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var target = (CompositionImageFrame)d;
+            var target = (ImageFrame)d;
             var newTransitionDuration = target.TransitionDuration;
             target.OnTransitionDurationChanged(newTransitionDuration);
         }
@@ -966,7 +996,7 @@ namespace CompositionProToolkit.Controls
         /// UseImageCache Dependency Property
         /// </summary>
         public static readonly DependencyProperty UseImageCacheProperty =
-            DependencyProperty.Register("UseImageCache", typeof(bool), typeof(CompositionImageFrame),
+            DependencyProperty.Register("UseImageCache", typeof(bool), typeof(ImageFrame),
                 new PropertyMetadata(true, OnUseImageCacheChanged));
 
         /// <summary>
@@ -983,11 +1013,11 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handles changes to the UseImageCache property.
         /// </summary>
-        /// <param name="d">CompositionImageFrame</param>
+        /// <param name="d">ImageFrame</param>
 		/// <param name="e">DependencyProperty changed event arguments</param>
         private static void OnUseImageCacheChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var frame = (CompositionImageFrame)d;
+            var frame = (ImageFrame)d;
             frame.OnUseImageCacheChanged();
         }
 
@@ -1009,16 +1039,16 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Ctor
         /// </summary>
-        public CompositionImageFrame()
+        public ImageFrame()
         {
             // Set the default Style Key
-            DefaultStyleKey = typeof(CompositionImageFrame);
+            DefaultStyleKey = typeof(ImageFrame);
 
             // Setting the background to transparent so that it will
             // receive Pointer events
             Background = new SolidColorBrush(Colors.Transparent);
             // Initialize the ImageOptions
-            _imageOptions = CompositionSurfaceImageOptions.Default;
+            _imageOptions = ImageSurfaceOptions.Default;
         }
 
         #endregion
@@ -1036,6 +1066,31 @@ namespace CompositionProToolkit.Controls
             if (_compositor == null)
             {
                 InitComposition();
+            }
+
+            var hasInvalidAvailableWidth = Double.IsNaN(availableSize.Width) || Double.IsInfinity(availableSize.Width);
+            var hasInvalidAvailableHeight = Double.IsNaN(availableSize.Height) || Double.IsInfinity(availableSize.Height);
+            var hasInvalidLength = hasInvalidAvailableWidth || hasInvalidAvailableHeight;
+
+            if ((_imageSurface?.Uri != null) && hasInvalidLength)
+            {
+                if ((hasInvalidAvailableWidth && hasInvalidAvailableHeight) || (Stretch == Stretch.None))
+                {
+                    return _imageSurface.Size;
+                }
+
+                if (hasInvalidAvailableWidth)
+                {
+                    var finalHeight = availableSize.Height;
+                    var finalWidth = (_imageSurface.Size.Width * finalHeight) / _imageSurface.Size.Height;
+                    return new Size(finalWidth, finalHeight);
+                }
+                else
+                {
+                    var finalWidth = availableSize.Width;
+                    var finalHeight = (_imageSurface.Size.Height * finalWidth) / _imageSurface.Size.Width;
+                    return new Size(finalWidth, finalHeight);
+                }
             }
 
             return base.MeasureOverride(availableSize);
@@ -1069,8 +1124,8 @@ namespace CompositionProToolkit.Controls
             _frameLayer.Size = frameSize;
             _frameBackgroundVisual.Size = frameSize;
             _frameContentVisual.Size = frameSize;
-            _placeholderVisual.Size = frameSize;
-            _placeholderVisual.Children.ElementAt(0).Size = frameSize;
+            _placeholderContentVisual.Size = frameSize;
+            _placeholderBackgroundVisual.Size = frameSize;
             _shadowVisual.Size = frameSize;
             _nextVisualContent.Size = frameSize;
             _rootContainer.Offset = new Vector3(left, top, 0);
@@ -1093,15 +1148,24 @@ namespace CompositionProToolkit.Controls
             {
                 if (!brush.Color.Equals(FrameBackground))
                 {
-                    _colorAnimation.InsertKeyFrame(1f, FrameBackground);
-                    brush.StartAnimation("Color", _colorAnimation);
+                    // If we are rendering fast, then no need to animate.
+                    // Just set the final value.
+                    if (RenderFast)
+                    {
+                        brush.Color = FrameBackground;
+                    }
+                    else
+                    {
+                        _colorAnimation.InsertKeyFrame(1f, FrameBackground);
+                        brush.StartAnimation("Color", _colorAnimation);
+                    }
                 }
             }
 
             // If the PlaceholderBackground has changed since the last time it was
-            // applied to the placeholderVisual, then update the brush's
+            // applied to the _placeholderBackgroundVisual, then update the brush's
             // color to the new color.
-            brush = _placeholderVisual.Brush as CompositionColorBrush;
+            brush = _placeholderBackgroundVisual.Brush as CompositionColorBrush;
             if (brush != null)
             {
                 if (!brush.Color.Equals(PlaceholderBackground))
@@ -1111,7 +1175,7 @@ namespace CompositionProToolkit.Controls
             }
 
             // Redraw the placeholder content with the latest placeholder color
-            _placeholderMask.Redraw(PlaceholderColor);
+            _placeholderContentMask.Redraw(PlaceholderColor, PlaceholderBackground);
 
             // Set the stretch property of placeholder content's brush according to its size
             if ((width > PlaceholderSize.Width) && (height > PlaceholderSize.Height))
@@ -1128,35 +1192,37 @@ namespace CompositionProToolkit.Controls
             _imageOptions.SurfaceBackgroundColor = Colors.Transparent;
             _imageOptions.AutoResize = !RenderOptimized;
 
-            // If Source is valid then try loading/refreshing the surfaceImage
+            // If Source is valid then try loading/refreshing the ImageSurface
             if (Source != null)
             {
-                // Load/Refresh the image
-                PreloadImage();
+                if (_imageSurface != null)
+                {
+                    // Resize the ImageSurface to the new size
+                    _imageSurface.Resize(frameSize.ToSize(), _imageOptions);
+                    // Update the surface brush based on the Stretch and Alignment options
+                    if (RenderFast)
+                    {
+                        // Use no animations to update alignment if we are rendering fast
+                        (_frameContentVisual.Brush as CompositionSurfaceBrush)?.UpdateSurfaceBrushOptions(Stretch,
+                            AlignX, AlignY);
+                    }
+                    else
+                    {
+                        // Update stretch and alignment using animation
+                        (_frameContentVisual.Brush as CompositionSurfaceBrush)?.UpdateSurfaceBrushOptions(Stretch,
+                            AlignX, AlignY, _alignXAnimation, _alignYAnimation);
+                    }
+                }
+                else
+                {
+                    // Load the Source to the ImageSurface
+                    ScheduleNextLoad();
+                }
             }
             else
             {
                 // If the frameContentVisual had any previous brush, fade it out
-                if (_surfaceImage != null)
-                {
-                    _compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
-                        () =>
-                        {
-                            _frameContentVisual.StartAnimation("Opacity", _fadeOutAnimation);
-                        },
-                        () =>
-                        {
-                            // Make the frameVisualContent transparent
-                            _frameContentVisual.Brush = _compositor.CreateColorBrush(Colors.Transparent);
-                            _frameContentVisual.Opacity = 1;
-                            // Dispose the surfaceImage
-                            _surfaceImage.Dispose();
-                            _surfaceImage = null;
-                            DisplayPlaceHolder();
-                            _engineState = ImageEngineState.Idle;
-                        });
-                }
-                else
+                if (_imageSurface == null)
                 {
                     // Make the frameVisualContent transparent
                     _frameContentVisual.Brush = _compositor.CreateColorBrush(Colors.Transparent);
@@ -1219,24 +1285,26 @@ namespace CompositionProToolkit.Controls
             _frameLayer = _compositor.CreateLayerVisual();
             _frameBackgroundVisual = _compositor.CreateSpriteVisual();
             _frameContentVisual = _compositor.CreateSpriteVisual();
-            _placeholderVisual = _compositor.CreateSpriteVisual();
+            _placeholderContentVisual = _compositor.CreateSpriteVisual();
+            _placeholderBackgroundVisual = _compositor.CreateSpriteVisual();
             _nextVisualContent = _compositor.CreateSpriteVisual();
 
-            _frameLayer.Children.InsertAtBottom(_frameBackgroundVisual);
+            _frameLayer.Children.InsertAtTop(_frameBackgroundVisual);
             _frameLayer.Children.InsertAtTop(_frameContentVisual);
-            _frameLayer.Children.InsertAtTop(_placeholderVisual);
+            _frameLayer.Children.InsertAtTop(_placeholderBackgroundVisual);
+            _frameLayer.Children.InsertAtTop(_placeholderContentVisual);
             _frameLayer.Children.InsertAtTop(_nextVisualContent);
 
             // Placeholder content
-            _placeholderMask = _generator.CreateMask(PlaceholderSize, GetPlaceHolderGeometry(), PlaceholderColor);
-            _placeholderContentBrush = _compositor.CreateSurfaceBrush(_placeholderMask.Surface);
-            _placeholderVisual.Brush = _compositor.CreateColorBrush(PlaceholderBackground);
-            var placeholderContent = _compositor.CreateSpriteVisual();
-            placeholderContent.Brush = _placeholderContentBrush;
-            _placeholderVisual.Children.InsertAtTop(placeholderContent);
+            _placeholderContentMask = _generator.CreateGeometrySurface(PlaceholderSize, GetPlaceHolderGeometry(),
+                PlaceholderColor, PlaceholderBackground);
+            _placeholderContentBrush = _compositor.CreateSurfaceBrush(_placeholderContentMask.Surface);
+            _placeholderContentVisual.Brush = _placeholderContentBrush;
+            // Placeholder background
+            _placeholderBackgroundVisual.Brush = _compositor.CreateColorBrush(PlaceholderBackground);
 
             // By default placeholder visual will not be visible
-            _placeholderVisual.Opacity = 0;
+            HidePlaceholder();
 
             // Shadow visual
             _shadowVisual = _compositor.CreateSpriteVisual();
@@ -1264,7 +1332,7 @@ namespace CompositionProToolkit.Controls
             _layerEffectBrush = layerEffectFactory.CreateBrush();
 
             // The mask for the imageFrame
-            _frameLayerMask = _generator.CreateMask(new Size(0, 0), null);
+            _frameLayerMask = _generator.CreateMaskSurface(new Size(0, 0), null);
             _layerEffectBrush.SetSourceParameter("mask", _compositor.CreateSurfaceBrush(_frameLayerMask.Surface));
             // Apply the mask effect to the frameLayer
             _frameLayer.Effect = _layerEffectBrush;
@@ -1346,14 +1414,14 @@ namespace CompositionProToolkit.Controls
         {
             if (ShowPlaceholder)
             {
-                _placeholderMask.Redraw(GetPlaceHolderGeometry(progress));
+                _placeholderContentMask.Redraw(GetPlaceHolderGeometry(progress));
             }
         }
 
         /// <summary>
         /// Updates the state of the the ImageLoadEngine before loading an image
         /// </summary>
-        private async void PreloadImage()
+        private async void ScheduleNextLoad()
         {
             _scheduledUri = Source;
             switch (_engineState)
@@ -1382,62 +1450,81 @@ namespace CompositionProToolkit.Controls
             try
             {
                 bool raiseEvent;
-                // Does the CompositionImageFrame contain no previously rendered image?
-                if (_surfaceImage == null)
+                // Does the ImageFrame contain no previously rendered image?
+                if (_imageSurface == null)
                 {
                     // Since a new Uri is being loaded, ImageOpened event
                     // must be raised on successful load 
                     raiseEvent = true;
                     // Show the placeholder, if required
                     DisplayPlaceHolder();
-                    // Create the surfaceImage
-                    bool loadNextScheduledUri;
+                    // Create the ImageSurface
+                    var cachedUri = await LoadNextScheduledUri(uri, size, false);
 
-                    do
+                    // A valid Uri is loaded
+                    if ((cachedUri != null) && (_imageSurface != null))
                     {
-                        var cachedUri = UseImageCache ? await ImageCache.GetCachedUriAsync(uri, ProgressHandler) : uri;
-
-                        if (!UseImageCache)
+                        // Set initial opacity to 0 so that the contentVisual can be faded in
+                        _frameContentVisual.Opacity = 0;
+                        // Apply the surfaceBrush to the visual
+                        var surfaceBrush = _compositor.CreateSurfaceBrush(_imageSurface.Surface);
+                        // Update the surface brush based on the Stretch and Alignment options
+                        surfaceBrush.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY);
+                        _frameContentVisual.Brush = surfaceBrush;
+                        // Report 100% progress
+                        ProgressHandler(100);
+                        // Hide the placeholder
+                        HidePlaceholder();
+                        if (RenderFast)
                         {
-                            // Report 25% progress, since we are not caching the image
-                            // 25% progress will indicate that the image is being directly loaded
-                            ProgressHandler(25);
-                        }
-
-                        // Load the new uri
-                        _surfaceImage = await _generator.CreateSurfaceImageAsync(cachedUri, size, _imageOptions);
-
-                        // Report 99% progress
-                        ProgressHandler(99);
-
-                        // Since the loading of the uri takes some time, it could be possible
-                        // that a new Uri has been scheduled for load. In that case, discard
-                        // the current Uri and load the scheduled Uri
-                        if (_engineState == ImageEngineState.Scheduled)
-                        {
-                            loadNextScheduledUri = true;
-                            uri = _scheduledUri;
-                            _engineState = ImageEngineState.Loading;
+                            // No need to fade in the frameVisualContent as we are rendering fast
+                            _frameContentVisual.Opacity = 1;
                         }
                         else
                         {
-                            loadNextScheduledUri = false;
+                            // Fade in the frameVisualContent
+                            _frameContentVisual.StartAnimation(() => _frameContentVisual.Opacity, _fadeInAnimation);
                         }
-                    } while (loadNextScheduledUri);
+                    }
+                    // No Uri is loaded
+                    else
+                    {
+                        // Clear the progress in the Placeholder
+                        ProgressHandler(-1);
 
-                    // Set initial opacity to 0 so that the contentVisual can be faded in
-                    _frameContentVisual.Opacity = 0;
-                    // Apply the surfaceBrush to the visual
-                    var surfaceBrush = _compositor.CreateSurfaceBrush(_surfaceImage.Surface);
-                    // Update the surface brush based on the Stretch and Alignment options
-                    surfaceBrush.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY);
-                    _frameContentVisual.Brush = surfaceBrush;
-                    // Report 100% progress
-                    ProgressHandler(100);
-                    // Hide the placeholder
-                    _placeholderVisual.Opacity = 0;
-                    // Fade in the frameVisualContent
-                    _frameContentVisual.StartAnimation(() => _frameContentVisual.Opacity, _fadeInAnimation);
+                        if (RenderFast)
+                        {
+                            // Make the frameVisualContent transparent
+                            _frameContentVisual.Brush = _compositor.CreateColorBrush(Colors.Transparent);
+                            // Dispose the ImageSurface
+                            _imageSurface?.Dispose();
+                            _imageSurface = null;
+                            //DisplayPlaceHolder();
+                            _engineState = ImageEngineState.Idle;
+                        }
+                        else
+                        {
+                            _compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
+                                () =>
+                                {
+                                    // Fade out the frameVisualContent
+                                    _frameContentVisual.StartAnimation(() => _frameContentVisual.Opacity,
+                                    _fadeOutAnimation);
+                                },
+                                () =>
+                                {
+                                    // Make the frameVisualContent transparent
+                                    _frameContentVisual.Brush = _compositor.CreateColorBrush(Colors.Transparent);
+                                    //await _imageSurface.RedrawAsync(cachedUri, size, _imageOptions);
+                                    _frameContentVisual.Opacity = 1;
+                                    // Dispose the ImageSurface
+                                    _imageSurface?.Dispose();
+                                    _imageSurface = null;
+                                    // Engine is now idle
+                                    _engineState = ImageEngineState.Idle;
+                                });
+                        }
+                    }
                 }
                 else
                 {
@@ -1447,15 +1534,26 @@ namespace CompositionProToolkit.Controls
                     // called when ShowPlaceholder property changes which triggers a redraw/reload
                     // of the surface. We do not want to show the placeholder and reload the same
                     // image on the surface.
-                    if (_surfaceImage.Uri.IsEqualTo(hashedUri) || _surfaceImage.Uri.IsEqualTo(uri))
+                    if (_imageSurface.Uri.IsEqualTo(hashedUri) || _imageSurface.Uri.IsEqualTo(uri))
                     {
                         // Since the Uri has not changed, no need to raise the ImageOpened event
-                        // Just resize the surfaceImage with the given imageOptions and
+                        // Just resize the ImageSurface with the given imageOptions and
                         // update the frameContentVisual's brush
                         raiseEvent = false;
-                        _surfaceImage.Resize(size, _imageOptions);
+                        _imageSurface.Resize(size, _imageOptions);
                         // Update the surface brush based on the Stretch and Alignment options
-                        (_frameContentVisual.Brush as CompositionSurfaceBrush)?.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY, _alignXAnimation, _alignYAnimation);
+                        if (RenderFast)
+                        {
+                            // Use no animations to update alignment if we are rendering fast
+                            (_frameContentVisual.Brush as CompositionSurfaceBrush)?.UpdateSurfaceBrushOptions(Stretch,
+                                AlignX, AlignY);
+                        }
+                        else
+                        {
+                            // Update stretch and alignment using animation
+                            (_frameContentVisual.Brush as CompositionSurfaceBrush)?.UpdateSurfaceBrushOptions(Stretch,
+                                AlignX, AlignY, _alignXAnimation, _alignYAnimation);
+                        }
                     }
                     else
                     {
@@ -1465,70 +1563,92 @@ namespace CompositionProToolkit.Controls
                         // Show the placeholder, if required
                         DisplayPlaceHolder();
 
-                        //// Create a temporary visual which loads the new Uri
+                        // Create a temporary visual which loads the new Uri
                         _nextVisualContent.Opacity = 0;
-                        bool loadNextScheduledUri;
+                        // Load the uri scheduled for load
+                        var cachedUri = await LoadNextScheduledUri(uri, size, true);
 
-                        do
+                        // A valid Uri is loaded
+                        if (cachedUri != null)
                         {
-                            var cachedUri = UseImageCache ? await ImageCache.GetCachedUriAsync(uri, ProgressHandler) : uri;
+                            // Create the surface brush for the next image
+                            _nextSurfaceBrush = _compositor.CreateSurfaceBrush(_nextImageSurface.Surface);
+                            // Update the surface brush based on the Stretch and Alignment options
+                            _nextSurfaceBrush.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY);
+                            _nextVisualContent.Brush = _nextSurfaceBrush;
 
-                            if (!UseImageCache)
+                            // Report 100% progress
+                            ProgressHandler(100);
+
+                            _compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
+                                () =>
+                                {
+                                    // If we are rendering fast, then no need to animate.
+                                    // Just set the final value.
+                                    if (RenderFast)
+                                    {
+                                        _frameContentVisual.Opacity = 0;
+                                        _nextVisualContent.Opacity = 1;
+                                    }
+                                    else
+                                    {
+                                        _frameContentVisual.StartAnimation(() => _frameContentVisual.Opacity, _fadeOutAnimation);
+                                        _nextVisualContent.StartAnimation(() => _nextVisualContent.Opacity, _fadeInAnimation);
+                                    }
+                                },
+                                () =>
+                                {
+                                    // apply the new brush to the frameVisualContent
+                                    _frameContentVisual.Brush = _nextSurfaceBrush;
+                                    // Update the surface image
+                                    _imageSurface = _nextImageSurface;
+                                    // Make the frameVisualContent visible again
+                                    _frameContentVisual.Opacity = 1;
+                                    // Hide the placeholder
+                                    HidePlaceholder();
+                                    // Hide the nextVisualContent
+                                    _nextVisualContent.Opacity = 0;
+                                });
+                        }
+                        // No Uri is loaded
+                        else
+                        {
+                            // Clear the progress in the Placeholder
+                            ProgressHandler(-1);
+
+                            if (RenderFast)
                             {
-                                // Report 25% progress, since we are not caching the image
-                                // 25% progress will indicate that the image is being directly loaded
-                                ProgressHandler(25);
-                            }
-
-                            // Load the new uri
-                            _nextSurfaceImage = await _generator.CreateSurfaceImageAsync(cachedUri, size, _imageOptions);
-
-                            // Report 99% progress
-                            ProgressHandler(99);
-                            
-                            // Since the loading of the uri takes some time, it could be possible
-                            // that a new Uri has been scheduled for load. In that case, discard
-                            // the current Uri and load the scheduled Uri
-                            if (_engineState == ImageEngineState.Scheduled)
-                            {
-                                loadNextScheduledUri = true;
-                                uri = _scheduledUri;
-                                _engineState = ImageEngineState.Loading;
+                                // Make the frameVisualContent transparent
+                                _frameContentVisual.Brush = _compositor.CreateColorBrush(Colors.Transparent);
+                                // Dispose the ImageSurface
+                                _imageSurface.Dispose();
+                                _imageSurface = null;
+                                // Engine is now idle
+                                _engineState = ImageEngineState.Idle;
                             }
                             else
                             {
-                                loadNextScheduledUri = false;
+                                _compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
+                                    () =>
+                                    {
+                                        // Fade out the frameVisualContent
+                                        _frameContentVisual.StartAnimation(() => _frameContentVisual.Opacity,
+                                            _fadeOutAnimation);
+                                    },
+                                    () =>
+                                    {
+                                        // Make the frameVisualContent transparent
+                                        _frameContentVisual.Brush = _compositor.CreateColorBrush(Colors.Transparent);
+                                        //await _imageSurface.RedrawAsync(cachedUri, size, _imageOptions);
+                                        _frameContentVisual.Opacity = 1;
+                                        // Dispose the ImageSurface
+                                        _imageSurface.Dispose();
+                                        _imageSurface = null;
+                                        //DisplayPlaceHolder();
+                                        _engineState = ImageEngineState.Idle;
+                                    });
                             }
-                        } while (loadNextScheduledUri);
-
-                        // Create the surface brush for the next image
-                        _nextSurfaceBrush = _compositor.CreateSurfaceBrush(_nextSurfaceImage.Surface);
-                        // Update the surface brush based on the Stretch and Alignment options
-                        _nextSurfaceBrush.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY);
-                        _nextVisualContent.Brush = _nextSurfaceBrush;
-
-                        // Report 100% progress
-                        ProgressHandler(100);
-
-                        _compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
-                            () =>
-                            {
-                                _frameContentVisual.StartAnimation(() => _frameContentVisual.Opacity, _fadeOutAnimation);
-                                _nextVisualContent.StartAnimation(() => _nextVisualContent.Opacity, _fadeInAnimation);
-                            },
-                            () =>
-                            {
-                                // apply the new brush to the frameVisualContent
-                                _frameContentVisual.Brush = _nextSurfaceBrush;
-                                // Update the surface image
-                                _surfaceImage = _nextSurfaceImage;
-                                // Make the frameVisualContent visible again
-                                _frameContentVisual.Opacity = 1;
-                                // Hide the placeholder
-                                _placeholderVisual.Opacity = 0;
-                                // Hide the nextVisualContent
-                                _nextVisualContent.Opacity = 0;
-                            });
+                        }
                     }
                 }
 
@@ -1538,7 +1658,7 @@ namespace CompositionProToolkit.Controls
                     await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                         () =>
                         {
-                            ImageOpened?.Invoke(this, new CompositionImageEventArgs(_surfaceImage.Uri, string.Empty));
+                            ImageOpened?.Invoke(this, new ImageFrameEventArgs(_imageSurface.Uri, string.Empty));
                         });
                 }
             }
@@ -1548,12 +1668,70 @@ namespace CompositionProToolkit.Controls
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
                     {
-                        ImageFailed?.Invoke(this, new CompositionImageEventArgs(uri, ex.ToString()));
+                        ImageFailed?.Invoke(this, new ImageFrameEventArgs(uri, ex.ToString()));
                     });
             }
 
             // Update the engineState after load is completed
             PostLoadImage();
+        }
+
+        /// <summary>
+        /// Loads the Uri scheduled for load. If after loading there is another
+        /// Uri scheduled it loads that and keeps on repeating this until there
+        /// are no more Uris scheduled for load.
+        /// </summary>
+        /// <param name="uri">Uri scheduled for load</param>
+        /// <param name="size">Size of the ImageSurface</param>
+        /// <param name="isLoadingNext">Whether loading in the imageSurface or the 
+        /// nextImageSurface</param>
+        /// <returns>Uri</returns>
+        private async Task<Uri> LoadNextScheduledUri(Uri uri, Size size, bool isLoadingNext)
+        {
+            bool loadNextScheduledUri;
+            Uri cachedUri;
+
+            do
+            {
+                cachedUri = UseImageCache ? await ImageCache.GetCachedUriAsync(uri, ProgressHandler) : uri;
+
+                if (!UseImageCache)
+                {
+                    // Report 25% progress, since we are not caching the image
+                    // 25% progress will indicate that the image is being directly loaded
+                    ProgressHandler(25);
+                }
+
+                // Load the new uri
+                if (isLoadingNext)
+                {
+                    _nextImageSurface =
+                                    await _generator.CreateImageSurfaceAsync(cachedUri, size, _imageOptions);
+                }
+                else
+                {
+                    _imageSurface = await _generator.CreateImageSurfaceAsync(cachedUri, size, _imageOptions);
+                }
+
+                // Report 99% progress
+                ProgressHandler(99);
+
+                // Since the loading of the uri takes some time, it could be possible
+                // that a new Uri has been scheduled for load. In that case, discard
+                // the current Uri and load the scheduled Uri
+                if (_engineState == ImageEngineState.Scheduled)
+                {
+                    loadNextScheduledUri = true;
+                    uri = _scheduledUri;
+                    _engineState = ImageEngineState.Loading;
+                }
+                else
+                {
+                    loadNextScheduledUri = false;
+                }
+            } while (loadNextScheduledUri);
+
+            return cachedUri;
         }
 
         /// <summary>
@@ -1571,6 +1749,8 @@ namespace CompositionProToolkit.Controls
                     // Loading is complete. No image pending load.
                     _engineState = ImageEngineState.Idle;
                     _scheduledUri = null;
+                    // Now that the load has completed, Invalidate the Measure
+                    InvalidateMeasure();
                     break;
                 case ImageEngineState.Scheduled:
                     // New image waiting in the pipeline to be rendered.
@@ -1586,10 +1766,30 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         private void DisplayPlaceHolder()
         {
-            if (ShowPlaceholder)
+            if (!ShowPlaceholder)
+                return;
+
+            _placeholderContentVisual.Opacity = 1;
+            // If we are rendering fast, then no need to animate 
+            // placeholderBackgroundVisual's Opacity.
+            // Just set the final value.
+            if (RenderFast)
             {
-                _placeholderVisual.Opacity = 1;
+                _placeholderBackgroundVisual.Opacity = 1;
             }
+            else
+            {
+                _placeholderBackgroundVisual.StartAnimation(() => _placeholderBackgroundVisual.Opacity, _fadeInAnimation);
+            }
+        }
+
+        /// <summary>
+        /// Hides the Placeholder
+        /// </summary>
+        private void HidePlaceholder()
+        {
+            _placeholderContentVisual.Opacity = 0;
+            _placeholderBackgroundVisual.Opacity = 0;
         }
 
         #endregion

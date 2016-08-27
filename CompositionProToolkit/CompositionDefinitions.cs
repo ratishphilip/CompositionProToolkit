@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.3
+// CompositionProToolkit v0.4.4
 // 
 
 using Windows.UI;
@@ -47,9 +47,9 @@ namespace CompositionProToolkit
 
     /// <summary>
     /// Class to define the various options that would
-    /// influence the rendering of the image on the CompositionSurfaceImage
+    /// influence the rendering of the image on the ImageSurface
     /// </summary>
-    public class CompositionSurfaceImageOptions
+    public class ImageSurfaceOptions
     {
         #region Properties
 
@@ -65,13 +65,13 @@ namespace CompositionProToolkit
         public Stretch Stretch { get; set; }
         /// <summary>
         /// Describes how image is positioned horizontally in 
-        /// the CompositionSurfaceImage
+        /// the ImageSurface
         /// NOTE: This property is taken into consideration only if AutoResize is False.
         /// </summary>
         public AlignmentX HorizontalAlignment { get; set; }
         /// <summary>
         /// Describes how image is positioned vertically in 
-        /// the CompositionSurfaceImage
+        /// the ImageSurface
         /// NOTE: This property is taken into consideration only if AutoResize is False.
         /// </summary>
         public AlignmentY VerticalAlignment { get; set; }
@@ -94,11 +94,11 @@ namespace CompositionProToolkit
         #region Static Properties
 
         /// <summary>
-        /// Default CompositionSurfaceImageOptions when AutoResize is True
+        /// Default ImageSurfaceOptions when AutoResize is True
         /// Uniform Stretch and Center alignment
         /// </summary>
-        public static CompositionSurfaceImageOptions Default =>
-                    new CompositionSurfaceImageOptions()
+        public static ImageSurfaceOptions Default =>
+                    new ImageSurfaceOptions()
                     {
                         AutoResize = true,
                         Interpolation = CanvasImageInterpolation.HighQualityCubic,
@@ -110,11 +110,11 @@ namespace CompositionProToolkit
                     };
 
         /// <summary>
-        /// Default CompositionSurfaceImageOptions when AutoResize is False
+        /// Default ImageSurfaceOptions when AutoResize is False
         /// Uniform Stretch and Center alignment
         /// </summary>
-        public static CompositionSurfaceImageOptions DefaultOptimized =>
-                    new CompositionSurfaceImageOptions()
+        public static ImageSurfaceOptions DefaultOptimized =>
+                    new ImageSurfaceOptions()
                     {
                         AutoResize = false,
                         Interpolation = CanvasImageInterpolation.HighQualityCubic,

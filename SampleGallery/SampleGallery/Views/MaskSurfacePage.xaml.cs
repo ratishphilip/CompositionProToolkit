@@ -1,24 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using CompositionExpressionToolkit;
 using CompositionProToolkit;
-using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 
@@ -27,11 +15,11 @@ namespace SampleGallery.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class CompositionMaskPage : Page
+    public sealed partial class MaskSurfacePage : Page
     {
         private Compositor _compositor;
         private ICompositionGenerator _generator;
-        private ICompositionMask _animatedCompositionMask;
+        private IGeometrySurface _animatedMaskSurface;
         private CanvasGeometry _outerGeometry;
         private CanvasGeometry _combinedGeometry;
         private float _angle;
@@ -43,11 +31,11 @@ namespace SampleGallery.Views
         private SpriteVisual _bgVisual;
         private SpriteVisual _animatedVisual;
 
-        public CompositionMaskPage()
+        public MaskSurfacePage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             _angle = 0f;
-            this.Loaded += OnLoaded;
+            Loaded += OnLoaded;
             SizeChanged += OnSizeChanged;
         }
 
@@ -76,7 +64,7 @@ namespace SampleGallery.Views
             _visual1.Children.InsertAtTop(visualChild);
 
             // Create the CompositionMask
-            var compositionMask = _generator.CreateMask(_visual1.Size.ToSize(), _combinedGeometry);
+            var compositionMask = _generator.CreateMaskSurface(_visual1.Size.ToSize(), _combinedGeometry);
             // Create SurfaceBrush from CompositionMask
             var mask = _compositor.CreateSurfaceBrush(compositionMask.Surface);
             var source = _compositor.CreateColorBrush(Color.FromArgb(255, 0, 173, 239));
@@ -96,7 +84,7 @@ namespace SampleGallery.Views
 
             // Create the CompositionMask filled with color
             var compositionMask2 =
-                _generator.CreateMask(_visual2.Size.ToSize(), _combinedGeometry, Color.FromArgb(192, 192, 0, 0));
+                _generator.CreateGeometrySurface(_visual2.Size.ToSize(), _combinedGeometry, Color.FromArgb(192, 192, 0, 0));
             // Create SurfaceBrush from CompositionMask
             var surfaceBrush = _compositor.CreateSurfaceBrush(compositionMask2.Surface);
             _visual2.Brush = surfaceBrush;
@@ -116,7 +104,7 @@ namespace SampleGallery.Views
 
             var radians = ((45f*Math.PI)/180).Single();
             var bgGeometry = _combinedGeometry.Transform(Matrix3x2.CreateRotation(radians, new Vector2(_width/2, _height/2)));
-            var bgMask = _generator.CreateMask(_bgVisual.Size.ToSize(), bgGeometry, Color.FromArgb(255, 0, 173, 239));
+            var bgMask = _generator.CreateGeometrySurface(_bgVisual.Size.ToSize(), bgGeometry, Color.FromArgb(255, 0, 173, 239));
             var bgBrush = _compositor.CreateSurfaceBrush(bgMask.Surface);
             _bgVisual.Brush = bgBrush;
 
@@ -131,8 +119,8 @@ namespace SampleGallery.Views
             _outerGeometry = CanvasGeometry.CreateRectangle(_generator.Device, 0, 0, _width, _height);
             var excludedGeometry = _outerGeometry.CombineWith(_combinedGeometry, Matrix3x2.Identity, CanvasGeometryCombine.Exclude);
             // Create the CompositionMask
-            _animatedCompositionMask = _generator.CreateMask(_animatedVisual.Size.ToSize(), excludedGeometry, Color.FromArgb(192, 192, 0, 0));
-            var animBrush = _compositor.CreateSurfaceBrush(_animatedCompositionMask.Surface);
+            _animatedMaskSurface = _generator.CreateGeometrySurface(_animatedVisual.Size.ToSize(), excludedGeometry, Color.FromArgb(192, 192, 0, 0));
+            var animBrush = _compositor.CreateSurfaceBrush(_animatedMaskSurface.Surface);
             _animatedVisual.Brush = animBrush;
 
             container.Children.InsertAtTop(_animatedVisual);
@@ -142,7 +130,7 @@ namespace SampleGallery.Views
 
         private void AnimatedCanvasCtrl_OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
-            if (_animatedCompositionMask == null)
+            if (_animatedMaskSurface == null)
                 return;
 
             _angle = (float)((_angle + 1) % 360);
@@ -152,7 +140,7 @@ namespace SampleGallery.Views
                                                              Matrix3x2.CreateRotation(radians, new Vector2(_width / 2, _height / 2)),
                                                              CanvasGeometryCombine.Exclude);
             // Update the geometry in the Composition Mask
-            _animatedCompositionMask.Redraw(updatedGeometry);
+            _animatedMaskSurface.Redraw(updatedGeometry);
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)

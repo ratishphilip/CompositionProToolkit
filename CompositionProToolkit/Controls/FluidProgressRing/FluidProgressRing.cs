@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.3
+// CompositionProToolkit v0.4.4
 // 
 
 using System;
@@ -56,7 +56,7 @@ namespace CompositionProToolkit.Controls
 
         private readonly Compositor _compositor;
         private readonly ICompositionGenerator _generator;
-        private ICompositionMask _nodeMask;
+        private IGeometrySurface _nodeMask;
         private ContainerVisual _container;
 
         private Vector2 _ringSize;
@@ -471,7 +471,7 @@ namespace CompositionProToolkit.Controls
             {
                 //Task.Run(async () =>
                 //        {
-                            _nodeMask = _generator.CreateMask(_nodeSize.ToSize(), geometry, color);
+                            _nodeMask = _generator.CreateGeometrySurface(_nodeSize.ToSize(), geometry, color);
                     //    })
                     //.Wait();
             }

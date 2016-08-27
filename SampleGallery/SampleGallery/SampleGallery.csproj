@@ -108,11 +108,11 @@
     <Compile Include="Views\BusyControl.xaml.cs">
       <DependentUpon>BusyControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CompositionImageFramePage.xaml.cs">
-      <DependentUpon>CompositionImageFramePage.xaml</DependentUpon>
+    <Compile Include="Views\ImageFramePage.xaml.cs">
+      <DependentUpon>ImageFramePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CompositionMaskPage.xaml.cs">
-      <DependentUpon>CompositionMaskPage.xaml</DependentUpon>
+    <Compile Include="Views\MaskSurfacePage.xaml.cs">
+      <DependentUpon>MaskSurfacePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FluidBannerPage.xaml.cs">
       <DependentUpon>FluidBannerPage.xaml</DependentUpon>
@@ -189,11 +189,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CompositionImageFramePage.xaml">
+    <Page Include="Views\ImageFramePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CompositionMaskPage.xaml">
+    <Page Include="Views\MaskSurfacePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

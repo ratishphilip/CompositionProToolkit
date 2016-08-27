@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.3
+// CompositionProToolkit v0.4.4
 // 
 
 using System;
@@ -105,7 +105,7 @@ namespace CompositionProToolkit
             _disposingLock = new object();
 
             // Canvas Device
-            _canvasDevice = useSharedCanvasDevice ? 
+            _canvasDevice = useSharedCanvasDevice ?
                 CanvasDevice.GetSharedDevice() : new CanvasDevice(useSoftwareRenderer);
             _isCanvasDeviceCreator = !useSharedCanvasDevice;
 
@@ -150,31 +150,119 @@ namespace CompositionProToolkit
         #region APIs
 
         /// <summary>
-        /// Creates a CompositionMask having the given size and geometry
+        /// Creates a MaskSurface having the given size and geometry with MaskMode as True.
+        /// The geometry is filled with white color. The surface not covered by the geometry is
+        /// transparent.
         /// </summary>
         /// <param name="size">Size of the mask</param>
         /// <param name="geometry">Geometry of the mask</param>
-        /// <returns>ICompositionMask</returns>
-        public ICompositionMask CreateMask(Size size, CanvasGeometry geometry)
+        /// <returns>IMaskSurface</returns>
+        public IMaskSurface CreateMaskSurface(Size size, CanvasGeometry geometry)
         {
-            // If the geometry is not null then fill the geometry area
-            // with white. The rest of the area on the surface will be transparent.
-            // When this mask is applied to a visual, only the area that is white
-            // will be visible.
-            return CreateMask(size, geometry, Colors.White);
+            // Initialize the mask
+            IMaskSurface mask = new MaskSurface(this, size, geometry);
+            // Render the mask
+            mask.Redraw();
+
+            return mask;
         }
 
         /// <summary>
-        /// Creates the CompositionMask having the given size, geometry & color
+        /// Creates a GeometrySurface having the given size, geometry, foreground color with
+        /// MaskMode as False.
         /// </summary>
         /// <param name="size">Size of the mask</param>
         /// <param name="geometry">Geometry of the mask</param>
-        /// <param name="color">Fill color of the geometry.</param>
-        /// <returns>ICompositionMask</returns>
-        public ICompositionMask CreateMask(Size size, CanvasGeometry geometry, Color color)
+        /// <param name="foregroundColor">Fill color of the geometry.</param>
+        /// <returns>IGeometrySurface</returns>
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, Color foregroundColor)
         {
             // Initialize the mask
-            ICompositionMask mask = new CompositionMask(this, size, geometry, color);
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, foregroundColor, Colors.Transparent);
+            // Render the mask
+            mask.Redraw();
+
+            return mask;
+        }
+
+        /// <summary>
+        /// Creates a GeometrySurface having the given size, geometry, foreground color and
+        /// background color with MaskMode as False.
+        /// </summary>
+        /// <param name="size">Size of the mask</param>
+        /// <param name="geometry">Geometry of the mask</param>
+        /// <param name="foregroundColor">Fill color of the geometry</param>
+        /// <param name="backgroundColor">Fill color of the Mask surface background which is 
+        /// not covered by the geometry</param>
+        /// <returns>IGeometrySurface</returns>
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, Color foregroundColor, Color backgroundColor)
+        {
+            // Initialize the mask
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, foregroundColor, backgroundColor);
+            // Render the mask
+            mask.Redraw();
+
+            return mask;
+        }
+
+        /// <summary>
+        /// Creates a GeometrySurface having the given size, geometry and foreground brush with
+        /// MaskMode as False.
+        /// </summary>
+        /// <param name="size">Size of the mask</param>
+        /// <param name="geometry">Geometry of the mask</param>
+        /// <param name="foregroundBrush">The brush with which the geometry has to be filled</param>
+        /// <returns>IGeometrySurface</returns>
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush)
+        {
+            // Create the background brush
+            var backgroundBrush = new CanvasSolidColorBrush(Device, Colors.Transparent);
+            // Initialize the mask
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, foregroundBrush, backgroundBrush);
+            // Render the mask
+            mask.Redraw();
+
+            return mask;
+        }
+
+        /// <summary>
+        /// Creates a GeometrySurface having the given size, geometry, foreground brush and
+        /// background brush with MaskMode as False.
+        /// </summary>
+        /// <param name="size">Size of the mask</param>
+        /// <param name="geometry">Geometry of the mask</param>
+        /// <param name="foregroundBrush">The brush with which the geometry has to be filled</param>
+        /// <param name="backgroundBrush">The brush to fill the Mask background surface which is 
+        /// not covered by the geometry</param>
+        /// <returns>IGeometrySurface</returns>
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush,
+            ICanvasBrush backgroundBrush)
+        {
+            // Initialize the mask
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, foregroundBrush, backgroundBrush);
+            // Render the mask
+            mask.Redraw();
+
+            return mask;
+        }
+
+        /// <summary>
+        /// Creates a GeometrySurface having the given size, geometry, foreground brush and
+        /// background color with MaskMode as False.
+        /// </summary>
+        /// <param name="size">Size of the mask</param>
+        /// <param name="geometry">Geometry of the mask</param>
+        /// <param name="foregroundBrush">The brush with which the geometry has to be filled</param>
+        /// <param name="backgroundColor">Fill color of the Mask background surface which is 
+        /// not covered by the geometry</param>
+        /// <returns>IGeometrySurface</returns>
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush,
+            Color backgroundColor)
+        {
+            // Create the background brush
+            var backgroundBrush = new CanvasSolidColorBrush(Device, backgroundColor);
+            // Initialize the mask
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, foregroundBrush, backgroundBrush);
 
             // Render the mask
             mask.Redraw();
@@ -183,16 +271,22 @@ namespace CompositionProToolkit
         }
 
         /// <summary>
-        /// Creates the CompositionMask having the given size, geometry & brush
+        /// Creates a GeometrySurface having the given size, geometry, foreground color and
+        /// background brush with MaskMode as False.
         /// </summary>
         /// <param name="size">Size of the mask</param>
         /// <param name="geometry">Geometry of the mask</param>
-        /// <param name="brush">Brush to fill the geometry.</param>
-        /// <returns>ICompositionMask</returns>
-        public ICompositionMask CreateMask(Size size, CanvasGeometry geometry, ICanvasBrush brush)
+        /// <param name="foregroundColor">Fill color of the geometry</param>
+        /// <param name="backgroundBrush">The brush to fill the Mask background surface which is 
+        /// not covered by the geometry</param>
+        /// <returns>IGeometrySurface</returns>
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, Color foregroundColor,
+            ICanvasBrush backgroundBrush)
         {
+            // Create the foreground brush
+            var foregroundBrush = new CanvasSolidColorBrush(Device, foregroundColor);
             // Initialize the mask
-            ICompositionMask mask = new CompositionMask(this, size, geometry, brush);
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, foregroundBrush, backgroundBrush);
 
             // Render the mask
             mask.Redraw();
@@ -201,22 +295,22 @@ namespace CompositionProToolkit
         }
 
         /// <summary>
-        /// Creates a CompositionSurfaceImage having the given size onto which an image (based on the Uri
+        /// Creates a ImageSurface having the given size onto which an image (based on the Uri
         /// and the options) is loaded.
         /// </summary>
         /// <param name="uri">Uri of the image to be loaded onto the SurfaceImage.</param>
         /// <param name="size">New size of the SurfaceImage</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <returns>ICompositionSurfaceImage</returns>
-        public async Task<ICompositionSurfaceImage> CreateSurfaceImageAsync(Uri uri, Size size, CompositionSurfaceImageOptions options)
+        public async Task<IImageSurface> CreateImageSurfaceAsync(Uri uri, Size size, ImageSurfaceOptions options)
         {
             // Initialize the SurfaceImage
-            ICompositionSurfaceImage surfaceImage = new CompositionSurfaceImage(this, uri, size, options);
+            var surfaceImage = new ImageSurface(this, uri, size, options);
 
             // Render the image onto the surface
             await surfaceImage.RedrawAsync();
 
-            return surfaceImage;
+            return (IImageSurface)surfaceImage;
         }
 
         /// <summary>
@@ -253,7 +347,7 @@ namespace CompositionProToolkit
             var effectBrush = effectFactory.CreateBrush();
 
             // Create the gradient brush for the effect
-            CanvasLinearGradientBrush gradientBrush = new CanvasLinearGradientBrush(_canvasDevice,
+            var gradientBrush = new CanvasLinearGradientBrush(_canvasDevice,
                                                                 Colors.White, Colors.Transparent);
 
             // Based on the reflection location,
@@ -292,7 +386,8 @@ namespace CompositionProToolkit
             }
 
             // Create a mask filled with gradientBrush
-            var mask = CreateMask(visual.Size.ToSize(), null, gradientBrush);
+            var mask = CreateGeometrySurface(visual.Size.ToSize(), null, Colors.Transparent, gradientBrush);
+
             // Set the 'mask' parameter of the effectBrush
             effectBrush.SetSourceParameter("mask", _compositor.CreateSurfaceBrush(mask.Surface));
 
@@ -304,6 +399,10 @@ namespace CompositionProToolkit
 
             visual.Children.InsertAtTop(reflectionLayer);
         }
+
+        #endregion
+
+        #region Internal APIs
 
         /// <summary>
         /// Creates a CompositionDrawingSurface of given size
@@ -362,17 +461,22 @@ namespace CompositionProToolkit
         }
 
         /// <summary>
-        /// Redraws the mask surface with the given size, geometry and brush
+        /// Redraws the MaskSurface with the given size and geometry
         /// </summary>
         /// <param name="surfaceLock">The object to lock to prevent multiple threads
         /// from accessing the surface at the same time.</param>
         /// <param name="surface">CompositionDrawingSurface</param>
-        /// <param name="size">Size ofthe Mask Surface</param>
-        /// <param name="geometry">Geometry of the Mask Surface</param>
-        /// <param name="brush">Brush to fill the geometry.</param>
-        public void RedrawMaskSurface(object surfaceLock, CompositionDrawingSurface surface,
-            Size size, CanvasGeometry geometry, ICanvasBrush brush)
+        /// <param name="size">Size ofthe MaskSurface</param>
+        /// <param name="geometry">Geometry of the MaskSurface</param>
+        public void RedrawMaskSurface(object surfaceLock, CompositionDrawingSurface surface, Size size,
+            CanvasGeometry geometry)
         {
+            // If the surface is not created, create it
+            if (surface == null)
+            {
+                surface = CreateDrawingSurface(surfaceLock, size);
+            }
+
             // No need to render if the width and/or height of the surface is zero
             if (surface.Size.Width.IsZero() || surface.Size.Height.IsZero())
                 return;
@@ -386,44 +490,99 @@ namespace CompositionProToolkit
                 // Render the mask to the surface
                 using (var session = CanvasComposition.CreateDrawingSession(surface))
                 {
-                    // If the geometry is not null then fill the geometry area
-                    // with the given color. The rest of the area on the surface will be transparent.
-                    // If the color is white and this mask is applied to a visual, only the area that is white
-                    // will be visible.
                     if (geometry != null)
                     {
+                        // If the geometry is not null then fill the geometry area
+                        // with the White color. The rest of the area on the surface will be transparent.
+                        // When this mask is applied to a visual, only the area that is white will be visible.
                         session.Clear(Colors.Transparent);
-                        session.FillGeometry(geometry, brush);
+                        session.FillGeometry(geometry, Colors.White);
                     }
                     else
                     {
                         // If the geometry is null, then the entire mask should be filled the 
                         // the given color. If the color is white, then the masked visual will be seen completely.
-                        session.FillRectangle(0, 0, size.Width.Single(), size.Height.Single(), brush);
+                        session.FillRectangle(0, 0, size.Width.Single(), size.Height.Single(), Colors.White);
                     }
                 }
             }
         }
 
         /// <summary>
-        /// Resizes the SurfaceImage to the given size and redraws the SurfaceImage
-        /// by resizing the existing canvasBitmap
+        /// Redraws the GeometrySurface with the given size, geometry, foreground brush and background brush
+        /// </summary>
+        /// <param name="surfaceLock">The object to lock to prevent multiple threads
+        /// from accessing the surface at the same time.</param>
+        /// <param name="surface">CompositionDrawingSurface</param>
+        /// <param name="size">Size ofthe GeometrySurface</param>
+        /// <param name="geometry">Geometry of the GeometrySurface</param>
+        /// <param name="foregroundBrush">The brush with which the geometry has to be filled</param>
+        /// <param name="backgroundBrush">The brush with which the GeometrySurface background has to be filled</param>
+        public void RedrawGeometrySurface(object surfaceLock, CompositionDrawingSurface surface, Size size,
+            CanvasGeometry geometry, ICanvasBrush foregroundBrush, ICanvasBrush backgroundBrush)
+        {
+            // If the surface is not created, create it
+            if (surface == null)
+            {
+                surface = CreateDrawingSurface(surfaceLock, size);
+            }
+
+            // No need to render if the width and/or height of the surface is zero
+            if (surface.Size.Width.IsZero() || surface.Size.Height.IsZero())
+                return;
+
+            //
+            // Since multiple threads could be trying to get access to the device/surface 
+            // at the same time, we need to do any device/surface work under a lock.
+            //
+            lock (surfaceLock)
+            {
+                // Render the mask to the surface
+                using (var session = CanvasComposition.CreateDrawingSession(surface))
+                {
+                    // First fill the background
+                    var brush = backgroundBrush as CanvasSolidColorBrush;
+                    if (brush != null)
+                    {
+                        // If the backgroundBrush is a SolideColorBrush then use the Clear()
+                        // method to fill the surface with background color. It is faster.
+                        // Clear the surface with the background color
+                        session.Clear(brush.Color);
+                    }
+                    else
+                    {
+                        // Fill the surface with the background brush.
+                        session.FillRectangle(0, 0, size.Width.Single(), size.Height.Single(), backgroundBrush);
+                    }
+
+                    // If the geometry is not null then fill the geometry area with the foreground brush.
+                    if (geometry != null)
+                    {
+                        session.FillGeometry(geometry, foregroundBrush);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Resizes the ImageSurface to the given size and redraws the ImageSurface
+        /// by rendering the canvasBitmap onto the surface.
         /// </summary>
         /// <param name="surfaceLock">The object to lock to prevent multiple threads
         /// from accessing the surface at the same time.</param>
         /// <param name="surface">CompositionDrawingSurface</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <param name="canvasBitmap">The CanvasBitmap on which the image is loaded.</param>
-        public void RedrawSurfaceImage(object surfaceLock, CompositionDrawingSurface surface,
-            CompositionSurfaceImageOptions options, CanvasBitmap canvasBitmap)
+        public void RedrawImageSurface(object surfaceLock, CompositionDrawingSurface surface,
+            ImageSurfaceOptions options, CanvasBitmap canvasBitmap)
         {
             // Render the image to the surface
             RenderBitmap(surfaceLock, surface, canvasBitmap, options);
         }
 
         /// <summary>
-        /// Resizes the SurfaceImage to the given size and redraws the SurfaceImage by loading 
-        /// image from the new Uri. It returns the CanvasBitmap so that it can be cached for efficiency.
+        /// Resizes the ImageSurface with the given size and redraws the ImageSurface by loading 
+        /// image from the new Uri.
         /// </summary>
         /// <param name="surfaceLock">The object to lock to prevent multiple threads
         /// from accessing the surface at the same time.</param>
@@ -432,8 +591,8 @@ namespace CompositionProToolkit
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <param name="canvasBitmap">The CanvasBitmap on which the image is loaded.</param>
         /// <returns>CanvasBitmap</returns>
-        public async Task<CanvasBitmap> RedrawSurfaceImageAsync(object surfaceLock, CompositionDrawingSurface surface,
-            Uri uri, CompositionSurfaceImageOptions options, CanvasBitmap canvasBitmap)
+        public async Task<CanvasBitmap> RedrawImageSurfaceAsync(object surfaceLock, CompositionDrawingSurface surface,
+            Uri uri, ImageSurfaceOptions options, CanvasBitmap canvasBitmap)
         {
             if ((canvasBitmap == null) && (uri != null))
             {
@@ -763,7 +922,7 @@ namespace CompositionProToolkit
         /// <param name="canvasBitmap">CanvasBitmap created by loading the image from the Uri</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         private static void RenderBitmap(object surfaceLock, CompositionDrawingSurface surface, CanvasBitmap canvasBitmap,
-            CompositionSurfaceImageOptions options)
+            ImageSurfaceOptions options)
         {
             var surfaceSize = surface.Size;
 

@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.3
+// CompositionProToolkit v0.4.4
 // 
 
 using Windows.UI;
@@ -32,6 +32,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml.Media;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using CompositionExpressionToolkit;
 
 namespace CompositionProToolkit
 {
@@ -44,12 +45,12 @@ namespace CompositionProToolkit
         /// Creates a custom shaped Effect Brush using BackdropBrush and a Mask
         /// </summary>
         /// <param name="compositor">Compositor</param>
-        /// <param name="mask">ICompositionMask</param>
+        /// <param name="mask">IMaskSurface</param>
         /// <param name="blendColor">Color to blend in the BackdropBrush</param>
         /// <param name="blurAmount">Blur Amount of the Backdrop Brush</param>
         /// <param name="backdropBrush">Backdrop Brush (optional). If not provided, then compositor creates it.</param>
         /// <returns>CompositionEffectBrush</returns>
-        public static CompositionEffectBrush CreateMaskedBackdropBrush(this Compositor compositor, ICompositionMask mask,
+        public static CompositionEffectBrush CreateMaskedBackdropBrush(this Compositor compositor, IMaskSurface mask,
             Color blendColor, float blurAmount, CompositionBackdropBrush backdropBrush = null)
         {
             // Blur Effect
@@ -157,7 +158,7 @@ namespace CompositionProToolkit
             else
             {
                 alignXAnimation.InsertKeyFrame(1f, finalAlignX);
-                surfaceBrush.StartAnimation("HorizontalAlignmentRatio", alignXAnimation);
+                surfaceBrush.StartAnimation(() => surfaceBrush.HorizontalAlignmentRatio, alignXAnimation);
             }
 
             // Vertical Alignment
@@ -184,7 +185,7 @@ namespace CompositionProToolkit
             else
             {
                 alignYAnimation.InsertKeyFrame(1f, finalAlignY);
-                surfaceBrush.StartAnimation("VerticalAlignmentRatio", alignYAnimation);
+                surfaceBrush.StartAnimation(() => surfaceBrush.VerticalAlignmentRatio, alignYAnimation);
             }
         }
     }

@@ -53,8 +53,8 @@ namespace SampleGallery.Views
             var hRefLeft = (float)(CompositionGrid1.ActualWidth - hRefWidth) / 2f;
             var hRefTop = (float)(CompositionGrid1.ActualHeight - visualSize.Y) / 2f;
 
-            var surfaceImage = await _generator.CreateSurfaceImageAsync(new Uri("ms-appx:///Assets/Images/Car.jpg"),
-                visualSize.ToSize(), CompositionSurfaceImageOptions.Default);
+            var surfaceImage = await _generator.CreateImageSurfaceAsync(new Uri("ms-appx:///Assets/Images/Car.jpg"),
+                visualSize.ToSize(), ImageSurfaceOptions.Default);
             var surfaceBrush = _compositor.CreateSurfaceBrush(surfaceImage.Surface);
 
             var visual1 = _compositor.CreateSpriteVisual();

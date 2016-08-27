@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.3
+// CompositionProToolkit v0.4.4
 // 
 
 using System;
@@ -37,9 +37,9 @@ using Microsoft.Graphics.Canvas;
 namespace CompositionProToolkit
 {
     /// <summary>
-    /// Class to define a CompositionSurface where an image can be rendered
+    /// Class for rendering an image onto a ICompositionSurface
     /// </summary>
-    internal sealed class CompositionSurfaceImage : ICompositionSurfaceImage
+    internal sealed class ImageSurface : IImageSurface
     {
         #region Fields
 
@@ -76,7 +76,7 @@ namespace CompositionProToolkit
         /// <summary>
         /// Describes how the image is resized to fill its allocated space.
         /// </summary>
-        public CompositionSurfaceImageOptions Options { get; private set; }
+        public ImageSurfaceOptions Options { get; private set; }
 
         #endregion
 
@@ -89,7 +89,7 @@ namespace CompositionProToolkit
         /// <param name="uri">Uri of the image to be loaded onto the SurfaceImage.</param>
         /// <param name="size">Size of the SurfaceImage</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
-        public CompositionSurfaceImage(ICompositionGeneratorInternal generator, Uri uri, Size size, CompositionSurfaceImageOptions options)
+        public ImageSurface(ICompositionGeneratorInternal generator, Uri uri, Size size, ImageSurfaceOptions options)
         {
             if (generator == null)
                 throw new ArgumentNullException(nameof(generator), "CompositionGenerator cannot be null!");
@@ -115,10 +115,10 @@ namespace CompositionProToolkit
         /// Redraws the SurfaceImage
         /// </summary>
         /// <returns>Task</returns>
-        public Task RedrawAsync()
+        public void Redraw()
         {
             // Reload the SurfaceImage
-            return RedrawSurfaceImageInternalAsync();
+            RedrawSurfaceImageInternal();
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace CompositionProToolkit
         /// </summary>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <returns>Task</returns>
-        public void Redraw(CompositionSurfaceImageOptions options)
+        public void Redraw(ImageSurfaceOptions options)
         {
             // Set the image options
             Options = options;
@@ -161,7 +161,7 @@ namespace CompositionProToolkit
         /// <param name="uri">Uri of the image to be loaded on to the image surface.</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <returns>Task</returns>
-        public Task RedrawAsync(Uri uri, CompositionSurfaceImageOptions options)
+        public Task RedrawAsync(Uri uri, ImageSurfaceOptions options)
         {
             // If the given Uri differs from the previously stored Uri
             // dispose the existing canvasBitmap
@@ -187,7 +187,7 @@ namespace CompositionProToolkit
         /// <param name="size">New size of the SurfaceImage</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <returns>Task</returns>
-        public async Task RedrawAsync(Uri uri, Size size, CompositionSurfaceImageOptions options)
+        public async Task RedrawAsync(Uri uri, Size size, ImageSurfaceOptions options)
         {
             // If the given Uri differs from the previously stored Uri
             // dispose the existing canvasBitmap
@@ -236,7 +236,7 @@ namespace CompositionProToolkit
         /// </summary>
         /// <param name="size">New size of the SurfaceImage</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
-        public void Resize(Size size, CompositionSurfaceImageOptions options)
+        public void Resize(Size size, ImageSurfaceOptions options)
         {
             // Set the image options
             Options = options;
@@ -270,6 +270,21 @@ namespace CompositionProToolkit
 
         #endregion
 
+        #region Internal APIs
+
+        /// <summary>
+        /// Redraws the SurfaceImage asynchronously
+        /// by loading the image from the Uri
+        /// </summary>
+        /// <returns>Task</returns>
+        internal Task RedrawAsync()
+        {
+            // Reload the SurfaceImage
+            return RedrawSurfaceImageInternalAsync();
+        }
+
+        #endregion
+
         #region Event Handlers
 
         /// <summary>
@@ -279,6 +294,8 @@ namespace CompositionProToolkit
         /// <param name="e">object</param>
         private async void OnDeviceReplaced(object sender, object e)
         {
+            // Recreate the ImageSurface
+            _surface = _generator.CreateDrawingSurface(_surfaceLock, Size);
             // Reload the SurfaceImage
             await RedrawSurfaceImageInternalAsync();
         }
@@ -293,7 +310,7 @@ namespace CompositionProToolkit
         private void RedrawSurfaceImageInternal()
         {
             // Resize the surface image
-            _generator.RedrawSurfaceImage(_surfaceLock, _surface, Options, _canvasBitmap);
+            _generator.RedrawImageSurface(_surfaceLock, _surface, Options, _canvasBitmap);
             // If AutoResize is allowed and the image is successfully loaded into the canvasBitmap, 
             // then update the Size property of the surface as the surface has been resized to match the canvasBitmap size
             if (Options.AutoResize)
@@ -311,7 +328,7 @@ namespace CompositionProToolkit
         private async Task RedrawSurfaceImageInternalAsync()
         {
             // Cache the canvasBitmap to avoid reloading of the same image during Resize/Redraw operations
-            _canvasBitmap = await _generator.RedrawSurfaceImageAsync(_surfaceLock, _surface, _uri, Options, _canvasBitmap);
+            _canvasBitmap = await _generator.RedrawImageSurfaceAsync(_surfaceLock, _surface, _uri, Options, _canvasBitmap);
             // If AutoResize is allowed and the image is successfully loaded into the canvasBitmap, 
             // then update the Size property of the surface as the surface has been resized to match the canvasBitmap size
             if (Options.AutoResize)

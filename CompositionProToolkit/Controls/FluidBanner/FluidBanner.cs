@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.3
+// CompositionProToolkit v0.4.4
 // 
 
 using System;
@@ -77,9 +77,9 @@ namespace CompositionProToolkit.Controls
         private ImplicitAnimationCollection _implicitAnimationCollection;
         private ContainerVisual _selectedVisual;
         private ContainerVisual _hoverVisual;
-        private Dictionary<ICompositionSurfaceImage, SpriteVisual> _surfaceVisuals;
+        private Dictionary<IImageSurface, SpriteVisual> _surfaceVisuals;
         private Dictionary<ContainerVisual, Rect> _fluidItems;
-        private List<ICompositionSurfaceImage> _surfaceImages;
+        private List<IImageSurface> _surfaceImages;
         private Rect _bannerBounds;
         private int _itemCount;
         private float _itemWidth;
@@ -402,8 +402,8 @@ namespace CompositionProToolkit.Controls
         public FluidBanner()
         {
             _fluidItems = new Dictionary<ContainerVisual, Rect>();
-            _surfaceImages = new List<ICompositionSurfaceImage>();
-            _surfaceVisuals = new Dictionary<ICompositionSurfaceImage, SpriteVisual>();
+            _surfaceImages = new List<IImageSurface>();
+            _surfaceVisuals = new Dictionary<IImageSurface, SpriteVisual>();
             Loaded += OnBannerLoaded;
         }
 
@@ -698,14 +698,14 @@ namespace CompositionProToolkit.Controls
             if ((ItemsSource == null) || !ItemsSource.Any())
                 return;
 
-            var options = CompositionSurfaceImageOptions.Default;
+            var options = ImageSurfaceOptions.Default;
             options.SurfaceBackgroundColor = Colors.Transparent;
 
             var availableSize = new Size(_availableWidth, _availableHeight);
             for (var i = 0; i < ItemsSource.Count(); i++)
             {
                 // Create the surface image
-                var surfaceImage = await _generator.CreateSurfaceImageAsync(ItemsSource.ElementAt(i), availableSize, options);
+                var surfaceImage = await _generator.CreateImageSurfaceAsync(ItemsSource.ElementAt(i), availableSize, options);
                 _surfaceImages.Add(surfaceImage);
 
                 // Add a visual for the background

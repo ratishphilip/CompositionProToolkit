@@ -21,7 +21,7 @@ namespace SampleGallery.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class CompositionImageFramePage : Page
+    public sealed partial class ImageFramePage : Page
     {
         private int count = 0;
         private List<String> _images;
@@ -30,7 +30,7 @@ namespace SampleGallery.Views
         private Dictionary<int, AlignmentY> _alignYModes;
         private List<Uri> _uris;
 
-        public CompositionImageFramePage()
+        public ImageFramePage()
         {
             this.InitializeComponent();
             Loaded += OnLoaded;

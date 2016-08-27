@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.3
+// CompositionProToolkit v0.4.4
 // 
 
 using System;
@@ -54,41 +54,96 @@ namespace CompositionProToolkit
         CanvasDevice Device { get; }
 
         /// <summary>
-        /// Creates the CompositionMask having the given size and geometry.
-        /// The geometry is filled with white color.
+        /// Creates a MaskSurface having the given size and geometry with MaskMode as True.
+        /// The geometry is filled with white color. The surface not covered by the geometry is
+        /// transparent.
         /// </summary>
         /// <param name="size">Size of the mask</param>
         /// <param name="geometry">Geometry of the mask</param>
-        /// <returns>ICompositionMask</returns>
-        ICompositionMask CreateMask(Size size, CanvasGeometry geometry);
+        /// <returns>IMaskSurface</returns>
+        IMaskSurface CreateMaskSurface(Size size, CanvasGeometry geometry);
 
         /// <summary>
-        /// Creates the CompositionMask having the given size, geometry & color
+        /// Creates a GeometrySurface having the given size, geometry, foreground color with
+        /// MaskMode as False.
         /// </summary>
         /// <param name="size">Size of the mask</param>
         /// <param name="geometry">Geometry of the mask</param>
-        /// <param name="color">Fill color of the geometry.</param>
-        /// <returns>ICompositionMask</returns>
-        ICompositionMask CreateMask(Size size, CanvasGeometry geometry, Color color);
+        /// <param name="foregroundColor">Fill color of the geometry.</param>
+        /// <returns>IGeometrySurface</returns>
+        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, Color foregroundColor);
 
         /// <summary>
-        /// Creates the CompositionMask having the given size, geometry & brush
+        /// Creates a GeometrySurface having the given size, geometry, foreground color and
+        /// background color with MaskMode as False.
         /// </summary>
         /// <param name="size">Size of the mask</param>
         /// <param name="geometry">Geometry of the mask</param>
-        /// <param name="brush">The brush to fill the geometry with</param>
-        /// <returns>ICompositionMask</returns>
-        ICompositionMask CreateMask(Size size, CanvasGeometry geometry, ICanvasBrush brush);
+        /// <param name="foregroundColor">Fill color of the geometry</param>
+        /// <param name="backgroundColor">Fill color of the Mask surface background which is 
+        /// not covered by the geometry</param>
+        /// <returns>IGeometrySurface</returns>
+        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, Color foregroundColor, 
+            Color backgroundColor);
 
         /// <summary>
-        /// Creates a CompositionSurfaceImage having the given size onto which an image (based on the Uri
+        /// Creates a GeometrySurface having the given size, geometry and foreground brush with
+        /// MaskMode as False.
+        /// </summary>
+        /// <param name="size">Size of the mask</param>
+        /// <param name="geometry">Geometry of the mask</param>
+        /// <param name="foregroundBrush">The brush with which the geometry has to be filled</param>
+        /// <returns>IGeometrySurface</returns>
+        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush);
+
+        /// <summary>
+        /// Creates a GeometrySurface having the given size, geometry, foreground brush and
+        /// background brush with MaskMode as False.
+        /// </summary>
+        /// <param name="size">Size of the mask</param>
+        /// <param name="geometry">Geometry of the mask</param>
+        /// <param name="foregroundBrush">The brush with which the geometry has to be filled</param>
+        /// <param name="backgroundBrush">The brush to fill the Mask background surface which is 
+        /// not covered by the geometry</param>
+        /// <returns>IGeometrySurface</returns>
+        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush, 
+            ICanvasBrush backgroundBrush);
+
+        /// <summary>
+        /// Creates a GeometrySurface having the given size, geometry, foreground brush and
+        /// background color with MaskMode as False.
+        /// </summary>
+        /// <param name="size">Size of the mask</param>
+        /// <param name="geometry">Geometry of the mask</param>
+        /// <param name="foregroundBrush">The brush with which the geometry has to be filled</param>
+        /// <param name="backgroundColor">Fill color of the Mask background surface which is 
+        /// not covered by the geometry</param>
+        /// <returns>IGeometrySurface</returns>
+        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush,
+            Color backgroundColor);
+
+        /// <summary>
+        /// Creates a GeometrySurface having the given size, geometry, foreground color and
+        /// background brush with MaskMode as False.
+        /// </summary>
+        /// <param name="size">Size of the mask</param>
+        /// <param name="geometry">Geometry of the mask</param>
+        /// <param name="foregroundColor">Fill color of the geometry</param>
+        /// <param name="backgroundBrush">The brush to fill the Mask background surface which is 
+        /// not covered by the geometry</param>
+        /// <returns>IGeometrySurface</returns>
+        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, Color foregroundColor,
+            ICanvasBrush backgroundBrush);
+
+        /// <summary>
+        /// Creates a ImageSurface having the given size onto which an image (based on the Uri
         /// and the options) is loaded.
         /// </summary>
         /// <param name="uri">Uri of the image to be loaded onto the SurfaceImage.</param>
         /// <param name="size">New size of the SurfaceImage</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <returns>ICompositionSurfaceImage</returns>
-        Task<ICompositionSurfaceImage> CreateSurfaceImageAsync(Uri uri, Size size, CompositionSurfaceImageOptions options);
+        Task<IImageSurface> CreateImageSurfaceAsync(Uri uri, Size size, ImageSurfaceOptions options);
 
         /// <summary>
         /// Creates a reflection of the given Visual
@@ -98,7 +153,7 @@ namespace CompositionProToolkit
         /// <param name="reflectionLength">Normalized Length of the reflected visual that will be visible.</param>
         /// <param name="location"> <see cref="ReflectionLocation"/> - Location of the reflection with respect 
         /// to the Visual - Bottom, Top, Left or Right</param>
-        void CreateReflection(ContainerVisual visual, float reflectionDistance = 0f,
-            float reflectionLength = 0.7f, ReflectionLocation location = ReflectionLocation.Bottom);
+        void CreateReflection(ContainerVisual visual, float reflectionDistance = 0f, float reflectionLength = 0.7f,
+            ReflectionLocation location = ReflectionLocation.Bottom);
     }
 }

@@ -27,36 +27,50 @@
 // CompositionProToolkit v0.4.4
 // 
 
+using System;
+using Windows.Foundation;
 using Windows.UI.Composition;
 
 namespace CompositionProToolkit
 {
     /// <summary>
-    /// Factory class to instantiate the CompositionGenerator
+    /// Represents the core interface for interfaces
+    /// which render onto ICompositionSurface.
     /// </summary>
-    public static class CompositionGeneratorFactory
+    public interface IRenderSurface : IDisposable
     {
-        /// <summary>
-        /// Instantiates a CompositionGenerator object
-        /// </summary>
-        /// <param name="compositor">Compositor</param>
-        /// <param name="useSharedCanvasDevice">Whether to use a shared CanvasDevice or to create a new one.</param>
-        /// <param name="useSoftwareRenderer">Whether to use Software Renderer when creating a new CanvasDevice.</param>
-        /// <returns>ICompositionGenerator</returns>
-        public static ICompositionGenerator GetCompositionGenerator(Compositor compositor, 
-            bool useSharedCanvasDevice = true, bool useSoftwareRenderer = false)
-        {
-            return new CompositionGenerator(compositor, useSharedCanvasDevice, useSoftwareRenderer);
-        }
+        #region Properties
 
         /// <summary>
-        /// Instantiates a CompositionGenerator object
+        /// Generator
         /// </summary>
-        /// <param name="graphicsDevice">Composition Graphics Device</param>
-        /// <returns>ICompositionGenerator</returns>
-        public static ICompositionGenerator GetCompositionGenerator(CompositionGraphicsDevice graphicsDevice)
-        {
-            return new CompositionGenerator(graphicsDevice);
-        }
+        ICompositionGenerator Generator { get; }
+
+        /// <summary>
+        /// Surface
+        /// </summary>
+        ICompositionSurface Surface { get; }
+
+        /// <summary>
+        /// Surface Size
+        /// </summary>
+        Size Size { get; }
+
+        #endregion
+
+        #region APIs
+
+        /// <summary>
+        /// Redraws the surface
+        /// </summary>
+        void Redraw();
+
+        /// <summary>
+        /// Resizes the surface to the new size.
+        /// </summary>
+        /// <param name="size">New size of the surface</param>
+        void Resize(Size size);
+
+        #endregion
     }
 }

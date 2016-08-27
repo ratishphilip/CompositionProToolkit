@@ -24,31 +24,27 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.3
+// CompositionProToolkit v0.4.4
 // 
 
 using System;
 using Windows.Foundation;
-using Windows.UI;
 using Windows.UI.Composition;
-using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Geometry;
 
 namespace CompositionProToolkit
 {
     /// <summary>
-    /// Class to define a Mask surface using a CanvasGeometry.
-    /// This mask surface can be used to initialize a 
-    /// CompositionMaskBrush to create custom shaped visuals.
+    /// Class for rendering custom shaped geometries onto ICompositionSurface
+    /// so that they can be useds as masks on Composition Visuals.
     /// </summary>
-    internal sealed class CompositionMask : ICompositionMask
+    internal sealed class MaskSurface : IMaskSurface
     {
         #region Fields
 
         private ICompositionGeneratorInternal _generator;
         private CompositionDrawingSurface _surface;
         private CanvasGeometry _geometry;
-        private ICanvasBrush _brush;
         private readonly object _surfaceLock;
 
         #endregion
@@ -56,19 +52,19 @@ namespace CompositionProToolkit
         #region Properties
 
         /// <summary>
-        /// Mask Generator
+        /// Surface Generator
         /// </summary>
         public ICompositionGenerator Generator => _generator;
         /// <summary>
-        /// Mask Surface
+        /// Surface of MaskSurface
         /// </summary>
         public ICompositionSurface Surface => _surface;
         /// <summary>
-        /// Mask Geometry
+        /// Geometry of the MaskSurface
         /// </summary>
         public CanvasGeometry Geometry => _geometry;
         /// <summary>
-        /// Mask Size
+        /// Size of the MaskSurface
         /// </summary>
         public Size Size { get; private set; }
 
@@ -80,10 +76,9 @@ namespace CompositionProToolkit
         /// Constructor
         /// </summary>
         /// <param name="generator">ICompositionMaskGeneratorInternal object</param>
-        /// <param name="size">Size of the mask</param>
-        /// <param name="geometry">Geometry of the mask</param>
-        /// <param name="color">Fill color of the geometry</param>
-        public CompositionMask(ICompositionGeneratorInternal generator, Size size, CanvasGeometry geometry, Color color)
+        /// <param name="size">Size of the MaskSurface</param>
+        /// <param name="geometry">Geometry of the MaskSurface</param>
+        public MaskSurface(ICompositionGeneratorInternal generator, Size size, CanvasGeometry geometry)
         {
             if (generator == null)
                 throw new ArgumentNullException(nameof(generator), "CompositionGenerator cannot be null!");
@@ -91,31 +86,6 @@ namespace CompositionProToolkit
             _generator = generator;
             _surfaceLock = new object();
             _geometry = geometry;
-            // Create Mask Surface
-            _surface = _generator.CreateDrawingSurface(_surfaceLock, size);
-            // Set the size
-            Size = _surface?.Size ?? new Size(0, 0);
-            _brush = new CanvasSolidColorBrush(_generator.Device, color);
-            // Subscribe to DeviceReplaced event
-            _generator.DeviceReplaced += OnDeviceReplaced;
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="generator">ICompositionMaskGeneratorInternal object</param>
-        /// <param name="size">Size of the mask</param>
-        /// <param name="geometry">Geometry of the mask</param>
-        /// <param name="brush">Brush to fill the geometry.</param>
-        public CompositionMask(ICompositionGeneratorInternal generator, Size size, CanvasGeometry geometry, ICanvasBrush brush)
-        {
-            if (generator == null)
-                throw new ArgumentNullException(nameof(generator), "CompositionGenerator cannot be null!");
-
-            _generator = generator;
-            _surfaceLock = new object();
-            _geometry = geometry;
-            _brush = brush;
             // Create Mask Surface
             _surface = _generator.CreateDrawingSurface(_surfaceLock, size);
             // Set the size
@@ -129,7 +99,7 @@ namespace CompositionProToolkit
         #region APIs
 
         /// <summary>
-        /// Redraws the Mask surface
+        /// Redraws the MaskSurface
         /// </summary>
         public void Redraw()
         {
@@ -138,7 +108,7 @@ namespace CompositionProToolkit
         }
 
         /// <summary>
-        /// Redraws the Mask surface with the new geometry
+        /// Redraws the MaskSurface with the new geometry
         /// </summary>
         /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
         public void Redraw(CanvasGeometry geometry)
@@ -150,34 +120,10 @@ namespace CompositionProToolkit
         }
 
         /// <summary>
-        /// Redraws the Mask surface by filling the existing geometry with
-        /// the new color.
-        /// </summary>
-        /// <param name="color">Color with which the mask geometry is to be filled</param>
-        public void Redraw(Color color)
-        {
-            // Set the brush
-            _brush = new CanvasSolidColorBrush(_generator.Device, color);
-            // Redraw the mask surface
-            RedrawSurfaceInternal();
-        }
-
-        /// <summary>
-        /// Redraws the Mask surface by filling the existing geometry with
-        /// the new brush.
-        /// </summary>
-        /// <param name="brush">Brush with which the mask geometry is to be filled</param>
-        public void Redraw(ICanvasBrush brush)
-        {
-            // Set the brush
-            _brush = brush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
-            // Redraw the mask surface
-            RedrawSurfaceInternal();
-        }
-
-        /// <summary>
-        /// Resizes the Mask with the given size and redraws the mask
-        /// with the new geometry.
+        /// Resizes the MaskSurface with the given size and redraws the MaskSurface
+        /// with the new geometry and fills it either with White color
+        /// (if the MaskMode is True) or with the foreground brush
+        /// (if the MaskMode is False).
         /// </summary>
         /// <param name="size">New size of the mask</param>
         /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
@@ -194,49 +140,7 @@ namespace CompositionProToolkit
         }
 
         /// <summary>
-        /// Resizes the Mask with the given size and redraws the mask
-        /// with the new geometry and fills it with the given color.
-        /// </summary>
-        /// <param name="size">New size of the mask</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
-        /// <param name="color">Fill color for the geometry</param>
-        public void Redraw(Size size, CanvasGeometry geometry, Color color)
-        {
-            // Resize the mask surface
-            _generator.ResizeDrawingSurface(_surfaceLock, _surface, size);
-            // Set the size
-            Size = _surface?.Size ?? new Size(0, 0);
-            // Set the new geometry
-            _geometry = geometry;
-            // Set the brush
-            _brush = new CanvasSolidColorBrush(_generator.Device, color);
-            // Redraw the mask surface
-            RedrawSurfaceInternal();
-        }
-
-        /// <summary>
-        /// Resizes the Mask with the given size and redraws the mask
-        /// with the new geometry and fills it with the given color.
-        /// </summary>
-        /// <param name="size">New size of the mask</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
-        /// <param name="brush">Brush to fill the geometry.</param>
-        public void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush brush)
-        {
-            // Resize the mask surface
-            _generator.ResizeDrawingSurface(_surfaceLock, _surface, size);
-            // Set the size
-            Size = _surface?.Size ?? new Size(0, 0);
-            // Set the new geometry
-            _geometry = geometry;
-            // Set the brush
-            _brush = brush;
-            // Redraw the mask surface
-            RedrawSurfaceInternal();
-        }
-
-        /// <summary>
-        /// Resizes the mask to the new size.
+        /// Resizes the MaskSurface to the new size.
         /// </summary>
         /// <param name="size">New size of the mask</param>
         public void Resize(Size size)
@@ -250,13 +154,14 @@ namespace CompositionProToolkit
         }
 
         /// <summary>
-        /// Disposes the resources used by the mask
+        /// Disposes the resources used by the MaskSurface
         /// </summary>
         public void Dispose()
         {
             _surface?.Dispose();
             _geometry?.Dispose();
-            _generator.DeviceReplaced -= OnDeviceReplaced;
+            if (_generator != null)
+                _generator.DeviceReplaced -= OnDeviceReplaced;
             _surface = null;
             _generator = null;
             _geometry = null;
@@ -273,6 +178,8 @@ namespace CompositionProToolkit
         /// <param name="e">object</param>
         private void OnDeviceReplaced(object sender, object e)
         {
+            // Recreate the MaskSurface
+            _surface = _generator.CreateDrawingSurface(_surfaceLock, Size);
             // Redraw the mask surface
             RedrawSurfaceInternal();
         }
@@ -282,11 +189,11 @@ namespace CompositionProToolkit
         #region Helpers
 
         /// <summary>
-        /// Helper class to redraw the surface
+        /// Helper class to redraw the MaskSurface
         /// </summary>
         private void RedrawSurfaceInternal()
         {
-            _generator.RedrawMaskSurface(_surfaceLock, _surface, Size, _geometry, _brush);
+            _generator.RedrawMaskSurface(_surfaceLock, _surface, Size, _geometry);
         }
 
         #endregion

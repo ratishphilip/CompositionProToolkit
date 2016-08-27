@@ -33,7 +33,7 @@ namespace SampleGallery.Views
     {
         private Compositor _compositor;
         private ICompositionGenerator _generator;
-        private ICompositionMask _animatedCompositionMask;
+        private IMaskSurface _animatedCompositionMask;
         private CompositionBackdropBrush _backdropBrush;
         private CanvasGeometry _outerGeometry;
         private CanvasGeometry _combinedGeometry;
@@ -90,7 +90,7 @@ namespace SampleGallery.Views
                                          ((CompositionGrid1.ActualHeight - _height) / 2).Single(), 0);
             // Create the CompositionMask
             var ellipseGeometry = CanvasGeometry.CreateEllipse(_generator.Device, _width / 2, _height / 2, 0.4f * _width, 0.4f * _height);
-            var compositionMask = _generator.CreateMask(_visual1.Size.ToSize(), ellipseGeometry);
+            var compositionMask = _generator.CreateMaskSurface(_visual1.Size.ToSize(), ellipseGeometry);
             // Create Masked BackdropBrush from CompositionMask
             _visual1.Brush = _compositor.CreateMaskedBackdropBrush(compositionMask, Colors.AntiqueWhite, 30f, _backdropBrush);
 
@@ -126,7 +126,7 @@ namespace SampleGallery.Views
             _outerGeometry = CanvasGeometry.CreateRectangle(_generator.Device, 0, 0, _width, _height);
             var excludedGeometry = _outerGeometry.CombineWith(_combinedGeometry, Matrix3x2.Identity, CanvasGeometryCombine.Exclude);
             // Create the CompositionMask
-            _animatedCompositionMask = _generator.CreateMask(_animatedVisual.Size.ToSize(), excludedGeometry);
+            _animatedCompositionMask = _generator.CreateMaskSurface(_animatedVisual.Size.ToSize(), excludedGeometry);
             var animBrush = _compositor.CreateMaskedBackdropBrush(_animatedCompositionMask, Colors.AntiqueWhite, 10f, _backdropBrush);
             _animatedVisual.Brush = animBrush;
 
@@ -135,7 +135,7 @@ namespace SampleGallery.Views
             ElementCompositionPreview.SetElementChildVisual(CompositionGrid2, container2);
         }
 
-        private async void AnimatedCanvasCtrl_OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
+        private void AnimatedCanvasCtrl_OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
             if (_animatedCompositionMask == null)
                 return;
