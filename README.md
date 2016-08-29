@@ -176,15 +176,11 @@ void Redraw(Color foregroundColor, ICanvasBrush backgroundBrush);
 void Redraw(ICanvasBrush foregroundBrush, Color backgroundColor);
 void Redraw(Size size, CanvasGeometry geometry);
 void Redraw(Size size, CanvasGeometry geometry, Color foregroundColor);
-void Redraw(Size size, CanvasGeometry geometry, Color foregroundColor, 
-    Color backgroundColor);
+void Redraw(Size size, CanvasGeometry geometry, Color foregroundColor, Color backgroundColor);
 void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush);
-void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush,
-    ICanvasBrush backgroundBrush);
-void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush,
-    Color backgroundColor);
-void Redraw(Size size, CanvasGeometry geometry, Color foregroundColor, 
-    ICanvasBrush backgroundBrush);
+void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush, ICanvasBrush backgroundBrush);
+void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush, Color backgroundColor);
+void Redraw(Size size, CanvasGeometry geometry, Color foregroundColor, ICanvasBrush backgroundBrush);
 void Resize(Size size);
 ```
 
