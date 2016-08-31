@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using CompositionProToolkit.Controls;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -85,6 +86,16 @@ namespace SampleGallery.Views
                 "Bottom"
             };
 
+            TransitionCB.ItemsSource = new List<string>()
+            {
+                "FadeIn",
+                "SlideLeft",
+                "SlideRight",
+                "SlideUp",
+                "SlideDown",
+                "ZoomIn"
+            };
+
             ImageCB.SelectedIndex = -1;
             StretchCB.SelectedIndex = -1;
             AlignXCB.SelectedIndex = -1;
@@ -92,9 +103,9 @@ namespace SampleGallery.Views
 
             _uris = new List<Uri>()
             {
-                new Uri($"ms-appx:///Assets/Images/Image3.jpg"),
-                new Uri($"ms-appx:///Assets/Images/Image2.jpg"),
                 new Uri($"ms-appx:///Assets/Images/Image1.jpg"),
+                new Uri($"ms-appx:///Assets/Images/Image2.jpg"),
+                new Uri($"ms-appx:///Assets/Images/Image3.jpg"),
                 new Uri("http://umad.com/img/2015/6/black-and-white-cat-wallpaper-5494-5772-hd-wallpapers.jpg"),
                 new Uri("http://66.media.tumblr.com/eb82497094c835e10f0a5e1b31263b01/tumblr_mtumx7AxJh1rwsyzqo1_1280.png"),
                 new Uri("http://www.repairerdrivennews.com/wp-content/uploads/2016/04/tesla-model-3-provided-2016-2-1.png")
@@ -115,6 +126,7 @@ namespace SampleGallery.Views
             StretchCB.SelectedIndex = 0;
             AlignXCB.SelectedIndex = 1;
             AlignYCB.SelectedIndex = 1;
+            TransitionCB.SelectedIndex = 0;
         }
 
         private void OnImageSelected(object sender, SelectionChangedEventArgs e)
@@ -153,6 +165,19 @@ namespace SampleGallery.Views
             {
                 ImageFrame.CornerRadius = new CornerRadius(radius.Value);
             });
+        }
+
+        private async void OnTransitionModeChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var index = (sender as ComboBox).SelectedIndex;
+
+            if (index >= 0)
+            {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    ImageFrame.TransitionMode = (TransitionModeType)index;
+                });
+            }
         }
     }
 }

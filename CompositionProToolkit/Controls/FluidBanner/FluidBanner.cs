@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.4
+// CompositionProToolkit v0.4.5
 // 
 
 using System;
@@ -40,8 +40,8 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using CompositionExpressionToolkit;
 using CompositionProToolkit.Common;
+using CompositionProToolkit.Expressions;
 
 namespace CompositionProToolkit.Controls
 {

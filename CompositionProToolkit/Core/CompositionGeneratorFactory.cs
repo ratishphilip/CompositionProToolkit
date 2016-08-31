@@ -27,29 +27,36 @@
 // CompositionProToolkit v0.4.5
 // 
 
-using System;
-using System.Threading.Tasks;
+using Windows.UI.Composition;
 
 namespace CompositionProToolkit
 {
-    internal interface ICacheHandler
+    /// <summary>
+    /// Factory class to instantiate the CompositionGenerator
+    /// </summary>
+    public static class CompositionGeneratorFactory
     {
         /// <summary>
-        /// Checks if this handler can cache the given object
+        /// Instantiates a CompositionGenerator object
         /// </summary>
-        /// <param name="objectToCache">Object to cache</param>
-        /// <returns>True if it can cache, otherwise False</returns>
-        bool CanCache(object objectToCache);
+        /// <param name="compositor">Compositor</param>
+        /// <param name="useSharedCanvasDevice">Whether to use a shared CanvasDevice or to create a new one.</param>
+        /// <param name="useSoftwareRenderer">Whether to use Software Renderer when creating a new CanvasDevice.</param>
+        /// <returns>ICompositionGenerator</returns>
+        public static ICompositionGenerator GetCompositionGenerator(Compositor compositor, 
+            bool useSharedCanvasDevice = true, bool useSoftwareRenderer = false)
+        {
+            return new CompositionGenerator(compositor, useSharedCanvasDevice, useSoftwareRenderer);
+        }
 
         /// <summary>
-        /// Caches the given Uri to the Application's ImageCache
-        /// and returns the uri of the cached file.
+        /// Instantiates a CompositionGenerator object
         /// </summary>
-        /// <param name="objectToCache">Object to cache</param>
-        /// <param name="cacheFileName">Name of the cache file</param>
-        /// <param name="progressHandler">Delegate for handling progress</param>
-        /// <returns>Uri</returns>
-        Task<Uri> GetCachedUriAsync(object objectToCache, string cacheFileName,
-            CacheProgressHandler progressHandler = null);
+        /// <param name="graphicsDevice">Composition Graphics Device</param>
+        /// <returns>ICompositionGenerator</returns>
+        public static ICompositionGenerator GetCompositionGenerator(CompositionGraphicsDevice graphicsDevice)
+        {
+            return new CompositionGenerator(graphicsDevice);
+        }
     }
 }

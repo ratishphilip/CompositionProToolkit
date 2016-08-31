@@ -10,48 +10,60 @@
     <Grid Background="Wheat">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="50"></RowDefinition>
-            <RowDefinition Height="70"></RowDefinition>
+            <RowDefinition Height="60"></RowDefinition>
+            <RowDefinition Height="60"></RowDefinition>
         </Grid.RowDefinitions>
         <controls:ImageFrame x:Name="ImageFrame"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch"
-                                        Margin="50,30"
-                                        Background="Transparent"
-                                        FrameBackground="Black"
-                                        BorderBrush="#000000"
-                                        BorderThickness="0"
-                                        DisplayShadow="False"
-                                        ShadowBlurRadius="15"
-                                        ShadowColor="#222222"
-                                        ShadowOffsetX="10"
-                                        ShadowOffsetY="10"
-                                        ShadowOpacity="0.65"
-                                        Padding="4"></controls:ImageFrame>
+                             HorizontalAlignment="Stretch"
+                             VerticalAlignment="Stretch"
+                             Margin="50,30"
+                             CornerRadius="25"
+                             ShowPlaceholder="True"
+                             Background="Transparent"
+                             FrameBackground="Black"
+                             BorderBrush="#000000"
+                             BorderThickness="0"
+                             DisplayShadow="True"
+                             ShadowBlurRadius="15"
+                             ShadowColor="#222222"
+                             ShadowOffsetX="10"
+                             ShadowOffsetY="10"
+                             ShadowOpacity="0.65"
+                             TransitionDuration="00:00:02"
+                             Padding="4"></controls:ImageFrame>
 
         <StackPanel Orientation="Horizontal"
                     Grid.Row="1"
-                    
-                    HorizontalAlignment="Center">
+                    HorizontalAlignment="Center"
+                    Margin="10,0">
             <TextBlock VerticalAlignment="Center"
-                       Margin="50,-2,-30,10"
+                       Margin="0,-2,0,10"
                        Foreground="Black"
                        Text="CornerRadius"></TextBlock>
-            <Slider Width="200"
+            <Slider Width="180"
                     VerticalAlignment="Center"
                     Minimum="0"
                     Maximum="150"
                     Foreground="Black"
                     Background="Black"
+                    Value="25"
                     ValueChanged="OnCornerRadiusChanged"
-                    Margin="50,0,-30,0"></Slider>
-            <ToggleSwitch  Margin="50,0,0,0"
+                    Margin="10,0,0,0"></Slider>
+            <ToggleSwitch  Margin="10,0,0,0"
                            Foreground="Black"
                            IsOn="{Binding ElementName=ImageFrame, Path=ShowPlaceholder, Mode=TwoWay}">Placeholder</ToggleSwitch>
-            <ToggleSwitch  Margin="50,0,0,0"
-                           Foreground="Black"
-                           IsOn="{Binding ElementName=ImageFrame, Path=DisplayShadow, Mode=TwoWay}">Shadow</ToggleSwitch>
 
+            <TextBlock VerticalAlignment="Center"
+                       Margin="-50,10,0,10"
+                       Foreground="Black"
+                       Text="TransitionMode"></TextBlock>
+            <ComboBox x:Name="TransitionCB"
+                      Width="120"
+                      Foreground="Black"
+                      Margin="10,10,0,10"
+                      Height="34"
+                      VerticalAlignment="Center"
+                      SelectionChanged="OnTransitionModeChanged"></ComboBox>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal"

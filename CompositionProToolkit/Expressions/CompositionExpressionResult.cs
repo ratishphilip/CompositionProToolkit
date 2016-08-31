@@ -24,52 +24,23 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.4
-// 
+// CompositionProToolkit v0.4.5
+//
 
-using System;
-using Windows.Foundation;
-using Windows.UI.Composition;
+using System.Collections.Generic;
 
-namespace CompositionProToolkit
+namespace CompositionProToolkit.Expressions
 {
     /// <summary>
-    /// Represents the core interface for interfaces
-    /// which render onto ICompositionSurface.
+    /// This class stores the result of the Expression Tree visit
+    /// done by the CompositionExpressionEngine
     /// </summary>
-    public interface IRenderSurface : IDisposable
+    public class CompositionExpressionResult
     {
         #region Properties
 
-        /// <summary>
-        /// Generator
-        /// </summary>
-        ICompositionGenerator Generator { get; }
-
-        /// <summary>
-        /// Surface
-        /// </summary>
-        ICompositionSurface Surface { get; }
-
-        /// <summary>
-        /// Surface Size
-        /// </summary>
-        Size Size { get; }
-
-        #endregion
-
-        #region APIs
-
-        /// <summary>
-        /// Redraws the surface
-        /// </summary>
-        void Redraw();
-
-        /// <summary>
-        /// Resizes the surface to the new size.
-        /// </summary>
-        /// <param name="size">New size of the surface</param>
-        void Resize(Size size);
+        public string Expression { get; set; }
+        public Dictionary<string, object> Parameters { get; set; }
 
         #endregion
     }

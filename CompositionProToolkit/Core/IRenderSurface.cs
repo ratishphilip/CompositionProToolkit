@@ -28,28 +28,49 @@
 // 
 
 using System;
-using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.UI.Composition;
 
 namespace CompositionProToolkit
 {
-    internal interface ICacheHandler
+    /// <summary>
+    /// Represents the core interface for interfaces
+    /// which render onto ICompositionSurface.
+    /// </summary>
+    public interface IRenderSurface : IDisposable
     {
-        /// <summary>
-        /// Checks if this handler can cache the given object
-        /// </summary>
-        /// <param name="objectToCache">Object to cache</param>
-        /// <returns>True if it can cache, otherwise False</returns>
-        bool CanCache(object objectToCache);
+        #region Properties
 
         /// <summary>
-        /// Caches the given Uri to the Application's ImageCache
-        /// and returns the uri of the cached file.
+        /// Generator
         /// </summary>
-        /// <param name="objectToCache">Object to cache</param>
-        /// <param name="cacheFileName">Name of the cache file</param>
-        /// <param name="progressHandler">Delegate for handling progress</param>
-        /// <returns>Uri</returns>
-        Task<Uri> GetCachedUriAsync(object objectToCache, string cacheFileName,
-            CacheProgressHandler progressHandler = null);
+        ICompositionGenerator Generator { get; }
+
+        /// <summary>
+        /// Surface
+        /// </summary>
+        ICompositionSurface Surface { get; }
+
+        /// <summary>
+        /// Surface Size
+        /// </summary>
+        Size Size { get; }
+
+        #endregion
+
+        #region APIs
+
+        /// <summary>
+        /// Redraws the surface
+        /// </summary>
+        void Redraw();
+
+        /// <summary>
+        /// Resizes the surface to the new size.
+        /// </summary>
+        /// <param name="size">New size of the surface</param>
+        void Resize(Size size);
+
+        #endregion
     }
 }

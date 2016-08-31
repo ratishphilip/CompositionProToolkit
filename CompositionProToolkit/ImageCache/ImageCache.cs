@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.4
+// CompositionProToolkit v0.4.5
 // 
 
 using System;
@@ -35,6 +35,7 @@ using System.Threading.Tasks;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage;
+using Windows.Storage.Streams;
 
 namespace CompositionProToolkit
 {
@@ -56,10 +57,9 @@ namespace CompositionProToolkit
         #region Fields
 
         private static readonly SemaphoreSlim CacheFolderSemaphore = new SemaphoreSlim(1);
-        private static readonly Dictionary<string, Task<Uri>> ConcurrentUriTasks = new Dictionary<string, Task<Uri>>();
-        private static readonly Dictionary<string, Task<Uri>> ConcurrentFileTasks = new Dictionary<string, Task<Uri>>();
-        private static readonly List<IUriCacheHandler> UriCacheHandlers = new List<IUriCacheHandler>();
-        private static readonly List<IStorageFileCacheHandler> FileCacheHandlers = new List<IStorageFileCacheHandler>();
+        private static readonly Dictionary<string, Task<Uri>> ConcurrentCacheTasks = new Dictionary<string, Task<Uri>>();
+        private static readonly List<ICacheHandler> CacheHandlers = new List<ICacheHandler>();
+        private static readonly HashAlgorithmProvider AlgorithmProvider;
         private static StorageFolder _cacheFolder;
 
         #endregion
@@ -87,11 +87,15 @@ namespace CompositionProToolkit
         {
             // Default cache duration is a day
             CacheDuration = TimeSpan.FromHours(24);
-            // Uri Cache Handlers
-            UriCacheHandlers.Add(new ApplicationUriCacheHandler());
-            UriCacheHandlers.Add(new HttpUriCacheHandler());
-            // StorageFile Cache Handlers
-            FileCacheHandlers.Add(new StorageFileCacheHandler());
+
+            // Cache Handlers
+            CacheHandlers.Add(new ApplicationUriCacheHandler());
+            CacheHandlers.Add(new HttpUriCacheHandler());
+            CacheHandlers.Add(new StorageFileCacheHandler());
+            CacheHandlers.Add(new StreamCacheHandler());
+
+            // Algorithm Provider
+            AlgorithmProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha1);
         }
 
         #endregion
@@ -99,59 +103,41 @@ namespace CompositionProToolkit
         #region Internal APIs
 
         /// <summary>
-        /// Adds IUriCacheHandlers to the UriCacheHandlers
+        /// Adds collection of ICacheHandlers to the CacheHandlers
         /// </summary>
-        /// <param name="cacheHandlers">IUriCacheHandlers</param>
-        internal static void AddUriCacheHandlers(IEnumerable<IUriCacheHandler> cacheHandlers)
+        /// <param name="cacheHandlers">Collection of ICacheHandlers</param>
+        internal static void AddCacheHandlers(IEnumerable<ICacheHandler> cacheHandlers)
         {
             if (cacheHandlers == null)
                 return;
 
-            UriCacheHandlers.AddRange(cacheHandlers);
+            CacheHandlers.AddRange(cacheHandlers);
         }
 
         /// <summary>
-        /// Adds IStorageFileCacheHandler to the FileCacheHandlers
+        /// Clears the CacheHandlers
         /// </summary>
-        /// <param name="cacheHandlers">IStorageFileCacheHandlers</param>
-        internal static void AddFileCacheHandlers(IEnumerable<IStorageFileCacheHandler> cacheHandlers)
+        internal static void ClearCacheHandlers()
         {
-            if (cacheHandlers == null)
-                return;
-
-            FileCacheHandlers.AddRange(cacheHandlers);
+            CacheHandlers.Clear();
         }
 
         /// <summary>
-        /// Clears the UriCacheHandlers
+        /// Creates a Uri from the Hashed value of the given object.
+        /// The object must be one of the following types:
+        /// 1. Uri
+        /// 2. StorageFile
+        /// 3. IRandomAccessStream
         /// </summary>
-        internal static void ClearUriCacheHandlers()
-        {
-            UriCacheHandlers.Clear();
-        }
-
-        /// <summary>
-        /// Clears the FileCacheHandlers
-        /// </summary>
-        internal static void ClearFileCacheHandlers()
-        {
-            FileCacheHandlers.Clear();
-        }
-
-        /// <summary>
-        /// Creates a Uri from the Hashed value of the Uri's AbsoluteUri
-        /// </summary>
-        /// <param name="uri">Uri to hash</param>
+        /// <param name="objectToHash">Object to hash</param>
         /// <returns>Hashed Uri</returns>
-        internal static Uri GetHashedUri(Uri uri)
+        internal static async Task<Uri> GetHashedUriAsync(object objectToHash)
         {
-            if (uri == null)
+            if (objectToHash == null)
                 return null;
 
-            // Get the hash file name of the Uri
-            var hashFileName = GetHashedFileName(uri);
-
-            return new Uri($"ms-appdata:///temp/{CacheFolderName}/{hashFileName}");
+            var fileName = await GetHashedFileNameAsync(objectToHash);
+            return (fileName == null) ? null : new Uri($"ms-appdata:///temp/{CacheFolderName}/{fileName}");
         }
 
         #endregion
@@ -159,37 +145,39 @@ namespace CompositionProToolkit
         #region APIs
 
         /// <summary>
-        /// Caches the image obtained from the given Uri to the ImageCache
-        /// and provides the Uri to the cached file.
+        /// Caches the given object to the Application's ImageCache
+        /// and returns the uri of the cached file.
         /// </summary>
-        /// <param name="uri">Uri of the image</param>
+        /// <param name="objectToCache">Object to cache</param>
         /// <param name="progressHandler">Delegate for handling progress</param>
         /// <returns>Uri of the cached file</returns>
-        public static async Task<Uri> GetCachedUriAsync(Uri uri, CacheProgressHandler progressHandler = null)
+        public static async Task<Uri> GetCachedUriAsync(object objectToCache,
+            CacheProgressHandler progressHandler = null)
         {
-            if (uri == null)
+            if (objectToCache == null)
                 return null;
 
             Task<Uri> task;
 
-            // Get the hashed value of the Uri
-            var hashKey = GetHashedFileName(uri);
+            // Get the hashed value of the object
+            var hashKey = await GetHashedFileNameAsync(objectToCache);
 
-            // Check if another task requesting the the same Uri exists
-            lock (ConcurrentUriTasks)
+            // Check if another task, requesting the cached file of 
+            // the same object, exists
+            lock (ConcurrentCacheTasks)
             {
-                if (ConcurrentUriTasks.ContainsKey(hashKey))
+                if (ConcurrentCacheTasks.ContainsKey(hashKey))
                 {
-                    task = ConcurrentUriTasks[hashKey];
+                    task = ConcurrentCacheTasks[hashKey];
                 }
                 else
                 {
-                    var cacheHandler = UriCacheHandlers.FirstOrDefault(h => h.CanCache(uri.Scheme));
+                    var cacheHandler = CacheHandlers.FirstOrDefault(h => h.CanCache(objectToCache));
                     if (cacheHandler == null)
                         return null;
 
-                    task = cacheHandler.GetCachedUriAsync(uri, hashKey, progressHandler);
-                    ConcurrentUriTasks.Add(hashKey, task);
+                    task = cacheHandler.GetCachedUriAsync(objectToCache, hashKey, progressHandler);
+                    ConcurrentCacheTasks.Add(hashKey, task);
                 }
             }
 
@@ -204,67 +192,11 @@ namespace CompositionProToolkit
             }
             finally
             {
-                lock (ConcurrentUriTasks)
+                lock (ConcurrentCacheTasks)
                 {
-                    if (ConcurrentUriTasks.ContainsKey(hashKey))
+                    if (ConcurrentCacheTasks.ContainsKey(hashKey))
                     {
-                        ConcurrentUriTasks.Remove(hashKey);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Caches the image represented by the given StorageFile to
-        ///  the ImageCache and provides the Uri to the cached file.
-        /// </summary>
-        /// <param name="file">StorageFile</param>
-        /// <param name="progressHandler">Delegate for handling progress</param>
-        /// <returns>Uri of the cached file</returns>
-        public static async Task<Uri> GetCachedUriAsync(StorageFile file, CacheProgressHandler progressHandler = null)
-        {
-            if (file == null)
-                return null;
-
-            Task<Uri> task;
-
-            // Get the hashed value of the Uri
-            var hashKey = GetHashedFileName(file);
-
-            // Check if another task requesting the the same Uri exists
-            lock (ConcurrentFileTasks)
-            {
-                if (ConcurrentFileTasks.ContainsKey(hashKey))
-                {
-                    task = ConcurrentFileTasks[hashKey];
-                }
-                else
-                {
-                    var cacheHandler = FileCacheHandlers.FirstOrDefault(h => h.CanCache(file));
-                    if (cacheHandler == null)
-                        return null;
-
-                    task = cacheHandler.GetCachedUriAsync(file, hashKey, progressHandler);
-                    ConcurrentFileTasks.Add(hashKey, task);
-                }
-            }
-
-            // Wait for the task to complete
-            try
-            {
-                return await task;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-            finally
-            {
-                lock (ConcurrentFileTasks)
-                {
-                    if (ConcurrentFileTasks.ContainsKey(hashKey))
-                    {
-                        ConcurrentFileTasks.Remove(hashKey);
+                        ConcurrentCacheTasks.Remove(hashKey);
                     }
                 }
             }
@@ -275,26 +207,95 @@ namespace CompositionProToolkit
         #region Helpers
 
         /// <summary>
-        /// Generates the name of the cache file by hashing
-        /// the AbsoluteUri of the Uri.
+        /// Gets the hashed file name for the given object. Supported object types
+        /// include - Uri, StorageFile and IRandomAccessStream
         /// </summary>
-        /// <param name="uri">Uri</param>
+        /// <param name="objectToHash">Object to be hashed.</param>
         /// <returns>Hashed file name</returns>
-        private static string GetHashedFileName(Uri uri)
+        private static async Task<string> GetHashedFileNameAsync(object objectToHash)
         {
-            return $"{ComputeHash(uri.AbsoluteUri)}.jpg";
+            // Is the object a Uri?
+            var uri = objectToHash as Uri;
+            if (uri != null)
+            {
+                return $"{ComputeHash(uri.AbsoluteUri)}.jpg";
+            }
+
+            // Is the object a string representing a Uri?
+            var uriString = objectToHash as string;
+            if (uriString != null)
+            {
+                // Try creating the Uri from the uriString
+                if (Uri.TryCreate(uriString, UriKind.RelativeOrAbsolute, out uri))
+                {
+                    return $"{ComputeHash(uri.AbsoluteUri)}.jpg";
+                }
+            }
+
+            // Is the object a StorageFile?
+            var file = objectToHash as StorageFile;
+            if (file != null)
+            {
+                return $"{ComputeHash(file.Path)}.jpg";
+            }
+
+            // Is the object a readable IRandomAccessStream?
+            var stream = objectToHash as IRandomAccessStream;
+            if ((stream != null) && (stream.CanRead))
+            {
+                return $"{await ComputeHashAsync(stream)}.jpg";
+            }
+
+            return null;
         }
 
-        /// <summary>
-        /// Generates the name of the cache file by hashing
-        /// the Path of the StorageFile.
-        /// </summary>
-        /// <param name="file">StorageFile</param>
-        /// <returns>Hashed file name</returns>
-        private static string GetHashedFileName(StorageFile file)
-        {
-            return $"{ComputeHash(file.Path)}.jpg";
-        }
+        ///// <summary>
+        ///// Generates the name of the cache file by hashing
+        ///// the AbsoluteUri of the Uri.
+        ///// </summary>
+        ///// <param name="uri">Uri</param>
+        ///// <returns>Hashed file name</returns>
+        //private static string GetHashedFileName(Uri uri)
+        //{
+        //    return $"{ComputeHash(uri.AbsoluteUri)}.jpg";
+        //}
+
+        ///// <summary>
+        ///// Generates the name of the cache file by hashing
+        ///// the Path of the StorageFile.
+        ///// </summary>
+        ///// <param name="file">StorageFile</param>
+        ///// <returns>Hashed file name</returns>
+        //private static string GetHashedFileName(StorageFile file)
+        //{
+        //    return $"{ComputeHash(file.Path)}.jpg";
+        //}
+
+        //private static async Task<string> GetHashedFileNameAsync(IRandomAccessStream stream)
+        //{
+        //    return $"{await ComputeHashAsync(stream)}.jpg";
+
+        //    //IBuffer buffer = new Windows.Storage.Streams.Buffer((uint)stream.Size);
+        //    //buffer = await stream.ReadAsync(buffer, buffer.Capacity, InputStreamOptions.None);
+        //    //var bufferHash = _algorithmProvider.HashData(buffer);
+        //    //var hash = CryptographicBuffer.EncodeToHexString(bufferHash).ToLower();
+
+
+        //    //var dr = new DataReader(stream.GetInputStreamAt(0));
+        //    //var bytes = new byte[stream.Size];
+        //    //await dr.LoadAsync((uint)stream.Size);
+        //    //dr.ReadBytes(bytes);
+
+
+        //    //// Convert stream to IBuffer
+        //    //using (var memoryStream = new MemoryStream())
+        //    //{
+
+        //    //    memoryStream.Capacity = (int)stream.Size;
+        //    //    var iBuffer = memoryStream.GetWindowsRuntimeBuffer();
+        //    //    await stream.ReadAsync(iBuffer, (uint)stream.Size, InputStreamOptions.None).AsTask().ConfigureAwait(false);
+        //    //}
+        //}
 
         /// <summary>
         /// Computes the SHA1 hash of the given string
@@ -303,10 +304,31 @@ namespace CompositionProToolkit
         /// <returns>Hashed string</returns>
         private static string ComputeHash(string input)
         {
+            // Convert string to IBuffer
             var buffer = CryptographicBuffer.ConvertStringToBinary(input, BinaryStringEncoding.Utf8);
-            var provider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha1);
-            var bufferHash = provider.HashData(buffer);
+            // Calculate the hash
+            var bufferHash = AlgorithmProvider.HashData(buffer);
+            // Encode to hexadecimal lowercase characters
             var hash = CryptographicBuffer.EncodeToHexString(bufferHash).ToLower();
+
+            return hash;
+        }
+
+        /// <summary>
+        /// Computes the SHA1 hash of the given IRandomAccessStream
+        /// </summary>
+        /// <param name="stream">IRandomAccessStream</param>
+        /// <returns>Hashed string</returns>
+        private static async Task<string> ComputeHashAsync(IRandomAccessStream stream)
+        {
+            // Copy the stream to IBuffer
+            IBuffer buffer = new Windows.Storage.Streams.Buffer((uint)stream.Size);
+            buffer = await stream.ReadAsync(buffer, buffer.Capacity, InputStreamOptions.None);
+            // Calculate the hash
+            var bufferHash = AlgorithmProvider.HashData(buffer);
+            // Encode to hexadecimal lowercase characters
+            var hash = CryptographicBuffer.EncodeToHexString(bufferHash).ToLower();
+
             return hash;
         }
 

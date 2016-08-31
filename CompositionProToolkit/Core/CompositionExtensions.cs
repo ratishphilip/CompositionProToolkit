@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.4
+// CompositionProToolkit v0.4.5
 // 
 
 using Windows.UI;
@@ -32,7 +32,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml.Media;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
-using CompositionExpressionToolkit;
+using CompositionProToolkit.Expressions;
 
 namespace CompositionProToolkit
 {

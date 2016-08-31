@@ -24,39 +24,45 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.4
+// CompositionProToolkit v0.4.5
 // 
 
-using Windows.UI.Composition;
+using Windows.Foundation;
+using Microsoft.Graphics.Canvas.Geometry;
 
 namespace CompositionProToolkit
 {
     /// <summary>
-    /// Factory class to instantiate the CompositionGenerator
+    /// Interface for rendering custom shaped geometries onto ICompositionSurface
+    /// so that they can be useds as masks on Composition Visuals.
     /// </summary>
-    public static class CompositionGeneratorFactory
+    public interface IMaskSurface : IRenderSurface
     {
-        /// <summary>
-        /// Instantiates a CompositionGenerator object
-        /// </summary>
-        /// <param name="compositor">Compositor</param>
-        /// <param name="useSharedCanvasDevice">Whether to use a shared CanvasDevice or to create a new one.</param>
-        /// <param name="useSoftwareRenderer">Whether to use Software Renderer when creating a new CanvasDevice.</param>
-        /// <returns>ICompositionGenerator</returns>
-        public static ICompositionGenerator GetCompositionGenerator(Compositor compositor, 
-            bool useSharedCanvasDevice = true, bool useSoftwareRenderer = false)
-        {
-            return new CompositionGenerator(compositor, useSharedCanvasDevice, useSoftwareRenderer);
-        }
+        #region Properties
 
         /// <summary>
-        /// Instantiates a CompositionGenerator object
+        /// Mask Geometry
         /// </summary>
-        /// <param name="graphicsDevice">Composition Graphics Device</param>
-        /// <returns>ICompositionGenerator</returns>
-        public static ICompositionGenerator GetCompositionGenerator(CompositionGraphicsDevice graphicsDevice)
-        {
-            return new CompositionGenerator(graphicsDevice);
-        }
+        CanvasGeometry Geometry { get; }
+
+        #endregion
+
+        #region APIs
+
+        /// <summary>
+        /// Redraws the MaskSurface with the new geometry
+        /// </summary>
+        /// <param name="geometry">New CanvasGeometry to be applied to the MaskSurface</param>
+        void Redraw(CanvasGeometry geometry);
+
+        /// <summary>
+        /// Resizes the MaskSurface with the given size and redraws the MaskSurface
+        /// with the new geometry and fills it with White color
+        /// </summary>
+        /// <param name="size">New size of the mask</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the MaskSurface</param>
+        void Redraw(Size size, CanvasGeometry geometry);
+
+        #endregion
     }
 }

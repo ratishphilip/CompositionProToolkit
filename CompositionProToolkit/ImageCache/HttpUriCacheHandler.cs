@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.4
+// CompositionProToolkit v0.4.5
 // 
 
 using System;
@@ -37,59 +37,11 @@ using Windows.Web.Http;
 namespace CompositionProToolkit
 {
     /// <summary>
-    /// This class handles the caching of files which are present in 
-    /// the Application package, Application data or any other location
-    /// related to the Application whose Uri starts with 'ms-' like
-    /// 'ms-appx', 'ms-appdata' for example.
-    /// </summary>
-    internal class ApplicationUriCacheHandler : IUriCacheHandler
-    {
-        #region Constants
-
-        private const string UriScheme = "ms-";
-
-        #endregion
-
-        #region APIs
-
-        /// <summary>
-        /// Checks if this handler can cache the Uri
-        /// with the given Uri scheme.
-        /// </summary>
-        /// <param name="uriScheme">Uri Scheme</param>
-        /// <returns>True if it can cache, otherwise False</returns>
-        public bool CanCache(string uriScheme)
-        {
-            return !String.IsNullOrWhiteSpace(uriScheme) &&
-                   uriScheme.StartsWith(UriScheme);
-        }
-
-        /// <summary>
-        /// Since the given Uri is contained within the Application data or package, there
-        /// is no need to cache it. Just return the same uri.
-        /// </summary>
-        /// <param name="uri">Uri to cache</param>
-        /// <param name="cacheFileName">Hash of the Uri</param>
-        /// <param name="progressHandler">Delegate for handling progress</param>
-        /// <returns>Uri</returns>
-        public Task<Uri> GetCachedUriAsync(Uri uri, string cacheFileName, CacheProgressHandler progressHandler = null)
-        {
-            // Caching indicates only 80% of the task completed i.e. 80% progress,
-            // Progress will be 100% only when the image is loaded successfully on the 
-            // CompositionImageFrame
-            progressHandler?.Invoke(80);
-            return Task.Run(() => uri);
-        }
-
-        #endregion
-    }
-
-    /// <summary>
     /// This class handles the caching of files which are available on the
     /// web throught the 'http' or 'https' protocol. It uses the Http client 
     /// to download the file and cache it.
     /// </summary>
-    internal class HttpUriCacheHandler : IUriCacheHandler
+    internal class HttpUriCacheHandler : ICacheHandler
     {
         #region Constants
 
@@ -100,31 +52,65 @@ namespace CompositionProToolkit
         #region APIs
 
         /// <summary>
-        /// Checks if this handler can cache the Uri
-        /// with the given Uri scheme.
+        /// Checks if this handler can cache the given object
         /// </summary>
-        /// <param name="uriScheme">Uri Scheme</param>
+        /// <param name="objectToCache">Object to cache</param>
         /// <returns>True if it can cache, otherwise False</returns>
-        public bool CanCache(string uriScheme)
+        public bool CanCache(object objectToCache)
         {
-            // Accept only http or https
-            return !string.IsNullOrWhiteSpace(uriScheme) &&
-                   _uriSchemes.Contains(uriScheme.ToLower().Trim());
+            // Is the objectToCache is a valid Uri?
+            var uri = objectToCache as Uri;
+            if (uri != null)
+            {
+                // Check if the objectToCache is a valid Uri with a Scheme
+                // equal to either 'http' or 'https'
+                return !String.IsNullOrWhiteSpace(uri.Scheme) &&
+                   _uriSchemes.Contains(uri.Scheme.ToLower().Trim());
+            }
+
+            // Is the objectToCache a string representing a Uri?
+            var uriString = objectToCache as string;
+            if (uriString != null)
+            {
+                // Try creating the Uri from the uriString
+                if (Uri.TryCreate(uriString, UriKind.RelativeOrAbsolute, out uri))
+                {
+                    // Check if the objectToCache is a valid Uri with a Scheme
+                    // equal to either 'http' or 'https'
+                    return !String.IsNullOrWhiteSpace(uri.Scheme) &&
+                        _uriSchemes.Contains(uri.Scheme.ToLower().Trim());
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
-        /// Caches the given Uri to the Application's ImageCache
+        /// Caches the given object to the Application's ImageCache
         /// and returns the uri of the cached file.
         /// </summary>
-        /// <param name="uri">Uri to cache</param>
-        /// <param name="cacheFileName">Name of the cache file.</param>
+        /// <param name="objectToCache">Object to cache</param>
+        /// <param name="cacheFileName">Name of the cache file</param>
         /// <param name="progressHandler">Delegate for handling progress</param>
         /// <returns>Uri</returns>
-        public async Task<Uri> GetCachedUriAsync(Uri uri, string cacheFileName,
+        public async Task<Uri> GetCachedUriAsync(object objectToCache, string cacheFileName,
             CacheProgressHandler progressHandler = null)
         {
+            // Check if the objectToCache is a valid Uri
+            var uri = objectToCache as Uri;
             if (uri == null)
-                return null;
+            {
+                // Is the objectToCache a string representing a Uri?
+                var uriString = objectToCache as string;
+                if (uriString != null)
+                {
+                    // Try creating the Uri from the uriString
+                    if (!(Uri.TryCreate(uriString, UriKind.RelativeOrAbsolute, out uri)))
+                    {
+                        return null;
+                    }
+                }
+            }
 
             // Calculate the expiry date
             var expirationDate = DateTime.Now.Subtract(ImageCache.CacheDuration);
@@ -142,11 +128,11 @@ namespace CompositionProToolkit
             // Has the cache file expired or does it not exist?
             if (await cacheFile.IsNullOrExpired(expirationDate))
             {
-                // Create/Recreate the cache file
-                cacheFile = await cacheFolder.CreateFileAsync(cacheFileName, CreationCollisionOption.ReplaceExisting);
-
                 try
                 {
+                    // Create/Recreate the cache file
+                    cacheFile = await cacheFolder.CreateFileAsync(cacheFileName, CreationCollisionOption.ReplaceExisting);
+
                     using (var httpClient = new HttpClient())
                     {
                         // Use HttpCompletionOption.ResponseHeadersRead for the GetAsync call so that it returns as 
@@ -164,16 +150,6 @@ namespace CompositionProToolkit
                                     ulong totalBytesRead = 0;
                                     var prevProgress = -1;
                                     var totalContentLength = response.Content.Headers.ContentLength ?? 0UL;
-                                    if (totalContentLength <= 0UL)
-                                    {
-                                        //// Report Progress
-                                        //// Since we are not able to obtain the totalContentLength,
-                                        //// we will not be able to calculate the accurate progress
-                                        //// so set a progress of 25% to indicate the at least some
-                                        //// download is in progress
-                                        //progressHandler?.Invoke(25);
-                                        prevProgress = 0;
-                                    }
                                     while (true)
                                     {
                                         // Read from the stream
@@ -195,7 +171,7 @@ namespace CompositionProToolkit
                                             // of the task of displaying the image. The other 20% requires successful loading 
                                             // of the cached image.
                                             var progress =
-                                                (int) Math.Round((totalBytesRead*80)/(double) totalContentLength);
+                                                (int)Math.Round((totalBytesRead * 80) / (double)totalContentLength);
                                             if (progress != prevProgress)
                                             {
                                                 // Report Progress
@@ -222,94 +198,6 @@ namespace CompositionProToolkit
                 {
                     // In case any exception occurs during the downloading or caching
                     // delete the cacheFile and return a 'null' Uri
-                    await cacheFile.DeleteAsync();
-
-                    // Report Progress
-                    progressHandler?.Invoke(-1);
-
-                    return null;
-                }
-            }
-
-            // Report Progress
-            // Caching indicates only half of the task completed i.e. 50% progress,
-            // Progress will be 100% only when the image is loaded successfully on the 
-            // CompositionImageFrame
-            progressHandler?.Invoke(80);
-
-            // Now that we have a valid cached file for the Uri, return the Uri of the cached inputFile
-            return new Uri($"ms-appdata:///temp/{ImageCache.CacheFolderName}/{cacheFileName}");
-        }
-
-        #endregion
-    }
-
-    /// <summary>
-    /// This class is responsible for caching a StorageFile in the ImageCache
-    /// </summary>
-    internal class StorageFileCacheHandler : IStorageFileCacheHandler
-    {
-        #region APIs
-
-        /// <summary>
-        /// Checks if this handler can cache the given StorageFile
-        /// </summary>
-        /// <param name="file">StorageFile</param>
-        /// <returns>True if it can cache, otherwise False</returns>
-        public bool CanCache(StorageFile file)
-        {
-            // For now, this class should be able to cache all StorageFiles
-            return true;
-        }
-
-        /// <summary>
-        /// Caches the given Uri to the Application's ImageCache
-        /// and returns the uri of the cached file.
-        /// </summary>
-        /// <param name="inputFile">StorageFile to be cached</param>
-        /// <param name="cacheFileName">Name of the cache file.</param>
-        /// <param name="progressHandler">Delegate for handling progress</param>
-        /// <returns></returns>
-        public async Task<Uri> GetCachedUriAsync(StorageFile inputFile, string cacheFileName,
-            CacheProgressHandler progressHandler = null)
-        {
-            if (inputFile == null)
-                return null;
-
-            // Calculate the expiry date
-            var expirationDate = DateTime.Now.Subtract(ImageCache.CacheDuration);
-            // Get the cache folder location
-            var cacheFolder = await ImageCache.GetCacheFolderAsync();
-            if (cacheFolder == null)
-                return null;
-
-            // Report Progress
-            progressHandler?.Invoke(0);
-
-            // Get the cache file corresponding to the cacheFileName
-            var cacheFile = await cacheFolder.TryGetItemAsync(cacheFileName) as StorageFile;
-
-            // Has the cache file expired or does it not exist?
-            if (await cacheFile.IsNullOrExpired(expirationDate))
-            {
-                try
-                {
-                    // Report Progress
-                    progressHandler?.Invoke(10);
-
-                    // Copy the storage file to the cacheFolder. If the file already exists, overwrite it
-                    await inputFile.CopyAsync(cacheFolder, cacheFileName, NameCollisionOption.ReplaceExisting);
-
-                    // Report Progress
-                    // Caching indicates only 80% of the task completed i.e. 80% progress,
-                    // Progress will be 100% only when the image is loaded successfully on the 
-                    // CompositionImageFrame
-                    progressHandler?.Invoke(80);
-                }
-                catch (Exception)
-                {
-                    // In case any exception occurs during the copying of the StorageFile
-                    // delete the cacheFile and return a 'null' Uri
                     cacheFile = await cacheFolder.TryGetItemAsync(cacheFileName) as StorageFile;
                     if (cacheFile != null)
                     {
@@ -324,6 +212,8 @@ namespace CompositionProToolkit
             }
 
             // Report Progress
+            // Caching indicates only half of the task completed i.e. 50% progress,
+            // Progress will be 100% only when the image is loaded successfully on the ImageFrame
             progressHandler?.Invoke(80);
 
             // Now that we have a valid cached file for the Uri, return the Uri of the cached inputFile

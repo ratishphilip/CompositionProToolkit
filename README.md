@@ -18,8 +18,12 @@
   - [FluidProgressRing](#1-fluidprogressring)
   - [FluidWrapPanel](#2-fluidwrappanel)
   - [ImageFrame](#3-imageframe)
+    - [ImageFrame Source](#imageframe-source)
+    - [Image Caching](#image-caching)
+    - [ImageFrame Transitions](#imageframe-transitions)
     - [Using ImageFrame with FilePicker](#using-imageframe-with-filepicker)   
   - [FluidBanner](#4-fluidbanner)
+- [CompositionProToolkit Expressions]()
 - [Updates Chronology](#updates-chronology)
 
 **CompositionProToolkit** is a collection of helper classes for Windows.UI.Composition. It also contains controls which can be used in UWP applications. It has dependency on the **Win2D** and the  [**CompositionExpressionToolkit**](https://github.com/ratishphilip/CompositionExpressionToolkit) libraries.
@@ -377,29 +381,53 @@ In order to configure the rendering of the image, **ImageFrame** has the followi
 | **`AlignY`** | `AlignmentY` | Specifies how the image is positioned vertically in the **ImageFrame**. | **AlignmentY.Center** |
 | **`CornerRadius`** | `CornerRadius` | Indicates the corner radius of the the ImageFrame. The image will be rendered with rounded corners. | **(0, 0, 0, 0)** |
 | **`DisplayShadow`** | `Boolean` | Indicates whether the shadow for this image should be displayed. | **False** |
-| **FrameBackground** | `Color` | Specifies the background color of the **ImageFrame** to fill the area where image is not rendered. | **Colors.Black** |
-| **Interpolation** | `CanvasImageInterpolation` | Specifies the interpolation used for rendering the image. | **HighQualityCubic** |
-| **`PlaceholderBackground`** | Color| Indicates the background color of the Placeholder. | **Colors.Black** |
-| **`PlaceholderColor`** | Color | Indicates the color with which the rendered placeholder geometry should be filled | **RGB(192, 192, 192)** |
-| **`RenderFast`** | Boolean| Indicates whether the animations need to be switched off if the ImageFrame is being used in scenarios where it is being rapidly updated with new Source. | **False** |
+| **`FrameBackground`** | `Color` | Specifies the background color of the **ImageFrame** to fill the area where image is not rendered. | **Colors.Black** |
+| **`Interpolation`** | `CanvasImageInterpolation` | Specifies the interpolation used for rendering the image. | **HighQualityCubic** |
+| **`PlaceholderBackground`** | `Color` | Indicates the background color of the Placeholder. | **Colors.Black** |
+| **`PlaceholderColor`** | `Color` | Indicates the color with which the rendered placeholder geometry should be filled | **RGB(192, 192, 192)** |
+| **`RenderFast`** | `Boolean` | Indicates whether the animations need to be switched off if the ImageFrame is being used in scenarios where it is being rapidly updated with new Source. | **False** |
 | **`RenderOptimized`** | `Boolean` | Indicates whether optimization must be used to render the image.Set this property to True if the ImageFrame is very small compared to the actual image size. This will optimize memory usage. | **False** |
 | **`ShadowBlurRadius`** | `Double` | Specifies the Blur radius of the shadow. | **0.0** |
 | **`ShadowColor`** | `Color` | Specifies the color of the shadow. | **Colors.Transparent** |
 | **`ShadowOffsetX`** | `Double` | Specifies the horizontal offset of the shadow. | **0.0** |
 | **`ShadowOffsetY`** | `Double` | Specifies the vertical offset of the shadow. | **0.0** |
 | **`ShadowOpacity`** | `Double` | Specifies the opacity of the shadow. | **1** |
-| **`ShowPlaceHolder`** | Boolean| Indicates whether the placeholder needs to be displayed during image load or when no image is loaded in the ImageFrame. | **False** |
-| **`Source`** | `Uri` | Specifies the Uri of the image to be loaded into the **ImageFrame**. | **null** |
+| **`ShowPlaceHolder`** | `Boolean` | Indicates whether the placeholder needs to be displayed during image load or when no image is loaded in the ImageFrame. | **True** |
+| **`Source`** | `object` | Indicates `Uri` or `StorageFile` or `IRandomAccessStream` of the image to be loaded into the **ImageFrame**. | **null** |
 | **`Stretch`** | `Stretch` | Specifies how the image is resized to fill its allocated space in the **ImageFrame**. | **Stretch.Uniform** |
 | **`TransitionDuration`** | `Double` | Indicates the duration of the crossfade animation while transitioning from one image to another. | **700ms** |
-| **`UseImageCache`** | Boolean | Indicates whether the images should be cached before rendering them. | **True** |
+| **`TransitionMode`** | `TransitionModeType` | Indicates the type of transition animation to employ for displaying an image after it has been loaded. | **TransitionModeType.FadeIn** |
 
 **ImageFrame** raises the following events  
 - **ImageOpened** - when the image has been successfully loaded from the Uri and rendered.
 - **ImageFailed** - when there is an error loading the image from the Uri.
 
+### ImageFrame Source
+The **Source** property of **ImageFrame** is of type **object** so that it can accept the following types
+
+- **Uri**
+- **String** (_from which a **Uri** can be successfully created_)
+- **StorageFile**
+- **IRandomAccessStream**
+
+### Image Caching
+**ImageFrame** internally caches the objects provided to **Source** property. The cache is located in the temporary folder of the application using the **ImageFrame**. Within the application, you can clear the cache anytime by using the following code
+
+```C#
+await ImageCache.ClearCacheAsync();
+```
+
+### ImageFrame Transitions
+**ImageFrame** provides several transition animations while displaying the newly loaded image. You can configure which animation to run by setting the  **TransitionMode** property of the **imageFrame**. **TransitionMode** can be set to any of the following values
+- `FadeIn` - The newly loaded image fades into view.
+- `SlideLeft` - The newly loaded image slides into view from the right side of the ImageFrame and moves left.
+- `SlideRight` - The newly loaded image slides into view from the left side of the ImageFrame and moves right.
+- `SlideUp` - The newly loaded image slides into view from the bottom of the ImageFrame and moves up.
+- `SlideDown` - The newly loaded image slides into view from the top of the ImageFrame and moves down.
+- `ZoomIn` - The newly loaded image zooms into view from the center of the ImageFrame.
+
 ### Using ImageFrame with FilePicker
-If you have a **CompostionImageFrame** control in  you application and your want to use the **FilePicker** to select an image file to be displayed on the **CompostionImageFrame**, then you must do the following
+If you have a **ImageFrame** control in  you application and your want to use the **FilePicker** to select an image file to be displayed on the **CompostionImageFrame**, then you must do the following
 
 ```C#
 var picker = new Windows.Storage.Pickers.FileOpenPicker
@@ -411,10 +439,8 @@ picker.FileTypeFilter.Add(".jpg");
 picker.FileTypeFilter.Add(".jpeg");
 picker.FileTypeFilter.Add(".png");
 var file = await picker.PickSingleFileAsync();
-imageFrame.Source = await ImageCache.GetCachedUriAsync(file);
+imageFrame.Source = file;
 ```
-Since the **ImageFrame**'s **Source** property expects a **Uri**, while the **FilePicker** provides a **StorageFile**. So in order to obtain a **Uri** from the **StorageFile**, you must first cache it using the **ImageCache.GetCachedUriAsync()** method.
-
 
 ## 4. FluidBanner
 
@@ -437,6 +463,9 @@ It provides the following properties which can be used to customize the **FluidB
 | **`Stretch`** | `Stretch` | Indicates how the image is resized to fill its allocated space within each **FluidBanner** item. | **Uniform** |
 
 # Updates Chronology
+
+## v0.4.5.0
+(**Wednesday, August 31, 2016**) - Merged `CompositionExpressionToolkit` with `CompositionProToolkit`. Transitions added to `ImageFrame`.
 
 ## v0.4.4.1
 (**Saturday, August 27, 2016**) - Improved UX in ImageFrame. Bug fixes. Breaking changes - several classes refactored and renamed.

@@ -24,45 +24,34 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.4
-// 
+// CompositionProToolkit v0.4.5
+//
 
-using Windows.Foundation;
-using Microsoft.Graphics.Canvas.Geometry;
+using System;
 
-namespace CompositionProToolkit
+namespace CompositionProToolkit.Expressions
 {
     /// <summary>
-    /// Interface for rendering custom shaped geometries onto ICompositionSurface
-    /// so that they can be useds as masks on Composition Visuals.
+    /// Extension methods for System.Double
     /// </summary>
-    public interface IMaskSurface : IRenderSurface
+    public static class DoubleExtensions
     {
-        #region Properties
-
         /// <summary>
-        /// Mask Geometry
+        /// Converts double value to float
         /// </summary>
-        CanvasGeometry Geometry { get; }
-
-        #endregion
-
-        #region APIs
-
-        /// <summary>
-        /// Redraws the MaskSurface with the new geometry
-        /// </summary>
-        /// <param name="geometry">New CanvasGeometry to be applied to the MaskSurface</param>
-        void Redraw(CanvasGeometry geometry);
-
-        /// <summary>
-        /// Resizes the MaskSurface with the given size and redraws the MaskSurface
-        /// with the new geometry and fills it with White color
-        /// </summary>
-        /// <param name="size">New size of the mask</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the MaskSurface</param>
-        void Redraw(Size size, CanvasGeometry geometry);
-
-        #endregion
+        /// <param name="value">double value</param>
+        /// <returns>float</returns>
+        public static float Single(this double value)
+        {
+            // Double to float conversion can overflow.
+            try
+            {
+                return Convert.ToSingle(value);
+            }
+            catch (OverflowException ex)
+            {
+                throw new ArgumentOutOfRangeException("Cannot convert the double value to float!", ex);
+            }
+        }
     }
 }
