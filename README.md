@@ -418,13 +418,16 @@ await ImageCache.ClearCacheAsync();
 ```
 
 ### ImageFrame Transitions
+
+<img src="https://cloud.githubusercontent.com/assets/7021835/18138092/f4c56fe2-6f5f-11e6-9b6c-ea8a0f27ad08.gif" alt="ImageFrame Transitions" />
+
 **ImageFrame** provides several transition animations while displaying the newly loaded image. You can configure which animation to run by setting the  **TransitionMode** property of the **imageFrame**. **TransitionMode** can be set to any of the following values
-- `FadeIn` - The newly loaded image fades into view.
-- `SlideLeft` - The newly loaded image slides into view from the right side of the ImageFrame and moves left.
-- `SlideRight` - The newly loaded image slides into view from the left side of the ImageFrame and moves right.
-- `SlideUp` - The newly loaded image slides into view from the bottom of the ImageFrame and moves up.
-- `SlideDown` - The newly loaded image slides into view from the top of the ImageFrame and moves down.
-- `ZoomIn` - The newly loaded image zooms into view from the center of the ImageFrame.
+- **`FadeIn`** - The newly loaded image fades into view.
+- **`SlideLeft`** - The newly loaded image slides into view from the right side of the ImageFrame and moves left.
+- **`SlideRight`** - The newly loaded image slides into view from the left side of the ImageFrame and moves right.
+- **`SlideUp`** - The newly loaded image slides into view from the bottom of the ImageFrame and moves up.
+- **`SlideDown`** - The newly loaded image slides into view from the top of the ImageFrame and moves down.
+- **`ZoomIn`** - The newly loaded image zooms into view from the center of the ImageFrame.
 
 ### Using ImageFrame with FilePicker
 If you have a **ImageFrame** control in  you application and your want to use the **FilePicker** to select an image file to be displayed on the **CompostionImageFrame**, then you must do the following
