@@ -1,5 +1,5 @@
 <p align="center">
-<img align="center" src="https://cloud.githubusercontent.com/assets/7021835/14901044/4da2cbb6-0d48-11e6-9a5b-872324451063.png" alt="CompositionExpressionToolkit logo">
+<img align="center" src="https://cloud.githubusercontent.com/assets/7021835/18138158/41f5d4aa-6f60-11e6-8373-9e1085130bff.png" alt="CompositionProToolkit.Expressions logo">
 </p>
 
 __CompositionProToolkit.Expressions__ namespace consists of a collection of Extension methods and Helper classes which make it easier to use <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.ui.composition.aspx">Windows.UI.Composition</a> features. They include methods for creating statically typed **CompositionAnimation** expressions, **CompositionPropertySet** extension methods, helper methods for creating **ScopedBatchSets** etc.
