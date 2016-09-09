@@ -478,7 +478,6 @@ protected override void OnNavigatedFrom(NavigationEventArgs e)
 
     VisualTreeHelper.DisconnectChildrenRecursive(ItemGridView);
     ItemGridView.ItemsSource = null;
-    ItemGridView.Items?.Clear();
 
     base.OnNavigatedFrom(e);
 }
@@ -504,6 +503,9 @@ It provides the following properties which can be used to customize the **FluidB
 | **`Stretch`** | `Stretch` | Indicates how the image is resized to fill its allocated space within each **FluidBanner** item. | **Uniform** |
 
 # Updates Chronology
+
+## v0.4.6.1
+(**Friday, September 9, 2016**) - `ImageFrame` now implements `IDisposable`. `OptimizeShadow` feature added to `ImageFrame`. `CreateFrostedGlassBrush` extension method added to compositor.
 
 ## v0.4.5.0
 (**Wednesday, August 31, 2016**) - Merged `CompositionExpressionToolkit` with `CompositionProToolkit`. Transitions added to `ImageFrame`.
