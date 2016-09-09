@@ -11,9 +11,10 @@
   - [Creating custom shaped `Visual` using `CanvasGeometry`](#2-creating-custom-shaped-visual-using-canvasgeometry)
     - [Using IMaskSurface](#using-imasksurface)
     - [Using IGeometrySurface](#using-igeometrysurface)
- - [Creating Masked Backdrop Brush using `IMaskSurface`](#3-creating-masked-backdrop-brush-using-imasksurface)
-  - [Loading Images on Visual using `IImageSurface`](#4-loading-images-on-visual-using-iimagesurface)
-  - [Creating the Reflection of a `ContainerVisual`](#5-creating-the-reflection-of-a-containervisual)
+  - [Creating Masked Backdrop Brush using `IMaskSurface`](#3-creating-masked-backdrop-brush-using-imasksurface)
+  - [Creating a Frosted Glass Effect Brush using `IMaskSurface`](#4-creating-a-frosted-glass-effect-brush-using-imasksurface)
+  - [Loading Images on Visual using `IImageSurface`](#5-loading-images-on-visual-using-iimagesurface)
+  - [Creating the Reflection of a `ContainerVisual`](#6-creating-the-reflection-of-a-containervisual)
 - [CompositionProToolkit Controls](#compositionprotoolkit-controls)
   - [FluidProgressRing](#1-fluidprogressring)
   - [FluidWrapPanel](#2-fluidwrappanel)
@@ -21,7 +22,8 @@
     - [ImageFrame Source](#imageframe-source)
     - [Image Caching](#image-caching)
     - [ImageFrame Transitions](#imageframe-transitions)
-    - [Using ImageFrame with FilePicker](#using-imageframe-with-filepicker)   
+    - [Using ImageFrame with FilePicker](#using-imageframe-with-filepicker)
+    - [Guidelines for Disposing `ImageFrame` effectively](#guidelines-for-disposing-imageframe-effectively)
   - [FluidBanner](#4-fluidbanner)
 - [CompositionProToolkit Expressions](https://github.com/ratishphilip/CompositionProToolkit/tree/master/CompositionProToolkit/Expressions)
 - [Updates Chronology](#updates-chronology)
@@ -222,7 +224,21 @@ Using this method, you can apply a BackdropBrush with a custom shape to a visual
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/16091854/562d255c-32ea-11e6-8952-424a513741ea.gif" />
 
-## 4. Loading Images on Visual using `IImageSurface`
+## 4. Creating a Frosted Glass Effect Brush using `IMaskSurface`
+**CompositionProToolkit** now provides the following extension method for **Compositor** to create a Frosted Glass effect brush.
+
+```C#
+public static CompositionEffectBrush CreateFrostedGlassBrush(this Compositor compositor, IMaskSurface mask,
+    Color blendColor, float blurAmount, CompositionBackdropBrush backdropBrush = null,
+    float multiplyAmount = 0, float colorAmount = 0.5f, float backdropAmount = 0.5f)
+```  
+
+
+Using this method, you can create a Frosted Glass effect brush with a custom shape to a visual. You can provide a **Color** to blend with the BackdropBrush, the amount by which the BackdropBrush should be blurred and an optional **CompositionBackdropBrush**. If no **CompositionBackdropBrush** is provided by the user then this method creates one.
+
+The main difference between this method and the **CreateMaskedBackdropBrush** is that when you apply the FrostedGlassBrush to a visual with a DropShadow, it will look better, whereas with the MaskedBackdropBrush, the shadow will darken the visual.
+
+## 5. Loading Images on Visual using `IImageSurface`
 **IImageSurface** is an interface which encapsulates a **CompositionDrawingSurface** onto which an image can be loaded by providing a **Uri**. You can then use the **CompositionDrawingSurface** to create a **CompositionSurfaceBrush** which can be applied to any **Visual**.
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/17491822/0f3c390a-5d5e-11e6-89de-772c786fb2e2.png" />
@@ -300,7 +316,7 @@ Task Resize(Size size, ImageSurfaceOptions options);
 
 Once you call any of the above methods, the Visual's brush is also updated.
 
-## 5. Creating the Reflection of a `ContainerVisual`
+## 6. Creating the Reflection of a `ContainerVisual`
 **CompositionProToolkit** provides the following API which allows you to create the reflection of any **ContainerVisual**
 
 ```C#
@@ -383,6 +399,7 @@ In order to configure the rendering of the image, **ImageFrame** has the followi
 | **`DisplayShadow`** | `Boolean` | Indicates whether the shadow for this image should be displayed. | **False** |
 | **`FrameBackground`** | `Color` | Specifies the background color of the **ImageFrame** to fill the area where image is not rendered. | **Colors.Black** |
 | **`Interpolation`** | `CanvasImageInterpolation` | Specifies the interpolation used for rendering the image. | **HighQualityCubic** |
+| **`OptimizeShadow`** | `Boolean` | Indicates whether the **ImageFrame** should use a shared shadow object to display the shadow. | **False** |
 | **`PlaceholderBackground`** | `Color` | Indicates the background color of the Placeholder. | **Colors.Black** |
 | **`PlaceholderColor`** | `Color` | Indicates the color with which the rendered placeholder geometry should be filled | **RGB(192, 192, 192)** |
 | **`RenderFast`** | `Boolean` | Indicates whether the animations need to be switched off if the ImageFrame is being used in scenarios where it is being rapidly updated with new Source. | **False** |
@@ -445,6 +462,25 @@ var file = await picker.PickSingleFileAsync();
 imageFrame.Source = file;
 ```
 
+### Guidelines for Disposing `ImageFrame` effectively
+Since **ImageFrame** internally uses several Composition objects which must be disposed properly to optimize the memory usage within your app, the responsibility, of disposing the **ImageFrame**, lies upon you. **ImageFrame** implements the **IDisposable** interface and this provides the **Dispose()** method for easy disposal of the instance. If the **ImageFrame** instances are not disposed, they will not be garbage collected causing your app memory requirement to bloat.
+Consider a scenario where you are displaying several **ImageFrame** instances in a **GridView** within a page. When the app navigates _away_ from the page, then you must dispose the **ImageFrame** instances like this
+
+```C#
+protected override void OnNavigatedFrom(NavigationEventArgs e)
+{
+    foreach (var imgFrame in ItemGridView.GetDescendantsOfType<ImageFrame>())
+    {
+        imgFrame.Dispose();
+    }
+
+    VisualTreeHelper.DisconnectChildrenRecursive(ItemGridView);
+    ItemGridView.ItemsSource = null;
+    ItemGridView.Items?.Clear();
+
+    base.OnNavigatedFrom(e);
+}
+``` 
 ## 4. FluidBanner
 
 **FluidBanner** control is banner control created using Windows Composition. It allows for displaying multiple images in a unique interactive format.  It internally uses **ImageSurface** to host the images. 
