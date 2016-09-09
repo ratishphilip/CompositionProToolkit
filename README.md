@@ -236,6 +236,8 @@ public static CompositionEffectBrush CreateFrostedGlassBrush(this Compositor com
 
 Using this method, you can create a Frosted Glass effect brush with a custom shape to a visual. You can provide a **Color** to blend with the BackdropBrush, the amount by which the BackdropBrush should be blurred and an optional **CompositionBackdropBrush**. If no **CompositionBackdropBrush** is provided by the user then this method creates one.
 
+<img src="https://cloud.githubusercontent.com/assets/7021835/18399591/8953d48c-7686-11e6-848a-f36e0574f1e0.png" />
+
 The main difference between this method and the **CreateMaskedBackdropBrush** is that when you apply the FrostedGlassBrush to a visual with a DropShadow, it will look better, whereas with the MaskedBackdropBrush, the shadow will darken the visual.
 
 ## 5. Loading Images on Visual using `IImageSurface`
