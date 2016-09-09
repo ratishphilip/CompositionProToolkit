@@ -24,11 +24,14 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.5
+// CompositionProToolkit v0.4.6
 // 
 
+using System.Collections.Generic;
+using System.Linq;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
@@ -97,6 +100,72 @@ namespace CompositionProToolkit
             brush.SetSourceParameter("backdrop", backdropBrush ?? compositor.CreateBackdropBrush());
 
             // Set the Mask
+            // Create SurfaceBrush from IMaskSurface
+            var maskBrush = compositor.CreateSurfaceBrush(mask.Surface);
+            brush.SetSourceParameter("mask", maskBrush);
+
+            return brush;
+        }
+
+        /// <summary>
+        /// Creates a custom shaped Frosted Glass Effect Brush using BackdropBrush and a Mask
+        /// </summary>
+        /// <param name="compositor">Compositor</param>
+        /// <param name="mask">IMaskSurface</param>
+        /// <param name="blendColor">Color to blend in the BackdropBrush</param>
+        /// <param name="blurAmount">Blur Amount of the Backdrop Brush</param>
+        /// <param name="backdropBrush">Backdrop Brush (optional). If not provided, then compositor creates it.</param>
+        /// <param name="multiplyAmount">MultiplyAmount of the ArithmeticCompositeEffect</param>
+        /// <param name="colorAmount">Source1Amount of the ArithmeticCompositeEffect</param>
+        /// <param name="backdropAmount">Source2Amount of the ArithmeticCompositeEffect</param>
+        /// <returns>CompositionEffectBrush</returns>
+        public static CompositionEffectBrush CreateFrostedGlassBrush(this Compositor compositor, IMaskSurface mask,
+            Color blendColor, float blurAmount, CompositionBackdropBrush backdropBrush = null,
+            float multiplyAmount = 0, float colorAmount = 0.5f, float backdropAmount = 0.5f)
+        {
+            // Create a frosty glass effect 
+            var frostEffect = new GaussianBlurEffect
+            {
+                Name = "Blur",
+                BlurAmount = blurAmount,
+                BorderMode = EffectBorderMode.Hard,
+                Source = new ArithmeticCompositeEffect
+                {
+                    Name = "Source",
+                    MultiplyAmount = multiplyAmount,
+                    Source1Amount = backdropAmount,
+                    Source2Amount = colorAmount,
+                    Source1 = new CompositionEffectSourceParameter("backdrop"),
+                    Source2 = new ColorSourceEffect
+                    {
+                        Name = "BlendColor",
+                        Color = blendColor
+                    }
+                }
+            };
+
+            // Composite Effect
+            var effect = new CompositeEffect
+            {
+                Mode = CanvasComposite.DestinationIn,
+                Sources =
+                {
+                    frostEffect,
+                    new CompositionEffectSourceParameter("mask")
+                }
+
+            };
+
+            // Create Effect Factory
+            var factory = compositor.CreateEffectFactory(effect, new[] { "Blur.BlurAmount", "BlendColor.Color" });
+            // Create Effect Brush
+            var brush = factory.CreateBrush();
+
+            // Set the BackDropBrush
+            // If no backdrop brush is provided, create one
+            brush.SetSourceParameter("backdrop", backdropBrush ?? compositor.CreateBackdropBrush());
+
+            // Set the Mask
             // Create SurfaceBrush from CompositionMask
             var maskBrush = compositor.CreateSurfaceBrush(mask.Surface);
             brush.SetSourceParameter("mask", maskBrush);
@@ -113,7 +182,7 @@ namespace CompositionProToolkit
         /// <param name="alignY">Vertical Alignment</param>
         /// <param name="alignXAnimation">The animation to use to update the horizontal alignment of the surface brush</param>
         /// <param name="alignYAnimation">The animation to use to update the vertical alignment of the surface brush</param>
-        public static void UpdateSurfaceBrushOptions(this CompositionSurfaceBrush surfaceBrush, Stretch stretch, 
+        public static void UpdateSurfaceBrushOptions(this CompositionSurfaceBrush surfaceBrush, Stretch stretch,
             AlignmentX alignX, AlignmentY alignY, ScalarKeyFrameAnimation alignXAnimation = null,
             ScalarKeyFrameAnimation alignYAnimation = null)
         {
@@ -187,6 +256,107 @@ namespace CompositionProToolkit
                 alignYAnimation.InsertKeyFrame(1f, finalAlignY);
                 surfaceBrush.StartAnimation(() => surfaceBrush.VerticalAlignmentRatio, alignYAnimation);
             }
+        }
+
+        /// <summary>
+        /// Gets the first descendant (of Type T) of this dependency object in the visual tree.
+        /// </summary>
+        /// <typeparam name="T">Type deriving from DependencyObject</typeparam>
+        /// <param name="dependencyObject">DependencyObject whose first descendant is to be obtained.</param>
+        /// <returns>First descendant (of Type T), if any</returns>
+        public static T GetFirstDescendantOfType<T>(this DependencyObject dependencyObject) where T : DependencyObject
+        {
+            return dependencyObject.GetDescendantsOfType<T>().FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Gets the descendants (of Type T) of this dependency object in the visual tree.
+        /// </summary>
+        /// <typeparam name="T">Type deriving from DependencyObject</typeparam>
+        /// <param name="dependencyObject">DependencyObject whose descendants are to be obtained.</param>
+        /// <returns>Enumerable collection of descendants (of Type T)</returns>
+        public static IEnumerable<T> GetDescendantsOfType<T>(this DependencyObject dependencyObject) where T : DependencyObject
+        {
+            return dependencyObject.GetDescendants().OfType<T>();
+        }
+
+        /// <summary>
+        /// Gets the descendants of this dependency object in the visual tree.
+        /// </summary>
+        /// <param name="dependencyObject">DependencyObject whose descendants are to be obtained.</param>
+        /// <returns>Enumerable collection of descendants</returns>
+        public static IEnumerable<DependencyObject> GetDescendants(this DependencyObject dependencyObject)
+        {
+            var queue = new Queue<DependencyObject>();
+            // Add to queue to obtain its descendants
+            queue.Enqueue(dependencyObject);
+
+            while (queue.Count > 0)
+            {
+                var parent = queue.Dequeue();
+                if (parent == null)
+                    continue;
+
+                var childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+                for (var i = 0; i < childrenCount; i++)
+                {
+                    var child = VisualTreeHelper.GetChild(parent, i);
+                    // Yield for enumeration
+                    yield return child;
+                    // Add child to queue to obtain its descendants
+                    queue.Enqueue(child);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the first ancestor (of Type T) of this dependency object in the visual tree.
+        /// </summary>
+        /// <typeparam name="T">Type deriving from DependencyObject</typeparam>
+        /// <param name="dependencyObject">DependencyObject whose first ancestor is to be obtained.</param>
+        /// <returns>First ancestor (of Type T), if any</returns>
+        public static T GetFirstAncestorOfType<T>(this DependencyObject dependencyObject) where T : DependencyObject
+        {
+            return dependencyObject.GetAncestorsOfType<T>().FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Gets the ancestors (of Type T) of this dependency object in the visual tree.
+        /// </summary>
+        /// <typeparam name="T">Type deriving from DependencyObject</typeparam>
+        /// <param name="dependencyObject">DependencyObject whose ancestors are to be obtained.</param>
+        /// <returns>Enumerable collection of ancestors (of Type T)</returns>
+        public static IEnumerable<T> GetAncestorsOfType<T>(this DependencyObject dependencyObject) where T : DependencyObject
+        {
+            return dependencyObject.GetAncestors().OfType<T>();
+        }
+
+        /// <summary>
+        /// Gets the ancestors of this dependency object in the visual tree.
+        /// </summary>
+        /// <param name="dependencyObject">DependencyObject whose ancestors are to be obtained.</param>
+        /// <returns>Enumerable collection of ancestors</returns>
+        public static IEnumerable<DependencyObject> GetAncestors(this DependencyObject dependencyObject)
+        {
+            var parent = VisualTreeHelper.GetParent(dependencyObject);
+
+            while (parent != null)
+            {
+                yield return parent;
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+        }
+
+        /// <summary>
+        /// Checks if this dependency object is present in the Visual Tree 
+        /// of the current window.
+        /// </summary>
+        /// <param name="dependencyObject">DependencyObject</param>
+        /// <returns>True if present, otherwise False</returns>
+        public static bool IsInVisualTree(this DependencyObject dependencyObject)
+        {
+            return Window.Current.Content != null &&
+                dependencyObject.GetAncestors().Contains(Window.Current.Content);
         }
     }
 }

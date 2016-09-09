@@ -29,7 +29,6 @@
                              ShadowOffsetX="10"
                              ShadowOffsetY="10"
                              ShadowOpacity="0.65"
-                             TransitionDuration="00:00:02"
                              Padding="4"></controls:ImageFrame>
 
         <StackPanel Orientation="Horizontal"

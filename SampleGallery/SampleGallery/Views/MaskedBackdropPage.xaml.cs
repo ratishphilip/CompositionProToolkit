@@ -84,6 +84,27 @@ namespace SampleGallery.Views
 
             container1.Children.InsertAtTop(_visual1);
 
+            var visual = _compositor.CreateSpriteVisual();
+            visual.Size = new Vector2(400, 400);
+            visual.Offset = new Vector3(((3 * CompositionGrid1.ActualWidth / 4f) - (_width / 2)).Single(),
+                                         ((3 * CompositionGrid1.ActualHeight / 4f) - (_height / 2)).Single(), 0);
+            var roundRectGeometry = CanvasGeometry.CreateRoundedRectangle(_generator.Device, 0, 0, _width, _height, 25, 25);
+            var maskSurface = _generator.CreateMaskSurface(visual.Size.ToSize(), roundRectGeometry);
+
+            var frostedBrush = _compositor.CreateFrostedGlassBrush(maskSurface, Colors.AntiqueWhite, 30f, _backdropBrush);
+
+            var shadow = _compositor.CreateDropShadow();
+            shadow.Opacity = 0.5f;
+            shadow.Color = Colors.Black;
+            shadow.Offset = new Vector3(10, 10, 0);
+            shadow.BlurRadius = 15;
+            shadow.Mask = frostedBrush.GetSourceParameter("mask");
+
+            visual.Brush = frostedBrush;
+            visual.Shadow = shadow;
+
+            container1.Children.InsertAtTop(visual);
+
             ElementCompositionPreview.SetElementChildVisual(CompositionGrid1, container1);
 
             // Initialize the visuals for the Animated Canvas

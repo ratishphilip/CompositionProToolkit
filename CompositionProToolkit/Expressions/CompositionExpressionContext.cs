@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.5
+// CompositionProToolkit v0.4.6
 // 
 
 using System.Numerics;
@@ -59,9 +59,9 @@ namespace CompositionProToolkit.Expressions
         public float Atan(float value) { return 0; }
         public float Ceiling(float value) { return 0; }
         public float Clamp(float value, float min, float max) { return 0; }
-        public Color ColorLerp(Color ColorTo, Color ColorFrom, float Progression) { return default(Color); }
-        public Color ColorLerpHSL(Color ColorTo, Color ColorFrom, float Progression) { return default(Color); }
-        public Color ColorLerpRGB(Color ColorTo, Color ColorFrom, float Progression) { return default(Color); }
+        public Color ColorLerp(Color colorTo, Color colorFrom, float progression) { return default(Color); }
+        public Color ColorLerpHSL(Color colorTo, Color colorFrom, float progression) { return default(Color); }
+        public Color ColorLerpRGB(Color colorTo, Color colorFrom, float progression) { return default(Color); }
         public Quaternion Concatenate(Quaternion value, Quaternion value2) { return default(Quaternion); }
         public float Cos(float value) { return 0; }
         public Vector2 Distance(Vector2 value1, Vector2 value2) { return default(Vector2); }

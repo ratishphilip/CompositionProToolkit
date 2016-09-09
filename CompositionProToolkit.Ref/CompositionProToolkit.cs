@@ -3,7 +3,15 @@ namespace CompositionProToolkit
     public delegate void CacheProgressHandler(int progress);
     public static partial class CompositionExtensions
     {
+        public static Windows.UI.Composition.CompositionEffectBrush CreateFrostedGlassBrush(this Windows.UI.Composition.Compositor compositor, CompositionProToolkit.IMaskSurface mask, Windows.UI.Color blendColor, float blurAmount, Windows.UI.Composition.CompositionBackdropBrush backdropBrush=null, float multiplyAmount=0f, float colorAmount=0.5f, float backdropAmount=0.5f) { return default(Windows.UI.Composition.CompositionEffectBrush); }
         public static Windows.UI.Composition.CompositionEffectBrush CreateMaskedBackdropBrush(this Windows.UI.Composition.Compositor compositor, CompositionProToolkit.IMaskSurface mask, Windows.UI.Color blendColor, float blurAmount, Windows.UI.Composition.CompositionBackdropBrush backdropBrush=null) { return default(Windows.UI.Composition.CompositionEffectBrush); }
+        public static System.Collections.Generic.IEnumerable<Windows.UI.Xaml.DependencyObject> GetAncestors(this Windows.UI.Xaml.DependencyObject dependencyObject) { return default(System.Collections.Generic.IEnumerable<Windows.UI.Xaml.DependencyObject>); }
+        public static System.Collections.Generic.IEnumerable<T> GetAncestorsOfType<T>(this Windows.UI.Xaml.DependencyObject dependencyObject) where T : Windows.UI.Xaml.DependencyObject { return default(System.Collections.Generic.IEnumerable<T>); }
+        public static System.Collections.Generic.IEnumerable<Windows.UI.Xaml.DependencyObject> GetDescendants(this Windows.UI.Xaml.DependencyObject dependencyObject) { return default(System.Collections.Generic.IEnumerable<Windows.UI.Xaml.DependencyObject>); }
+        public static System.Collections.Generic.IEnumerable<T> GetDescendantsOfType<T>(this Windows.UI.Xaml.DependencyObject dependencyObject) where T : Windows.UI.Xaml.DependencyObject { return default(System.Collections.Generic.IEnumerable<T>); }
+        public static T GetFirstAncestorOfType<T>(this Windows.UI.Xaml.DependencyObject dependencyObject) where T : Windows.UI.Xaml.DependencyObject { return default(T); }
+        public static T GetFirstDescendantOfType<T>(this Windows.UI.Xaml.DependencyObject dependencyObject) where T : Windows.UI.Xaml.DependencyObject { return default(T); }
+        public static bool IsInVisualTree(this Windows.UI.Xaml.DependencyObject dependencyObject) { return default(bool); }
         public static void UpdateSurfaceBrushOptions(this Windows.UI.Composition.CompositionSurfaceBrush surfaceBrush, Windows.UI.Xaml.Media.Stretch stretch, Windows.UI.Xaml.Media.AlignmentX alignX, Windows.UI.Xaml.Media.AlignmentY alignY, Windows.UI.Composition.ScalarKeyFrameAnimation alignXAnimation=null, Windows.UI.Composition.ScalarKeyFrameAnimation alignYAnimation=null) { }
     }
     public static partial class CompositionGeneratorFactory
@@ -244,7 +252,7 @@ namespace CompositionProToolkit.Controls
         protected override Windows.Foundation.Size ArrangeOverride(Windows.Foundation.Size finalSize) { return default(Windows.Foundation.Size); }
         protected override Windows.Foundation.Size MeasureOverride(Windows.Foundation.Size availableSize) { return default(Windows.Foundation.Size); }
     }
-    public sealed partial class ImageFrame : Windows.UI.Xaml.Controls.Control
+    public sealed partial class ImageFrame : Windows.UI.Xaml.Controls.Control, System.IDisposable
     {
         public static readonly Windows.UI.Xaml.DependencyProperty AlignXProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty AlignYProperty;
@@ -252,6 +260,7 @@ namespace CompositionProToolkit.Controls
         public static readonly Windows.UI.Xaml.DependencyProperty DisplayShadowProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty FrameBackgroundProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty InterpolationProperty;
+        public static readonly Windows.UI.Xaml.DependencyProperty OptimizeShadowProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty PlaceholderBackgroundProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty PlaceholderColorProperty;
         public static readonly Windows.UI.Xaml.DependencyProperty RenderFastProperty;
@@ -273,6 +282,7 @@ namespace CompositionProToolkit.Controls
         public bool DisplayShadow { get { return default(bool); } set { } }
         public Windows.UI.Color FrameBackground { get { return default(Windows.UI.Color); } set { } }
         public Microsoft.Graphics.Canvas.CanvasImageInterpolation Interpolation { get { return default(Microsoft.Graphics.Canvas.CanvasImageInterpolation); } set { } }
+        public bool OptimizeShadow { get { return default(bool); } set { } }
         public Windows.UI.Color PlaceholderBackground { get { return default(Windows.UI.Color); } set { } }
         public Windows.UI.Color PlaceholderColor { get { return default(Windows.UI.Color); } set { } }
         public bool RenderFast { get { return default(bool); } set { } }
@@ -290,6 +300,7 @@ namespace CompositionProToolkit.Controls
         public event Windows.UI.Xaml.RoutedEventHandler ImageFailed { add { } remove { } }
         public event Windows.UI.Xaml.RoutedEventHandler ImageOpened { add { } remove { } }
         protected override Windows.Foundation.Size ArrangeOverride(Windows.Foundation.Size finalSize) { return default(Windows.Foundation.Size); }
+        public void Dispose() { }
         protected override Windows.Foundation.Size MeasureOverride(Windows.Foundation.Size availableSize) { return default(Windows.Foundation.Size); }
     }
     public partial class ImageFrameEventArgs : Windows.UI.Xaml.RoutedEventArgs
@@ -331,9 +342,9 @@ namespace CompositionProToolkit.Expressions
         public float Atan(float value) { return default(float); }
         public float Ceiling(float value) { return default(float); }
         public float Clamp(float value, float min, float max) { return default(float); }
-        public Windows.UI.Color ColorLerp(Windows.UI.Color ColorTo, Windows.UI.Color ColorFrom, float Progression) { return default(Windows.UI.Color); }
-        public Windows.UI.Color ColorLerpHSL(Windows.UI.Color ColorTo, Windows.UI.Color ColorFrom, float Progression) { return default(Windows.UI.Color); }
-        public Windows.UI.Color ColorLerpRGB(Windows.UI.Color ColorTo, Windows.UI.Color ColorFrom, float Progression) { return default(Windows.UI.Color); }
+        public Windows.UI.Color ColorLerp(Windows.UI.Color colorTo, Windows.UI.Color colorFrom, float progression) { return default(Windows.UI.Color); }
+        public Windows.UI.Color ColorLerpHSL(Windows.UI.Color colorTo, Windows.UI.Color colorFrom, float progression) { return default(Windows.UI.Color); }
+        public Windows.UI.Color ColorLerpRGB(Windows.UI.Color colorTo, Windows.UI.Color colorFrom, float progression) { return default(Windows.UI.Color); }
         public System.Numerics.Quaternion Concatenate(System.Numerics.Quaternion value, System.Numerics.Quaternion value2) { return default(System.Numerics.Quaternion); }
         public float Cos(float value) { return default(float); }
         public System.Numerics.Vector2 Distance(System.Numerics.Vector2 value1, System.Numerics.Vector2 value2) { return default(System.Numerics.Vector2); }

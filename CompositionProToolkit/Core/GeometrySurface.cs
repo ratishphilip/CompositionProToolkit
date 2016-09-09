@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.5
+// CompositionProToolkit v0.4.6
 // 
 
 using System;
@@ -435,7 +435,8 @@ namespace CompositionProToolkit
         {
             _surface?.Dispose();
             _geometry?.Dispose();
-            _generator.DeviceReplaced -= OnDeviceReplaced;
+            if (_generator != null)
+                _generator.DeviceReplaced -= OnDeviceReplaced;
             _surface = null;
             _generator = null;
             _geometry = null;

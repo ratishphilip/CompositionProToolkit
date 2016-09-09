@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.5
+// CompositionProToolkit v0.4.6
 // 
 
 using System;
@@ -95,9 +95,47 @@ namespace CompositionProToolkit.Controls
     }
 
     /// <summary>
+    /// Provides the shared DropShadow resource
+    /// </summary>
+    internal static class ShadowProvider
+    {
+        #region Fields
+
+        private static DropShadow _sharedShadow;
+        private static readonly object ShadowLock = new object();
+
+        #endregion
+
+        #region Internal APIs
+
+        /// <summary>
+        /// Gets the instance of the shared DropShadow
+        /// </summary>
+        /// <param name="compositor">Compositor</param>
+        /// <returns>DropShadow</returns>
+        internal static DropShadow GetSharedShadow(Compositor compositor)
+        {
+            if (_sharedShadow == null)
+            {
+                lock (ShadowLock)
+                {
+                    if (_sharedShadow == null)
+                    {
+                        _sharedShadow = compositor.CreateDropShadow();
+                    }
+                }
+            }
+
+            return _sharedShadow;
+        }
+
+        #endregion
+    }
+
+    /// <summary>
     /// Control which can be used for displaying images
     /// </summary>
-    public sealed class ImageFrame : Control
+    public sealed class ImageFrame : Control, IDisposable
     {
         #region Enums
 
@@ -412,6 +450,48 @@ namespace CompositionProToolkit.Controls
         /// Provides the class instance an opportunity to handle changes to the Interpolation property.
         /// </summary>
         private void OnInterpolationChanged()
+        {
+            // Refresh Layout
+            InvalidateArrange();
+        }
+
+        #endregion
+
+        #region OptimizeShadow
+
+        /// <summary>
+        /// OptimizeShadow Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty OptimizeShadowProperty =
+            DependencyProperty.Register("OptimizeShadow", typeof(bool), typeof(ImageFrame),
+                new PropertyMetadata(false, OnOptimizeShadowChanged));
+
+        /// <summary>
+        /// Gets or sets the OptimizeShadow property. This dependency property 
+        /// indicates whether the ImageFrame should use a shared shadow object to display
+        /// the shadow.
+        /// </summary>
+        public bool OptimizeShadow
+        {
+            get { return (bool)GetValue(OptimizeShadowProperty); }
+            set { SetValue(OptimizeShadowProperty, value); }
+        }
+
+        /// <summary>
+        /// Handles changes to the OptimizeShadow property.
+        /// </summary>
+        /// <param name="d">ImageFrame</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnOptimizeShadowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var frame = (ImageFrame)d;
+            frame.OnOptimizeShadowChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the OptimizeShadow property.
+        /// </summary>
+        private void OnOptimizeShadowChanged()
         {
             // Refresh Layout
             InvalidateArrange();
@@ -1041,6 +1121,82 @@ namespace CompositionProToolkit.Controls
 
         #endregion
 
+        #region APIs
+
+        /// <summary>
+        /// Disposes the resources
+        /// </summary>
+        public void Dispose()
+        {
+            // Clean up resources
+            _compositor = null;
+            Source = null;
+            DataContext = null;
+            Foreground = null;
+            Background = null;
+            _scheduledObject = null;
+            _currentObject = null;
+
+            // Clean up Composition Objects
+            _imageSurface?.Dispose();
+            _imageSurface = null;
+            _nextImageSurface?.Dispose();
+            _nextImageSurface = null;
+            _frameLayerMask?.Dispose();
+            _frameLayerMask = null;
+            _placeholderContentMask?.Dispose();
+            _placeholderContentMask = null;
+            _placeholderContentBrush?.Dispose();
+            _placeholderContentBrush = null;
+            _nextSurfaceBrush?.Dispose();
+            _nextSurfaceBrush = null;
+            _rootContainer?.Dispose();
+            _rootContainer = null;
+            _shadowVisual?.Dispose();
+            _shadowVisual = null;
+            _frameLayer?.Dispose();
+            _frameLayer = null;
+            _frameBackgroundVisual?.Dispose();
+            _frameBackgroundVisual = null;
+            _placeholderBackgroundVisual?.Dispose();
+            _placeholderBackgroundVisual = null;
+            _placeholderContentVisual?.Dispose();
+            _placeholderContentVisual = null;
+            _frameContentVisual?.Dispose();
+            _frameContentVisual = null;
+            _nextVisualContent?.Dispose();
+            _nextVisualContent = null;
+            _shadow?.Dispose();
+            _shadow = null;
+            _layerEffectBrush?.Dispose();
+            _layerEffectBrush = null;
+            _imageOptions = null;
+            _zoomInAnimationGroup?.Dispose();
+            _zoomInAnimationGroup = null;
+            _fadeOutAnimation?.Dispose();
+            _fadeOutAnimation = null;
+            _fadeInAnimation?.Dispose();
+            _fadeInAnimation = null;
+            _colorAnimation?.Dispose();
+            _colorAnimation = null;
+            _alignXAnimation?.Dispose();
+            _alignXAnimation = null;
+            _alignYAnimation?.Dispose();
+            _alignYAnimation = null;
+            _offsetAnimation?.Dispose();
+            _offsetAnimation = null;
+            _scaleAnimation?.Dispose();
+            _scaleAnimation = null;
+
+            // Dispose the generator at the end to allow the 
+            // dependant composition objects to unsubscribe from
+            // generator events
+            _generator?.Dispose();
+            _generator = null;
+        }
+
+        #endregion
+
         #region Overrides
 
         /// <summary>
@@ -1178,6 +1334,9 @@ namespace CompositionProToolkit.Controls
             }
 
             // Update the imageOptions
+            _imageOptions.Stretch = Stretch;
+            _imageOptions.HorizontalAlignment = AlignX;
+            _imageOptions.VerticalAlignment = AlignY;
             _imageOptions.Interpolation = Interpolation;
             _imageOptions.SurfaceBackgroundColor = Colors.Transparent;
             _imageOptions.AutoResize = !RenderOptimized;
@@ -1224,18 +1383,18 @@ namespace CompositionProToolkit.Controls
             // Handle shadow
             if (DisplayShadow)
             {
-                if (_shadow == null)
-                {
-                    _shadow = _compositor.CreateDropShadow();
-                }
+                // If OptimizeShadow is True then use the sharedShadow otherwise use the instance shadow
+                var shadow = OptimizeShadow
+                             ? ShadowProvider.GetSharedShadow(_compositor) 
+                             : (_shadow ?? (_shadow = _compositor.CreateDropShadow()));
 
-                _shadow.BlurRadius = ShadowBlurRadius.Single();
-                _shadow.Color = ShadowColor;
-                _shadow.Offset = new Vector3(ShadowOffsetX.Single(), ShadowOffsetY.Single(), 0);
-                _shadow.Opacity = ShadowOpacity.Single();
-                _shadow.Mask = _layerEffectBrush.GetSourceParameter("mask");
+                shadow.BlurRadius = ShadowBlurRadius.Single();
+                shadow.Color = ShadowColor;
+                shadow.Offset = new Vector3(ShadowOffsetX.Single(), ShadowOffsetY.Single(), 0);
+                shadow.Opacity = ShadowOpacity.Single();
+                shadow.Mask = _layerEffectBrush.GetSourceParameter("mask");
 
-                _shadowVisual.Shadow = _shadow;
+                _shadowVisual.Shadow = shadow;
             }
             else
             {
@@ -1258,6 +1417,7 @@ namespace CompositionProToolkit.Controls
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
             // CompositionGenerator
             _generator = CompositionGeneratorFactory.GetCompositionGenerator(_compositor);
+            
             // Fade Out Animation
             _fadeOutAnimation = _compositor.CreateScalarKeyFrameAnimation();
             _fadeOutAnimation.InsertKeyFrame(1f, 0);

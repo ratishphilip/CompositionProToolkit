@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.5
+// CompositionProToolkit v0.4.6
 // 
 
 using System;
@@ -809,6 +809,9 @@ namespace CompositionProToolkit
             _canvasDevice.DeviceLost += DeviceLost;
             // Update the CompositionGraphicsDevice
             CanvasComposition.SetCanvasDevice(_graphicsDevice, _canvasDevice);
+
+            // Raise the device replaced event
+            RaiseDeviceReplacedEvent();
         }
 
         /// <summary>
@@ -818,10 +821,7 @@ namespace CompositionProToolkit
         /// <param name="args">RenderingDeviceReplacedEventArgs</param>
         private void RenderingDeviceReplaced(CompositionGraphicsDevice sender, RenderingDeviceReplacedEventArgs args)
         {
-            if (DeviceReplaced != null)
-            {
-                RaiseDeviceReplacedEvent();
-            }
+            RaiseDeviceReplacedEvent();
         }
 
         /// <summary>
@@ -831,9 +831,7 @@ namespace CompositionProToolkit
         /// <param name="args">Event arguments</param>
         private void OnDisplayContentsInvalidated(DisplayInformation sender, object args)
         {
-            //
             // This will trigger the device lost event
-            //
             _canvasDevice.RaiseDeviceLost();
         }
 
