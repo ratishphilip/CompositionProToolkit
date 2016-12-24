@@ -26,6 +26,7 @@
     - [Guidelines for Disposing `ImageFrame` effectively](#guidelines-for-disposing-imageframe-effectively)
   - [FluidBanner](#4-fluidbanner)
 - [CompositionProToolkit Expressions](https://github.com/ratishphilip/CompositionProToolkit/tree/master/CompositionProToolkit/Expressions)
+- [Win2d Helpers](#win2d-helpers)
 - [Updates Chronology](#updates-chronology)
 
 **CompositionProToolkit** is a collection of helper classes for Windows.UI.Composition. It also contains controls which can be used in UWP applications. It has dependency on the **Win2D** library.
@@ -502,8 +503,90 @@ It provides the following properties which can be used to customize the **FluidB
 | **`Padding`** | `Thickness` | The padding inside the **FluidBanner** | **Thickness(0)** |
 | **`Stretch`** | `Stretch` | Indicates how the image is resized to fill its allocated space within each **FluidBanner** item. | **Uniform** |
 
+# Win2d Helpers
+
+## CanvasPathBuilder extension methods
+
+**CanvasPathBuilder** allows you to create a freeform path using lines, arcs, Quadratic Beziers and Cubic Beziers. You can then convert this path to a **CanvasGeometry**. Each path is composed of one or more figures. Each figure definition is encapsulated by the **BeginFigure()** and **EndFigure()** methods of **CanvasPathBuilder**. 
+
+If you want to add a circle(or ellipse) or a polygon figure to your path, you need to break the figure into curves or line segments and add them to the path one by one.
+
+The following extension methods have been added to the CanvasPathBuilder to add a circle, ellipse or a polygon figure directly to your path
+
+```C#
+public static void AddCircleFigure (CanvasPathBuilder pathBuilder, Vector2 center, float radius);
+public static void AddCircleFigure (CanvasPathBuilder pathBuilder, float x, float y, float radius);
+public static void AddEllipseFigure(CanvasPathBuilder pathBuilder, Vector2 center, float radiusX, float radiusY);
+public static void AddEllipseFigure(CanvasPathBuilder pathBuilder, float x, float y, float radiusX, float radiusY);
+public static void AddPolygonFigure(CanvasPathBuilder pathBuilder, int numSides, Vector2 center, float radius);
+public static void AddPolygonFigure(CanvasPathBuilder pathBuilder, int numSides, float x, float y, float radius);
+```
+
+In the **AddPolygonFigure**, the **radius** parameter indicates the distance between the center of the polygon and its vertices. 
+
+**Note**: _These methods add the required curves or line segments to your path internally. Since these methods add a figure to your path, you can invoke them only after closing the current figure in the path. They must not be called in between **BeginFigure()** and **EndFigure()** calls, otherwise an **ArgumentException** will be raised. These extension methods call the **BeginFigure()** and **EndFigure()** **CanvasPathBuilder** methods internally._
+
+## CanvasGeometryParser
+The [Path Mini Langugage](https://msdn.microsoft.com/en-us/library/ms752293%28v=vs.110%29.aspx), which is quite popular in WPF/Silverlight, is a powerful and complex mini-language which you can use to specify path geometries more compactly using Extensible Application Markup Language (XAML). It is derived mainly from the [SVG (Scalable Vector Graphics) Path language specification](http://www.w3.org/TR/SVG11/paths.html). Here is an example 
+
+```
+    M8.64,223.948c0,0,143.468,3.431,185.777-181.808c2.673-11.702-1.23-20.154,1.316-33.146h16.287c0,0-3.14,17.248,1.095,30.848c21.392,68.692-4.179,242.343-204.227,196.59L8.64,223.948z
+```
+
+The **CanvasGeometryParser** class parses the above string and converts it into appropriate **CanvasPathBuilder** commands. It contains the following static methods
+
+```C#
+public static CanvasGeometry Parse(ICanvasResourceCreator resourceCreator, System.String pathData, StringBuilder logger = null);
+```
+
+_The **logger** parameter in this method is an option argument of type **StringBuilder** which can be used to obtain the **CanvasPathBuilder** commands in text format. It is mainly intended for information/debugging purpose only_.
+
+Here is an example usage of the **CanvasGeometryParser**
+
+```C#
+private void OnCanvasDraw(CanvasControl sender, CanvasDrawEventArgs args)
+{
+    string data = "M8.64,223.948c0,0,143.468,3.431,185.777-181.808c2.673-11.702-1.23-20.154," + 
+        "1.316-33.146h16.287c0,0-3.14,17.248,1.095,30.848c21.392,68.692-4.179,242.343-204.227,196.59L8.64,223.948z";
+
+    var geometry = CanvasGeometryParser.Parse(sender, data);
+    
+    args.DrawingSession.FillGeometry(geometry, Colors.Yellow);
+    args.DrawingSession.DrawGeometry(geometry, Colors.Black, 2f);
+}
+```
+
+Based on the [SVG (Scalable Vector Graphics) Path language specification](http://www.w3.org/TR/SVG11/paths.html), the following rules must be followed to create the path data
+
+- All instructions are expressed as one character (e.g., a moveto is expressed as an M).				
+- Superfluous white space and separators such as commas can be eliminated (e.g., **M 100 100 L 200 200* contains unnecessary spaces and could be expressed more compactly as **M100 100L200 200**).				
+- The command letter can be eliminated on subsequent commands if the same command is used multiple times in a row (e.g., you can drop the second "L" in "M 100 200 L 200 100 L -100 -200" and use "M 100 200 L 200 100 -100 -200" instead).				
+- Relative versions of all commands are available (uppercase means absolute coordinates, lowercase means relative coordinates).	
+
+In the table below, the following notation is used:
+- **()** indicates grouping of parameters.
+- **+** indicates 1 or more of the given parameter(s) is required.
+
+
+| Command | Command Letter | Parameters | Remarks |
+|---|---|---|---|
+| MoveTo | M | (x y)+ | Starts a new sub-path at the given (x,y) coordinate. If a moveto is followed by multiple pairs of coordinates, the subsequent pairs are treated as implicit lineto commands.|
+| ClosePath | Z | _none_ | Closes the current subpath by drawing a straight line from the current point to current subpath's initial point. |
+| LineTo | L | (x y)+ | Draws a line from the current point to the given (x,y) coordinate which becomes the new current point. |
+| HorizontalLineTo | H | (x)+ | Draws a horizontal line from the current point (cpx, cpy) to (x, cpy).  |
+| VerticalLineTo | V | (y)+ | Draws a vertical line from the current point (cpx, cpy) to (cpx, y). |
+| CubicBezier | C | (x1 y1 x2 y2 x y)+ | Draws a cubic Bézier curve from the current point to (x,y) using (x1,y1) as the control point at the beginning of the curve and (x2,y2) as the control point at the end of the curve. |
+| SmoothCubicBezier | S | (x2 y2 x y)+ | Draws a cubic Bézier curve from the current point to (x,y). The first control point is assumed to be the reflection of the second control point on the previous command relative to the current point. (If there is no previous command or if the previous command was not an C, c, S or s, assume the first control point is coincident with the current point.)  |
+| QuadraticBezier | Q | (x1 y1 x y)+ | Draws a quadratic Bézier curve from the current point to (x,y) using (x1,y1) as the control point. |
+| SmoothQuadraticBezier | T | (x y)+ | Draws a quadratic Bézier curve from the current point to (x,y). The control point is assumed to be the reflection of the control point on the previous command relative to the current point. (If there is no previous command or if the previous command was not a Q, q, T or t, assume the control point is coincident with the current point.)  |
+| Arc | A | (radiusX radiusY angle isLargeFlag SweepDirection x y)+ | Draws an elliptical arc from the current point to (x, y).  |
+| EllipseFigure | O | (radiusX radiusY x y)+ | Adds an Ellipse Figure to the path. The current point remains unchanged. |
+| PolygonFigure | P | (numSides radius x y)+ | Adds an n-sided Polygon Figure to the path. The current point remains unchanged. |
+
 # Updates Chronology
 
+## v0.5.0 
+(**Saturday, December 24, 2016**) -Added `CanvasPathBuilder` extension methods and `CanvasGeometryParser` which parses XAML or SVG path data to CanvasGeometry.
 ## v0.4.6.1
 (**Friday, September 9, 2016**) - `ImageFrame` now implements `IDisposable`. `OptimizeShadow` feature added to `ImageFrame`. `CreateFrostedGlassBrush` extension method added to compositor.
 
