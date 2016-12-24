@@ -110,6 +110,7 @@
     <GenAPIAdditionalParameters>$(GenAPIAdditionalParameters) -excludeApiList "$(MSBuildProjectDirectory)\GenAPI_ExcludeAPIs.txt"</GenAPIAdditionalParameters>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Common\SingleConstants.cs" />
     <Compile Include="Core\CompositionDefinitions.cs" />
     <Compile Include="Common\Utils.cs" />
     <Compile Include="Core\CompositionGenerator.cs" />
@@ -149,6 +150,28 @@
     <Compile Include="ImageCache\StorageFileCacheHandler.cs" />
     <Compile Include="ImageCache\StreamCacheHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Win2d\AbstractPathElement.cs" />
+    <Compile Include="Win2d\ArcElement.cs" />
+    <Compile Include="Win2d\CanvasEllipseFigure.cs" />
+    <Compile Include="Win2d\CanvasGeometryParser.cs" />
+    <Compile Include="Win2d\CanvasPathBuilderExtensions.cs" />
+    <Compile Include="Win2d\CanvasPathFigure.cs" />
+    <Compile Include="Win2d\CanvasPathGeometry.cs" />
+    <Compile Include="Win2d\CanvasPolygonFigure.cs" />
+    <Compile Include="Win2d\ClosePathElement.cs" />
+    <Compile Include="Win2d\CubicBezierElement.cs" />
+    <Compile Include="Win2d\FillRuleElement.cs" />
+    <Compile Include="Win2d\HorizontalLineElement.cs" />
+    <Compile Include="Win2d\ICanvasPathElement.cs" />
+    <Compile Include="Win2d\LineElement.cs" />
+    <Compile Include="Win2d\MoveToElement.cs" />
+    <Compile Include="Win2d\PathElementFactory.cs" />
+    <Compile Include="Win2d\QuadraticBezierElement.cs" />
+    <Compile Include="Win2d\RegexFactory.cs" />
+    <Compile Include="Win2d\SmoothCubicBezierElement.cs" />
+    <Compile Include="Win2d\SmoothQuadraticBezierElement.cs" />
+    <Compile Include="Win2d\VerticalLineElement.cs" />
+    <Compile Include="Win2d\Win2dCommon.cs" />    
     <EmbeddedResource Include="Properties\CompositionProToolkit.rd.xml" />
   </ItemGroup>
   <ItemGroup>

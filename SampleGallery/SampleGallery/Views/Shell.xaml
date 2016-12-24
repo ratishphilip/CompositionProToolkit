@@ -124,6 +124,19 @@
                                Text="Fluid Banner" />
                 </StackPanel>
             </controls:HamburgerButtonInfo>
+            <!--  CanvasGeometry Parser button  -->
+            <controls:HamburgerButtonInfo ClearHistory="True"
+                                          PageType="local:CanvasGeometryParserPage">
+                <StackPanel Orientation="Horizontal">
+                    <localControls:GlyphIcon Width="48"
+                                             Height="48"
+                                             Foreground="White"
+                                             Glyph="{StaticResource CanvasGeometryParser.Glyph}"></localControls:GlyphIcon>
+                    <TextBlock Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               Text="CanvasGeometry Parser" />
+                </StackPanel>
+            </controls:HamburgerButtonInfo>
         </controls:HamburgerMenu.PrimaryButtons>
 
         <!--<controls:HamburgerMenu.SecondaryButtons>

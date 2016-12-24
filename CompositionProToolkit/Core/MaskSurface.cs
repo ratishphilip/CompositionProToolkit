@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 Ratish Philip 
+﻿// Copyright (c) 2017 Ratish Philip 
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.6
+// CompositionProToolkit v0.5.0
 // 
 
 using System;

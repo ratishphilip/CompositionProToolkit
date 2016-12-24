@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 Ratish Philip 
+﻿// Copyright (c) 2017 Ratish Philip 
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.6
+// CompositionProToolkit v0.5.0
 // 
 
 using System;
@@ -742,7 +742,7 @@ namespace CompositionProToolkit
             var radiusY = (double)topRight.Y;
             if (!radiusX.IsZero() || !radiusY.IsZero())
             {
-                pathBuilder.AddArc(topRight, radiusX.Single(), radiusY.Single(), (Math.PI / 2f).Single(),
+                pathBuilder.AddArc(topRight, radiusX.Single(), radiusY.Single(), Float.PiByTwo,
                     CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
             }
 
@@ -754,7 +754,7 @@ namespace CompositionProToolkit
             radiusY = size.Height - bottomRight.Y;
             if (!radiusX.IsZero() || !radiusY.IsZero())
             {
-                pathBuilder.AddArc(rightBottom, radiusX.Single(), radiusY.Single(), (Math.PI / 2f).Single(),
+                pathBuilder.AddArc(rightBottom, radiusX.Single(), radiusY.Single(), Float.PiByTwo,
                     CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
             }
 
@@ -766,7 +766,7 @@ namespace CompositionProToolkit
             radiusY = size.Height - bottomLeft.Y;
             if (!radiusX.IsZero() || !radiusY.IsZero())
             {
-                pathBuilder.AddArc(bottomLeft, radiusX.Single(), radiusY.Single(), (Math.PI / 2f).Single(),
+                pathBuilder.AddArc(bottomLeft, radiusX.Single(), radiusY.Single(), Float.PiByTwo,
                     CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
             }
 
@@ -778,7 +778,7 @@ namespace CompositionProToolkit
             radiusY = topLeft.Y;
             if (!radiusX.IsZero() || !radiusY.IsZero())
             {
-                pathBuilder.AddArc(leftTop, radiusX.Single(), radiusY.Single(), (Math.PI / 2f).Single(),
+                pathBuilder.AddArc(leftTop, radiusX.Single(), radiusY.Single(), Float.PiByTwo,
                     CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
             }
 

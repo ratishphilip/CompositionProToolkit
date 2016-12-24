@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>CompositionProToolkit</id>
-    <version>0.4.6.1</version>
+    <version>0.5.0.0</version>
     <title>CompositionProToolkit</title>
     <authors>Ratish Philip</authors>
     <owners>Ratish Philip</owners>
@@ -10,12 +10,12 @@
     <projectUrl>https://github.com/ratishphilip/CompositionProToolkit</projectUrl>
     <iconUrl>https://cloud.githubusercontent.com/assets/7021835/16889815/17851c12-4a9e-11e6-87d6-9b00282011b3.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>Collection of Helper classes (using Win2d &amp; CompositionExpressionToolkit) for Windows.UI.Composition and some UI controls.</description>
-    <releaseNotes>ImageFrame now implements IDisposable. OptimizeShadow feature added to ImageFrame. CreateFrostedGlassBrush added to compositor. Refer to https://wpfspark.wordpress.com/ for more details.</releaseNotes>
-    <copyright>Copyright 2016</copyright>
+    <description>Collection of Helper classes for Windows.UI.Composition, Win2d and some UI controls.</description>
+    <releaseNotes>Added CanvasPathBuilder extension methods and CanvasGeometryParser which parses XAML or SVG path data to CanvasGeometry.</releaseNotes>
+    <copyright>Copyright 2017</copyright>
     <dependencies>
-        <dependency id="Win2D.uwp" version="1.19.0" />
-        <dependency id="Microsoft.Xaml.Behaviors.Uwp.Managed" version="1.1.0" />
+        <dependency id="Win2D.uwp" version="1.20.0" />
+        <dependency id="Microsoft.Xaml.Behaviors.Uwp.Managed" version="2.0.0" />
     </dependencies>
   </metadata>
 </package>

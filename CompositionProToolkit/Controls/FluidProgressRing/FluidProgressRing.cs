@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 Ratish Philip 
+﻿// Copyright (c) 2017 Ratish Philip 
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.6
+// CompositionProToolkit v0.5.0
 // 
 
 using System;
@@ -36,6 +36,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
+using CompositionProToolkit.Common;
 using Microsoft.Graphics.Canvas.Geometry;
 
 namespace CompositionProToolkit.Controls
@@ -441,7 +442,7 @@ namespace CompositionProToolkit.Controls
             // gamma is the angle between adjacent nodes when maxNodes number of nodes are arranged in a circle
             _gamma = 360f / MaxNodes;
             // beta is the angle a node must travel after hitting the adjacent node
-            _beta = 2f * (float)(Math.Asin(_nodeRadius / _ringRadius) * (180f / Math.PI));
+            _beta = 2f * (float)(Math.Asin(_nodeRadius / _ringRadius) * Float.RadiansToDegree);
             // alpha is the smallest angle a node must travel before hitting the adjacent node
             _alpha = _gamma - _beta;
             // phi is the angle occupied by (MaxNodes - ActiveNodes) number of nodes

@@ -1,0 +1,112 @@
+﻿<Page
+    x:Class="SampleGallery.Views.CanvasGeometryParserPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SampleGallery.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
+    mc:Ignorable="d">
+
+    <Grid Background="#ffe5e7d0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.1*"></RowDefinition>
+            <RowDefinition Height="36"></RowDefinition>
+            <RowDefinition Height="0.9*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBox x:Name="InputData"
+                 TextWrapping="Wrap"
+                 PlaceholderText="Enter SVG/XAML Path Data and press Parse."
+                 Margin="10,3"
+                 FontFamily="Courier New"
+                 FontSize="14"
+                 SelectionHighlightColor="#007aff"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"></TextBox>
+        <Button Grid.Row="1"
+                Width="120"
+                Height="30"
+                Content="Parse"
+                HorizontalAlignment="Right"
+                Margin="10,3"
+                Click="OnParseData"></Button>
+        <Button Grid.Row="1"
+                Width="120"
+                Height="30"
+                Content="Sample"
+                HorizontalAlignment="Left"
+                Margin="10,3"
+                Click="OnShowSample"></Button>
+        <Button Grid.Row="1"
+                Width="120"
+                Height="30"
+                Content="Clear"
+                HorizontalAlignment="Center"
+                Margin="10,3"
+                Click="OnClearCanvas"></Button>
+        <Pivot x:Name="RootPivot"
+               Grid.Row="2">
+            <PivotItem Header="Canvas">
+                <ScrollViewer x:Name="RenderScroll"
+                              SizeChanged="RenderScroll_OnSizeChanged"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Auto">
+                    <xaml:CanvasControl x:Name="RenderCanvas"
+                                        MinWidth="1200"
+                                        MinHeight="800"
+                                        Width="{Binding ElementName=RenderScroll, Path=ActualWidth}"
+                                        Height="{Binding ElementName=RenderScroll, Path=ActualHeight}"
+                                        HorizontalContentAlignment="Stretch"
+                                        VerticalContentAlignment="Stretch"
+                                        ClearColor="Beige"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Draw="OnCanvasDraw"></xaml:CanvasControl>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="Commands">
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled"
+                              Background="Beige">
+                    <TextBlock x:Name="CommandsList"
+                               FontFamily="Courier New"
+                               FontSize="16"
+                               IsTextSelectionEnabled="True"
+                               Foreground="Black"
+                               SelectionHighlightColor="#007aff"
+                               TextWrapping="Wrap"></TextBlock>
+                </ScrollViewer>
+            </PivotItem>
+        </Pivot>
+        <StackPanel Grid.Row="2"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal">
+            <TextBlock Text="StrokeThickness"
+                       Margin="10,10,5,-10"></TextBlock>
+            <Slider x:Name="StrokeThickness"
+                    Width="150"
+                    Height="30"
+                    Foreground="Black"
+                    Background="Black"
+                    Minimum="0"
+                    Maximum="10"
+                    StepFrequency="0.1"
+                    ValueChanged="OnStrokeThicknessChanged"
+                    Margin="0,4,10,4"></Slider>
+            <TextBlock Text="Stroke Color"
+                       Margin="10,10,5,-10"></TextBlock>
+            <ComboBox x:Name="StrokeList"
+                      Width="150"
+                      Height="30"
+                      SelectionChanged="OnStrokeColorChanged"
+                      Margin="0,4,10,4"></ComboBox>
+            <TextBlock Text="Fill Color"
+                       Margin="10,10,5,-10"></TextBlock>
+            <ComboBox x:Name="FillList"
+                      Width="150"
+                      Height="30"
+                      SelectionChanged="OnFillColorChanged"
+                      Margin="0,4,10,4"></ComboBox>
+        </StackPanel>
+    </Grid>
+</Page>

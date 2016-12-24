@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 Ratish Philip 
+﻿// Copyright (c) 2017 Ratish Philip 
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,10 +24,11 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.4.6
+// CompositionProToolkit v0.5.0
 // 
 
 using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -59,8 +60,11 @@ namespace CompositionProToolkit.Common
         /// </returns>
         public static bool IsCloseTo(this double value1, double value2)
         {
-            //in case they are Infinities (then epsilon check does not work)
-            if (value1 == value2) return true;
+            //in case they are Infinities or NaN (then epsilon check does not work)
+            if ((Double.IsInfinity(value1) &&
+                 Double.IsInfinity(value2)) ||
+                (IsNaN(value1) && (IsNaN(value2))))
+                return true;
             // This computes (|value1-value2| / (|value1| + |value2| + 10.0)) < DoubleEpsilon
             var eps = (Math.Abs(value1) + Math.Abs(value2) + 10.0) * DoubleEpsilon;
             var delta = value1 - value2;
@@ -129,8 +133,12 @@ namespace CompositionProToolkit.Common
         /// </returns>
         public static bool IsCloseTo(this float value1, float value2)
         {
-            //in case they are Infinities (then epsilon check does not work)
-            if (value1 == value2) return true;
+            // In case they are Infinities or NaN (then epsilon check does not work)
+            if ((Single.IsInfinity(value1) &&
+                 Single.IsInfinity(value2)) ||
+                (Single.IsNaN(value1) && (Single.IsNaN(value2))))
+                return true;
+
             // This computes (|value1-value2| / (|value1| + |value2| + 10.0)) < FloatMin
             var eps = (Math.Abs(value1) + Math.Abs(value2) + 10.0) * FloatMin;
             var delta = value1 - value2;
@@ -640,6 +648,31 @@ namespace CompositionProToolkit.Common
             return
                 Uri.Compare(uri, otherUri, UriComponents.AbsoluteUri, UriFormat.SafeUnescaped,
                     StringComparison.OrdinalIgnoreCase) == 0;
+        }
+
+        #endregion
+
+        #region Vector2
+
+        /// <summary>
+        /// Reflects point 'a' over point 'b'
+        /// </summary>
+        /// <param name="a">Point to be reflected</param>
+        /// <param name="b">Point of reflection</param>
+        /// <returns>Reflected point</returns>
+        public static Vector2 Reflect(Vector2 a, Vector2 b)
+        {
+            //
+            // Let 'c' be the reflected point. Then point 'b' 
+            // becomes the middle point between 'a' and 'c'.
+            // As per MidPoint formula,
+            // b.X = (a.X + c.X) / 2 and 
+            // b.Y = (a.Y + c.Y) / 2
+            // Therefore, c.X = 2 * b.X - a.X
+            //            c.y = 2 * b.Y - a.Y
+            //
+            return new Vector2(2f * b.X - a.X,
+                               2f * b.Y - a.Y);
         }
 
         #endregion

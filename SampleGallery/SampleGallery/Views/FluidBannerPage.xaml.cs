@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -29,17 +33,56 @@ namespace SampleGallery.Views
             Loaded += OnLoaded;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var itemCount = 6;
+            var itemCount = 15;
 
             var items = new List<Uri>();
+            var urls = (await GetUrls()).Take(itemCount).ToList();
             for (var i = 0; i < itemCount; i++)
             {
-                items.Add(new Uri($"ms-appx:///Assets/Images/Image{i + 1}.jpg"));
+                //items.Add(new Uri($"ms-appx:///Assets/Images/Image{i + 1}.jpg"));
+                items.Add(new Uri(urls.ElementAt(i)));
             }
 
             Banner.ItemsSource = items;
+        }
+
+        private static async Task<IEnumerable<string>> GetUrls()
+        {
+            string xml;
+
+            using (var client = new HttpClient())
+            {
+                xml = await client.GetStringAsync("http://www.apple.com/trailers/home/xml/current.xml");
+            }
+
+            xml = xml.Replace("\u001f", "");
+
+            var result = new List<string>();
+            try
+            {
+                var xDoc = XDocument.Parse(xml);
+                if (xDoc == null)
+                    return result;
+                var movieInfos = xDoc.Root.Elements("movieinfo");
+                result.AddRange(from info in movieInfos
+                                select info.Element("poster")
+                                        into poster
+                                where poster != null
+                                select poster.Element("xlarge").Value);
+
+                return result;
+            }
+            catch (Exception exception)
+            {
+
+                throw;
+            }
+
+            
+
+            return null;
         }
     }
 }
