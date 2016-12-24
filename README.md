@@ -1,6 +1,6 @@
 <img src="https://cloud.githubusercontent.com/assets/7021835/16889814/1784ed78-4a9e-11e6-80d0-7c2084d6c960.png" alt="CompositionProToolkit"></img>
 
->  IMPORTANT: **CompositionProToolkit has undergone some breaking API changes in v0.4.4. Look [here](https://wpfspark.wordpress.com/2016/08/27/compositionprotoolkit-v0-4-4-released/) for more details.**
+>  What's New in v0.5.0 Holiday Update: **CompositionProToolkit has added helper classes for Win2d - CanvasPathBuilder extension methods and CanvasGeometryParser which parses XAML or SVG path data to CanvasGeometry.**
 
 
 # Table of Contents
