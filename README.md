@@ -555,11 +555,11 @@ private void OnCanvasDraw(CanvasControl sender, CanvasDrawEventArgs args)
     args.DrawingSession.DrawGeometry(geometry, Colors.Black, 2f);
 }
 ```
-Check out the [Sample Gallery project](https://github.com/ratishphilip/CompositionProToolkit/tree/master/SampleGallery) where you can interact with the CanvasGeometryParser by providing the SVG/XAML path data and converting it to CanvasGeometry. You can alter the StrokeThickness, StrokeColor and FillColor of the rendered geometry.
+Check out the [Sample Gallery project](https://github.com/ratishphilip/CompositionProToolkit/tree/master/SampleGallery) where you can interact with the **CanvasGeometryParser** by providing the SVG/XAML path data and converting it to **CanvasGeometry**. You can alter the **StrokeThickness**, **StrokeColor** and **FillColor** of the rendered geometry.
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/21503221/a976448c-cc0a-11e6-8049-1c7c32209e55.jpg" />
 
-You can view the CanvasPathBuilder commands called to create the parsed geometry.
+You can view the **CanvasPathBuilder** commands called to create the parsed geometry.
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/21503224/ac140788-cc0a-11e6-8ca1-d88d294d44c1.jpg" />
 
