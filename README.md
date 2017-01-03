@@ -29,7 +29,7 @@
 - [Win2d Helpers](#win2d-helpers)
 - [Updates Chronology](#updates-chronology)
 
-**CompositionProToolkit** is a collection of helper classes for Windows.UI.Composition namespace and the Win2d project. It also contains controls which can be used in UWP applications.
+**CompositionProToolkit** is a collection of helper classes for the **Windows.UI.Composition** namespace and the **Win2d** project. It also contains controls which can be used in UWP applications.
 
 # Installing from NuGet
 
