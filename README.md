@@ -1,6 +1,15 @@
 <img src="https://cloud.githubusercontent.com/assets/7021835/16889814/1784ed78-4a9e-11e6-80d0-7c2084d6c960.png" alt="CompositionProToolkit"></img>
 
->  What's New in v0.5.0 Holiday Update: **CompositionProToolkit has added helper classes for Win2d - CanvasPathBuilder extension methods and CanvasGeometryParser which parses XAML or SVG path data to CanvasGeometry.**
+# What's new in v0.5.1?
+- ICanvasStroke & CanvasStroke
+- IGeometrySurface now supports ICanvasStroke to render outline to CanvasGeometry
+- Win2d Mini Language specification
+- New extension methods for CanvasPathBuilder
+- New extension methods for CanvasDrawingSession (supporting ICanvasStroke)
+- CanvasObject class (replaces CanvasGeometryParser)
+- CanvasRenderLayer
+- CanvasElement
+- Utility methods and Constants
 
 
 # Table of Contents
@@ -27,6 +36,13 @@
   - [FluidBanner](#4-fluidbanner)
 - [CompositionProToolkit Expressions](https://github.com/ratishphilip/CompositionProToolkit/tree/master/CompositionProToolkit/Expressions)
 - [Win2d Helpers](#win2d-helpers)
+    - [ICanvasStroke and CanvasStroke](#icanvasstroke-and-canvasstroke)
+    - [CanvasDrawingSession extension methods](#canvasdrawingsession-extension-methods)
+    - [Win2d MiniLanguage specification](#win2d-mini-language-specification)
+    - [Parsing Win2d Mini Language with CanvasObject](#parsing-win2d-mini-language-with-canvasobject)
+    - [CanvasPathBuilder extension methods](#canvaspathbuilder-extension-methods)
+    - [Creating multilayer Vector shapes with CanvasElement](#creating-multilayer-vector-shapes-with-canvaselement)
+- [Utility methods and Constants](#utility-methods-and-constants)
 - [Updates Chronology](#updates-chronology)
 
 **CompositionProToolkit** is a collection of helper classes for the **Windows.UI.Composition** namespace and the **Win2d** project. It also contains controls which can be used in UWP applications.
@@ -126,22 +142,48 @@ void Resize(Size size);
 ```
 
 ### Using `IGeometrySurface`
-If you want to render CanvasGeometry with a fill color and a background color, you have to use the **ICompositionGenerator** to create an object implementing the **IGeometrySurface**.
+If you want to render CanvasGeometry with a stroke, fill color and a background color, you have to use the **ICompositionGenerator** to create an object implementing the **IGeometrySurface**.
 
-The following API is provided in **ICompositionGenerator** to create a **IGeometrySurface**
+The following APIs are provided in **ICompositionGenerator** to create a **IGeometrySurface**
 
 ```C#
 IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, 
+    ICanvasStroke stroke);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, 
+    Color fillColor);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
+    ICanvasStroke stroke, Color fillColor);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
+    Color fillColor, Color backgroundColor);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
+    ICanvasStroke stroke, Color fillColor, Color backgroundColor);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
+    ICanvasBrush fillBrush);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
+    ICanvasStroke stroke, ICanvasBrush fillBrush);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
+    ICanvasBrush fillBrush, ICanvasBrush backgroundBrush);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
+    ICanvasStroke stroke, ICanvasBrush fillBrush, ICanvasBrush backgroundBrush);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
+    ICanvasBrush fillBrush, Color backgroundColor);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
+    ICanvasStroke stroke, ICanvasBrush fillBrush, Color backgroundColor);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
+    Color fillColor, ICanvasBrush backgroundBrush);
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
+    ICanvasStroke stroke, Color fillColor, ICanvasBrush backgroundBrush);    
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
     Color foregroundColor);
-IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, 
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
     Color foregroundColor, Color backgroundColor);
-IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, 
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
     ICanvasBrush foregroundBrush);
-IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, 
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
     ICanvasBrush foregroundBrush, ICanvasBrush backgroundBrush);
-IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, 
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
     ICanvasBrush foregroundBrush, Color backgroundColor);
-IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, 
+IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry,
     Color foregroundColor, ICanvasBrush backgroundBrush);
 ```
 The previous example can also be written as
@@ -160,9 +202,12 @@ var ellipse1 = CanvasGeometry.CreateEllipse(generator.Device, 200, 200, 150, 75)
 var ellipse2 = CanvasGeometry.CreateEllipse(generator.Device, 200, 200, 75, 150);
 var combinedGeometry = ellipse1.CombineWith(ellipse2, Matrix3x2.Identity, CanvasGeometryCombine.Union);
 
+// Create the stroke
+var stroke = new CanvasStroke(2f, Colors.Black);
+
 // Create the CompositionMask
 IGeometrySurface geometrySurface = 
-                  generator.CreateGeometrySurface(visual.Size.ToSize(), combinedGeometry, Colors.Blue);
+    generator.CreateGeometrySurface(visual.Size.ToSize(), combinedGeometry, stroke, Colors.Blue);
 
 // Create SurfaceBrush from GeometrySurface
 var surfaceBrush = compositor.CreateSurfaceBrush(geometrySurface.Surface);
@@ -170,25 +215,48 @@ var surfaceBrush = compositor.CreateSurfaceBrush(geometrySurface.Surface);
 visual.Brush = surfaceBrush;
 ```
 
-**IGeometrySurface** provides several APIs which allow you to update its geometry, size, fill and background (and thus the shape of the Visual).
+**IGeometrySurface** provides several APIs which allow you to update its geometry, size, stroke, fill and background (and thus the shape of the Visual).
 
 ```C#
-void Redraw();
 void Redraw(CanvasGeometry geometry);
-void Redraw(Color foregroundColor);
-void Redraw(Color foregroundColor, Color backgroundColor);
-void Redraw(ICanvasBrush foregroundBrush);
-void Redraw(ICanvasBrush foregroundBrush, ICanvasBrush backgroundBrush);
-void Redraw(Color foregroundColor, ICanvasBrush backgroundBrush);
-void Redraw(ICanvasBrush foregroundBrush, Color backgroundColor);
+void Redraw(ICanvasStroke stroke);
+void Redraw(Color fillColor);
+void Redraw(ICanvasStroke stroke, Color fillColor);
+void Redraw(Color fillColor, Color backgroundColor);
+void Redraw(ICanvasStroke stroke, Color fillColor, Color backgroundColor);
+void Redraw(ICanvasBrush fillBrush);
+void Redraw(ICanvasStroke stroke, ICanvasBrush fillBrush);
+void Redraw(ICanvasBrush fillBrush, ICanvasBrush backgroundBrush);
+void Redraw(ICanvasStroke stroke, ICanvasBrush fillBrush, 
+    ICanvasBrush backgroundBrush);
+void Redraw(Color fillColor, ICanvasBrush backgroundBrush);
+void Redraw(ICanvasStroke stroke, Color fillColor, 
+    ICanvasBrush backgroundBrush);
+void Redraw(ICanvasBrush fillBrush, Color backgroundColor);
+void Redraw(ICanvasStroke stroke, ICanvasBrush fillBrush, 
+    Color backgroundColor);
 void Redraw(Size size, CanvasGeometry geometry);
-void Redraw(Size size, CanvasGeometry geometry, Color foregroundColor);
-void Redraw(Size size, CanvasGeometry geometry, Color foregroundColor, Color backgroundColor);
-void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush);
-void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush, ICanvasBrush backgroundBrush);
-void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush, Color backgroundColor);
-void Redraw(Size size, CanvasGeometry geometry, Color foregroundColor, ICanvasBrush backgroundBrush);
-void Resize(Size size);
+void Redraw(Size size, CanvasGeometry geometry, ICanvasStroke stroke);
+void Redraw(Size size, CanvasGeometry geometry, Color fillColor);
+void Redraw(Size size, CanvasGeometry geometry, ICanvasStroke stroke, 
+    Color fillColor);
+void Redraw(Size size, CanvasGeometry geometry, Color fillColor, 
+    Color backgroundColor);
+void Redraw(Size size, CanvasGeometry geometry, ICanvasStroke stroke,
+    Color fillColor, Color backgroundColor);
+void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush fillBrush);
+void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush fillBrush,
+    ICanvasBrush backgroundBrush);
+void Redraw(Size size, CanvasGeometry geometry, ICanvasStroke stroke,
+    ICanvasBrush fillBrush, ICanvasBrush backgroundBrush);
+void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush fillBrush,
+    Color backgroundColor);
+void Redraw(Size size, CanvasGeometry geometry, ICanvasStroke stroke,
+    ICanvasBrush fillBrush, Color backgroundColor);
+void Redraw(Size size, CanvasGeometry geometry, Color fillColor,
+    ICanvasBrush backgroundBrush);
+void Redraw(Size size, CanvasGeometry geometry, ICanvasStroke stroke,
+    Color fillColor, ICanvasBrush backgroundBrush);
 ```
 
 Here is an example of a **CanvasAnimatedControl** having two visuals - A blue rectangular visual in the background and a red visual in the foreground. The red visual's mask is redrawn periodically to give an impression of animation. (_see the **[SampleGallery](https://github.com/ratishphilip/CompositionProToolkit/tree/master/SampleGallery)** project for more details on how it is implemented_)
@@ -505,6 +573,152 @@ It provides the following properties which can be used to customize the **FluidB
 
 # Win2d Helpers
 
+## ICanvasStroke and CanvasStroke
+In Win2d, the stroke, that is used to render an outline to a CanvasGeometry, is comprised of three components
+- Stroke Width – defines the width of the stroke.
+- Stroke Brush – defines the **ICanvasBrush** that will be used to render the stroke.
+- Stroke Style – defines the **CanvasStrokeStyle** for the stroke.
+
+**ICanvasStroke** interface, defined in the CompositionProToolkit.Win2d namespace, encapsulates these three components and the **CanvasStroke** class implements this interface. It provides several constructors to define the stroke.
+
+```C#
+public interface ICanvasStroke
+{
+  ICanvasBrush Brush { get; }
+  float Width { get; }
+  CanvasStrokeStyle Style { get; }
+  Matrix3x2 Transform { get; set; }
+}
+
+public sealed class CanvasStroke : ICanvasStroke
+{
+  public float Width { get; }
+  public CanvasStrokeStyle Style { get; }
+  public ICanvasBrush Brush { get; }
+  public Matrix3x2 Transform { get; set; }
+  public CanvasStroke(ICanvasBrush brush, float strokeWidth = 1f);
+  public CanvasStroke(ICanvasBrush brush, float strokeWidth, CanvasStrokeStyle strokeStyle);
+  public CanvasStroke(ICanvasResourceCreator device, Color strokeColor, float strokeWidth = 1f);
+  public CanvasStroke(ICanvasResourceCreator device, Color strokeColor, float strokeWidth, 
+                      CanvasStrokeStyle strokeStyle);
+}
+```
+
+The **Transform** property in CanvasStroke gets or sets the Transform property of the stroke brush.
+
+## CanvasDrawingSession extension methods
+
+The following extension methods have been created for CanvasDrawingSession to incorporate ICanvasStroke in its DrawXXX() methods
+
+```C#
+public static void DrawCircle(this CanvasDrawingSession session,
+    Vector2 centerPoint, float radius, ICanvasStroke stroke);
+public static void DrawCircle(this CanvasDrawingSession session,
+    float x, float y, float radius, ICanvasStroke stroke);
+public static void DrawEllipse(this CanvasDrawingSession session, 
+    Vector2 centerPoint, float radiusX, float radiusY, ICanvasStroke stroke);
+public static void DrawEllipse(this CanvasDrawingSession session,
+    float x, float y, float radiusX, float radiusY, ICanvasStroke stroke);
+public static void DrawGeometry(this CanvasDrawingSession session,
+    CanvasGeometry geometry, ICanvasStroke stroke);
+public static void DrawGeometry(this CanvasDrawingSession session,
+    CanvasGeometry geometry, Vector2 offset, ICanvasStroke stroke);
+public static void DrawGeometry(this CanvasDrawingSession session,
+    CanvasGeometry geometry, float x, float y, ICanvasStroke stroke);
+public static void DrawLine(this CanvasDrawingSession session, Vector2 point0, 
+    Vector2 point1, ICanvasStroke stroke);
+public static void DrawLine(this CanvasDrawingSession session, float x0, 
+    float y0, float x1, float y1, ICanvasStroke stroke);
+public static void DrawRectangle(this CanvasDrawingSession session, Rect rect, 
+    ICanvasStroke stroke) ;
+public static void DrawRectangle(this CanvasDrawingSession session, float x, 
+    float y, float w, float h, ICanvasStroke stroke);
+public static void DrawRoundedRectangle(this CanvasDrawingSession session, 
+    Rect rect, float radiusX, float radiusY, ICanvasStroke stroke);
+public static void DrawRoundedRectangle(this CanvasDrawingSession session, float x,
+    float y, float w, float h, float radiusX, float radiusY, ICanvasStroke stroke);
+```
+## Win2d MiniLanguage specification
+**Microsoft.Graphics.Canvas.Geometry.CanvasGeometry** class facilitates the drawing and manipulation of complex geometrical shapes. These shapes can be outlined with a stroke and filled with a brush (which can be a solid color, a bitmap pattern or a gradient). 
+While the **CanvasGeometry** class provides various static methods to create predefined shapes like Circle, Ellipse, Rectangle, RoundedRectangle, the **CanvasPathBuilder** class provides several methods to create freeform CanvasGeometry objects.
+Creation of a complex freeform geometric shape may involve invoking of several CanvasPathBuilder commands. For example, the following code shows how to create a triangle geometry using CanvasPathBuilder
+
+```C#
+CanvasPathBuilder pathBuilder = new CanvasPathBuilder(device);
+
+pathBuilder.BeginFigure(1, 1);
+pathBuilder.AddLine(300, 300);
+pathBuilder.AddLine(1, 300);
+pathBuilder.EndFigure(CanvasFigureLoop.Closed);
+
+CanvasGeometry triangleGeometry = CanvasGeometry.CreatePath(pathBuilder);
+```
+**Win2d Mini Language** is a powerful and sophisticated language which facilitates specifying complex geometries, color, brushes, strokes and stroke styles in a more compact manner. 
+
+Using Win2d Mini-Language, the geometry in above example can be created in the following way
+
+```C#
+string pathData = “M 1 1 300 300 1 300 Z”;
+CanvasGeometry triangleGeometry = CanvasObject.CreateGeometry(device, pathData);
+```
+
+Win2d Mini Language is based on the [SVG (Scalable Vector Graphics) Path language specification](http://www.w3.org/TR/SVG11/paths.html). 
+
+The following specification document describes the Win2d Markup Language in detail.
+
+[Win2d Mini Language Specification.pdf](https://github.com/ratishphilip/CompositionProToolkit/files/743126/Win2d.Mini.Language.Specification.pdf)
+
+## Parsing Win2d Mini Language with CanvasObject
+The **CompositionProToolkit.CanvasObject** static class provides APIs that parse the Win2d Mini Language and instantiate the appropriate objects.
+
+### Color
+#### From Hexadecimal Color string
+There are two APIs that convert the hexadecimal color string in **#RRGGBB** or **#AARRGGBB** format to the corresponding Color object. The '**#**' character is optional.
+
+```C#
+public static Color CreateColor(string hexColor);
+public static bool TryCreateColor(string hexColor, out Color color);
+```
+
+The first API will raise an **ArgumentException** if the argument is not in the correct format while the second API will attempt to convert the color string without raising an exception.
+
+#### From High Dynamic Range Color string
+The following API Converts a Vector4 High Dynamic Range Color to Color object. Negative components of the Vector4 will be sanitized by taking the absolute value of the component. The HDR Color components should have value in the range [0, 1]. If their value is more than 1, they will be clamped at 1.  Vector4's X, Y, Z, W components match to Color's R, G, B, A components respectively. 
+
+```C#
+public static Color CreateColor(Vector4 hdrColor);
+```
+
+### CanvasGeometry
+The following API converts a CanvasGeometry path string to CanvasGeometry object
+```C#
+public static CanvasGeometry CreateGeometry(ICanvasResourceCreator resourceCreator,
+                                            string pathData, 
+                                            StringBuilder logger = null);
+```
+
+_The **logger** parameter in this method is an option argument of type **StringBuilder** which can be used to obtain the **CanvasPathBuilder** commands in text format. It is mainly intended for information/debugging purpose only_.
+
+### ICanvasBrush
+The following API converts a brush data string to ICanvasBrush object
+```C#
+public static ICanvasBrush CreateBrush(ICanvasResourceCreator resourceCreator, 
+                                       string brushData);
+```
+
+### CanvasStrokeStyle
+The following API converts a style data string to CanvasStrokeStyle object
+```C#
+public static CanvasStrokeStyle CreateStrokeStyle(string styleData);
+```
+
+### ICanvasStroke
+The following API converts a stroke data string to ICanvasStroke object
+```C#
+public static ICanvasStroke CreateStroke(ICanvasResourceCreator resourceCreator,
+                                         string strokeData);
+```
+
 ## CanvasPathBuilder extension methods
 
 **CanvasPathBuilder** allows you to create a freeform path using lines, arcs, Quadratic Beziers and Cubic Beziers. You can then convert this path to a **CanvasGeometry**. Each path is composed of one or more figures. Each figure definition is encapsulated by the **BeginFigure()** and **EndFigure()** methods of **CanvasPathBuilder**. 
@@ -516,84 +730,161 @@ The following extension methods have been added to the CanvasPathBuilder to add 
 ```C#
 public static void AddCircleFigure (CanvasPathBuilder pathBuilder, Vector2 center, float radius);
 public static void AddCircleFigure (CanvasPathBuilder pathBuilder, float x, float y, float radius);
-public static void AddEllipseFigure(CanvasPathBuilder pathBuilder, Vector2 center, float radiusX, float radiusY);
-public static void AddEllipseFigure(CanvasPathBuilder pathBuilder, float x, float y, float radiusX, float radiusY);
-public static void AddPolygonFigure(CanvasPathBuilder pathBuilder, int numSides, Vector2 center, float radius);
-public static void AddPolygonFigure(CanvasPathBuilder pathBuilder, int numSides, float x, float y, float radius);
+public static void AddEllipseFigure(CanvasPathBuilder pathBuilder, Vector2 center, float radiusX,
+    float radiusY);
+public static void AddEllipseFigure(CanvasPathBuilder pathBuilder, float x, float y, float radiusX,
+    float radiusY);
+public static void AddPolygonFigure(CanvasPathBuilder pathBuilder, int numSides, Vector2 center,
+    float radius);
+public static void AddPolygonFigure(CanvasPathBuilder pathBuilder, int numSides, float x, float y,
+    float radius);
+public static void AddRectangleFigure(this CanvasPathBuilder pathBuilder, float x, float y,
+    float width, float height)
+public static void AddRoundedRectangleFigure(this CanvasPathBuilder pathBuilder, float x, float y,
+    float width, float height, float radiusX, float radiusY);
 ```
 
-In the **AddPolygonFigure**, the **radius** parameter indicates the distance between the center of the polygon and its vertices. 
+In the **AddPolygonFigure**, the **radius** parameter denotes the radius of the circle circumscribing the polygon vertices (i.e. the distance between the center of the polygon and its vertices). 
 
 **Note**: _These methods add the required curves or line segments to your path internally. Since these methods add a figure to your path, you can invoke them only after closing the current figure in the path. They must not be called in between **BeginFigure()** and **EndFigure()** calls, otherwise an **ArgumentException** will be raised. These extension methods call the **BeginFigure()** and **EndFigure()** **CanvasPathBuilder** methods internally._
 
-## CanvasGeometryParser
-The [Path Mini Langugage](https://msdn.microsoft.com/en-us/library/ms752293%28v=vs.110%29.aspx), which is quite popular in WPF/Silverlight, is a powerful and complex mini-language which you can use to specify path geometries more compactly using Extensible Application Markup Language (XAML). It is derived mainly from the [SVG (Scalable Vector Graphics) Path language specification](http://www.w3.org/TR/SVG11/paths.html). Here is an example 
+Check out the [Sample Gallery project](https://github.com/ratishphilip/CompositionProToolkit/tree/master/SampleGallery) where you can interact with the **CanvasObject** class by providing the SVG/XAML path data and converting it to **CanvasGeometry**. You can alter the **StrokeThickness**, **StrokeColor** and **FillColor** of the rendered geometry.
 
-```
-    M8.64,223.948c0,0,143.468,3.431,185.777-181.808c2.673-11.702-1.23-20.154,1.316-33.146h16.287c0,0-3.14,17.248,1.095,30.848c21.392,68.692-4.179,242.343-204.227,196.59L8.64,223.948z
-```
-
-The **CanvasGeometryParser** class parses the above string and converts it into appropriate **CanvasPathBuilder** commands. It contains the following static methods
-
-```C#
-public static CanvasGeometry Parse(ICanvasResourceCreator resourceCreator, System.String pathData, StringBuilder logger = null);
-```
-
-_The **logger** parameter in this method is an option argument of type **StringBuilder** which can be used to obtain the **CanvasPathBuilder** commands in text format. It is mainly intended for information/debugging purpose only_.
-
-Here is an example usage of the **CanvasGeometryParser**
-
-```C#
-private void OnCanvasDraw(CanvasControl sender, CanvasDrawEventArgs args)
-{
-    string data = "M8.64,223.948c0,0,143.468,3.431,185.777-181.808c2.673-11.702-1.23-20.154," + 
-        "1.316-33.146h16.287c0,0-3.14,17.248,1.095,30.848c21.392,68.692-4.179,242.343-204.227,196.59L8.64,223.948z";
-
-    var geometry = CanvasGeometryParser.Parse(sender, data);
-    
-    args.DrawingSession.FillGeometry(geometry, Colors.Yellow);
-    args.DrawingSession.DrawGeometry(geometry, Colors.Black, 2f);
-}
-```
-Check out the [Sample Gallery project](https://github.com/ratishphilip/CompositionProToolkit/tree/master/SampleGallery) where you can interact with the **CanvasGeometryParser** by providing the SVG/XAML path data and converting it to **CanvasGeometry**. You can alter the **StrokeThickness**, **StrokeColor** and **FillColor** of the rendered geometry.
-
-<img src="https://cloud.githubusercontent.com/assets/7021835/21503221/a976448c-cc0a-11e6-8049-1c7c32209e55.jpg" />
+<img src="https://cloud.githubusercontent.com/assets/7021835/22484131/e58b0046-e7b4-11e6-8b31-335c57a738f0.png" />
 
 You can view the **CanvasPathBuilder** commands called to create the parsed geometry.
 
-<img src="https://cloud.githubusercontent.com/assets/7021835/21503224/ac140788-cc0a-11e6-8ca1-d88d294d44c1.jpg" />
+<img src="https://cloud.githubusercontent.com/assets/7021835/22484130/e58a13c0-e7b4-11e6-8764-1670dc866372.png" />
 
-Based on the [SVG (Scalable Vector Graphics) Path language specification](http://www.w3.org/TR/SVG11/paths.html), the following rules must be followed to create the path data
+## Creating multilayer Vector shapes with CanvasElement
+The CanvasElement class allows the creation of multilayer vector shapes. Each layer is represented by the CanvasRenderLayer class. The CanvasRenderLayer implements the ICanvasRenderLayer interface which encapsulates three properties required for rendering a layer
+- **CanvasGeometry** - The geometry to be rendered on the layer.
+- **ICanvasBrush** - The brush to fill the geometry.
+- **ICanvasStroke** - The stroke to outline the geometry.
 
-- All instructions are expressed as one character (e.g., a moveto is expressed as an M).				
-- Superfluous white space and separators such as commas can be eliminated (e.g., **M 100 100 L 200 200* contains unnecessary spaces and could be expressed more compactly as **M100 100L200 200**).				
-- The command letter can be eliminated on subsequent commands if the same command is used multiple times in a row (e.g., you can drop the second "L" in "M 100 200 L 200 100 L -100 -200" and use "M 100 200 L 200 100 -100 -200" instead).				
-- Relative versions of all commands are available (uppercase means absolute coordinates, lowercase means relative coordinates).	
+The CanvasRenderLayer provides several constructors which accept the CanvasGeometry, ICanvasBrush and ICanvasStroke objects or their respective data definition strings.
 
-In the table below, the following notation is used:
-- **()** indicates grouping of parameters.
-- **+** indicates 1 or more of the given parameter(s) is required.
+```C#
+public CanvasRenderLayer(CanvasGeometry geometry, ICanvasBrush brush,
+    ICanvasStroke stroke);
+public CanvasRenderLayer(ICanvasResourceCreator creator, string geometryData,
+    string brushData, string strokeData);
+public CanvasRenderLayer(ICanvasResourceCreator creator, string geometryData,
+    ICanvasBrush brush, Color strokeColor, float strokeWidth = 1f);
+public CanvasRenderLayer(ICanvasResourceCreator creator, string geometryData,
+    ICanvasBrush brush, Color strokeColor, float strokeWidth, 
+    CanvasStrokeStyle strokeStyle);
+public CanvasRenderLayer(ICanvasResourceCreator creator, string geometryData,
+    ICanvasBrush brush, ICanvasBrush strokeBrush, float strokeWidth = 1);
+public CanvasRenderLayer(ICanvasResourceCreator creator, string geometryData, 
+    ICanvasBrush brush, ICanvasBrush strokeBrush, float strokeWidth, 
+    CanvasStrokeStyle strokeStyle);
+```
 
+The CanvasElement class implements the ICanvasElement interface which provides the following properties and APIs
 
-| Command | Command Letter | Parameters | Remarks |
-|---|---|---|---|
-| MoveTo | M | (x y)+ | Starts a new sub-path at the given (x,y) coordinate. If a moveto is followed by multiple pairs of coordinates, the subsequent pairs are treated as implicit lineto commands.|
-| ClosePath | Z | _none_ | Closes the current subpath by drawing a straight line from the current point to current subpath's initial point. |
-| LineTo | L | (x y)+ | Draws a line from the current point to the given (x,y) coordinate which becomes the new current point. |
-| HorizontalLineTo | H | (x)+ | Draws a horizontal line from the current point (cpx, cpy) to (x, cpy).  |
-| VerticalLineTo | V | (y)+ | Draws a vertical line from the current point (cpx, cpy) to (cpx, y). |
-| CubicBezier | C | (x1 y1 x2 y2 x y)+ | Draws a cubic Bézier curve from the current point to (x,y) using (x1,y1) as the control point at the beginning of the curve and (x2,y2) as the control point at the end of the curve. |
-| SmoothCubicBezier | S | (x2 y2 x y)+ | Draws a cubic Bézier curve from the current point to (x,y). The first control point is assumed to be the reflection of the second control point on the previous command relative to the current point. (If there is no previous command or if the previous command was not an C, c, S or s, assume the first control point is coincident with the current point.)  |
-| QuadraticBezier | Q | (x1 y1 x y)+ | Draws a quadratic Bézier curve from the current point to (x,y) using (x1,y1) as the control point. |
-| SmoothQuadraticBezier | T | (x y)+ | Draws a quadratic Bézier curve from the current point to (x,y). The control point is assumed to be the reflection of the control point on the previous command relative to the current point. (If there is no previous command or if the previous command was not a Q, q, T or t, assume the control point is coincident with the current point.)  |
-| Arc | A | (radiusX radiusY angle isLargeFlag SweepDirection x y)+ | Draws an elliptical arc from the current point to (x, y).  |
-| EllipseFigure | O | (radiusX radiusY x y)+ | Adds an Ellipse Figure to the path. The current point remains unchanged. |
-| PolygonFigure | P | (numSides radius x y)+ | Adds an n-sided Polygon Figure to the path. The current point remains unchanged. |
+```C#
+interface ICanvasElement
+{
+    List<ICanvasRenderLayer> Layers { get; set; }
+    bool ScaleStroke { get; set; }
+    
+    void Render(CanvasDrawingSession session, float width, float height, Vector2 offset,
+        Vector4 padding, float rotation);
+
+    SpriteVisual CreateVisual(ICompositionGenerator generator, float width, float height,
+        Vector2 offset, Vector4 padding, float rotation);
+}
+```
+
+The **Render** API renders the CanvasElement layers on a CanvasControl or a CanvasAnimated control for the given dimensions, offset, padding and rotation.
+
+The **CreateVisual** API creates a SpriteVisual which contains several SpriteVisuals, each representing a layer of the CanvasElement.
+
+The constructor of **CanvasElement** requires the base dimensions of the element, the layers of the CanvasElement and an option whether to scale the stroke width when the CanvasElement is scaled (default is true).
+
+```C#
+public CanvasElement(float baseWidth, float baseHeight, IEnumerable<ICanvasRenderLayer> layers,
+            bool scaleStroke = true);
+```
+
+Using the base dimension, the CanvasLayer is able to scale its layers to any valid dimensions.
+
+_The layers are rendered based on their order in the layers list, i.e. the first layer in the list is rendered first and the subsequent layers are drawn on top of the previous layer. Thus the first layer in the list appears at the bottom and the last layer in the list is rendered top most._
+
+**CanvasElement** can be primarily used to create vector based icons for UWP applications.
+
+The following example code
+
+```C#
+CanvasElement _element;
+
+private void OnCanvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
+{
+    var geom1 = CanvasObject.CreateGeometry(sender, "O 116 116 128 128");
+    var fill1 = CanvasObject.CreateBrush(sender, "SC #00adef");
+    var stroke1 = CanvasObject.CreateStroke(sender, "ST 8 SC #2a388f");
+    var layer1 = new CanvasRenderLayer(geom1, fill1, stroke1);
+
+    var geom2 = CanvasObject.CreateGeometry(sender, "U 56 56 64 64 8 8");
+    var fill2 = CanvasObject.CreateBrush(sender, "SC #ed1c24");
+    var stroke2 = CanvasObject.CreateStroke(sender, "ST 2 SC #404041");
+    var layer2 = new CanvasRenderLayer(geom2, fill2, stroke2);
+
+    var geom3 = CanvasObject.CreateGeometry(sender, "U 136 56 64 64 8 8");
+    var fill3 = CanvasObject.CreateBrush(sender, "SC #38b449");
+    var layer3 = new CanvasRenderLayer(geom3, fill3, stroke2);
+
+    var geom4 = CanvasObject.CreateGeometry(sender, "U 56 136 64 64 8 8");
+    var fill4 = CanvasObject.CreateBrush(sender, "SC #fff100");
+    var layer4 = new CanvasRenderLayer(geom4, fill4, stroke2);
+
+    var geom5 = CanvasObject.CreateGeometry(sender, "R 96 96 64 64");
+    var fill5 = CanvasObject.CreateBrush(sender, "SC #f7931d");
+    var layer5 = new CanvasRenderLayer(geom5, fill5, stroke2);
+
+    var layers = new List<CanvasRenderLayer> { layer1, layer2, layer3, layer4, layer5 };
+    _element = new CanvasElement(256f, 256f, layers);
+}
+
+private void OnCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+{
+    _element?.Render(args.DrawingSession, 512f, 512f, Vector2.Zero, new Vector4(10), 0f);
+}
+```
+
+will create the following 
+
+<img src="https://cloud.githubusercontent.com/assets/7021835/22483836/c040e680-e7b3-11e6-9cf4-ca8682610876.png" />
+
+# Utility methods and Constants
+
+## Float constants
+The following floating point constants have been defined in the static class **Float**
+- **Float.Pi** - same as (float)Math.PI radians (**180 degrees**).
+- **Float.TwoPi** - Two times (float)Math.PI radians (**360 degrees**).
+- **Float.PiByTwo** - half of (float)Math.PI radians (**90 degrees**).
+- **Float.PiByThree** - one third of (float)Math.PI radians (**600 degrees**).
+- **Float.PiByFour** - one fourth of (float)Math.PI radians (**45 degrees**).
+- **Float.PiBySix** - one sixth of (float)Math.PI radians (**30 degrees**).
+- **Float.ThreePiByTwo** - three times half of (float)Math.PI radians (**270 degrees**).      
+- **Float.DegreeToRadians** - 1 degree in radians.
+- **Float.RadiansToDegree** - 1 radian in degrees.
+
+## ToSingle extension method
+
+The **Single()** extension method for **System.Double** is now marked as **obsolete**. _Your code will still work, but you will receive a warning during build_.
+
+The **Single()** extension method is now replaced with **ToSingle()** extension method. It does the same job - converts **System.Double** to **System.Single**.
 
 # Updates Chronology
 
+## v0.5.1 
+(**Tuesday, January 31, 2017**) -Added `ICanvasStroke`, `CanvasElement`, `CanvasRenderLayer`, Win2d Mini Language support, `CanvasPathBuilder` extension methods and `CanvasDrawingSession` extension methods.
+
 ## v0.5.0 
 (**Saturday, December 24, 2016**) -Added `CanvasPathBuilder` extension methods and `CanvasGeometryParser` which parses XAML or SVG path data to CanvasGeometry.
+
 ## v0.4.6.1
 (**Friday, September 9, 2016**) - `ImageFrame` now implements `IDisposable`. `OptimizeShadow` feature added to `ImageFrame`. `CreateFrostedGlassBrush` extension method added to compositor.
 
