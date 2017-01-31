@@ -19,16 +19,42 @@ namespace CompositionProToolkit
         public static CompositionProToolkit.ICompositionGenerator GetCompositionGenerator(Windows.UI.Composition.CompositionGraphicsDevice graphicsDevice) { throw null; }
         public static CompositionProToolkit.ICompositionGenerator GetCompositionGenerator(Windows.UI.Composition.Compositor compositor, bool useSharedCanvasDevice=true, bool useSoftwareRenderer=false) { throw null; }
     }
+    public static partial class DoubleExtensions
+    {
+        [System.ObsoleteAttribute("This extension method is obsolete. Use the Double.ToSingle() extension method instead.")]
+        public static float Single(this double value) { throw null; }
+        public static float ToSingle(this double value) { throw null; }
+    }
+    public static partial class Float
+    {
+        public const float DegreeToRadians = 0.0174532924f;
+        public const float Pi = 3.14159274f;
+        public const float PiByFour = 0.7853982f;
+        public const float PiBySix = 0.5235988f;
+        public const float PiByThree = 1.04719758f;
+        public const float PiByTwo = 1.57079637f;
+        public const float RadiansToDegree = 57.2957764f;
+        public const float ThreePiByTwo = 4.712389f;
+        public const float TwoPi = 6.28318548f;
+    }
     public partial interface ICompositionGenerator : System.IDisposable
     {
+        Windows.UI.Composition.Compositor Compositor { get; }
         Microsoft.Graphics.Canvas.CanvasDevice Device { get; }
         event System.EventHandler<object> DeviceReplaced;
-        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush foregroundBrush);
-        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush foregroundBrush, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
-        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush foregroundBrush, Windows.UI.Color backgroundColor);
-        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Windows.UI.Color foregroundColor);
-        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Windows.UI.Color foregroundColor, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
-        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Windows.UI.Color foregroundColor, Windows.UI.Color backgroundColor);
+        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, CompositionProToolkit.Win2d.ICanvasStroke stroke);
+        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, CompositionProToolkit.Win2d.ICanvasStroke stroke, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush);
+        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, CompositionProToolkit.Win2d.ICanvasStroke stroke, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
+        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, CompositionProToolkit.Win2d.ICanvasStroke stroke, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush, Windows.UI.Color backgroundColor);
+        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, CompositionProToolkit.Win2d.ICanvasStroke stroke, Windows.UI.Color fillColor);
+        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, CompositionProToolkit.Win2d.ICanvasStroke stroke, Windows.UI.Color fillColor, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
+        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, CompositionProToolkit.Win2d.ICanvasStroke stroke, Windows.UI.Color fillColor, Windows.UI.Color backgroundColor);
+        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush);
+        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
+        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush, Windows.UI.Color backgroundColor);
+        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Windows.UI.Color fillColor);
+        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Windows.UI.Color fillColor, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
+        CompositionProToolkit.IGeometrySurface CreateGeometrySurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Windows.UI.Color fillColor, Windows.UI.Color backgroundColor);
         System.Threading.Tasks.Task<CompositionProToolkit.IImageSurface> CreateImageSurfaceAsync(System.Uri uri, Windows.Foundation.Size size, CompositionProToolkit.ImageSurfaceOptions options);
         CompositionProToolkit.IMaskSurface CreateMaskSurface(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry);
         void CreateReflection(Windows.UI.Composition.ContainerVisual visual, float reflectionDistance=0f, float reflectionLength=0.7f, CompositionProToolkit.ReflectionLocation location=(CompositionProToolkit.ReflectionLocation)(0));
@@ -36,22 +62,36 @@ namespace CompositionProToolkit
     public partial interface IGeometrySurface : CompositionProToolkit.IRenderSurface, System.IDisposable
     {
         Microsoft.Graphics.Canvas.Brushes.ICanvasBrush BackgroundBrush { get; }
-        Microsoft.Graphics.Canvas.Brushes.ICanvasBrush ForegroundBrush { get; }
+        Microsoft.Graphics.Canvas.Brushes.ICanvasBrush Fill { get; }
         Microsoft.Graphics.Canvas.Geometry.CanvasGeometry Geometry { get; }
-        void Redraw(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush foregroundBrush);
-        void Redraw(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush foregroundBrush, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
-        void Redraw(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush foregroundBrush, Windows.UI.Color backgroundColor);
+        CompositionProToolkit.Win2d.ICanvasStroke Stroke { get; }
+        void Redraw(CompositionProToolkit.Win2d.ICanvasStroke stroke);
+        void Redraw(CompositionProToolkit.Win2d.ICanvasStroke stroke, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush);
+        void Redraw(CompositionProToolkit.Win2d.ICanvasStroke stroke, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
+        void Redraw(CompositionProToolkit.Win2d.ICanvasStroke stroke, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush, Windows.UI.Color backgroundColor);
+        void Redraw(CompositionProToolkit.Win2d.ICanvasStroke stroke, Windows.UI.Color fillColor);
+        void Redraw(CompositionProToolkit.Win2d.ICanvasStroke stroke, Windows.UI.Color fillColor, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
+        void Redraw(CompositionProToolkit.Win2d.ICanvasStroke stroke, Windows.UI.Color fillColor, Windows.UI.Color backgroundColor);
+        void Redraw(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush);
+        void Redraw(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
+        void Redraw(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush, Windows.UI.Color backgroundColor);
         void Redraw(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry);
         void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry);
-        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush foregroundBrush);
-        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush foregroundBrush, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
-        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush foregroundBrush, Windows.UI.Color backgroundColor);
-        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Windows.UI.Color foregroundColor);
-        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Windows.UI.Color foregroundColor, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
-        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Windows.UI.Color foregroundColor, Windows.UI.Color backgroundColor);
-        void Redraw(Windows.UI.Color foregroundColor);
-        void Redraw(Windows.UI.Color foregroundColor, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
-        void Redraw(Windows.UI.Color foregroundColor, Windows.UI.Color backgroundColor);
+        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, CompositionProToolkit.Win2d.ICanvasStroke stroke);
+        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, CompositionProToolkit.Win2d.ICanvasStroke stroke, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
+        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, CompositionProToolkit.Win2d.ICanvasStroke stroke, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush, Windows.UI.Color backgroundColor);
+        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, CompositionProToolkit.Win2d.ICanvasStroke stroke, Windows.UI.Color fillColor);
+        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, CompositionProToolkit.Win2d.ICanvasStroke stroke, Windows.UI.Color fillColor, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
+        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, CompositionProToolkit.Win2d.ICanvasStroke stroke, Windows.UI.Color fillColor, Windows.UI.Color backgroundColor);
+        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush);
+        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
+        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush fillBrush, Windows.UI.Color backgroundColor);
+        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Windows.UI.Color fillColor);
+        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Windows.UI.Color fillColor, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
+        void Redraw(Windows.Foundation.Size size, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Windows.UI.Color fillColor, Windows.UI.Color backgroundColor);
+        void Redraw(Windows.UI.Color fillColor);
+        void Redraw(Windows.UI.Color fillColor, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush backgroundBrush);
+        void Redraw(Windows.UI.Color fillColor, Windows.UI.Color backgroundColor);
     }
     public partial interface IImageSurface : CompositionProToolkit.IRenderSurface, System.IDisposable
     {
@@ -103,19 +143,9 @@ namespace CompositionProToolkit
 }
 namespace CompositionProToolkit.Common
 {
-    public static partial class Float
-    {
-        public const float DegreeToRadians = 0.0174532924f;
-        public const float Pi = 3.14159274f;
-        public const float PiByFour = 0.7853982f;
-        public const float PiBySix = 0.5235988f;
-        public const float PiByThree = 1.04719758f;
-        public const float PiByTwo = 1.57079637f;
-        public const float RadiansToDegree = 57.2957764f;
-        public const float TwoPi = 6.28318548f;
-    }
     public static partial class Utils
     {
+        public static System.Numerics.Vector2 Collapse(this System.Numerics.Vector4 vector) { throw null; }
         public static Windows.Foundation.Size CollapseThickness(this Windows.UI.Xaml.Thickness thick) { throw null; }
         public static double ConvertToValidCornerValue(double corner) { throw null; }
         public static Windows.Foundation.Rect Deflate(this Windows.Foundation.Rect rect, Windows.UI.Xaml.Thickness thick) { throw null; }
@@ -140,11 +170,17 @@ namespace CompositionProToolkit.Common
         public static bool IsValid(this Windows.UI.Xaml.CornerRadius corner, bool allowNegative, bool allowNaN, bool allowPositiveInfinity, bool allowNegativeInfinity) { throw null; }
         public static bool IsValid(this Windows.UI.Xaml.Thickness thick, bool allowNegative, bool allowNaN, bool allowPositiveInfinity, bool allowNegativeInfinity) { throw null; }
         public static bool IsZero(this double value) { throw null; }
+        public static bool IsZero(this System.Numerics.Vector4 vector) { throw null; }
         public static bool IsZero(this float value) { throw null; }
         public static bool IsZero(this Windows.UI.Xaml.CornerRadius corner) { throw null; }
         public static bool IsZero(this Windows.UI.Xaml.Thickness thick) { throw null; }
         public static System.Numerics.Vector2 Reflect(System.Numerics.Vector2 a, System.Numerics.Vector2 b) { throw null; }
         public static double RoundLayoutValue(double value, double dpiScale) { throw null; }
+        public static System.Numerics.Vector4 ToAbsVector4(this Windows.UI.Xaml.CornerRadius corner) { throw null; }
+        public static System.Numerics.Vector4 ToAbsVector4(this Windows.UI.Xaml.Thickness thickness) { throw null; }
+        public static Windows.Foundation.Size ToSize(this System.Numerics.Vector4 vector) { throw null; }
+        public static System.Numerics.Vector4 ToVector4(this Windows.UI.Xaml.CornerRadius corner) { throw null; }
+        public static System.Numerics.Vector4 ToVector4(this Windows.UI.Xaml.Thickness thickness) { throw null; }
     }
 }
 namespace CompositionProToolkit.CompositionProToolkit_XamlTypeInfo
@@ -451,10 +487,6 @@ namespace CompositionProToolkit.Expressions
         public static void CreateScopedBatch(this Windows.UI.Composition.Compositor compositor, Windows.UI.Composition.CompositionBatchTypes batchType, System.Action<Windows.UI.Composition.CompositionScopedBatch> action, System.Action<Windows.UI.Composition.CompositionScopedBatch> postAction=null) { }
         public static System.Linq.Expressions.Expression<CompositionProToolkit.Expressions.CompositionLambda<T>> CreateStartingValueExpression<T>(this Windows.UI.Composition.Compositor compositor) { throw null; }
     }
-    public static partial class DoubleExtensions
-    {
-        public static float Single(this double value) { throw null; }
-    }
     public sealed partial class KeyFrame<T>
     {
         public KeyFrame(float normalizedProgressKey, T value, Windows.UI.Composition.CompositionEasingFunction easing=null) { }
@@ -504,9 +536,39 @@ namespace CompositionProToolkit.Expressions
 }
 namespace CompositionProToolkit.Win2d
 {
-    public static partial class CanvasGeometryParser
+    public static partial class CanvasDrawingSessionExtensions
     {
-        public static Microsoft.Graphics.Canvas.Geometry.CanvasGeometry Parse(Microsoft.Graphics.Canvas.ICanvasResourceCreator resourceCreator, string pathData, System.Text.StringBuilder logger=null) { throw null; }
+        public static void DrawCircle(this Microsoft.Graphics.Canvas.CanvasDrawingSession session, System.Numerics.Vector2 centerPoint, float radius, CompositionProToolkit.Win2d.ICanvasStroke stroke) { }
+        public static void DrawCircle(this Microsoft.Graphics.Canvas.CanvasDrawingSession session, float x, float y, float radius, CompositionProToolkit.Win2d.ICanvasStroke stroke) { }
+        public static void DrawEllipse(this Microsoft.Graphics.Canvas.CanvasDrawingSession session, System.Numerics.Vector2 centerPoint, float radiusX, float radiusY, CompositionProToolkit.Win2d.ICanvasStroke stroke) { }
+        public static void DrawEllipse(this Microsoft.Graphics.Canvas.CanvasDrawingSession session, float x, float y, float radiusX, float radiusY, CompositionProToolkit.Win2d.ICanvasStroke stroke) { }
+        public static void DrawGeometry(this Microsoft.Graphics.Canvas.CanvasDrawingSession session, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, CompositionProToolkit.Win2d.ICanvasStroke stroke) { }
+        public static void DrawGeometry(this Microsoft.Graphics.Canvas.CanvasDrawingSession session, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, System.Numerics.Vector2 offset, CompositionProToolkit.Win2d.ICanvasStroke stroke) { }
+        public static void DrawGeometry(this Microsoft.Graphics.Canvas.CanvasDrawingSession session, Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, float x, float y, CompositionProToolkit.Win2d.ICanvasStroke stroke) { }
+        public static void DrawLine(this Microsoft.Graphics.Canvas.CanvasDrawingSession session, System.Numerics.Vector2 point0, System.Numerics.Vector2 point1, CompositionProToolkit.Win2d.ICanvasStroke stroke) { }
+        public static void DrawLine(this Microsoft.Graphics.Canvas.CanvasDrawingSession session, float x0, float y0, float x1, float y1, CompositionProToolkit.Win2d.ICanvasStroke stroke) { }
+        public static void DrawRectangle(this Microsoft.Graphics.Canvas.CanvasDrawingSession session, float x, float y, float w, float h, CompositionProToolkit.Win2d.ICanvasStroke stroke) { }
+        public static void DrawRectangle(this Microsoft.Graphics.Canvas.CanvasDrawingSession session, Windows.Foundation.Rect rect, CompositionProToolkit.Win2d.ICanvasStroke stroke) { }
+        public static void DrawRoundedRectangle(this Microsoft.Graphics.Canvas.CanvasDrawingSession session, float x, float y, float w, float h, float radiusX, float radiusY, CompositionProToolkit.Win2d.ICanvasStroke stroke) { }
+        public static void DrawRoundedRectangle(this Microsoft.Graphics.Canvas.CanvasDrawingSession session, Windows.Foundation.Rect rect, float radiusX, float radiusY, CompositionProToolkit.Win2d.ICanvasStroke stroke) { }
+    }
+    public sealed partial class CanvasElement
+    {
+        public CanvasElement(float baseWidth, float baseHeight, System.Collections.Generic.IEnumerable<CompositionProToolkit.Win2d.ICanvasRenderLayer> layers, bool scaleStroke=true) { }
+        public System.Collections.Generic.List<CompositionProToolkit.Win2d.ICanvasRenderLayer> Layers { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { throw null; } [System.Runtime.CompilerServices.CompilerGeneratedAttribute]set { } }
+        public bool ScaleStroke { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { throw null; } [System.Runtime.CompilerServices.CompilerGeneratedAttribute]set { } }
+        public Windows.UI.Composition.SpriteVisual CreateVisual(CompositionProToolkit.ICompositionGenerator generator, float width, float height, System.Numerics.Vector2 offset, System.Numerics.Vector4 padding, float rotation) { throw null; }
+        public void Render(Microsoft.Graphics.Canvas.CanvasDrawingSession session, float width, float height, System.Numerics.Vector2 offset, System.Numerics.Vector4 padding, float rotation) { }
+    }
+    public static partial class CanvasObject
+    {
+        public static Microsoft.Graphics.Canvas.Brushes.ICanvasBrush CreateBrush(Microsoft.Graphics.Canvas.ICanvasResourceCreator resourceCreator, string brushData) { throw null; }
+        public static Windows.UI.Color CreateColor(System.Numerics.Vector4 hdrColor) { throw null; }
+        public static Windows.UI.Color CreateColor(string hexColor) { throw null; }
+        public static Microsoft.Graphics.Canvas.Geometry.CanvasGeometry CreateGeometry(Microsoft.Graphics.Canvas.ICanvasResourceCreator resourceCreator, string pathData, System.Text.StringBuilder logger=null) { throw null; }
+        public static CompositionProToolkit.Win2d.ICanvasStroke CreateStroke(Microsoft.Graphics.Canvas.ICanvasResourceCreator resourceCreator, string strokeData) { throw null; }
+        public static Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle CreateStrokeStyle(string styleData) { throw null; }
+        public static bool TryCreateColor(string hexColor, out Windows.UI.Color color) { color = default(Windows.UI.Color); throw null; }
     }
     public static partial class CanvasPathBuilderExtensions
     {
@@ -516,5 +578,43 @@ namespace CompositionProToolkit.Win2d
         public static void AddEllipseFigure(this Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder pathBuilder, float x, float y, float radiusX, float radiusY) { }
         public static void AddPolygonFigure(this Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder pathBuilder, int numSides, System.Numerics.Vector2 center, float radius) { }
         public static void AddPolygonFigure(this Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder pathBuilder, int numSides, float x, float y, float radius) { }
+        public static void AddRectangleFigure(this Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder pathBuilder, float x, float y, float width, float height) { }
+        public static void AddRoundedRectangleFigure(this Microsoft.Graphics.Canvas.Geometry.CanvasPathBuilder pathBuilder, float x, float y, float width, float height, float radiusX, float radiusY) { }
+    }
+    public partial class CanvasRenderLayer : CompositionProToolkit.Win2d.ICanvasRenderLayer
+    {
+        public CanvasRenderLayer(Microsoft.Graphics.Canvas.Geometry.CanvasGeometry geometry, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush brush, CompositionProToolkit.Win2d.ICanvasStroke stroke) { }
+        public CanvasRenderLayer(Microsoft.Graphics.Canvas.ICanvasResourceCreator creator, string geometryData, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush brush, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush strokeBrush, float strokeWidth=1f) { }
+        public CanvasRenderLayer(Microsoft.Graphics.Canvas.ICanvasResourceCreator creator, string geometryData, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush brush, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush strokeBrush, float strokeWidth, Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle strokeStyle) { }
+        public CanvasRenderLayer(Microsoft.Graphics.Canvas.ICanvasResourceCreator creator, string geometryData, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush brush, Windows.UI.Color strokeColor, float strokeWidth=1f) { }
+        public CanvasRenderLayer(Microsoft.Graphics.Canvas.ICanvasResourceCreator creator, string geometryData, Microsoft.Graphics.Canvas.Brushes.ICanvasBrush brush, Windows.UI.Color strokeColor, float strokeWidth, Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle strokeStyle) { }
+        public CanvasRenderLayer(Microsoft.Graphics.Canvas.ICanvasResourceCreator creator, string geometryData, string brushData, string strokeData) { }
+        public Microsoft.Graphics.Canvas.Brushes.ICanvasBrush Brush { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { throw null; } }
+        public Microsoft.Graphics.Canvas.Geometry.CanvasGeometry Geometry { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { throw null; } }
+        public CompositionProToolkit.Win2d.ICanvasStroke Stroke { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { throw null; } }
+    }
+    public sealed partial class CanvasStroke : CompositionProToolkit.Win2d.ICanvasStroke
+    {
+        public CanvasStroke(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush brush, float strokeWidth=1f) { }
+        public CanvasStroke(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush brush, float strokeWidth, Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle strokeStyle) { }
+        public CanvasStroke(Microsoft.Graphics.Canvas.ICanvasResourceCreator device, Windows.UI.Color strokeColor, float strokeWidth=1f) { }
+        public CanvasStroke(Microsoft.Graphics.Canvas.ICanvasResourceCreator device, Windows.UI.Color strokeColor, float strokeWidth, Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle strokeStyle) { }
+        public Microsoft.Graphics.Canvas.Brushes.ICanvasBrush Brush { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { throw null; } }
+        public Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle Style { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { throw null; } }
+        public System.Numerics.Matrix3x2 Transform { get { throw null; } set { } }
+        public float Width { [System.Runtime.CompilerServices.CompilerGeneratedAttribute]get { throw null; } }
+    }
+    public partial interface ICanvasRenderLayer
+    {
+        Microsoft.Graphics.Canvas.Brushes.ICanvasBrush Brush { get; }
+        Microsoft.Graphics.Canvas.Geometry.CanvasGeometry Geometry { get; }
+        CompositionProToolkit.Win2d.ICanvasStroke Stroke { get; }
+    }
+    public partial interface ICanvasStroke
+    {
+        Microsoft.Graphics.Canvas.Brushes.ICanvasBrush Brush { get; }
+        Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle Style { get; }
+        System.Numerics.Matrix3x2 Transform { get; set; }
+        float Width { get; }
     }
 }

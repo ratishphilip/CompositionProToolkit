@@ -46,8 +46,17 @@ namespace CompositionProToolkit.Expressions
     {
         #region Properties
 
+        /// <summary>
+        /// Gets or sets the Normalized Progress key
+        /// </summary>
         public float Key { get; set; }
+        /// <summary>
+        /// Gets or sets the Value associated with the Key
+        /// </summary>
         public T Value { get; set; }
+        /// <summary>
+        /// Gets or sets the Easing function
+        /// </summary>
         public CompositionEasingFunction Easing { get; set; }
 
         #endregion
@@ -149,12 +158,12 @@ namespace CompositionProToolkit.Expressions
         #region Properties
 
         /// <summary>
-        /// The encapsulated KeyFrameAnimation object
+        /// Gets the encapsulated KeyFrameAnimation object
         /// </summary>
         public KeyFrameAnimation Animation { get; }
 
         /// <summary>
-        /// The duration by which the animation should be delayed
+        /// Gets or sets the duration by which the animation should be delayed
         /// </summary>
         public TimeSpan DelayTime
         {
@@ -163,7 +172,7 @@ namespace CompositionProToolkit.Expressions
         }
 
         /// <summary>
-        /// Direction of the Animation
+        /// Gets or sets the Direction of the Animation
         /// </summary>
         public AnimationDirection Direction
         {
@@ -172,7 +181,7 @@ namespace CompositionProToolkit.Expressions
         }
 
         /// <summary>
-        /// The duration of the animation. Minimum allowed value is 1ms and maximum allowed value is 24 days.
+        /// Gets or sets the duration of the animation. Minimum allowed value is 1ms and maximum allowed value is 24 days.
         /// </summary>
         public TimeSpan Duration
         {
@@ -181,7 +190,7 @@ namespace CompositionProToolkit.Expressions
         }
 
         /// <summary>
-        /// The iteration behavior for the key frame animation.
+        /// Gets or sets the iteration behavior for the key frame animation.
         /// </summary>
         public AnimationIterationBehavior IterationBehavior
         {
@@ -190,7 +199,7 @@ namespace CompositionProToolkit.Expressions
         }
 
         /// <summary>
-        /// The number of times to repeat the key frame animation. 
+        /// Gets or sets the number of times to repeat the key frame animation. 
         /// A value of -1 causes the animation to repeat indefinitely.
         /// </summary>
         public int IterationCount
@@ -200,7 +209,7 @@ namespace CompositionProToolkit.Expressions
         }
 
         /// <summary>
-        /// The number of key frames in the KeyFrameAnimation.
+        /// Gets the number of key frames in the KeyFrameAnimation.
         /// </summary>
         public int KeyFrameCount => Animation.KeyFrameCount;
 
@@ -214,7 +223,7 @@ namespace CompositionProToolkit.Expressions
         }
 
         /// <summary>
-        /// Specifies the target for the animation
+        /// Gets or sets the target for the animation
         /// </summary>
         public string Target
         {

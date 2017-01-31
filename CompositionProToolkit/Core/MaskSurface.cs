@@ -52,19 +52,19 @@ namespace CompositionProToolkit
         #region Properties
 
         /// <summary>
-        /// Surface Generator
+        /// Gets the Composition Generator
         /// </summary>
         public ICompositionGenerator Generator => _generator;
         /// <summary>
-        /// Surface of MaskSurface
+        /// Gets the Surface of MaskSurface
         /// </summary>
         public ICompositionSurface Surface => _surface;
         /// <summary>
-        /// Geometry of the MaskSurface
+        /// Gets the Geometry of the MaskSurface
         /// </summary>
         public CanvasGeometry Geometry => _geometry;
         /// <summary>
-        /// Size of the MaskSurface
+        /// Gets the Size of the MaskSurface
         /// </summary>
         public Size Size { get; private set; }
 

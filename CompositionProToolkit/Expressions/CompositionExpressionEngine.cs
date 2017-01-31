@@ -517,7 +517,7 @@ namespace CompositionProToolkit.Expressions
             if (isExtensionMethod)
             {
                 // ### Customized for Windows.UI.Composition ###
-                // If the .Single() extension method is being called on a System.Double
+                // If the .ToSingle() extension method is being called on a System.Double
                 // value, no need to print it.
                 if (expression.Method.DeclaringType == typeof(DoubleExtensions))
                 {
@@ -1058,7 +1058,7 @@ namespace CompositionProToolkit.Expressions
             if (isExtensionMethod)
             {
                 // ### Customized for Windows.UI.Composition ###
-                // If the .Single() extension method is being called on a System.Double
+                // If the .ToSingle() extension method is being called on a System.Double
                 // value, no need to print it.
                 if (expression.Method.DeclaringType == typeof(DoubleExtensions))
                 {

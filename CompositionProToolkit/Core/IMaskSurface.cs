@@ -41,7 +41,7 @@ namespace CompositionProToolkit
         #region Properties
 
         /// <summary>
-        /// Mask Geometry
+        /// Gets the Geometry of the MaskSurface
         /// </summary>
         CanvasGeometry Geometry { get; }
 

@@ -31,6 +31,7 @@ using System;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Composition;
+using CompositionProToolkit.Win2d;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Geometry;
@@ -78,10 +79,11 @@ namespace CompositionProToolkit
         /// <param name="surface">CompositionDrawingSurface</param>
         /// <param name="size">Size ofthe GeometrySurface</param>
         /// <param name="geometry">Geometry of the GeometrySurface</param>
-        /// <param name="foregroundBrush">The brush with which the geometry has to be filled</param>
+        /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
+        /// <param name="fillBrush">The brush with which the geometry has to be filled</param>
         /// <param name="backgroundBrush">The brush with which the GeometrySurface background has to be filled</param>
         void RedrawGeometrySurface(object surfaceLock, CompositionDrawingSurface surface, Size size, 
-            CanvasGeometry geometry, ICanvasBrush foregroundBrush, ICanvasBrush backgroundBrush);
+            CanvasGeometry geometry, ICanvasStroke stroke, ICanvasBrush fillBrush, ICanvasBrush backgroundBrush);
 
         /// <summary>
         /// Resizes the ImageSurface to the given size and redraws the ImageSurface

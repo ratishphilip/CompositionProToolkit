@@ -41,6 +41,8 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using CompositionProToolkit.Common;
 using CompositionProToolkit.Expressions;
+using CompositionProToolkit.Win2d;
+using CompositionProToolkit.Win2d.Core;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Geometry;
@@ -1257,12 +1259,12 @@ namespace CompositionProToolkit.Controls
             var paddingSize = padding.CollapseThickness();
 
             // Calculate the Offset for the frameVisual
-            var left = (borders.Left + padding.Left).Single();
-            var top = (borders.Top + padding.Top).Single();
+            var left = (borders.Left + padding.Left).ToSingle();
+            var top = (borders.Top + padding.Top).ToSingle();
 
             // Calculate the Dimensions of the frameVisual
-            var width = Math.Max(0, finalSize.Width - borderSize.Width - paddingSize.Width).Single();
-            var height = Math.Max(0, finalSize.Height - borderSize.Height - paddingSize.Height).Single();
+            var width = Math.Max(0, finalSize.Width - borderSize.Width - paddingSize.Width).ToSingle();
+            var height = Math.Max(0, finalSize.Height - borderSize.Height - paddingSize.Height).ToSingle();
 
             // Set the Size and Offset of visuals in the ImageFrame
             var frameSize = new Vector2(width, height);
@@ -1278,12 +1280,16 @@ namespace CompositionProToolkit.Controls
 
             // Update the frameLayerMask in case the CornerRadius or 
             // BorderThickness or Padding has changed
-            var pathInfo = new CompositionPathInfo(corners, borders, padding, false);
-            using (var geometry =
-                CompositionGenerator.GenerateGeometry(_generator.Device, frameSize.ToSize(),
-                    pathInfo, Vector2.Zero))
+            var rect = new CanvasRoundRect(Vector2.Zero, frameSize, corners.ToVector4(), 
+                borders.ToVector4(), padding.ToVector4(), false);
+
+            using (var pathBuilder = new CanvasPathBuilder(_generator.Device))
             {
-                _frameLayerMask.Redraw(_frameLayer.Size.ToSize(), geometry);
+                pathBuilder.AddRoundedRectangleFigure(rect);
+                using (var geometry = CanvasGeometry.CreatePath(pathBuilder))
+                {
+                    _frameLayerMask.Redraw(_frameLayer.Size.ToSize(), geometry);
+                }
             }
 
             // If the FrameBackground has changed since the last time it was
@@ -1385,13 +1391,13 @@ namespace CompositionProToolkit.Controls
             {
                 // If OptimizeShadow is True then use the sharedShadow otherwise use the instance shadow
                 var shadow = OptimizeShadow
-                             ? ShadowProvider.GetSharedShadow(_compositor) 
+                             ? ShadowProvider.GetSharedShadow(_compositor)
                              : (_shadow ?? (_shadow = _compositor.CreateDropShadow()));
 
-                shadow.BlurRadius = ShadowBlurRadius.Single();
+                shadow.BlurRadius = ShadowBlurRadius.ToSingle();
                 shadow.Color = ShadowColor;
-                shadow.Offset = new Vector3(ShadowOffsetX.Single(), ShadowOffsetY.Single(), 0);
-                shadow.Opacity = ShadowOpacity.Single();
+                shadow.Offset = new Vector3(ShadowOffsetX.ToSingle(), ShadowOffsetY.ToSingle(), 0);
+                shadow.Opacity = ShadowOpacity.ToSingle();
                 shadow.Mask = _layerEffectBrush.GetSourceParameter("mask");
 
                 _shadowVisual.Shadow = shadow;
@@ -1417,7 +1423,7 @@ namespace CompositionProToolkit.Controls
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
             // CompositionGenerator
             _generator = CompositionGeneratorFactory.GetCompositionGenerator(_compositor);
-            
+
             // Fade Out Animation
             _fadeOutAnimation = _compositor.CreateScalarKeyFrameAnimation();
             _fadeOutAnimation.InsertKeyFrame(1f, 0);

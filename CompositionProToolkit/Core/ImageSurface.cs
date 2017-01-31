@@ -54,27 +54,27 @@ namespace CompositionProToolkit
         #region Properties
 
         /// <summary>
-        /// SurfaceImage Generator
+        /// Gets the CompositionGenerator
         /// </summary>
         public ICompositionGenerator Generator => _generator;
 
         /// <summary>
-        /// Surface of the SurfaceImage
+        /// Gets the Surface of the SurfaceImage
         /// </summary>
         public ICompositionSurface Surface => _surface;
 
         /// <summary>
-        /// Uri of the image to be loaded onto the SurfaceImage
+        /// Gets the Uri of the image to be loaded onto the SurfaceImage
         /// </summary>
         public Uri Uri => _uri;
 
         /// <summary>
-        /// SurfaceImage Size
+        /// Gets the SurfaceImage Size
         /// </summary>
         public Size Size { get; private set; }
 
         /// <summary>
-        /// Describes how the image is resized to fill its allocated space.
+        /// Gets the image's resize and alignment options in the allocated space.
         /// </summary>
         public ImageSurfaceOptions Options { get; private set; }
 

@@ -40,7 +40,7 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml.Media;
 using CompositionProToolkit.Common;
-using CompositionProToolkit.Expressions;
+using CompositionProToolkit.Win2d;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Effects;
@@ -79,7 +79,12 @@ namespace CompositionProToolkit
         #region Properties
 
         /// <summary>
-        /// CanvasDevice
+        /// Gets the Compositor
+        /// </summary>
+        public Compositor Compositor => _compositor;
+
+        /// <summary>
+        /// Gets the CanvasDevice
         /// </summary>
         public CanvasDevice Device => _canvasDevice;
 
@@ -168,17 +173,52 @@ namespace CompositionProToolkit
         }
 
         /// <summary>
+        /// Creates a GeometrySurface having the given size, geometry, stroke 
+        /// </summary>
+        /// <param name="size">Size of the GeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
+        /// <returns>IGeometrySurface</returns>
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke)
+        {
+            // Initialize the mask
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, stroke, Colors.Transparent, Colors.Transparent);
+            // Render the mask
+            mask.Redraw();
+
+            return mask;
+        }
+
+        /// <summary>
         /// Creates a GeometrySurface having the given size, geometry, foreground color with
         /// MaskMode as False.
         /// </summary>
         /// <param name="size">Size of the mask</param>
         /// <param name="geometry">Geometry of the mask</param>
-        /// <param name="foregroundColor">Fill color of the geometry.</param>
+        /// <param name="fillColor">Fill color of the geometry.</param>
         /// <returns>IGeometrySurface</returns>
-        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, Color foregroundColor)
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, Color fillColor)
         {
             // Initialize the mask
-            IGeometrySurface mask = new GeometrySurface(this, size, geometry, foregroundColor, Colors.Transparent);
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, null, fillColor, Colors.Transparent);
+            // Render the mask
+            mask.Redraw();
+
+            return mask;
+        }
+
+        /// <summary>
+        /// Creates a GeometrySurface having the given size, geometry, stroke and fill color
+        /// </summary>
+        /// <param name="size">Size of the GeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
+        /// <param name="fillColor">Fill color of the geometry.</param>
+        /// <returns>IGeometrySurface</returns>
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke, Color fillColor)
+        {
+            // Initialize the mask
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, stroke, fillColor, Colors.Transparent);
             // Render the mask
             mask.Redraw();
 
@@ -191,14 +231,36 @@ namespace CompositionProToolkit
         /// </summary>
         /// <param name="size">Size of the mask</param>
         /// <param name="geometry">Geometry of the mask</param>
-        /// <param name="foregroundColor">Fill color of the geometry</param>
+        /// <param name="fillColor">Fill color of the geometry</param>
         /// <param name="backgroundColor">Fill color of the Mask surface background which is 
         /// not covered by the geometry</param>
         /// <returns>IGeometrySurface</returns>
-        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, Color foregroundColor, Color backgroundColor)
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, Color fillColor, Color backgroundColor)
         {
             // Initialize the mask
-            IGeometrySurface mask = new GeometrySurface(this, size, geometry, foregroundColor, backgroundColor);
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, null, fillColor, backgroundColor);
+            // Render the mask
+            mask.Redraw();
+
+            return mask;
+        }
+
+        /// <summary>
+        /// Creates a GeometrySurface having the given size, geometry, stroke, fill color and
+        /// background color.
+        /// </summary>
+        /// <param name="size">Size of the GeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
+        /// <param name="fillColor">Fill color of the geometry</param>
+        /// <param name="backgroundColor">Fill color of the GeometrySurface background which is 
+        /// not covered by the geometry</param>
+        /// <returns>IGeometrySurface</returns>
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke, Color fillColor,
+            Color backgroundColor)
+        {
+            // Initialize the mask
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, stroke, fillColor, backgroundColor);
             // Render the mask
             mask.Redraw();
 
@@ -211,14 +273,34 @@ namespace CompositionProToolkit
         /// </summary>
         /// <param name="size">Size of the mask</param>
         /// <param name="geometry">Geometry of the mask</param>
-        /// <param name="foregroundBrush">The brush with which the geometry has to be filled</param>
+        /// <param name="fillBrush">The brush with which the geometry has to be filled</param>
         /// <returns>IGeometrySurface</returns>
-        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush)
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasBrush fillBrush)
         {
             // Create the background brush
             var backgroundBrush = new CanvasSolidColorBrush(Device, Colors.Transparent);
             // Initialize the mask
-            IGeometrySurface mask = new GeometrySurface(this, size, geometry, foregroundBrush, backgroundBrush);
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, null, fillBrush, backgroundBrush);
+            // Render the mask
+            mask.Redraw();
+
+            return mask;
+        }
+
+        /// <summary>
+        /// Creates a GeometrySurface having the given size, geometry, stroke and fill brush.
+        /// </summary>
+        /// <param name="size">Size of the GeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
+        /// <param name="fillBrush">The brush with which the geometry has to be filled</param>
+        /// <returns>IGeometrySurface</returns>
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke, ICanvasBrush fillBrush)
+        {
+            // Create the background brush
+            var backgroundBrush = new CanvasSolidColorBrush(Device, Colors.Transparent);
+            // Initialize the mask
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, stroke, fillBrush, backgroundBrush);
             // Render the mask
             mask.Redraw();
 
@@ -231,15 +313,37 @@ namespace CompositionProToolkit
         /// </summary>
         /// <param name="size">Size of the mask</param>
         /// <param name="geometry">Geometry of the mask</param>
-        /// <param name="foregroundBrush">The brush with which the geometry has to be filled</param>
+        /// <param name="fillBrush">The brush with which the geometry has to be filled</param>
         /// <param name="backgroundBrush">The brush to fill the Mask background surface which is 
         /// not covered by the geometry</param>
         /// <returns>IGeometrySurface</returns>
-        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush,
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasBrush fillBrush,
             ICanvasBrush backgroundBrush)
         {
             // Initialize the mask
-            IGeometrySurface mask = new GeometrySurface(this, size, geometry, foregroundBrush, backgroundBrush);
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, null, fillBrush, backgroundBrush);
+            // Render the mask
+            mask.Redraw();
+
+            return mask;
+        }
+
+        /// <summary>
+        /// Creates a GeometrySurface having the given size, geometry, stroke, fill brush and
+        /// background brush.
+        /// </summary>
+        /// <param name="size">Size of the GeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
+        /// <param name="fillBrush">The brush with which the geometry has to be filled</param>
+        /// <param name="backgroundBrush">The brush to fill the GeometrySurface background which is 
+        /// not covered by the geometry</param>
+        /// <returns>IGeometrySurface</returns>
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke, ICanvasBrush fillBrush,
+            ICanvasBrush backgroundBrush)
+        {
+            // Initialize the mask
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, stroke, fillBrush, backgroundBrush);
             // Render the mask
             mask.Redraw();
 
@@ -252,17 +356,42 @@ namespace CompositionProToolkit
         /// </summary>
         /// <param name="size">Size of the mask</param>
         /// <param name="geometry">Geometry of the mask</param>
-        /// <param name="foregroundBrush">The brush with which the geometry has to be filled</param>
+        /// <param name="fillBrush">The brush with which the geometry has to be filled</param>
         /// <param name="backgroundColor">Fill color of the Mask background surface which is 
         /// not covered by the geometry</param>
         /// <returns>IGeometrySurface</returns>
-        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasBrush foregroundBrush,
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasBrush fillBrush,
             Color backgroundColor)
         {
             // Create the background brush
             var backgroundBrush = new CanvasSolidColorBrush(Device, backgroundColor);
             // Initialize the mask
-            IGeometrySurface mask = new GeometrySurface(this, size, geometry, foregroundBrush, backgroundBrush);
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, null, fillBrush, backgroundBrush);
+
+            // Render the mask
+            mask.Redraw();
+
+            return mask;
+        }
+
+        /// <summary>
+        /// Creates a GeometrySurface having the given size, geometry, stroke, fill brush and
+        /// background color.
+        /// </summary>
+        /// <param name="size">Size of the GeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
+        /// <param name="fillBrush">The brush with which the geometry has to be filled</param>
+        /// <param name="backgroundColor">Fill color of the GeometrySurface background which is 
+        /// not covered by the geometry</param>
+        /// <returns>IGeometrySurface</returns>
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke, 
+            ICanvasBrush fillBrush, Color backgroundColor)
+        {
+            // Create the background brush
+            var backgroundBrush = new CanvasSolidColorBrush(Device, backgroundColor);
+            // Initialize the mask
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, stroke, fillBrush, backgroundBrush);
 
             // Render the mask
             mask.Redraw();
@@ -276,17 +405,42 @@ namespace CompositionProToolkit
         /// </summary>
         /// <param name="size">Size of the mask</param>
         /// <param name="geometry">Geometry of the mask</param>
-        /// <param name="foregroundColor">Fill color of the geometry</param>
+        /// <param name="fillColor">Fill color of the geometry</param>
         /// <param name="backgroundBrush">The brush to fill the Mask background surface which is 
         /// not covered by the geometry</param>
         /// <returns>IGeometrySurface</returns>
-        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, Color foregroundColor,
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, Color fillColor,
             ICanvasBrush backgroundBrush)
         {
             // Create the foreground brush
-            var foregroundBrush = new CanvasSolidColorBrush(Device, foregroundColor);
+            var foregroundBrush = new CanvasSolidColorBrush(Device, fillColor);
             // Initialize the mask
-            IGeometrySurface mask = new GeometrySurface(this, size, geometry, foregroundBrush, backgroundBrush);
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, null, foregroundBrush, backgroundBrush);
+
+            // Render the mask
+            mask.Redraw();
+
+            return mask;
+        }
+
+        /// <summary>
+        /// Creates a GeometrySurface having the given size, geometry, stroke, fill color and
+        /// background brush.
+        /// </summary>
+        /// <param name="size">Size of the GeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
+        /// <param name="fillColor">Fill color of the geometry</param>
+        /// <param name="backgroundBrush">The brush to fill the GeometrySurface background which is 
+        /// not covered by the geometry</param>
+        /// <returns>IGeometrySurface</returns>
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke, 
+            Color fillColor, ICanvasBrush backgroundBrush)
+        {
+            // Create the foreground brush
+            var foregroundBrush = new CanvasSolidColorBrush(Device, fillColor);
+            // Initialize the mask
+            IGeometrySurface mask = new GeometrySurface(this, size, geometry, stroke, foregroundBrush, backgroundBrush);
 
             // Render the mask
             mask.Redraw();
@@ -502,7 +656,7 @@ namespace CompositionProToolkit
                     {
                         // If the geometry is null, then the entire mask should be filled the 
                         // the given color. If the color is white, then the masked visual will be seen completely.
-                        session.FillRectangle(0, 0, size.Width.Single(), size.Height.Single(), Colors.White);
+                        session.FillRectangle(0, 0, size.Width.ToSingle(), size.Height.ToSingle(), Colors.White);
                     }
                 }
             }
@@ -516,10 +670,11 @@ namespace CompositionProToolkit
         /// <param name="surface">CompositionDrawingSurface</param>
         /// <param name="size">Size ofthe GeometrySurface</param>
         /// <param name="geometry">Geometry of the GeometrySurface</param>
-        /// <param name="foregroundBrush">The brush with which the geometry has to be filled</param>
+        /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
+        /// <param name="fillBrush">The brush with which the geometry has to be filled</param>
         /// <param name="backgroundBrush">The brush with which the GeometrySurface background has to be filled</param>
         public void RedrawGeometrySurface(object surfaceLock, CompositionDrawingSurface surface, Size size,
-            CanvasGeometry geometry, ICanvasBrush foregroundBrush, ICanvasBrush backgroundBrush)
+            CanvasGeometry geometry, ICanvasStroke stroke, ICanvasBrush fillBrush, ICanvasBrush backgroundBrush)
         {
             // If the surface is not created, create it
             if (surface == null)
@@ -537,14 +692,14 @@ namespace CompositionProToolkit
             //
             lock (surfaceLock)
             {
-                // Render the mask to the surface
+                // Render the geometry to the surface
                 using (var session = CanvasComposition.CreateDrawingSession(surface))
                 {
                     // First fill the background
                     var brush = backgroundBrush as CanvasSolidColorBrush;
                     if (brush != null)
                     {
-                        // If the backgroundBrush is a SolideColorBrush then use the Clear()
+                        // If the backgroundBrush is a SolidColorBrush then use the Clear()
                         // method to fill the surface with background color. It is faster.
                         // Clear the surface with the background color
                         session.Clear(brush.Color);
@@ -552,13 +707,19 @@ namespace CompositionProToolkit
                     else
                     {
                         // Fill the surface with the background brush.
-                        session.FillRectangle(0, 0, size.Width.Single(), size.Height.Single(), backgroundBrush);
+                        session.FillRectangle(0, 0, size.Width.ToSingle(), size.Height.ToSingle(), backgroundBrush);
                     }
 
-                    // If the geometry is not null then fill the geometry area with the foreground brush.
+                    // If the geometry is not null then render the geometry 
                     if (geometry != null)
                     {
-                        session.FillGeometry(geometry, foregroundBrush);
+                        // If fillBrush is defined then fill the geometry area
+                        if (fillBrush != null)
+                            session.FillGeometry(geometry, fillBrush);
+
+                        // If stroke is defined then outline the geometry area
+                        if (stroke != null)
+                            session.DrawGeometry(geometry, stroke.Brush, stroke.Width, stroke.Style);
                     }
                 }
             }
@@ -651,141 +812,6 @@ namespace CompositionProToolkit
 
                 _graphicsDevice = null;
             }
-        }
-
-        #endregion
-
-        #region Static APIs
-
-        internal static CanvasGeometry GenerateGeometry(CanvasDevice device, Size size, CompositionPathInfo info, Vector2 offset)
-        {
-            //
-            //   |--LeftTop----------------------RightTop--|
-            //   |                                         |
-            // TopLeft                                TopRight
-            //   |                                         |
-            //   |                                         |
-            //   |                                         |
-            //   |                                         |
-            //   |                                         |
-            //   |                                         |
-            // BottomLeft                          BottomRight
-            //   |                                         |
-            //   |--LeftBottom----------------RightBottom--|
-            //
-            //  compute the coordinates of the key points
-            var leftTop = new Vector2(info.LeftTop.Single(), 0);
-            var rightTop = new Vector2((size.Width - info.RightTop).Single(), 0);
-            var topRight = new Vector2(size.Width.Single(), info.TopRight.Single());
-            var bottomRight = new Vector2(size.Width.Single(), (size.Height - info.BottomRight).Single());
-            var rightBottom = new Vector2((size.Width - info.RightBottom).Single(), size.Height.Single());
-            var leftBottom = new Vector2(info.LeftBottom.Single(), size.Height.Single());
-            var bottomLeft = new Vector2(0, (size.Height - info.BottomLeft).Single());
-            var topLeft = new Vector2(0, info.TopLeft.Single());
-
-            //  check keypoints for overlap and resolve by partitioning corners according to
-            //  the percentage of each one.  
-
-            //  top edge
-            if (leftTop.X > rightTop.X)
-            {
-                var v = ((info.LeftTop) / (info.LeftTop + info.RightTop) * size.Width).Single();
-                leftTop.X = v;
-                rightTop.X = v;
-            }
-
-            //  right edge
-            if (topRight.Y > bottomRight.Y)
-            {
-                var v = ((info.TopRight) / (info.TopRight + info.BottomRight) * size.Height).Single();
-                topRight.Y = v;
-                bottomRight.Y = v;
-            }
-
-            //  bottom edge
-            if (leftBottom.X > rightBottom.X)
-            {
-                var v = ((info.LeftBottom) / (info.LeftBottom + info.RightBottom) * size.Width).Single();
-                rightBottom.X = v;
-                leftBottom.X = v;
-            }
-
-            // left edge
-            if (topLeft.Y > bottomLeft.Y)
-            {
-                var v = ((info.TopLeft) / (info.TopLeft + info.BottomLeft) * size.Height).Single();
-                bottomLeft.Y = v;
-                topLeft.Y = v;
-            }
-
-            // Apply offset
-            leftTop += offset;
-            rightTop += offset;
-            topRight += offset;
-            bottomRight += offset;
-            rightBottom += offset;
-            leftBottom += offset;
-            bottomLeft += offset;
-            topLeft += offset;
-
-            //  create the border geometry
-            var pathBuilder = new CanvasPathBuilder(device);
-
-            // Begin path
-            pathBuilder.BeginFigure(leftTop);
-
-            // Top line
-            pathBuilder.AddLine(rightTop);
-
-            // Upper-right corners
-            var radiusX = size.Width - rightTop.X;
-            var radiusY = (double)topRight.Y;
-            if (!radiusX.IsZero() || !radiusY.IsZero())
-            {
-                pathBuilder.AddArc(topRight, radiusX.Single(), radiusY.Single(), Float.PiByTwo,
-                    CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
-            }
-
-            // Right line
-            pathBuilder.AddLine(bottomRight);
-
-            // Lower-right corners
-            radiusX = size.Width - rightBottom.X;
-            radiusY = size.Height - bottomRight.Y;
-            if (!radiusX.IsZero() || !radiusY.IsZero())
-            {
-                pathBuilder.AddArc(rightBottom, radiusX.Single(), radiusY.Single(), Float.PiByTwo,
-                    CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
-            }
-
-            // Bottom line
-            pathBuilder.AddLine(leftBottom);
-
-            // Lower-left corners
-            radiusX = leftBottom.X;
-            radiusY = size.Height - bottomLeft.Y;
-            if (!radiusX.IsZero() || !radiusY.IsZero())
-            {
-                pathBuilder.AddArc(bottomLeft, radiusX.Single(), radiusY.Single(), Float.PiByTwo,
-                    CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
-            }
-
-            // Left line
-            pathBuilder.AddLine(topLeft);
-
-            // Upper-left corners
-            radiusX = leftTop.X;
-            radiusY = topLeft.Y;
-            if (!radiusX.IsZero() || !radiusY.IsZero())
-            {
-                pathBuilder.AddArc(leftTop, radiusX.Single(), radiusY.Single(), Float.PiByTwo,
-                    CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
-            }
-
-            // End path
-            pathBuilder.EndFigure(CanvasFigureLoop.Closed);
-
-            return CanvasGeometry.CreatePath(pathBuilder);
         }
 
         #endregion

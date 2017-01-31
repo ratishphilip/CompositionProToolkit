@@ -41,11 +41,11 @@ namespace CompositionProToolkit
         #region Properties
 
         /// <summary>
-        /// Uri of the image to be loaded onto the ImageSurface
+        /// Gets the Uri of the image to be loaded onto the ImageSurface
         /// </summary>
         Uri Uri { get; }
         /// <summary>
-        /// Describes the image's resize and alignment options in the allocated space.
+        /// Gets the image's resize and alignment options in the allocated space.
         /// </summary>
         ImageSurfaceOptions Options { get; }
 

@@ -447,10 +447,10 @@ namespace CompositionProToolkit.Controls
             var height = finalSize.Height;
             _itemCount = ItemsSource.Count();
 
-            _availableWidth = (width - paddingSize.Width).Single();
-            _availableHeight = (height - paddingSize.Height).Single();
+            _availableWidth = (width - paddingSize.Width).ToSingle();
+            _availableHeight = (height - paddingSize.Height).ToSingle();
             var gapCount = _itemCount - 1;
-            var totalGap = (gapCount * ItemGap).Single();
+            var totalGap = (gapCount * ItemGap).ToSingle();
             var availableNonGapWidth = _availableWidth - totalGap;
             var availableNonGapHeight = _availableHeight;
 
@@ -500,7 +500,7 @@ namespace CompositionProToolkit.Controls
                 (contentVisual.Brush as CompositionSurfaceBrush)?.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY);
 
                 // Calculate the Inset Clip
-                var left = index * (_itemWidth + ItemGap.Single());
+                var left = index * (_itemWidth + ItemGap.ToSingle());
                 var right = _availableWidth - (left + _itemWidth);
                 itemVisual.Properties.InsertScalar("LeftInset", left);
                 itemVisual.Properties.InsertScalar("RightInset", right);
@@ -722,7 +722,7 @@ namespace CompositionProToolkit.Controls
                 contentVisual.Brush = surfaceBrush;
 
                 // Calculate the Inset Clip
-                var left = i * (_itemWidth + ItemGap.Single());
+                var left = i * (_itemWidth + ItemGap.ToSingle());
                 var right = _availableWidth - (left + _itemWidth);
                 containerVisual.Properties.InsertScalar("LeftInset", left);
                 containerVisual.Properties.InsertScalar("RightInset", right);

@@ -39,7 +39,13 @@ namespace CompositionProToolkit.Expressions
     {
         #region Properties
 
+        /// <summary>
+        /// Gets the Expression as a string
+        /// </summary>
         public string Expression { get; set; }
+        /// <summary>
+        /// Map of parameters
+        /// </summary>
         public Dictionary<string, object> Parameters { get; set; }
 
         #endregion

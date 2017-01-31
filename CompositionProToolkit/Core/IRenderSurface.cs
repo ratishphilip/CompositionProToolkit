@@ -42,17 +42,17 @@ namespace CompositionProToolkit
         #region Properties
 
         /// <summary>
-        /// Generator
+        /// Gets the Generator
         /// </summary>
         ICompositionGenerator Generator { get; }
 
         /// <summary>
-        /// Surface
+        /// Gets the Surface
         /// </summary>
         ICompositionSurface Surface { get; }
 
         /// <summary>
-        /// Surface Size
+        /// Gets the Surface Size
         /// </summary>
         Size Size { get; }
 

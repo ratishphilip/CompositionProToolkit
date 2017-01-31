@@ -37,16 +37,17 @@ using Windows.UI.Xaml.Media;
 namespace CompositionProToolkit.Common
 {
     /// <summary>
-    /// A few very useful extension methods
+    /// Class containing collection of useful methods
+    /// for various types
     /// </summary>
     public static class Utils
     {
-        #region Double
+        #region Double & Float
 
         // Constant values 
 
         // Smallest double value such that 1.0 + DoubleEpsilon != 1.0
-        internal const double DoubleEpsilon = 2.2204460492503131e-016; 
+        internal const double DoubleEpsilon = 2.2204460492503131e-016;
         // Number close to zero, where float.MinValue is -float.MaxValue
         internal const float FloatMin = 1.175494351e-38F;
 
@@ -255,7 +256,7 @@ namespace CompositionProToolkit.Common
             [FieldOffset(0)]
             internal UInt64 UintValue;
         }
-        
+
         /// <summary>
         /// Faster check for NaN ( faster than double.IsNaN() )
         /// IEEE 754 : If the argument is any value in the range 0x7ff0000000000001L through 0x7fffffffffffffffL 
@@ -391,6 +392,50 @@ namespace CompositionProToolkit.Common
                     && thick.Left.IsCloseTo(thick.Bottom);
         }
 
+        /// <summary>
+        /// Converts the Thickness object to Vector4. If the Thickness 
+        /// object's component have values NaN, PositiveInfinity or 
+        /// NegativeInfinity, then Vector4.Zero will be returned.
+        /// </summary>
+        /// <param name="thickness">Thickness object</param>
+        /// <returns></returns>
+        public static Vector4 ToVector4(this Thickness thickness)
+        {
+            if (thickness.IsValid(true, false, false, false))
+            {
+                // Sanitize the component by taking only 
+                return new Vector4(thickness.Left.ToSingle(),
+                                   thickness.Top.ToSingle(),
+                                   thickness.Right.ToSingle(),
+                                   thickness.Bottom.ToSingle());
+            }
+
+            return Vector4.Zero;
+        }
+
+        /// <summary>
+        /// Converts the Thickness object to Vector4. If the Thickness
+        /// object contains negative components they will be converted
+        /// to positive values. If the Thickness object's component
+        /// have values NaN, PositiveInfinity or NegativeInfinity,
+        /// then Vector4.Zero will be returned.
+        /// </summary>
+        /// <param name="thickness">Thickness object</param>
+        /// <returns></returns>
+        public static Vector4 ToAbsVector4(this Thickness thickness)
+        {
+            if (thickness.IsValid(true, false, false, false))
+            {
+                // Sanitize the component by taking only 
+                return new Vector4(Math.Abs(thickness.Left).ToSingle(),
+                                   Math.Abs(thickness.Top).ToSingle(),
+                                   Math.Abs(thickness.Right).ToSingle(),
+                                   Math.Abs(thickness.Bottom).ToSingle());
+            }
+
+            return Vector4.Zero;
+        }
+
         #endregion
 
         #region CornerRadius
@@ -449,7 +494,7 @@ namespace CompositionProToolkit.Common
         /// Verifies if the CornerRadius contains only zero values
         /// </summary>
         /// <param name="corner">CornerRadius</param>
-        /// <returns>Size</returns>
+        /// <returns>true if yes, otherwise false</returns>
         public static bool IsZero(this CornerRadius corner)
         {
             return corner.TopLeft.IsZero()
@@ -487,6 +532,49 @@ namespace CompositionProToolkit.Common
             }
 
             return corner;
+        }
+
+        /// <summary>
+        /// Converts the CornerRadius object to Vector4. If the CornerRadius 
+        /// object's component have values NaN, PositiveInfinity or 
+        /// NegativeInfinity, then Vector4.Zero will be returned.
+        /// </summary>
+        /// <param name="corner">CornerRadius object</param>
+        /// <returns>Vector4</returns>
+        public static Vector4 ToVector4(this CornerRadius corner)
+        {
+            if (corner.IsValid(true, false, false, false))
+            {
+                return new Vector4(corner.TopLeft.ToSingle(),
+                                   corner.TopRight.ToSingle(),
+                                   corner.BottomRight.ToSingle(),
+                                   corner.BottomLeft.ToSingle());
+            }
+
+            return Vector4.Zero;
+        }
+
+        /// <summary>
+        /// Converts the CornerRadius object to Vector4. If the CornerRadius
+        /// object contains negative components they will be converted
+        /// to positive values. If the Thickness object's component
+        /// have values NaN, PositiveInfinity or NegativeInfinity,
+        /// then Vector4.Zero will be returned.
+        /// </summary>
+        /// <param name="corner">CornerRadius object</param>
+        /// <returns>Vector4</returns>
+        public static Vector4 ToAbsVector4(this CornerRadius corner)
+        {
+            if (corner.IsValid(true, false, false, false))
+            {
+                // Sanitize the component by taking only 
+                return new Vector4(Math.Abs(corner.TopLeft).ToSingle(),
+                                   Math.Abs(corner.TopRight).ToSingle(),
+                                   Math.Abs(corner.BottomRight).ToSingle(),
+                                   Math.Abs(corner.BottomLeft).ToSingle());
+            }
+
+            return Vector4.Zero;
         }
 
         #endregion
@@ -673,6 +761,49 @@ namespace CompositionProToolkit.Common
             //
             return new Vector2(2f * b.X - a.X,
                                2f * b.Y - a.Y);
+        }
+
+        #endregion
+
+        #region Vector4
+
+        /// <summary>
+        /// Verifies if the Vector4 contains only zero values
+        /// </summary>
+        /// <param name="vector">Vector4</param>
+        /// <returns>true if yes, otherwise false</returns>
+        public static bool IsZero(this Vector4 vector)
+        {
+            return vector.X.IsZero()
+                   && vector.Y.IsZero()
+                   && vector.Z.IsZero()
+                   && vector.W.IsZero();
+        }
+
+        /// <summary>
+        /// Useful in converting the four components
+        /// of Thickness or Padding to two components
+        /// by taking a sum of alternate components
+        /// (X & Z and Y & W).
+        /// </summary>
+        /// <param name="vector">Vector4</param>
+        /// <returns>Vector3</returns>
+        public static Vector2 Collapse(this Vector4 vector)
+        {
+            return new Vector2(vector.X + vector.Z, vector.Y + vector.W);
+        }
+
+        /// <summary>
+        /// Useful in converting the four components
+        /// of Thickness or Padding to two components
+        /// by adding alternate components - 
+        /// (X & Z and Y & W).
+        /// </summary>
+        /// <param name="vector">Vector4</param>
+        /// <returns>Size</returns>
+        public static Size ToSize(this Vector4 vector)
+        {
+            return new Size(vector.X + vector.Z, vector.Y + vector.W);
         }
 
         #endregion

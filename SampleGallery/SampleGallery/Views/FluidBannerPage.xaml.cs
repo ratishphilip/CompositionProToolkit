@@ -35,7 +35,7 @@ namespace SampleGallery.Views
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var itemCount = 15;
+            var itemCount = 10;
 
             var items = new List<Uri>();
             var urls = (await GetUrls()).Take(itemCount).ToList();

@@ -59,13 +59,13 @@ namespace SampleGallery.Views
 
             // Create the container to host the visuals
             var container1 = _compositor.CreateContainerVisual();
-            container1.Size = new Vector2(CompositionGrid1.ActualWidth.Single(), CompositionGrid1.ActualHeight.Single());
+            container1.Size = new Vector2(CompositionGrid1.ActualWidth.ToSingle(), CompositionGrid1.ActualHeight.ToSingle());
 
             // Background Visual
             _bgVisual1 = _compositor.CreateSpriteVisual();
             _bgVisual1.Size = new Vector2(_width * 0.45f, _height * 0.45f);
-            _bgVisual1.Offset = new Vector3(((CompositionGrid1.ActualWidth - _width) / 2).Single(),
-                                         ((CompositionGrid1.ActualHeight - _height) / 2).Single(), 0);
+            _bgVisual1.Offset = new Vector3(((CompositionGrid1.ActualWidth - _width) / 2).ToSingle(),
+                                         ((CompositionGrid1.ActualHeight - _height) / 2).ToSingle(), 0);
 
             _bgVisual1.Brush = _compositor.CreateColorBrush(Colors.DarkOrange);
 
@@ -74,8 +74,8 @@ namespace SampleGallery.Views
             // Create custom shaped visual using CompositionMaskBrush
             _visual1 = _compositor.CreateSpriteVisual();
             _visual1.Size = new Vector2(_width, _height);
-            _visual1.Offset = new Vector3(((CompositionGrid1.ActualWidth - _width) / 2).Single(),
-                                         ((CompositionGrid1.ActualHeight - _height) / 2).Single(), 0);
+            _visual1.Offset = new Vector3(((CompositionGrid1.ActualWidth - _width) / 2).ToSingle(),
+                                         ((CompositionGrid1.ActualHeight - _height) / 2).ToSingle(), 0);
             // Create the CompositionMask
             var ellipseGeometry = CanvasGeometry.CreateEllipse(_generator.Device, _width / 2, _height / 2, 0.4f * _width, 0.4f * _height);
             var compositionMask = _generator.CreateMaskSurface(_visual1.Size.ToSize(), ellipseGeometry);
@@ -86,8 +86,8 @@ namespace SampleGallery.Views
 
             var visual = _compositor.CreateSpriteVisual();
             visual.Size = new Vector2(400, 400);
-            visual.Offset = new Vector3(((3 * CompositionGrid1.ActualWidth / 4f) - (_width / 2)).Single(),
-                                         ((3 * CompositionGrid1.ActualHeight / 4f) - (_height / 2)).Single(), 0);
+            visual.Offset = new Vector3(((3 * CompositionGrid1.ActualWidth / 4f) - (_width / 2)).ToSingle(),
+                                         ((3 * CompositionGrid1.ActualHeight / 4f) - (_height / 2)).ToSingle(), 0);
             var roundRectGeometry = CanvasGeometry.CreateRoundedRectangle(_generator.Device, 0, 0, _width, _height, 25, 25);
             var maskSurface = _generator.CreateMaskSurface(visual.Size.ToSize(), roundRectGeometry);
 
@@ -110,15 +110,15 @@ namespace SampleGallery.Views
             // Initialize the visuals for the Animated Canvas
             // Create the container to host the visuals
             var container2 = _compositor.CreateContainerVisual();
-            container2.Size = new Vector2(CompositionGrid2.ActualWidth.Single(), CompositionGrid2.ActualHeight.Single());
+            container2.Size = new Vector2(CompositionGrid2.ActualWidth.ToSingle(), CompositionGrid2.ActualHeight.ToSingle());
 
             // Background Visual
             _bgVisual2 = _compositor.CreateSpriteVisual();
             _bgVisual2.Size = new Vector2(_width * Factor, _height * Factor);
-            _bgVisual2.Offset = new Vector3(((CompositionGrid2.ActualWidth - (_width * Factor)) / 2).Single(),
-                                         ((CompositionGrid2.ActualHeight - (_height * Factor)) / 2).Single(), 0);
+            _bgVisual2.Offset = new Vector3(((CompositionGrid2.ActualWidth - (_width * Factor)) / 2).ToSingle(),
+                                         ((CompositionGrid2.ActualHeight - (_height * Factor)) / 2).ToSingle(), 0);
 
-            //var radians = ((45f * Math.PI) / 180).Single();
+            //var radians = ((45f * Math.PI) / 180).ToSingle();
             //var bgGeometry = _combinedGeometry.Transform(Matrix3x2.CreateRotation(radians, new Vector2(_width / 2, _height / 2)));
             //var bgMask = await _generator.CreateMaskAsync(_bgVisual2.Size.ToSize(), bgGeometry, Colors.DarkRed);
             //_bgVisual2.Brush = _compositor.CreateSurfaceBrush(bgMask.Surface);
@@ -129,8 +129,8 @@ namespace SampleGallery.Views
             // Animated Visual
             _animatedVisual = _compositor.CreateSpriteVisual();
             _animatedVisual.Size = new Vector2(_width, _height);
-            _animatedVisual.Offset = new Vector3(((CompositionGrid2.ActualWidth - _width) / 2).Single(),
-                                                ((CompositionGrid2.ActualHeight - _height) / 2).Single(), 0);
+            _animatedVisual.Offset = new Vector3(((CompositionGrid2.ActualWidth - _width) / 2).ToSingle(),
+                                                ((CompositionGrid2.ActualHeight - _height) / 2).ToSingle(), 0);
             // Create the Excluded geometry
             _outerGeometry = CanvasGeometry.CreateRectangle(_generator.Device, 0, 0, _width, _height);
             var excludedGeometry = _outerGeometry.CombineWith(_combinedGeometry, Matrix3x2.Identity, CanvasGeometryCombine.Exclude);
@@ -163,26 +163,26 @@ namespace SampleGallery.Views
         {
             if (_visual1 != null)
             {
-                _visual1.Offset = new Vector3(((CompositionGrid1.ActualWidth - _width) / 2).Single(),
-                                         ((CompositionGrid1.ActualHeight - _height) / 2).Single(), 0);
+                _visual1.Offset = new Vector3(((CompositionGrid1.ActualWidth - _width) / 2).ToSingle(),
+                                         ((CompositionGrid1.ActualHeight - _height) / 2).ToSingle(), 0);
             }
 
             if (_bgVisual1 != null)
             {
-                _bgVisual1.Offset = new Vector3(((CompositionGrid1.ActualWidth - _width) / 2).Single(),
-                                         ((CompositionGrid1.ActualHeight - _height) / 2).Single(), 0);
+                _bgVisual1.Offset = new Vector3(((CompositionGrid1.ActualWidth - _width) / 2).ToSingle(),
+                                         ((CompositionGrid1.ActualHeight - _height) / 2).ToSingle(), 0);
             }
 
             if (_bgVisual2 != null)
             {
-                _bgVisual2.Offset = new Vector3(((CompositionGrid2.ActualWidth - (_width * Factor)) / 2).Single(),
-                                               ((CompositionGrid2.ActualHeight - (_height * Factor)) / 2).Single(), 0);
+                _bgVisual2.Offset = new Vector3(((CompositionGrid2.ActualWidth - (_width * Factor)) / 2).ToSingle(),
+                                               ((CompositionGrid2.ActualHeight - (_height * Factor)) / 2).ToSingle(), 0);
             }
 
             if (_animatedVisual != null)
             {
-                _animatedVisual.Offset = new Vector3(((CompositionGrid2.ActualWidth - _width) / 2).Single(),
-                                                     ((CompositionGrid2.ActualHeight - _height) / 2).Single(), 0);
+                _animatedVisual.Offset = new Vector3(((CompositionGrid2.ActualWidth - _width) / 2).ToSingle(),
+                                                     ((CompositionGrid2.ActualHeight - _height) / 2).ToSingle(), 0);
             }
         }
     }

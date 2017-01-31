@@ -29,7 +29,7 @@
 
 using System;
 using System.Numerics;
-using CompositionProToolkit.Common;
+using CompositionProToolkit.Win2d.Core;
 using Microsoft.Graphics.Canvas.Geometry;
 
 namespace CompositionProToolkit.Win2d
@@ -86,15 +86,11 @@ namespace CompositionProToolkit.Win2d
         public static void AddEllipseFigure(this CanvasPathBuilder pathBuilder, float x, float y,
             float radiusX, float radiusY)
         {
-            if (radiusX < 0f)
-            {
-                throw new ArgumentException("radiusX cannot be a negative number.", nameof(radiusX));
-            }
+            // Sanitize the radiusX by taking the absolute value
+            radiusX = Math.Abs(radiusX);
 
-            if (radiusY < 0f)
-            {
-                throw new ArgumentException("radiusY cannot be a negative number.", nameof(radiusY));
-            }
+            // Sanitize the radiusY by taking the absolute value
+            radiusY = Math.Abs(radiusY);
 
             try
             {
@@ -143,10 +139,8 @@ namespace CompositionProToolkit.Win2d
         public static void AddPolygonFigure(this CanvasPathBuilder pathBuilder, int numSides, float x, float y,
             float radius)
         {
-            if (radius < 0f)
-            {
-                throw new ArgumentException("radius cannot be a negative number.", nameof(radius));
-            }
+            // Sanitize the radius by taking the absolute value
+            radius = Math.Abs(radius);
 
             if (numSides < 3)
             {
@@ -188,5 +182,134 @@ namespace CompositionProToolkit.Win2d
             pathBuilder.EndFigure(CanvasFigureLoop.Closed);
         }
 
+        /// <summary>
+        /// Adds a Rectangle to the Path.
+        /// </summary>
+        /// <param name="pathBuilder">CanvasPathBuilder</param>
+        /// <param name="x">X offset of the TopLeft corner of the Rectangle</param>
+        /// <param name="y">Y offset of the TopLeft corner of the Rectangle</param>
+        /// <param name="width">Width of the Rectangle</param>
+        /// <param name="height">Height of the Rectangle</param>
+        public static void AddRectangleFigure(this CanvasPathBuilder pathBuilder, float x, float y, float width,
+            float height)
+        {
+            // Sanitize the width by taking the absolute value
+            width = Math.Abs(width);
+            // Sanitize the height by taking the absolute value
+            height = Math.Abs(height);
+
+            try
+            {
+                pathBuilder.BeginFigure(x, y);
+            }
+            catch (ArgumentException)
+            {
+                // An ArgumentException will be raised if another figure was already begun( and not ended)
+                // before calling AddPolygonFigure() method.
+                throw new InvalidOperationException("A call to CanvasPathBuilder.AddRectangleFigure occurred, " +
+                                                    "when another figure was already begun. Please call CanvasPathBuilder.EndFigure method, " +
+                                                    "before calling CanvasPathBuilder.AddRectangleFigure, to end the previous figure.");
+            }
+
+            // Top Side
+            pathBuilder.AddLine(x + width, y);
+            // Right Side
+            pathBuilder.AddLine(x + width, y + height);
+            // Bottom Side
+            pathBuilder.AddLine(x, y + height);
+            // Left Side
+            pathBuilder.AddLine(x, y);
+
+            // End the Figure
+            pathBuilder.EndFigure(CanvasFigureLoop.Closed);
+        }
+
+        /// <summary>
+        /// Adds a RoundedRectangle to the Path.
+        /// </summary>
+        /// <param name="pathBuilder">CanvasPathBuilder</param>
+        /// <param name="x">X offset of the TopLeft corner of the RoundedRectangle</param>
+        /// <param name="y">Y offset of the TopLeft corner of the RoundedRectangle</param>
+        /// <param name="width">Width of the RoundedRectangle</param>
+        /// <param name="height">Height of the RoundedRectangle</param>
+        /// <param name="radiusX">Corner Radius on the x-axis</param>
+        /// <param name="radiusY">Corner Radius on the y-axis</param>
+        public static void AddRoundedRectangleFigure(this CanvasPathBuilder pathBuilder, float x, float y, float width,
+            float height, float radiusX, float radiusY)
+        {
+            // Sanitize the width by taking the absolute value
+            width = Math.Abs(width);
+            // Sanitize the height by taking the absolute value
+            height = Math.Abs(height);
+
+            var rect = new CanvasRoundRect(x, y, width, height, radiusX, radiusY);
+            pathBuilder.AddRoundedRectangleFigure(rect, true);
+        }
+
+        /// <summary>
+        /// Adds a RoundedRectangle to the Path. (To be used internally)
+        /// </summary>
+        /// <param name="pathBuilder">CanvasPathBuilder</param>
+        /// <param name="rect">CanvasRoundRect</param>
+        /// <param name="raiseException">Flag to indicate whether exception should be raised</param>
+        internal static void AddRoundedRectangleFigure(this CanvasPathBuilder pathBuilder, CanvasRoundRect rect,
+            bool raiseException = false)
+        {
+            try
+            {
+                // Begin path
+                pathBuilder.BeginFigure(rect.LeftTop);
+            }
+            catch (ArgumentException)
+            {
+                if (!raiseException)
+                    return;
+
+                // An ArgumentException will be raised if another figure was already begun( and not ended)
+                // before calling AddPolygonFigure() method.
+                throw new InvalidOperationException("A call to CanvasPathBuilder.AddRoundedRectangleFigure occurred, " +
+                                                    "when another figure was already begun. Please call CanvasPathBuilder.EndFigure method, " +
+                                                    "before calling CanvasPathBuilder.AddRoundedRectangleFigure, to end the previous figure.");
+            }
+
+            // Top line
+            pathBuilder.AddLine(rect.RightTop);
+
+            // Upper-right corners
+            var radiusX = rect.TopRight.X - rect.RightTop.X;
+            var radiusY = rect.TopRight.Y - rect.RightTop.Y;
+            var center = new Vector2(rect.RightTop.X, rect.TopRight.Y);
+            pathBuilder.AddArc(center, radiusX, radiusY, 3f * Float.PiByTwo, Float.PiByTwo);
+
+            // Right line
+            pathBuilder.AddLine(rect.BottomRight);
+
+            // Lower-right corners
+            radiusX = rect.BottomRight.X - rect.RightBottom.X;
+            radiusY = rect.RightBottom.Y - rect.BottomRight.Y;
+            center = new Vector2(rect.RightBottom.X, rect.BottomRight.Y);
+            pathBuilder.AddArc(center, radiusX, radiusY, 0f, Float.PiByTwo);
+
+            // Bottom line
+            pathBuilder.AddLine(rect.LeftBottom);
+
+            // Lower-left corners
+            radiusX = rect.LeftBottom.X - rect.BottomLeft.X;
+            radiusY = rect.LeftBottom.Y - rect.BottomLeft.Y;
+            center = new Vector2(rect.LeftBottom.X, rect.BottomLeft.Y);
+            pathBuilder.AddArc(center, radiusX, radiusY, Float.PiByTwo, Float.PiByTwo);
+
+            // Left line
+            pathBuilder.AddLine(rect.TopLeft);
+
+            // Upper-left corners
+            radiusX = rect.LeftTop.X - rect.TopLeft.X;
+            radiusY = rect.TopLeft.Y - rect.LeftTop.Y;
+            center = new Vector2(rect.LeftTop.X, rect.TopLeft.Y);
+            pathBuilder.AddArc(center, radiusX, radiusY, 2f * Float.PiByTwo, Float.PiByTwo);
+
+            // End path
+            pathBuilder.EndFigure(CanvasFigureLoop.Closed);
+        }
     }
 }

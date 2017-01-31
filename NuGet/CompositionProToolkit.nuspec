@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>CompositionProToolkit</id>
-    <version>0.5.0.0</version>
+    <version>0.5.1.0</version>
     <title>CompositionProToolkit</title>
     <authors>Ratish Philip</authors>
     <owners>Ratish Philip</owners>
@@ -11,7 +11,7 @@
     <iconUrl>https://cloud.githubusercontent.com/assets/7021835/16889815/17851c12-4a9e-11e6-87d6-9b00282011b3.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Collection of Helper classes for Windows.UI.Composition, Win2d and some UI controls.</description>
-    <releaseNotes>Added CanvasPathBuilder extension methods and CanvasGeometryParser which parses XAML or SVG path data to CanvasGeometry.</releaseNotes>
+    <releaseNotes>Added CanvasObject - Parser for Win2d Mini Language, ICanvasStroke, CanvasStroke, ICanvasElement, CanvasElement, CanvasDrawingSession extension methods, CanvasPathBuilder extension methods.</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <dependencies>
         <dependency id="Win2D.uwp" version="1.20.0" />

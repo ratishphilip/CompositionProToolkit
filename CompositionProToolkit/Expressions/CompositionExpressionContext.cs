@@ -40,8 +40,14 @@ namespace CompositionProToolkit.Expressions
     /// </summary>
     public class CompositionExpressionContext<T>
     {
+        /// <summary>
+        /// Represents the 'StartingValue' expression
+        /// </summary>
         public T StartingValue { get; private set; }
 
+        /// <summary>
+        /// Represents the 'FinalValue' expression
+        /// </summary>
         public T FinalValue { get; private set; }
 
         private CompositionExpressionContext()

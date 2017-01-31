@@ -108,6 +108,9 @@
     <Compile Include="Views\BusyControl.xaml.cs">
       <DependentUpon>BusyControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CanvasElementPage.xaml.cs">
+      <DependentUpon>CanvasElementPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CanvasGeometryParserPage.xaml.cs">
       <DependentUpon>CanvasGeometryParserPage.xaml</DependentUpon>
     </Compile>
@@ -189,6 +192,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\BusyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CanvasElementPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
