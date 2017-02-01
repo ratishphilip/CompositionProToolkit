@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.0
+// CompositionProToolkit v0.5.1
 // 
 
 using System.Numerics;
