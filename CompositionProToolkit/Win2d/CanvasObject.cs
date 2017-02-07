@@ -102,32 +102,40 @@ namespace CompositionProToolkit.Win2d
         }
 
         /// <summary>
-        /// Converts the hexadecimal color string in #RRGGBB or #AARRGGBB format
-        /// to the corresponding Color object. The '#' character is optional.
+        /// Converts the color string in Hexadecimal or HDR color format to the 
+        /// corresponding Color object.
+        /// The hexadecimal color string should be in #RRGGBB or #AARRGGBB format.
+        /// The '#' character is optional.
+        /// The HDR color string should be in R G B A format. 
+        /// (R, G, B & A should have value in the range between 0 and 1, inclusive)
         /// </summary>
-        /// <param name="hexColor">Hexadecimal color string</param>
+        /// <param name="colorString">Color string in Hexadecimal or HDR format</param>
         /// <returns>Color</returns>
-        public static Color CreateColor(string hexColor)
+        public static Color CreateColor(string colorString)
         {
-            return ColorParser.Parse(hexColor);
+            return ColorParser.Parse(colorString);
         }
 
         /// <summary>
-        /// Attempts to convert the hexadecimal color string in #RRGGBB or #AARRGGBB format
-        /// to the corresponding Color object. The '#' character is optional.
+        /// Attempts to convert color string in Hexadecimal or HDR color format to the 
+        /// corresponding Color object.
+        /// The hexadecimal color string should be in #RRGGBB or #AARRGGBB format.
+        /// The '#' character is optional.
+        /// The HDR color string should be in R G B A format. 
+        /// (R, G, B & A should have value in the range between 0 and 1, inclusive)
         /// </summary>
-        /// <param name="hexColor">Hexadecimal color string</param>
+        /// <param name="colorString">Color string in Hexadecimal or HDR format</param>
         /// <param name="color">Output Color object</param>
         /// <returns>True if successful, otherwise False</returns>
-        public static bool TryCreateColor(string hexColor, out Color color)
+        public static bool TryCreateColor(string colorString, out Color color)
         {
-            return ColorParser.TryParse(hexColor, out color);
+            return ColorParser.TryParse(colorString, out color);
         }
 
         /// <summary>
         /// Converts a Vector4 High Dynamic Range Color to Color object. 
         /// Negative components of the Vector4 will be sanitized by taking the absolute 
-        /// value of the component. /// The HDR Color components should have value in 
+        /// value of the component. The HDR Color components should have value in 
         /// the range between 0 and 1, inclusive. If they are more than 1, they
         /// will be clamped at 1.
         /// Vector4's X, Y, Z, W components match to Color's R, G, B, A components respectively.

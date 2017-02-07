@@ -65,7 +65,12 @@ namespace CompositionProToolkit.Win2d.Core
         // Positive Floating point number
         private const string PositiveFloat = @"(?:[+]?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?)";
         // Floating point number between 0 and 1, inclusive
-        private const string Float01 = @"(?:(?<!\d*[1-9]\.?0*)(?:(?:0+(?:\.\d+)?)|(?:\.\d+)|(?:1(?!\.0*[1-9]+)(?:\.0+)?)))";
+        //private const string Float01 = @"(?:(?<!\d*[1-9]\.?0*)(?:(?:0+(?:\.\d+)?)|(?:\.\d+)|(?:1(?!\.0*[1-9]+)(?:\.0+)?)))";
+        private const string Float01 = @"(?:" +
+                                       @"(?:(?<!\d*[1-9]\.?0*)(?:(?:0+(?:\.\d+)?)|(?:1(?!\.0*[1-9]+)(?:\.0+)?)))|" +
+                                       @"(?:(?<!\d*[1-9])(?:\.\d+))|" +
+                                       @"(?:(?<=(?:\.\d+))(?:\.\d+))" +
+                                       @")";
 
         #endregion
 
@@ -212,11 +217,11 @@ namespace CompositionProToolkit.Win2d.Core
 
         #endregion
 
-        #region Hexadecimal Color
+        #region Color
 
         // Hexadecimal characters
         private const string Hex = "(?:[a-f]|[A-F]|[0-9])";
-        // Hexadecimal Color 
+        // ARGB Color 
         private static readonly string HexColor = $"(?:#?(?:{Hex}{{2}})?{Hex}{{6}})";
 
         // Alpha
@@ -227,17 +232,23 @@ namespace CompositionProToolkit.Win2d.Core
         private static readonly string Green = $"(?<Green>{Hex}{{2}})";
         // Blue
         private static readonly string Blue = $"(?<Blue>{Hex}{{2}})";
+       
+        // Hexadecimal Color 
+        private static readonly string RgbColor = $"(?<RgbColor>{HexColor})";
+        // HDR Color (Vector4 in which each component has a value between 0 and 1, inclusive)
+        private static readonly string HdrColor = $"(?<HdrColor>{Float01}{Sep}{Float01}{Sep}{Float01}{Sep}{Float01})";
+
         // Hexadecimal Color Attributes
-        private static readonly string HexColorRegexString = $"(?:#?{Alpha}?{Red}{Green}{Blue})";
+        private static readonly string RgbColorAttributes = $"(?<RgbColor>#?{Alpha}?{Red}{Green}{Blue})";
+        // HDR Color Attributes (Vector4 in which each component has a value between 0 and 1, inclusive)
+        private static readonly string HdrColorAttributes = $"(?<HdrColor>(?<X>{Float01}){Sep}(?<Y>{Float01}){Sep}(?<Z>{Float01}){Sep}(?<W>{Float01}))";
+
+        private static readonly string ColorRegexString = $"(?:{RgbColorAttributes}|{HdrColorAttributes})";
 
         #endregion
 
         #region ICanvasBrush
 
-        // SolidColor
-        private static readonly string SolidColor = $"(?<SolidColor>{HexColor}{Spacer})";
-        // HDR Color (Vector4 in which each component has a value between 0 and 1, inclusive)
-        private static readonly string HdrColor = $"(?<HdrColor>{Float01}{Sep}{Float01}{Sep}{Float01}{Sep}{Float01})";
         // Start Point
         private static readonly string StartPoint = $"(?<StartPoint>[Mm]{Spacer}{Pos}{Spacer})";
         // End Point
@@ -271,7 +282,7 @@ namespace CompositionProToolkit.Win2d.Core
         private static readonly string GradientStopHdrs = $"(?<GradientStops>[Ss]{Spacer}{Float01}{Sep}{HdrColor}(?:{Sep}{Float01}{Sep}{HdrColor})*{Spacer})";
 
         // Solid Color Brush
-        private static readonly string SolidColorBrush = $"(?<SolidColorBrush>[Ss][Cc]{Spacer}(?:{SolidColor}|{HdrColor}){Spacer}{Opacity}?)";
+        private static readonly string SolidColorBrush = $"(?<SolidColorBrush>[Ss][Cc]{Spacer}(?:{RgbColor}|{HdrColor}){Spacer}{Opacity}?)";
 
         // LinearGradient
         private static readonly string LinearGradient = $"(?<LinearGradient>[Ll][Gg]{Spacer}{StartPoint}{EndPoint}" +
@@ -297,11 +308,6 @@ namespace CompositionProToolkit.Win2d.Core
 
         #region ICanvasBrush Attributes
 
-        // Solid Color Attributes
-        private static readonly string SolidColorAttributes = $"(?<Color>{HexColor})";
-        // HDR Color Attributes (Vector4 in which each component has a value between 0 and 1, inclusive)
-        private static readonly string HdrColorAttributes = $"(?<X>{Float01}){Sep}(?<Y>{Float01}){Sep}(?<Z>{Float01}){Sep}(?<W>{Float01})";
-
         // Start Point
         private static readonly string StartPointAttr = $"(?:[Mm]{Spacer}(?<StartX>{Float}){Sep}(?<StartY>{Float}){Spacer})";
         // End Point
@@ -322,7 +328,7 @@ namespace CompositionProToolkit.Win2d.Core
         private static readonly string OriginOffsetAttr = $"(?<OriginOffset>[Ff]{Spacer}(?<OffsetX>{Float}){Sep}(?<OffsetY>{Float}){Spacer})";
 
         // GradientStop Attributes
-        public static readonly string GradientStopAttributes = $"(?<Position>{Float01}){ColorSep}{SolidColorAttributes}";
+        public static readonly string GradientStopAttributes = $"(?<Position>{Float01}){ColorSep}{RgbColorAttributes}";
         public static readonly string GradientStopMainAttributes = $"(?<Main>[Ss]{Spacer}{GradientStopAttributes})";
         public static readonly string GradientStopRegexString = $"(?<GradientStops>{GradientStopMainAttributes}" +
                                                                 $"(?<Additional>{Sep}{Float01}{ColorSep}{HexColor})*{Spacer})";
@@ -333,7 +339,7 @@ namespace CompositionProToolkit.Win2d.Core
         private static readonly string GradientStopHdrRegexString = $"(?<GradientStops>{GradientStopHdrMainAttributes}" +
                                                                     $"(?<Additional>{Sep}{Float01}{Sep}{HdrColor})*{Spacer})";
         // Regex for SolidColorBrush Attributes
-        private static readonly string SolidColorBrushRegexString = $"(?:[Ss][Cc]{Spacer}(?:{SolidColorAttributes}|{HdrColorAttributes}){Spacer}{OpacityAttr}?)";
+        private static readonly string SolidColorBrushRegexString = $"(?:[Ss][Cc]{Spacer}(?:{RgbColorAttributes}|{HdrColorAttributes}){Spacer}{OpacityAttr}?)";
         // Regex for LinearGradient Attributes
         private static readonly string LinearGradientRegexString = $"[Ll][Gg]{Spacer}{StartPointAttr}{EndPointAttr}" +
                                                                    $"{OpacityAttr}?{AlphaModeAttr}?{BufferPrecisionAttr}?" +
@@ -408,7 +414,7 @@ namespace CompositionProToolkit.Win2d.Core
         /// <summary>
         /// Gets the Regex for parsing Hexadecimal Color string
         /// </summary>
-        public static Regex HexadecimalColorRegex { get; }
+        public static Regex ColorRegex { get; }
         /// <summary>
         /// Gets the Regex for parsing the ICanvasBrush string
         /// </summary>
@@ -513,7 +519,7 @@ namespace CompositionProToolkit.Win2d.Core
 
             ValidationRegex = new Regex(@"\s+");
             CanvasGeometryRegex = new Regex(CanvasGeometryRegexString, RegexOptions.Compiled);
-            HexadecimalColorRegex = new Regex(HexColorRegexString, RegexOptions.Compiled);
+            ColorRegex = new Regex(ColorRegexString, RegexOptions.Compiled);
             CanvasBrushRegex = new Regex(CanvasBrushRegexString, RegexOptions.Compiled);
             GradientStopRegex = new Regex(GradientStopRegexString, RegexOptions.Compiled);
             GradientStopHdrRegex = new Regex(GradientStopHdrRegexString, RegexOptions.Compiled);

@@ -1,6 +1,6 @@
 ﻿{
   "dependencies": {
-    "CompositionProToolkit": "0.5.1",
+    "CompositionProToolkit": "0.5.1.1",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "Template10": "1.1.12"
   },

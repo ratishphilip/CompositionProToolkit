@@ -564,11 +564,11 @@ namespace CompositionProToolkit.Win2d
     {
         public static Microsoft.Graphics.Canvas.Brushes.ICanvasBrush CreateBrush(Microsoft.Graphics.Canvas.ICanvasResourceCreator resourceCreator, string brushData) { throw null; }
         public static Windows.UI.Color CreateColor(System.Numerics.Vector4 hdrColor) { throw null; }
-        public static Windows.UI.Color CreateColor(string hexColor) { throw null; }
+        public static Windows.UI.Color CreateColor(string colorString) { throw null; }
         public static Microsoft.Graphics.Canvas.Geometry.CanvasGeometry CreateGeometry(Microsoft.Graphics.Canvas.ICanvasResourceCreator resourceCreator, string pathData, System.Text.StringBuilder logger=null) { throw null; }
         public static CompositionProToolkit.Win2d.ICanvasStroke CreateStroke(Microsoft.Graphics.Canvas.ICanvasResourceCreator resourceCreator, string strokeData) { throw null; }
         public static Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle CreateStrokeStyle(string styleData) { throw null; }
-        public static bool TryCreateColor(string hexColor, out Windows.UI.Color color) { color = default(Windows.UI.Color); throw null; }
+        public static bool TryCreateColor(string colorString, out Windows.UI.Color color) { color = default(Windows.UI.Color); throw null; }
     }
     public static partial class CanvasPathBuilderExtensions
     {

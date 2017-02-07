@@ -208,7 +208,7 @@ namespace CompositionProToolkit.Win2d.Geometry.Brush
                     {
                         var mainMatch = RegexFactory.GetAttributesRegex(GradientStopAttributeType.Main).Match(main.Value);
                         Single.TryParse(mainMatch.Groups["Position"].Value, out position);
-                        ColorParser.TryParse(mainMatch.Groups["Color"].Value, out color);
+                        color = ColorParser.Parse(mainMatch);
 
                         _gradientStops.Add(new CanvasGradientStop()
                         {
@@ -226,7 +226,7 @@ namespace CompositionProToolkit.Win2d.Geometry.Brush
                     {
                         var addMatch = RegexFactory.GetAttributesRegex(GradientStopAttributeType.Additional).Match(addCapture.Value);
                         Single.TryParse(addMatch.Groups["Position"].Value, out position);
-                        ColorParser.TryParse(addMatch.Groups["Color"].Value, out color);
+                        color = ColorParser.Parse(addMatch);
 
                         _gradientStops.Add(new CanvasGradientStop()
                         {

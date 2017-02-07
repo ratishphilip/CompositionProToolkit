@@ -41,38 +41,46 @@ namespace CompositionProToolkit.Win2d.Parsers
     internal static class ColorParser
     {
         /// <summary>
-        /// Converts the hexadecimal color string in #RRGGBB or #AARRGGBB format
-        /// to the corresponding Color object. The '#' character is optional.
+        /// Converts the color string in Hexadecimal or HDR color format to the 
+        /// corresponding Color object.
+        /// The hexadecimal color string should be in #RRGGBB or #AARRGGBB format.
+        /// The '#' character is optional.
+        /// The HDR color string should be in R G B A format. 
+        /// (R, G, B & A should have value in the range between 0 and 1, inclusive)
         /// </summary>
-        /// <param name="hexColor">Hexadecimal color string</param>
+        /// <param name="colorString">Color string in Hexadecimal or HDR format</param>
         /// <returns>Color</returns>
-        internal static Color Parse(string hexColor)
+        internal static Color Parse(string colorString)
         {
-            var match = RegexFactory.HexadecimalColorRegex.Match(hexColor);
+            var match = RegexFactory.ColorRegex.Match(colorString);
             if (!match.Success)
             {
-                throw new ArgumentException("Invalid Hexadecimal string!", nameof(hexColor));
+                throw new ArgumentException("Invalid Hexadecimal string!", nameof(colorString));
             }
 
-            return GetColor(match);
+            return Parse(match);
         }
 
         /// <summary>
-        /// Attempts to convert the hexadecimal color string in #RRGGBB or #AARRGGBB format
-        /// to the corresponding Color object. The '#' character is optional.
+        /// Attempts to convert color string in Hexadecimal or HDR color format to the 
+        /// corresponding Color object.
+        /// The hexadecimal color string should be in #RRGGBB or #AARRGGBB format.
+        /// The '#' character is optional.
+        /// The HDR color string should be in R G B A format. 
+        /// (R, G, B & A should have value in the range between 0 and 1, inclusive)
         /// </summary>
-        /// <param name="hexColor">Hexadecimal color string</param>
+        /// <param name="colorString">Color string in Hexadecimal or HDR format</param>
         /// <param name="color">Output Color object</param>
         /// <returns>True if successful, otherwise False</returns>
-        internal static bool TryParse(string hexColor, out Color color)
+        internal static bool TryParse(string colorString, out Color color)
         {
-            var match = RegexFactory.HexadecimalColorRegex.Match(hexColor);
+            var match = RegexFactory.ColorRegex.Match(colorString);
             if (!match.Success)
             {
                 return false;
             }
 
-            color = GetColor(match);
+            color = Parse(match);
             return true;
         }
 
@@ -90,10 +98,23 @@ namespace CompositionProToolkit.Win2d.Parsers
         {
             // Vector4's X, Y, Z, W components match to
             // Color's   R, G, B, A components respectively
-            var r = (byte)Math.Min(Math.Abs(hdrColor.X) * 255f, 255f);
-            var g = (byte)Math.Min(Math.Abs(hdrColor.Y) * 255f, 255f);
-            var b = (byte)Math.Min(Math.Abs(hdrColor.Z) * 255f, 255f);
-            var a = (byte)Math.Min(Math.Abs(hdrColor.W) * 255f, 255f);
+            return Parse(hdrColor.X, hdrColor.Y, hdrColor.Z, hdrColor.W);
+        }
+
+        /// <summary>
+        /// Converts the given HDR color values to Color.
+        /// </summary>
+        /// <param name="x">Red Component</param>
+        /// <param name="y">Green Component</param>
+        /// <param name="z">Blue Component</param>
+        /// <param name="w">Alpha Component</param>
+        /// <returns></returns>
+        internal static Color Parse(float x, float y, float z, float w)
+        {
+            var r = (byte)Math.Min(Math.Abs(x) * 255f, 255f);
+            var g = (byte)Math.Min(Math.Abs(y) * 255f, 255f);
+            var b = (byte)Math.Min(Math.Abs(z) * 255f, 255f);
+            var a = (byte)Math.Min(Math.Abs(w) * 255f, 255f);
 
             return Color.FromArgb(a, r, g, b);
         }
@@ -104,23 +125,39 @@ namespace CompositionProToolkit.Win2d.Parsers
         /// </summary>
         /// <param name="match">Match object</param>
         /// <returns>Color</returns>
-        private static Color GetColor(Match match)
+        internal static Color Parse(Match match)
         {
-            // Alpha component
-            byte alpha = 255;
-            var alphaStr = match.Groups["Alpha"].Value;
-            if (!String.IsNullOrWhiteSpace(alphaStr))
+            if (match.Groups["RgbColor"].Success)
             {
-                alpha = (byte)Convert.ToInt32(alphaStr, 16);
-            }
-            // Red component
-            var red = (byte)Convert.ToInt32(match.Groups["Red"].Value, 16);
-            // Green component
-            var green = (byte)Convert.ToInt32(match.Groups["Green"].Value, 16);
-            // Blue component
-            var blue = (byte)Convert.ToInt32(match.Groups["Blue"].Value, 16);
+                // Alpha component
+                byte alpha = 255;
+                var alphaStr = match.Groups["Alpha"].Value;
+                if (!String.IsNullOrWhiteSpace(alphaStr))
+                {
+                    alpha = (byte)Convert.ToInt32(alphaStr, 16);
+                }
+                // Red component
+                var red = (byte)Convert.ToInt32(match.Groups["Red"].Value, 16);
+                // Green component
+                var green = (byte)Convert.ToInt32(match.Groups["Green"].Value, 16);
+                // Blue component
+                var blue = (byte)Convert.ToInt32(match.Groups["Blue"].Value, 16);
 
-            return Color.FromArgb(alpha, red, green, blue);
+                return Color.FromArgb(alpha, red, green, blue);
+            }
+
+            if (match.Groups["HdrColor"].Success)
+            {
+                float x = 0, y = 0, z = 0, w = 0;
+                Single.TryParse(match.Groups["X"].Value, out x);
+                Single.TryParse(match.Groups["Y"].Value, out y);
+                Single.TryParse(match.Groups["Z"].Value, out z);
+                Single.TryParse(match.Groups["W"].Value, out w);
+
+                return Parse(x, y, z, w);
+            }
+
+            return Colors.Transparent;
         }
     }
 }

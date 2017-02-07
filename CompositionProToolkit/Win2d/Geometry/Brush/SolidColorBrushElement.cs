@@ -101,23 +101,8 @@ namespace CompositionProToolkit.Win2d.Geometry.Brush
         /// <param name="match">Match object</param>
         protected override void GetAttributes(Match match)
         {
-            // Is it HexColor?
-            if (match.Groups["Color"].Success)
-            {
-                // Convert the captured hexadecimal string to Color
-                ColorParser.TryParse(match.Groups["Color"].Value, out _color);
-            }
-            //  or HdrColor
-            else
-            {
-                float x = 0f, y = 0f, z = 0f, w = 0f;
-                Single.TryParse(match.Groups["X"].Value, out x);
-                Single.TryParse(match.Groups["Y"].Value, out y);
-                Single.TryParse(match.Groups["Z"].Value, out z);
-                Single.TryParse(match.Groups["W"].Value, out w);
-
-                _color = ColorParser.Parse(new Vector4(x, y, z, w));
-            }
+            // Parse the Color
+            _color = ColorParser.Parse(match);
 
             // Opacity (optional)
             var group = match.Groups["Opacity"];
