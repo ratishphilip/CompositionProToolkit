@@ -638,7 +638,7 @@ public static void DrawRoundedRectangle(this CanvasDrawingSession session,
 public static void DrawRoundedRectangle(this CanvasDrawingSession session, float x,
     float y, float w, float h, float radiusX, float radiusY, ICanvasStroke stroke);
 ```
-## Win2d MiniLanguage specification
+## Win2d Mini Language specification
 **Microsoft.Graphics.Canvas.Geometry.CanvasGeometry** class facilitates the drawing and manipulation of complex geometrical shapes. These shapes can be outlined with a stroke and filled with a brush (which can be a solid color, a bitmap pattern or a gradient). 
 While the **CanvasGeometry** class provides various static methods to create predefined shapes like Circle, Ellipse, Rectangle, RoundedRectangle, the **CanvasPathBuilder** class provides several methods to create freeform CanvasGeometry objects.
 Creation of a complex freeform geometric shape may involve invoking of several CanvasPathBuilder commands. For example, the following code shows how to create a triangle geometry using CanvasPathBuilder
@@ -666,18 +666,18 @@ Win2d Mini Language is based on the [SVG (Scalable Vector Graphics) Path languag
 
 The following specification document describes the Win2d Markup Language in detail.
 
-[Win2d Mini Language Specification.pdf](https://github.com/ratishphilip/CompositionProToolkit/files/743126/Win2d.Mini.Language.Specification.pdf)
+[Win2d Mini Language Specification.pdf](https://github.com/ratishphilip/CompositionProToolkit/blob/master/Win2d%20Mini%20Language%20Specification/Win2d%20Mini%20Language%20Specification.pdf)
 
 ## Parsing Win2d Mini Language with CanvasObject
 The **CompositionProToolkit.CanvasObject** static class provides APIs that parse the Win2d Mini Language and instantiate the appropriate objects.
 
 ### Color
-#### From Hexadecimal Color string
-There are two APIs that convert the hexadecimal color string in **#RRGGBB** or **#AARRGGBB** format to the corresponding Color object. The '**#**' character is optional.
+#### From Hexadecimal Color String or High Dynamic Range Color String
+There are two APIs that convert the hexadecimal color string in #RRGGBB or #AARRGGBB format or the High Dynamic Range Color string in the R G B A format to the corresponding Color object. _The **#** character is optional in Hexadecimal color string. **R**, **G**, **B** & **A** should have value in the range between 0 and 1, inclusive._
 
 ```C#
-public static Color CreateColor(string hexColor);
-public static bool TryCreateColor(string hexColor, out Color color);
+public static Color CreateColor(string colorString);
+public static bool TryCreateColor(string  colorString , out Color color);
 ```
 
 The first API will raise an **ArgumentException** if the argument is not in the correct format while the second API will attempt to convert the color string without raising an exception.
