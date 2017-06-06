@@ -119,11 +119,12 @@ _The full list of functions available in the **CompositionExpressionContext&lt;T
 
 # 7. Expression Keywords
 The CompositionExpressionContext&lt;T&gt; class provides the following properties which are evaluated as keywords within the Expression
-Property | Description
-------- | -------
-StartingValue | Provides a reference to the original starting value of the property that is being animated.|
-CurrentValue | Provides a reference to the currently “known” value of the property |
-FinalValue | Provides a reference to the final value of the animation (if defined) Note: Relevant for Implicit Animations, for explicit, maintains same functionality as StartingValue |
+
+| Property | Description |
+| ------- | ------- |
+| **StartingValue** | Provides a reference to the original starting value of the property that is being animated.|
+| **CurrentValue** | Provides a reference to the currently “known” value of the property |
+| **FinalValue** | Provides a reference to the final value of the animation (if defined) Note: Relevant for Implicit Animations, for explicit, maintains same functionality as StartingValue |
 
 Within the Expression, these properties will resolve to the type of the animated property. 
 
@@ -417,11 +418,11 @@ rootVisual.StopAnimation(() => rootVisual.Offset, offsetAnimation);
 ## 15.1. KeyFrame&lt;T&gt;
 **KeyFrame&lt;T&gt;** is a generic class which encapsulates the values required to define a KeyFrame within a `KeyFrameAnimation`. It has the following properties
 
-Property | Type | Description
----------|------|------------
-Key | `float` | The time the key frame should occur at, expressed as a percentage of the animation Duration. Allowed value is from 0.0 to 1.0.
-Value | `T` | The type of the property being animated.
-Easing | `CompositionEasingFunction` | The easing function to use when interpolating between frames.
+| Property | Type | Description |
+| ---------|------|------------ |
+| Key | `float` | The time the key frame should occur at, expressed as a percentage of the animation Duration. Allowed value is from 0.0 to 1.0.
+| Value | `T` | The type of the property being animated.
+| Easing | `CompositionEasingFunction` | The easing function to use when interpolating between frames.
 
 ## 15.2. KeyFrameAnimation&lt;T&gt;
 To construct a KeyFrame Animation, normally you use one of the constructor methods of the Compositor class that correlates to the structure type of the property you wish to animate.
@@ -434,17 +435,17 @@ To construct a KeyFrame Animation, normally you use one of the constructor metho
 
 `KeyFrameAnimation<T>` is a generic class which encapsulates a `KeyFrameAnimation` object and provides a unified set of properties and methods which cater to the various animation classes deriving from KeyFrameAnimation. It has the following properties
 
-Property | Type | Description
----------|------|------------
-Animation | `KeyFrameAnimation` | The encapsulated KeyFrameAnimation object.
-DelayTime | `TimeSpan` | The duration by which the animation should be delayed
-Direction | `AnimationDirection` | Direction of the Animation
-Duration | `TimeSpan` | The duration of the animation. Minimum allowed value is 1ms and maximum allowed value is 24 days.
-IterationBehavior | `AnimationIterationBehavior` | The iteration behavior for the key frame animation.
-IterationCount | `int` | The number of times to repeat the key frame animation. A value of -1 causes the animation to repeat indefinitely.
-KeyFrameCount | `int` | The number of key frames in the KeyFrameAnimation.
-StopBehavior | `AnimationStopBehavior` | Specifies how to set the property value when StopAnimation is called.
-Target | `String` | Specifies the target for the animation.
+| Property | Type | Description |
+| ---------|------|------------ |
+| Animation | `KeyFrameAnimation` | The encapsulated KeyFrameAnimation object.
+| DelayTime | `TimeSpan` | The duration by which the animation should be delayed
+| Direction | `AnimationDirection` | Direction of the Animation
+| Duration | `TimeSpan` | The duration of the animation. Minimum allowed value is 1ms and maximum allowed value is 24 days.
+| IterationBehavior | `AnimationIterationBehavior` | The iteration behavior for the key frame animation.
+| IterationCount | `int` | The number of times to repeat the key frame animation. A value of -1 causes the animation to repeat indefinitely.
+| KeyFrameCount | `int` | The number of key frames in the KeyFrameAnimation.
+| StopBehavior | `AnimationStopBehavior` | Specifies how to set the property value when StopAnimation is called.
+| Target | `String` | Specifies the target for the animation.
 
 
 The following APIs facilitate the setting of keyframe(s) on the encapsulated KeyFrameAnimation object.
