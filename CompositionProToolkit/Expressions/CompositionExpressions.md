@@ -22,7 +22,7 @@
     - [10.3. Example](#103-example)
 - [11. Using CompositionPropertySet within the Expression](#11-using-compositionpropertyset-within-the-expression)
     - [11.1. Example](#111-example)
-- [12. Single Constants](#12-single-constants)
+- [12. Scalar Constants](#12-scalar-constants)
 - [13. Defining the ExpressionAnimation&lt;T&gt;](#13-defining-the-expressionanimationt)
 - [14. Using Lambda Expressions for `StartAnimation` & `StopAnimation`](#14-using-lambda-expressions-for-startanimation--stopanimation)
     - [14.1. Example](#141-example)
