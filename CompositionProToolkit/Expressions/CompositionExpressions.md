@@ -334,11 +334,11 @@ Expression<CompositionExpression<Vector3>> expression =
 offsetAnimation.InsertExpressionKeyFrame(1f, expression);
 ```
 
-# 12. Single Constants
-The static class Float defines several constants related to `Math.PI` as floating point numbers. They can be used within the Expression. It also contains two conversion factors to convert from radians to degrees and vice versa.
+# 12. Scalar Constants
+The static class **Scalar** defines several constants related to `Math.PI` as floating point numbers. They can be used within the Expression. It also contains two conversion factors to convert from radians to degrees and vice versa.
 
 ```C#
-public static class Float
+public static class Scalar
 {
     // Pi related constants
     public const float Pi = (float)Math.PI;
