@@ -122,7 +122,7 @@ Expression<CompositionExpression<Vector2>> expr = c => new Vector2(c.Cos(20), c.
 
 In the above lambda expression, c represents an object of type `CompositionExpressionContext<Vector2>` and you can use any of its functions to define your Expression.
 
-_The full list of functions available in the **CompositionExpressionContext&lt;T&gt;** is provided at the end of this document ([Appendix A]((#20-appendix-a)))._
+_The full list of functions available in the **CompositionExpressionContext&lt;T&gt;** is provided at the end of this document ([Appendix A](#20-appendix-a))._
 
 # 7. Expression Keywords
 The CompositionExpressionContext&lt;T&gt; class provides the following properties which are evaluated as keywords within the Expression
