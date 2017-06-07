@@ -343,15 +343,15 @@ offsetAnimation.InsertExpressionKeyFrame(1f, expression);
 # 12. Scalar Constants
 The static class **Scalar** defines several constants related to `Math.PI` as floating point numbers. They can be used within the Expression. It also contains two conversion factors to convert from radians to degrees and vice versa.
 
-- `Scalar.Pi` - same as `(float)Math.PI` radians ( or **180 degrees**).
-- `Scalar.TwoPi` - Two times `(float)Math.PI` radians ( or **360 degrees**).
-- `Scalar.PiByTwo` - half of `(float)Math.PI` radians ( or **90 degrees**).
-- `Scalar.PiByThree` - one third of `(float)Math.PI` radians ( or **60 degrees**).
-- `Scalar.PiByFour` - one fourth of `(float)Math.PI` radians ( or **45 degrees**).
-- `Scalar.PiBySix` - one sixth of `(float)Math.PI` radians ( or **30 degrees**).
-- `Scalar.ThreePiByTwo` - three times half of `(float)Math.PI` radians ( or **270 degrees**).
-- `Scalar.DegreeToRadians` - 1 degree in radians.
-- `Scalar.RadiansToDegree` - 1 radian in degrees.
+- **`Scalar.Pi`** - same as `(float)Math.PI` radians ( or **180 degrees**).
+- **`Scalar.TwoPi`** - Two times `(float)Math.PI` radians ( or **360 degrees**).
+- **`Scalar.PiByTwo`** - half of `(float)Math.PI` radians ( or **90 degrees**).
+- **`Scalar.PiByThree`** - one third of `(float)Math.PI` radians ( or **60 degrees**).
+- **`Scalar.PiByFour`** - one fourth of `(float)Math.PI` radians ( or **45 degrees**).
+- **`Scalar.PiBySix`** - one sixth of `(float)Math.PI` radians ( or **30 degrees**).
+- **`Scalar.ThreePiByTwo`** - three times half of `(float)Math.PI` radians ( or **270 degrees**).
+- **`Scalar.DegreeToRadians`** - 1 degree in radians.
+- **`Scalar.RadiansToDegree`** - 1 radian in degrees.
 
 # 13. Defining the ExpressionAnimation&lt;T&gt;
 
