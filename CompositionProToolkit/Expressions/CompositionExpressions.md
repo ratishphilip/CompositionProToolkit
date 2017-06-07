@@ -22,7 +22,7 @@
     - [10.3. Example](#103-example)
 - [11. Using CompositionPropertySet within the Expression](#11-using-compositionpropertyset-within-the-expression)
     - [11.1. Example](#111-example)
-- [12. Single Constants](#12-single-constants)
+- [12. Scalar Constants](#12-scalar-constants)
 - [13. Defining the ExpressionAnimation&lt;T&gt;](#13-defining-the-expressionanimationt)
 - [14. Using Lambda Expressions for `StartAnimation` & `StopAnimation`](#14-using-lambda-expressions-for-startanimation--stopanimation)
     - [14.1. Example](#141-example)
@@ -126,11 +126,20 @@ _The full list of functions available in the **CompositionExpressionContext&lt;T
 
 # 7. Expression Keywords
 The CompositionExpressionContext&lt;T&gt; class provides the following properties which are evaluated as keywords within the Expression
+<<<<<<< HEAD
 | Property | Description |
 | ------- | ------- |
 | StartingValue | Provides a reference to the original starting value of the property that is being animated.|
 | CurrentValue | Provides a reference to the currently “known” value of the property |
 | FinalValue | Provides a reference to the final value of the animation (if defined) Note: Relevant for Implicit Animations, for explicit, maintains same functionality as StartingValue |
+=======
+
+| Property | Description |
+| ------- | ------- |
+| **StartingValue** | Provides a reference to the original starting value of the property that is being animated.|
+| **CurrentValue** | Provides a reference to the currently “known” value of the property |
+| **FinalValue** | Provides a reference to the final value of the animation (if defined) Note: Relevant for Implicit Animations, for explicit, maintains same functionality as StartingValue |
+>>>>>>> cf48f4477b022fb72373df750f63fd42fe2e6dbf
 
 Within the Expression, these properties will resolve to the type of the animated property. 
 
@@ -340,11 +349,11 @@ Expression<CompositionExpression<Vector3>> expression =
 offsetAnimation.InsertExpressionKeyFrame(1f, expression);
 ```
 
-# 12. Single Constants
-The static class Float defines several constants related to `Math.PI` as floating point numbers. They can be used within the Expression. It also contains two conversion factors to convert from radians to degrees and vice versa.
+# 12. Scalar Constants
+The static class **Scalar** defines several constants related to `Math.PI` as floating point numbers. They can be used within the Expression. It also contains two conversion factors to convert from radians to degrees and vice versa.
 
 ```C#
-public static class Float
+public static class Scalar
 {
     // Pi related constants
     public const float Pi = (float)Math.PI;
@@ -484,9 +493,15 @@ visualDictionary["second"].StartAnimation(() => visualDictionary["second"], offs
 
 | Property | Type | Description |
 | ---------|------|------------ |
+<<<<<<< HEAD
 | Key | `float` | The time the key frame should occur at, expressed as a percentage of the animation Duration. Allowed value is from 0.0 to 1.0. |
 | Value | `T` | The type of the property being animated. |
 | Easing | `CompositionEasingFunction` | The easing function to use when interpolating between frames. |
+=======
+| Key | `float` | The time the key frame should occur at, expressed as a percentage of the animation Duration. Allowed value is from 0.0 to 1.0.
+| Value | `T` | The type of the property being animated.
+| Easing | `CompositionEasingFunction` | The easing function to use when interpolating between frames.
+>>>>>>> cf48f4477b022fb72373df750f63fd42fe2e6dbf
 
 ## 18.2. KeyFrameAnimation&lt;T&gt;
 To construct a KeyFrame Animation, normally you use one of the constructor methods of the Compositor class that correlates to the structure type of the property you wish to animate.
@@ -501,6 +516,7 @@ To construct a KeyFrame Animation, normally you use one of the constructor metho
 
 | Property | Type | Description |
 | ---------|------|------------ |
+<<<<<<< HEAD
 | Animation | `KeyFrameAnimation` | The encapsulated KeyFrameAnimation object. |
 | DelayTime | `TimeSpan` | The duration by which the animation should be delayed |
 | Direction | `AnimationDirection` | Direction of the Animation |
@@ -510,6 +526,17 @@ To construct a KeyFrame Animation, normally you use one of the constructor metho
 | KeyFrameCount | `int` | The number of key frames in the KeyFrameAnimation. |
 | StopBehavior | `AnimationStopBehavior` | Specifies how to set the property value when StopAnimation is called. |
 | Target | `String` | Specifies the target for the animation. |
+=======
+| Animation | `KeyFrameAnimation` | The encapsulated KeyFrameAnimation object.
+| DelayTime | `TimeSpan` | The duration by which the animation should be delayed
+| Direction | `AnimationDirection` | Direction of the Animation
+| Duration | `TimeSpan` | The duration of the animation. Minimum allowed value is 1ms and maximum allowed value is 24 days.
+| IterationBehavior | `AnimationIterationBehavior` | The iteration behavior for the key frame animation.
+| IterationCount | `int` | The number of times to repeat the key frame animation. A value of -1 causes the animation to repeat indefinitely.
+| KeyFrameCount | `int` | The number of key frames in the KeyFrameAnimation.
+| StopBehavior | `AnimationStopBehavior` | Specifies how to set the property value when StopAnimation is called.
+| Target | `String` | Specifies the target for the animation.
+>>>>>>> cf48f4477b022fb72373df750f63fd42fe2e6dbf
 
 
 The following APIs facilitate the setting of keyframe(s) on the encapsulated KeyFrameAnimation object.
