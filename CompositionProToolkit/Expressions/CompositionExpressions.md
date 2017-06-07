@@ -129,7 +129,7 @@ The CompositionExpressionContext&lt;T&gt; class provides the following propertie
 
 | Property | Description |
 | ------- | ------- |
-C#| **StartingValue** | Provides a reference to the original starting value of the property that is being animated.|
+| **StartingValue** | Provides a reference to the original starting value of the property that is being animated.|
 | **CurrentValue** | Provides a reference to the currently “known” value of the property |
 | **FinalValue** | Provides a reference to the final value of the animation (if defined) Note: Relevant for Implicit Animations, for explicit, maintains same functionality as StartingValue |
 
