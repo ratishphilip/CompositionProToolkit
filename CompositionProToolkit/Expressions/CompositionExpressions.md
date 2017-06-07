@@ -632,30 +632,30 @@ The following extension methods have been added to `Compositor` to create predef
 
 ```C#
 public static CubicBezierEasingFunction CreateEaseInBackEasingFunction();
-public static CubicBezierEasingFunction CreateEaseInCircEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInCircleEasingFunction();
 public static CubicBezierEasingFunction CreateEaseInCubicEasingFunction();
-public static CubicBezierEasingFunction CreateEaseInExpoEasingFunction();
-public static CubicBezierEasingFunction CreateEaseInQuadEasingFunction();
-public static CubicBezierEasingFunction CreateEaseInQuartEasingFunction();
-public static CubicBezierEasingFunction CreateEaseInQuintEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInExponentialFunction();
+public static CubicBezierEasingFunction CreateEaseInQuadraticEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInQuarticEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInQuinticEasingFunction();
 public static CubicBezierEasingFunction CreateEaseInSineEasingFunction();
 
 public static CubicBezierEasingFunction CreateEaseOutBackEasingFunction();
-public static CubicBezierEasingFunction CreateEaseOutCircEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutCircleEasingFunction();
 public static CubicBezierEasingFunction CreateEaseOutCubicEasingFunction();
-public static CubicBezierEasingFunction CreateEaseOutExpoEasingFunction();
-public static CubicBezierEasingFunction CreateEaseOutQuadEasingFunction();
-public static CubicBezierEasingFunction CreateEaseOutQuartEasingFunction();
-public static CubicBezierEasingFunction CreateEaseOutQuintEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutExponentialFunction();
+public static CubicBezierEasingFunction CreateEaseOutQuadraticEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutQuarticEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutQuinticEasingFunction();
 public static CubicBezierEasingFunction CreateEaseOutSineEasingFunction();
 
 public static CubicBezierEasingFunction CreateEaseInOutBackEasingFunction();
-public static CubicBezierEasingFunction CreateEaseInOutCircEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutCircleEasingFunction();
 public static CubicBezierEasingFunction CreateEaseInOutCubicEasingFunction();
-public static CubicBezierEasingFunction CreateEaseInOutExpoEasingFunction();
-public static CubicBezierEasingFunction CreateEaseInOutQuadEasingFunction();
-public static CubicBezierEasingFunction CreateEaseInOutQuartEasingFunction();
-public static CubicBezierEasingFunction CreateEaseInOutQuintEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutExponentialFunction();
+public static CubicBezierEasingFunction CreateEaseInOutQuadraticEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutQuarticEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutQuinticEasingFunction();
 public static CubicBezierEasingFunction CreateEaseInOutSineEasingFunction();
 ```
 # 20. APPENDIX A
