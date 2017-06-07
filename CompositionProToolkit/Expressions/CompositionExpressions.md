@@ -28,26 +28,33 @@
     - [14.1. Example](#141-example)
         - [14.1.1. Without using lambda expressions](#1411-without-using-lambda-expressions)
         - [14.1.2. Using lambda expressions](#1412-using-lambda-expressions)
-- [15. Defining the KeyFrameAnimation](#15-defining-the-keyframeanimation)
-    - [15.1. KeyFrame&lt;T&gt;](#151-keyframet)
-    - [15.2. KeyFrameAnimation&lt;T&gt;](#152-keyframeanimationt)
-    - [15.3. Example](#153-example)
-        - [15.3.1. Without using CompositionExpressions](#1531-without-using-compositionexpressions)
-        - [15.3.2. Using CompositionExpressions](#1532-using-compositionexpressions)
-- [16. APPENDIX A](#16-appendix-a)
-- [17. CompositionExpressionContext&lt;T&gt;](#17-compositionexpressioncontextt)
-    - [17.1. CompositionExpressionContext&lt;T&gt; Properties](#171-compositionexpressioncontextt-properties)
-    - [17.2. CompositionExpressionContext&lt;T&gt; Functions](#172-compositionexpressioncontextt-functions)
-        - [17.2.1. Scalar Functions](#1721-scalar-functions)
-        - [17.2.2. Vector2 Functions](#1722-vector2-functions)
-        - [17.2.3. Vector3 Functions](#1723-vector3-functions)
-        - [17.2.4. Vector4 Functions](#1724-vector4-functions)
-        - [17.2.5. Matrix3x2 Functions](#1725-matrix3x2-functions)
-        - [17.2.6. Matrix4x4 Functions](#1726-matrix4x4-functions)
-        - [17.2.7. Quaternion Functions](#1727-quaternion-functions)
-        - [17.2.8. Color Functions](#1728-color-functions)
-        - [17.2.9. Expression Templates - Targets](#1729-expression-templates---targets)
-        - [17.2.10. Expression Templates - References](#17210-expression-templates---references)
+- [15. Using Arrays in Expression](#15-using-arrays-in-expression)
+    - [15.1. Example](#151-example)
+- [16. Using List&lt;&gt; in Expression](#16-using-list-in-expression)
+    - [16.1. Example](#161-example)
+- [17. Using Dictionary&lt;,&gt; in Expression](#17-using-dictionary-in-expression)
+    - [17.1. Example](#171-example)
+- [18. Optimizing the KeyFrameAnimation](#18-optimizing-the-keyframeanimation)
+    - [18.1. KeyFrame&lt;T&gt;](#181-keyframet)
+    - [18.2. KeyFrameAnimation&lt;T&gt;](#182-keyframeanimationt)
+    - [18.3. Example](#183-example)
+        - [18.3.1. Without using CompositionExpressions](#1831-without-using-compositionexpressions)
+        - [18.3.2. Using CompositionExpressions](#1832-using-compositionexpressions)
+- [19. Custom Cubic Bezier Easing Functions](#19-custom-cubic-bezier-easing-functions)
+- [20. APPENDIX A](#20-appendix-a)
+- [21. CompositionExpressionContext&lt;T&gt;](#21-compositionexpressioncontextt)
+    - [21.1. CompositionExpressionContext&lt;T&gt; Properties](#211-compositionexpressioncontextt-properties)
+    - [21.2. CompositionExpressionContext&lt;T&gt; Functions](#212-compositionexpressioncontextt-functions)
+        - [21.2.1. Scalar Functions](#2121-scalar-functions)
+        - [21.2.2. Vector2 Functions](#2122-vector2-functions)
+        - [21.2.3. Vector3 Functions](#2123-vector3-functions)
+        - [21.2.4. Vector4 Functions](#2124-vector4-functions)
+        - [21.2.5. Matrix3x2 Functions](#2125-matrix3x2-functions)
+        - [21.2.6. Matrix4x4 Functions](#2126-matrix4x4-functions)
+        - [21.2.7. Quaternion Functions](#2127-quaternion-functions)
+        - [21.2.8. Color Functions](#2128-color-functions)
+        - [21.2.9. Expression Templates - Targets](#2129-expression-templates---targets)
+        - [21.2.10. Expression Templates - References](#21210-expression-templates---references)
 
 <!-- /TOC -->
 
@@ -119,11 +126,11 @@ _The full list of functions available in the **CompositionExpressionContext&lt;T
 
 # 7. Expression Keywords
 The CompositionExpressionContext&lt;T&gt; class provides the following properties which are evaluated as keywords within the Expression
-Property | Description
-------- | -------
-StartingValue | Provides a reference to the original starting value of the property that is being animated.|
-CurrentValue | Provides a reference to the currently “known” value of the property |
-FinalValue | Provides a reference to the final value of the animation (if defined) Note: Relevant for Implicit Animations, for explicit, maintains same functionality as StartingValue |
+| Property | Description |
+| ------- | ------- |
+| StartingValue | Provides a reference to the original starting value of the property that is being animated.|
+| CurrentValue | Provides a reference to the currently “known” value of the property |
+| FinalValue | Provides a reference to the final value of the animation (if defined) Note: Relevant for Implicit Animations, for explicit, maintains same functionality as StartingValue |
 
 Within the Expression, these properties will resolve to the type of the animated property. 
 
@@ -412,18 +419,76 @@ rootVisual.StartAnimation(() => rootVisual.RotationAxis.X, rotateAnimation);
 rootVisual.StartAnimation(() => rootVisual.ScaleXY(), scaleAnimation);
 rootVisual.StopAnimation(() => rootVisual.Offset, offsetAnimation);
 ```
+# 15. Using Arrays in Expression
+You can use an `Array` of objects deriving from CompositionObject within your Expression.
 
-# 15. Defining the KeyFrameAnimation
-## 15.1. KeyFrame&lt;T&gt;
+## 15.1. Example
+```C#
+var visual1 = compositor.CreateSpriteVisual();
+...
+var visual2 = compositor.CreateSpriteVisual();
+...
+var visualArray = new Visual[] { visual1, visual2 };
+
+var offsetAnimation = compositor.CreateVector3ExpressionAnimation();
+offsetAnimation.Expression = c => visualArray[0].Offset + new Vector(20);
+
+visualArray[1].StartAnimation(() => visualArray[1].Offset, offsetAnimation);
+
+```
+
+# 16. Using List&lt;&gt; in Expression
+You can use a `List<>` of objects deriving from CompositionObject within your Expression.
+
+## 16.1. Example
+```C#
+var visual1 = compositor.CreateSpriteVisual();
+...
+var visual2 = compositor.CreateSpriteVisual();
+...
+var visualList = new List<Visual> { visual1, visual2 };
+
+var offsetAnimation = compositor.CreateVector3ExpressionAnimation();
+offsetAnimation.Expression = c => visualList[0].Offset + new Vector(20);
+
+visualList[1].StartAnimation(() => visualList[1].Offset, offsetAnimation);
+```
+
+# 17. Using Dictionary&lt;,&gt; in Expression
+You can use a `Dictionary<TKey, TValue>` within your Expression. 
+`TKey` can be of types - `int`, `float`, `double` or `string`.
+`TValue` should be an object deriving from `CompositionObject`.
+
+## 17.1. Example
+```C#
+var visual1 = compositor.CreateSpriteVisual();
+...
+var visual2 = compositor.CreateSpriteVisual();
+...
+var visualDictionary = new Dictionary<string, Visual> 
+    {
+        ["first"] = visual1, 
+        ["second"] = visual2 
+    };
+
+var offsetAnimation = compositor.CreateVector3ExpressionAnimation();
+offsetAnimation.Expression = c => visualDictionary["first"].Offset + new Vector(20);
+
+visualDictionary["second"].StartAnimation(() => visualDictionary["second"], offsetAnimation);
+
+```
+
+# 18. Optimizing the KeyFrameAnimation
+## 18.1. KeyFrame&lt;T&gt;
 **KeyFrame&lt;T&gt;** is a generic class which encapsulates the values required to define a KeyFrame within a `KeyFrameAnimation`. It has the following properties
 
-Property | Type | Description
----------|------|------------
-Key | `float` | The time the key frame should occur at, expressed as a percentage of the animation Duration. Allowed value is from 0.0 to 1.0.
-Value | `T` | The type of the property being animated.
-Easing | `CompositionEasingFunction` | The easing function to use when interpolating between frames.
+| Property | Type | Description |
+| ---------|------|------------ |
+| Key | `float` | The time the key frame should occur at, expressed as a percentage of the animation Duration. Allowed value is from 0.0 to 1.0. |
+| Value | `T` | The type of the property being animated. |
+| Easing | `CompositionEasingFunction` | The easing function to use when interpolating between frames. |
 
-## 15.2. KeyFrameAnimation&lt;T&gt;
+## 18.2. KeyFrameAnimation&lt;T&gt;
 To construct a KeyFrame Animation, normally you use one of the constructor methods of the Compositor class that correlates to the structure type of the property you wish to animate.
 - `CreateColorKeyFrameAnimation`
 - `CreateQuaternionKeyFrameAnimation`
@@ -434,17 +499,17 @@ To construct a KeyFrame Animation, normally you use one of the constructor metho
 
 `KeyFrameAnimation<T>` is a generic class which encapsulates a `KeyFrameAnimation` object and provides a unified set of properties and methods which cater to the various animation classes deriving from KeyFrameAnimation. It has the following properties
 
-Property | Type | Description
----------|------|------------
-Animation | `KeyFrameAnimation` | The encapsulated KeyFrameAnimation object.
-DelayTime | `TimeSpan` | The duration by which the animation should be delayed
-Direction | `AnimationDirection` | Direction of the Animation
-Duration | `TimeSpan` | The duration of the animation. Minimum allowed value is 1ms and maximum allowed value is 24 days.
-IterationBehavior | `AnimationIterationBehavior` | The iteration behavior for the key frame animation.
-IterationCount | `int` | The number of times to repeat the key frame animation. A value of -1 causes the animation to repeat indefinitely.
-KeyFrameCount | `int` | The number of key frames in the KeyFrameAnimation.
-StopBehavior | `AnimationStopBehavior` | Specifies how to set the property value when StopAnimation is called.
-Target | `String` | Specifies the target for the animation.
+| Property | Type | Description |
+| ---------|------|------------ |
+| Animation | `KeyFrameAnimation` | The encapsulated KeyFrameAnimation object. |
+| DelayTime | `TimeSpan` | The duration by which the animation should be delayed |
+| Direction | `AnimationDirection` | Direction of the Animation |
+| Duration | `TimeSpan` | The duration of the animation. Minimum allowed value is 1ms and maximum allowed value is 24 days. |
+| IterationBehavior | `AnimationIterationBehavior` | The iteration behavior for the key frame animation. |
+| IterationCount | `int` | The number of times to repeat the key frame animation. A value of -1 causes the animation to repeat indefinitely. |
+| KeyFrameCount | `int` | The number of key frames in the KeyFrameAnimation. |
+| StopBehavior | `AnimationStopBehavior` | Specifies how to set the property value when StopAnimation is called. |
+| Target | `String` | Specifies the target for the animation. |
 
 
 The following APIs facilitate the setting of keyframe(s) on the encapsulated KeyFrameAnimation object.
@@ -510,8 +575,8 @@ public static KeyFrameAnimation<Vector4> GenerateVector4KeyFrameAnimation(
     this Compositor compositor);
 ```
  
-## 15.3. Example
-### 15.3.1. Without using CompositionExpressions
+## 18.3. Example
+### 18.3.1. Without using CompositionExpressions
 ```C#
 CubicBezierEasingFunction easeIn = 
     _compositor.CreateCubicBezierEasingFunction(new Vector2(0.0f, 0.51f),
@@ -550,7 +615,7 @@ spriteVisual3.ImplicitAnimations = implicitAnimationCollection;
 ```
 
  
-### 15.3.2. Using CompositionExpressions
+### 18.3.2. Using CompositionExpressions
 ```C#
 CubicBezierEasingFunction easeIn = 
     _compositor.CreateCubicBezierEasingFunction(new Vector2(0.0f, 0.51f),
@@ -590,20 +655,51 @@ implicitAnimationCollection["Offset"] = offsetAnimation.Animation;
 
 spriteVisual3.ImplicitAnimations = implicitAnimationCollection;
 ```
- 
-# 16. APPENDIX A
-# 17. CompositionExpressionContext&lt;T&gt;
+# 19. Custom Cubic Bezier Easing Functions
 
-## 17.1. CompositionExpressionContext&lt;T&gt; Properties
+The following extension methods have been added to `Compositor` to create predefined `CubicBezierEasingFunctions` (these custom cubic bezier easing functions are based on the [Robert Penner's Easing Equations](http://robertpenner.com/easing/) and the values are obtained from [Ceaser CSS Easing Animation Tool](https://matthewlein.com/ceaser/) )
+
+```C#
+public static CubicBezierEasingFunction CreateEaseInBackEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInCircEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInCubicEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInExpoEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInQuadEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInQuartEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInQuintEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInSineEasingFunction();
+
+public static CubicBezierEasingFunction CreateEaseOutBackEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutCircEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutCubicEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutExpoEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutQuadEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutQuartEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutQuintEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutSineEasingFunction();
+
+public static CubicBezierEasingFunction CreateEaseInOutBackEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutCircEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutCubicEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutExpoEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutQuadEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutQuartEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutQuintEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutSineEasingFunction();
+```
+# 20. APPENDIX A
+# 21. CompositionExpressionContext&lt;T&gt;
+
+## 21.1. CompositionExpressionContext&lt;T&gt; Properties
 
 ```
 T StartingValue { get; }
 T CurrentValue { get; }
 T FinalValue { get; }
 ```
-## 17.2. CompositionExpressionContext&lt;T&gt; Functions
+## 21.2. CompositionExpressionContext&lt;T&gt; Functions
 
-### 17.2.1. Scalar Functions
+### 21.2.1. Scalar Functions
 
 ```C#
 public float Abs(float value);
@@ -643,7 +739,7 @@ public float Tan(float value);
 public float ToDegrees(float radians);
 public float ToRadians(float degrees);
 ```
-### 17.2.2. Vector2 Functions
+### 21.2.2. Vector2 Functions
 
 ```C#
 public Vector2 Abs(Vector2 value);
@@ -657,7 +753,7 @@ public Vector2 Scale(Vector2 value, float factor);
 public Vector2 Transform(Vector2 value, Matrix3x2 matrix);
 public Vector2 Vector2(float x, float y);
 ```
-### 17.2.3. Vector3 Functions
+### 21.2.3. Vector3 Functions
 
 ```C#
 public Vector3 Abs(Vector3 value);
@@ -670,7 +766,7 @@ public Vector3 Normalize(Vector3 value);
 public Vector3 Scale(Vector3 value, float factor);
 public Vector3 Vector3(float x, float y, float z);
 ```
-### 17.2.4. Vector4 Functions
+### 21.2.4. Vector4 Functions
 
 ```C#
 public Vector4 Abs(Vector4 value);
@@ -684,7 +780,7 @@ public Vector4 Scale(Vector4 value, float factor);
 public Vector4 Transform(Vector4 value, Matrix4x4 matrix);
 public Vector4 Vector4(float x, float y, float z, float w);
 ```
-### 17.2.5. Matrix3x2 Functions
+### 21.2.5. Matrix3x2 Functions
 
 ```C#
 public Matrix3x2 CreateRotation(float radians);
@@ -700,7 +796,7 @@ public Matrix3x2 Matrix3x2CreateFromScale(Vector2 scale);
 public Matrix3x2 Matrix3x2CreateFromTranslation(Vector2 translation);
 public Matrix3x2 Scale(Matrix3x2 value, float factor);
 ```
-### 17.2.6. Matrix4x4 Functions
+### 21.2.6. Matrix4x4 Functions
 
 ```C#
 public Matrix4x4 CreateScale(Vector3 scale);
@@ -716,7 +812,7 @@ public Matrix4x4 Matrix4x4CreateFromTranslation(Vector3 translation);
 public Matrix4x4 Matrix4x4CreateFromAxisAngle(Vector3 axis, float angle);
 public Matrix4x4 Scale(Matrix4x4 value, float factor);
 ```
-### 17.2.7. Quaternion Functions
+### 21.2.7. Quaternion Functions
 
 ```C#
 public Quaternion Concatenate(Quaternion value, Quaternion value2);
@@ -725,7 +821,7 @@ public Quaternion Normalize(Quaternion value);
 public Quaternion Quaternion(float x, float y, float z, float w);
 public Quaternion Slerp(Quaternion value1, Quaternion value2, float progress);
 ```
-### 17.2.8. Color Functions
+### 21.2.8. Color Functions
 
 ```C#
 public Color ColorLerp(Color colorTo, Color colorFrom, float progression);
@@ -734,7 +830,7 @@ public Color ColorLerpRGB(Color colorTo, Color colorFrom, float progression);
 public Color ColorHsl(float h, float s, float l);
 public Color ColorRgb(byte a, byte r, byte g, byte b);
 ```
-### 17.2.9. Expression Templates - Targets
+### 21.2.9. Expression Templates - Targets
 
 ```C#
 public AmbientLightTarget AmbientLightTarget();
@@ -751,7 +847,7 @@ public SpotLightTarget SpotLightTarget();
 public SurfaceBrushTarget SurfaceBrushTarget();
 public VisualTarget VisualTarget();
 ```
-### 17.2.10. Expression Templates - References
+### 21.2.10. Expression Templates - References
 
 ```C#
 public AmbientLightReference AmbientLightReference(string referenceName);
