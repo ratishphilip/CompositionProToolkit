@@ -129,7 +129,7 @@ The CompositionExpressionContext&lt;T&gt; class provides the following propertie
 
 | Property | Description |
 | ------- | ------- |
-| **StartingValue** | Provides a reference to the original starting value of the property that is being animated.|
+C#| **StartingValue** | Provides a reference to the original starting value of the property that is being animated.|
 | **CurrentValue** | Provides a reference to the currently “known” value of the property |
 | **FinalValue** | Provides a reference to the final value of the animation (if defined) Note: Relevant for Implicit Animations, for explicit, maintains same functionality as StartingValue |
 
@@ -154,7 +154,7 @@ visual1.StartAnimation(() => visual1.RotationAngle, rotationAnimation);
 # 8. Using `new` operator in the Expression
 You can use the new operator within the Expression body to construct new objects. Right now the new operator is supported for the following constructors
 
-```
+```C#
 Vector2(float x, float y);
 Vector3(float x, float y, float z);
 Vector4(float x, float y, float z, float w);
@@ -435,7 +435,6 @@ var offsetAnimation = compositor.CreateVector3ExpressionAnimation();
 offsetAnimation.Expression = c => visualArray[0].Offset + new Vector(20);
 
 visualArray[1].StartAnimation(() => visualArray[1].Offset, offsetAnimation);
-
 ```
 
 # 16. Using List&lt;&gt; in Expression
@@ -477,7 +476,6 @@ var offsetAnimation = compositor.CreateVector3ExpressionAnimation();
 offsetAnimation.Expression = c => visualDictionary["first"].Offset + new Vector(20);
 
 visualDictionary["second"].StartAnimation(() => visualDictionary["second"], offsetAnimation);
-
 ```
 
 # 18. Optimizing the KeyFrameAnimation
