@@ -126,20 +126,12 @@ _The full list of functions available in the **CompositionExpressionContext&lt;T
 
 # 7. Expression Keywords
 The CompositionExpressionContext&lt;T&gt; class provides the following properties which are evaluated as keywords within the Expression
-<<<<<<< HEAD
-| Property | Description |
-| ------- | ------- |
-| StartingValue | Provides a reference to the original starting value of the property that is being animated.|
-| CurrentValue | Provides a reference to the currently “known” value of the property |
-| FinalValue | Provides a reference to the final value of the animation (if defined) Note: Relevant for Implicit Animations, for explicit, maintains same functionality as StartingValue |
-=======
 
 | Property | Description |
 | ------- | ------- |
 | **StartingValue** | Provides a reference to the original starting value of the property that is being animated.|
 | **CurrentValue** | Provides a reference to the currently “known” value of the property |
 | **FinalValue** | Provides a reference to the final value of the animation (if defined) Note: Relevant for Implicit Animations, for explicit, maintains same functionality as StartingValue |
->>>>>>> cf48f4477b022fb72373df750f63fd42fe2e6dbf
 
 Within the Expression, these properties will resolve to the type of the animated property. 
 
@@ -465,8 +457,9 @@ visualList[1].StartAnimation(() => visualList[1].Offset, offsetAnimation);
 
 # 17. Using Dictionary&lt;,&gt; in Expression
 You can use a `Dictionary<TKey, TValue>` within your Expression. 
-`TKey` can be of types - `int`, `float`, `double` or `string`.
-`TValue` should be an object deriving from `CompositionObject`.
+
+**`TKey`** can be of types - `int`, `float`, `double` or `string`.
+**`TValue`** should be an object deriving from `CompositionObject`.
 
 ## 17.1. Example
 ```C#
@@ -493,15 +486,9 @@ visualDictionary["second"].StartAnimation(() => visualDictionary["second"], offs
 
 | Property | Type | Description |
 | ---------|------|------------ |
-<<<<<<< HEAD
-| Key | `float` | The time the key frame should occur at, expressed as a percentage of the animation Duration. Allowed value is from 0.0 to 1.0. |
-| Value | `T` | The type of the property being animated. |
-| Easing | `CompositionEasingFunction` | The easing function to use when interpolating between frames. |
-=======
 | Key | `float` | The time the key frame should occur at, expressed as a percentage of the animation Duration. Allowed value is from 0.0 to 1.0.
 | Value | `T` | The type of the property being animated.
 | Easing | `CompositionEasingFunction` | The easing function to use when interpolating between frames.
->>>>>>> cf48f4477b022fb72373df750f63fd42fe2e6dbf
 
 ## 18.2. KeyFrameAnimation&lt;T&gt;
 To construct a KeyFrame Animation, normally you use one of the constructor methods of the Compositor class that correlates to the structure type of the property you wish to animate.
@@ -516,17 +503,6 @@ To construct a KeyFrame Animation, normally you use one of the constructor metho
 
 | Property | Type | Description |
 | ---------|------|------------ |
-<<<<<<< HEAD
-| Animation | `KeyFrameAnimation` | The encapsulated KeyFrameAnimation object. |
-| DelayTime | `TimeSpan` | The duration by which the animation should be delayed |
-| Direction | `AnimationDirection` | Direction of the Animation |
-| Duration | `TimeSpan` | The duration of the animation. Minimum allowed value is 1ms and maximum allowed value is 24 days. |
-| IterationBehavior | `AnimationIterationBehavior` | The iteration behavior for the key frame animation. |
-| IterationCount | `int` | The number of times to repeat the key frame animation. A value of -1 causes the animation to repeat indefinitely. |
-| KeyFrameCount | `int` | The number of key frames in the KeyFrameAnimation. |
-| StopBehavior | `AnimationStopBehavior` | Specifies how to set the property value when StopAnimation is called. |
-| Target | `String` | Specifies the target for the animation. |
-=======
 | Animation | `KeyFrameAnimation` | The encapsulated KeyFrameAnimation object.
 | DelayTime | `TimeSpan` | The duration by which the animation should be delayed
 | Direction | `AnimationDirection` | Direction of the Animation
@@ -536,8 +512,6 @@ To construct a KeyFrame Animation, normally you use one of the constructor metho
 | KeyFrameCount | `int` | The number of key frames in the KeyFrameAnimation.
 | StopBehavior | `AnimationStopBehavior` | Specifies how to set the property value when StopAnimation is called.
 | Target | `String` | Specifies the target for the animation.
->>>>>>> cf48f4477b022fb72373df750f63fd42fe2e6dbf
-
 
 The following APIs facilitate the setting of keyframe(s) on the encapsulated KeyFrameAnimation object.
 
