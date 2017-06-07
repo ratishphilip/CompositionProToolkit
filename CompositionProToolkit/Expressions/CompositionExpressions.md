@@ -358,20 +358,13 @@ The static class **Scalar** defines several constants related to `Math.PI` as fl
 The following extension methods have been defined on the **Compositor** to create the appropriate `ExpressionAnimation<T>` object.
 
 ```C#
-public static ExpressionAnimation<Color> CreateColorExpressionAnimation(this    
-      Compositor compositor);
-public static ExpressionAnimation<Quaternion> 
-      CreateQuaternionExpressionAnimation(this Compositor compositor);
-public static ExpressionAnimation<float> CreateScalarExpressionAnimation(this 
-      Compositor compositor);
-public static ExpressionAnimation<Vector2> CreateVector2ExpressionAnimation(this 
-      Compositor compositor);
-public static ExpressionAnimation<Vector3> CreateVector3ExpressionAnimation(this 
-      Compositor compositor);
-public static ExpressionAnimation<Vector4> CreateVector4ExpressionAnimation(this 
-      Compositor compositor);
-public static ExpressionAnimation<Matrix4x4> 
-      CreateMatrix4x4ExpressionAnimation(this Compositor compositor);
+public static ExpressionAnimation<Color> CreateColorExpressionAnimation(this Compositor compositor);
+public static ExpressionAnimation<Quaternion> CreateQuaternionExpressionAnimation(this Compositor compositor);
+public static ExpressionAnimation<float> CreateScalarExpressionAnimation(this Compositor compositor);
+public static ExpressionAnimation<Vector2> CreateVector2ExpressionAnimation(this Compositor compositor);
+public static ExpressionAnimation<Vector3> CreateVector3ExpressionAnimation(this Compositor compositor);
+public static ExpressionAnimation<Vector4> CreateVector4ExpressionAnimation(this Compositor compositor);
+public static ExpressionAnimation<Matrix4x4> CreateMatrix4x4ExpressionAnimation(this Compositor compositor);
 ```
 
 After creating the `ExpressionAnimation<T>` object you can set its `Expression` property with the appropriate Expression.
@@ -380,7 +373,7 @@ After creating the `ExpressionAnimation<T>` object you can set its `Expression` 
 In order to avoid providing the property names as string for `StartAnimation` and `StopAnimation` methods of CompositionObject, the following extension methods are provided
 
 ```C#
-public static void StartAnimation(this CompositionObject compositionObject,
+public static void StartAnimation(this CompositionObject compositionObject, 
     Expression<Func<object>> expression, CompositionAnimation animation);
 public static void StartAnimation<T>(this CompositionObject compositionObject,
     Expression<Func<T>> expression, KeyFrameAnimation<T> keyframeAnimation);
@@ -505,17 +498,13 @@ To construct a KeyFrame Animation, normally you use one of the constructor metho
 The following APIs facilitate the setting of keyframe(s) on the encapsulated KeyFrameAnimation object.
 
 ```C#
-public void InsertKeyFrame(float normalizedProgressKey, T value, 
-      CompositionEasingFunction easingFunction = null);
+public void InsertKeyFrame(float normalizedProgressKey, T value, CompositionEasingFunction easingFunction = null);
 public void InsertKeyFrame(KeyFrame<T> keyFrame);
 public void InsertKeyFrames(params KeyFrame<T>[] keyFrames);
-public void InsertExpressionKeyFrame(float normalizedProgressKey, 
-      Expression<CompositionExpression<T>> expression, CompositionEasingFunction 
-      easingFunction = null);
-public void InsertStartingValueKeyFrame(float normalizedProgressKey, 
-      CompositionEasingFunction easingFunction = null);
-public void InsertFinalValueKeyFrame(float normalizedProgressKey,             
-      CompositionEasingFunction easingFunction = null);
+public void InsertExpressionKeyFrame(float normalizedProgressKey, Expression<CompositionExpression<T>> expression,
+    CompositionEasingFunction easingFunction = null);
+public void InsertStartingValueKeyFrame(float normalizedProgressKey, CompositionEasingFunction easingFunction = null);
+public void InsertFinalValueKeyFrame(float normalizedProgressKey, CompositionEasingFunction easingFunction = null);
 ```
 
 The `InsertStartingValueKeyFrame()` and `InsertFinalValueKeyFrame()` allow you to directly specify a **StartingValue** and **FinalValue** keyword respectively in the Expression at the specified keyframe using the specified easing function(if any).
@@ -551,26 +540,19 @@ public KeyFrameAnimation<T> ForTarget(Expression<Func<T>> targetExpression);
 The following extension method is defined for the `Compositor` to create a `KeyFrameAnimation<T>` object for the appropriate animating property
 
 ```C#
-public static KeyFrameAnimation<Color> GenerateColorKeyFrameAnimation(
-    this Compositor compositor);
-public static KeyFrameAnimation<Quaternion> GenerateQuaternionKeyFrameAnimation(
-    this Compositor compositor);
-public static KeyFrameAnimation<float> GenerateScalarKeyFrameAnimation(
-    this Compositor compositor);
-public static KeyFrameAnimation<Vector2> GenerateVector2KeyFrameAnimation(
-    this Compositor compositor);
-public static KeyFrameAnimation<Vector3> GenerateVector3KeyFrameAnimation(
-    this Compositor compositor);
-public static KeyFrameAnimation<Vector4> GenerateVector4KeyFrameAnimation(
-    this Compositor compositor);
+public static KeyFrameAnimation<Color> GenerateColorKeyFrameAnimation(this Compositor compositor);
+public static KeyFrameAnimation<Quaternion> GenerateQuaternionKeyFrameAnimation(this Compositor compositor);
+public static KeyFrameAnimation<float> GenerateScalarKeyFrameAnimation(this Compositor compositor);
+public static KeyFrameAnimation<Vector2> GenerateVector2KeyFrameAnimation(this Compositor compositor);
+public static KeyFrameAnimation<Vector3> GenerateVector3KeyFrameAnimation(this Compositor compositor);
+public static KeyFrameAnimation<Vector4> GenerateVector4KeyFrameAnimation(this Compositor compositor);
 ```
  
 ## 18.3. Example
 ### 18.3.1. Without using CompositionExpressions
 ```C#
-CubicBezierEasingFunction easeIn = 
-    _compositor.CreateCubicBezierEasingFunction(new Vector2(0.0f, 0.51f),
-                                                new Vector2(1.0f, 0.51f));
+CubicBezierEasingFunction easeIn = _compositor.CreateCubicBezierEasingFunction(new Vector2(0.0f, 0.51f),
+                                                                               new Vector2(1.0f, 0.51f));
                                                                                
 // Example 1
 var enterAnimation = _compositor.CreateScalarKeyFrameAnimation();
@@ -607,9 +589,8 @@ spriteVisual3.ImplicitAnimations = implicitAnimationCollection;
  
 ### 18.3.2. Using CompositionExpressions
 ```C#
-CubicBezierEasingFunction easeIn = 
-    _compositor.CreateCubicBezierEasingFunction(new Vector2(0.0f, 0.51f),
-                                                new Vector2(1.0f, 0.51f));
+CubicBezierEasingFunction easeIn = _compositor.CreateCubicBezierEasingFunction(new Vector2(0.0f, 0.51f),
+                                                                               new Vector2(1.0f, 0.51f));
 
 // Example 1
 var enterAnimation =_compositor.CreateKeyFrameAnimation<float>()
