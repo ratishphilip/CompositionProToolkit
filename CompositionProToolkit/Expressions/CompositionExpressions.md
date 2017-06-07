@@ -134,7 +134,6 @@ The CompositionExpressionContext&lt;T&gt; class provides the following propertie
 | **FinalValue** | Provides a reference to the final value of the animation (if defined) Note: Relevant for Implicit Animations, for explicit, maintains same functionality as StartingValue |
 
 Within the Expression, these properties will resolve to the type of the animated property. 
-
  
 ## 7.1. Example
 
