@@ -350,8 +350,8 @@ The static class **Scalar** defines several constants related to `Math.PI` as fl
 - **`Scalar.PiByFour`** - one fourth of `(float)Math.PI` radians ( or **45 degrees**).
 - **`Scalar.PiBySix`** - one sixth of `(float)Math.PI` radians ( or **30 degrees**).
 - **`Scalar.ThreePiByTwo`** - three times half of `(float)Math.PI` radians ( or **270 degrees**).
-- **`Scalar.DegreeToRadians`** - 1 degree in radians.
-- **`Scalar.RadiansToDegree`** - 1 radian in degrees.
+- **`Scalar.DegreesToRadians`** - 1 degree in radians.
+- **`Scalar.RadiansToDegrees`** - 1 radian in degrees.
 
 # 13. Defining the ExpressionAnimation&lt;T&gt;
 
