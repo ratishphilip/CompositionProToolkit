@@ -854,18 +854,6 @@ will create the following
 
 # Utility methods and Constants
 
-## Float constants
-The following floating point constants have been defined in the static class **Float**
-- **Float.Pi** - same as (float)Math.PI radians (**180 degrees**).
-- **Float.TwoPi** - Two times (float)Math.PI radians (**360 degrees**).
-- **Float.PiByTwo** - half of (float)Math.PI radians (**90 degrees**).
-- **Float.PiByThree** - one third of (float)Math.PI radians (**600 degrees**).
-- **Float.PiByFour** - one fourth of (float)Math.PI radians (**45 degrees**).
-- **Float.PiBySix** - one sixth of (float)Math.PI radians (**30 degrees**).
-- **Float.ThreePiByTwo** - three times half of (float)Math.PI radians (**270 degrees**).      
-- **Float.DegreeToRadians** - 1 degree in radians.
-- **Float.RadiansToDegree** - 1 radian in degrees.
-
 ## ToSingle extension method
 
 The **Single()** extension method for **System.Double** is now marked as **obsolete**. _Your code will still work, but you will receive a warning during build_.
@@ -874,6 +862,7 @@ The **Single()** extension method is now replaced with **ToSingle()** extension 
 
 # Updates Chronology
 
+## v0.6.0  (**Tuesday, June 13, 2017**) - Refactored `CompositionProToolkit.Expressions` namespace, added new extension methods.
 ## v0.5.1 
 (**Tuesday, January 31, 2017**) -Added `ICanvasStroke`, `CanvasElement`, `CanvasRenderLayer`, Win2d Mini Language support, `CanvasPathBuilder` extension methods and `CanvasDrawingSession` extension methods.
 
