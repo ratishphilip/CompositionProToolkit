@@ -862,7 +862,9 @@ The **Single()** extension method is now replaced with **ToSingle()** extension 
 
 # Updates Chronology
 
-## v0.6.0  (**Tuesday, June 13, 2017**) - Refactored `CompositionProToolkit.Expressions` namespace, added new extension methods.
+## v0.6.0  
+(**Tuesday, June 13, 2017**) - Refactored `CompositionProToolkit.Expressions` namespace, added new extension methods.
+
 ## v0.5.1 
 (**Tuesday, January 31, 2017**) -Added `ICanvasStroke`, `CanvasElement`, `CanvasRenderLayer`, Win2d Mini Language support, `CanvasPathBuilder` extension methods and `CanvasDrawingSession` extension methods.
 
