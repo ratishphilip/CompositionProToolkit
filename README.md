@@ -1,15 +1,10 @@
 <img src="https://cloud.githubusercontent.com/assets/7021835/16889814/1784ed78-4a9e-11e6-80d0-7c2084d6c960.png" alt="CompositionProToolkit"></img>
 
-# What's new in v0.5.1?
-- ICanvasStroke & CanvasStroke
-- IGeometrySurface now supports ICanvasStroke to render outline to CanvasGeometry
-- Win2d Mini Language specification
-- New extension methods for CanvasPathBuilder
-- New extension methods for CanvasDrawingSession (supporting ICanvasStroke)
-- CanvasObject class (replaces CanvasGeometryParser)
-- CanvasRenderLayer
-- CanvasElement
-- Utility methods and Constants
+# What's new in v0.6?
+- CompositionProToolkit.Expressions namespace has been refactored.
+- Create Expressions for ExpressionAnimations in a simpler way.
+- New extension methods have been added.
+- Check out [CompositionProToolkit.Expressions documentation](https://github.com/ratishphilip/CompositionProToolkit/tree/master/CompositionProToolkit/Expressions) for more details.
 
 
 # Table of Contents
