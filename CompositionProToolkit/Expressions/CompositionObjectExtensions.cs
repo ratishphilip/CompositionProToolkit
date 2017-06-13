@@ -24,11 +24,12 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 //
 
 using System;
 using System.Linq.Expressions;
+using System.Numerics;
 using Windows.UI.Composition;
 
 namespace CompositionProToolkit.Expressions
@@ -53,6 +54,38 @@ namespace CompositionProToolkit.Expressions
         }
 
         /// <summary>
+        /// Starts the given KeyFrameAnimation&lt;&gt; on the property specified by the given expression.
+        /// The expression is converted to the appropriate property string by the
+        /// CompositionExpressionEngine
+        /// </summary>
+        /// <typeparam name="T">Type of the property to be animated.</typeparam>
+        /// <param name="compositionObject">CompositionObject</param>
+        /// <param name="expression">Lambda expression defining the property on 
+        /// which the animation has to be started.</param>
+        /// <param name="keyframeAnimation">The KeyFrameAnimation to run on the specified property.</param>
+        public static void StartAnimation<T>(this CompositionObject compositionObject,
+            Expression<Func<T>> expression, KeyFrameAnimation<T> keyframeAnimation)
+        {
+            compositionObject.StartAnimation(CompositionExpressionEngine.ParseExpression(expression), keyframeAnimation.Animation);
+        }
+
+        /// <summary>
+        /// Connects an ExpressionAnimation&lt;T&gt; with the specified property of the object 
+        /// and starts the animation.
+        /// </summary>
+        /// <typeparam name="T">Type of the property to be animated</typeparam>
+        /// <param name="compositionObject">The object on whose property the animation has to
+        /// be started.</param>
+        /// <param name="expression">Lambda expression representing the specified property to be
+        /// animated.</param>
+        /// <param name="expressionAnimation">The ExpressionAnimation&lt;T&gt; to run on the specified property.</param>
+        public static void StartAnimation<T>(this CompositionObject compositionObject,
+            Expression<Func<T>> expression, ExpressionAnimation<T> expressionAnimation)
+        {
+            compositionObject.StartAnimation(CompositionExpressionEngine.ParseExpression(expression), expressionAnimation.Animation);
+        }
+
+        /// <summary>
         /// Stops the given animation on the property specified by the given expression.
         /// The expression is converted to the appropriate property string by the
         /// CompositionExpressionEngine 
@@ -72,10 +105,10 @@ namespace CompositionProToolkit.Expressions
         /// properties of the CompositionObject.
         /// </summary>
         /// <param name="compositionObject">CompositionObject</param>
-        /// <returns></returns>
-        public static string ScaleXY(this CompositionObject compositionObject)
+        /// <returns>Vector2</returns>
+        public static Vector2 ScaleXY(this CompositionObject compositionObject)
         {
-            return "Scale.XY";
+            return new Vector2();
         }
     }
 }

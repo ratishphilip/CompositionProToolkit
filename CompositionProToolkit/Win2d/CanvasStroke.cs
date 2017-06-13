@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 // 
 
 using System.Numerics;
@@ -44,17 +44,17 @@ namespace CompositionProToolkit.Win2d
         #region Properties
 
         /// <summary>
-        /// Gets the brush with which the stroke will be rendered
+        /// Gets or sets the brush with which the stroke will be rendered
         /// </summary>
-        public ICanvasBrush Brush { get; }
+        public ICanvasBrush Brush { get; set; }
         /// <summary>
-        /// Gets the width of the stroke
+        /// Gets or sets the width of the stroke
         /// </summary>
-        public float Width { get; }
+        public float Width { get; set; }
         /// <summary>
-        /// Gets the Style of the stroke
+        /// Gets or sets the Style of the stroke
         /// </summary>
-        public CanvasStrokeStyle Style { get; }
+        public CanvasStrokeStyle Style { get; set; }
         /// <summary>
         /// Gets or sets the Transform matrix of the Stroke brush.
         /// </summary>

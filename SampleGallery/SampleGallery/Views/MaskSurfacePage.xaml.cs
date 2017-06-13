@@ -5,6 +5,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
+using CompositionDeviceHelper;
 using CompositionProToolkit;
 using CompositionProToolkit.Expressions;
 using Microsoft.Graphics.Canvas.Geometry;
@@ -41,9 +42,10 @@ namespace SampleGallery.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            //SampleHelper deviceHelper = new SampleHelper();
+            DeviceLostHelper lostHelper = new DeviceLostHelper();
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
             _generator = CompositionGeneratorFactory.GetCompositionGenerator(_compositor);
-
             _width = 300f;
             _height = 300f;
             // Create the combined geometry

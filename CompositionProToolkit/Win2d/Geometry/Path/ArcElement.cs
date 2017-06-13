@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 // 
 
 using System;
@@ -134,7 +134,7 @@ namespace CompositionProToolkit.Win2d.Geometry.Path
             Single.TryParse(match.Groups["Angle"].Value, out _angle);
             // Convert angle to radians as CanvasPathBuilder.AddArc() method
             // requires the angle to be in radians
-            _angle *= Float.DegreeToRadians;
+            _angle *= Scalar.DegreesToRadians;
             Enum.TryParse(match.Groups["IsLargeArc"].Value, out _arcSize);
             Enum.TryParse(match.Groups["SweepDirection"].Value, out _sweepDirection);
             Single.TryParse(match.Groups["X"].Value, out _x);

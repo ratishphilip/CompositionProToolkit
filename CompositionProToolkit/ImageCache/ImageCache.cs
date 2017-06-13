@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 // 
 
 using System;
@@ -39,6 +39,10 @@ using Windows.Storage.Streams;
 
 namespace CompositionProToolkit
 {
+    /// <summary>
+    /// Delegate which handles the progress.
+    /// </summary>
+    /// <param name="progress">Progress value.</param>
     public delegate void CacheProgressHandler(int progress);
 
     /// <summary>

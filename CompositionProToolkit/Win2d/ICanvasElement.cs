@@ -24,13 +24,14 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 // 
 
 using System.Collections.Generic;
 using System.Numerics;
 using Windows.UI.Composition;
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Brushes;
 
 namespace CompositionProToolkit.Win2d
 {
@@ -66,6 +67,23 @@ namespace CompositionProToolkit.Win2d
         /// geometry</param>
         void Render(CanvasDrawingSession session, float width, float height, Vector2 offset,
             Vector4 padding, float rotation);
+
+        /// <summary>
+        /// Renders the layers of the CanvasElement, based on the specified dimensions,
+        /// offset, padding and rotation, on a Canvas.
+        /// </summary>
+        /// <param name="session">CanvasDrawingSession</param>
+        /// <param name="width">Target width of the rendered geometry</param>
+        /// <param name="height">Target height of the rendered geometry</param>
+        /// <param name="offset">Offset of the rendered geometry</param>
+        /// <param name="padding">Padding of the surface on which the geometry
+        /// is rendered.</param>
+        /// <param name="rotation">Rotation angle (in radians) about the center of the 
+        /// geometry</param>
+        /// <param name="fill">Overrides layers having valid fill with given fill.</param>
+        /// <param name="stroke">Ovderrides layers having valid stroke with given stroke.</param>
+        void Render(CanvasDrawingSession session, float width, float height, Vector2 offset,
+            Vector4 padding, float rotation, ICanvasBrush fill, ICanvasStroke stroke);
 
         /// <summary>
         /// Creates a SpriteVisual which contains SpriteVisuals representing each of the 

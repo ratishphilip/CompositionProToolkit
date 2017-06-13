@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 //
  
 using System;
@@ -434,7 +434,7 @@ namespace CompositionProToolkit.Controls
         }
 
         /// <summary>
-        /// Checks if the region starting at (column, col) & having a width and 
+        /// Checks if the region starting at (column, col) &amp; having a width and 
         /// height of 'width' and 'height' respectively has any set bits.
         /// </summary>
         /// <param name="row">one column below the Row in which the region starts</param>

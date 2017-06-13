@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 // 
 
 using System.Collections.Generic;
@@ -48,7 +48,7 @@ namespace CompositionProToolkit.Win2d.Core
         // Whitespace or comma
         private const string SoC = @"(?:\s+|\s*,\s*)";
         // Whitespace or comma or a minus/plus sign (look ahead)
-        private const string Sep = @"(?:\s+|\s*,\s*|(?=[-+]))";
+        private const string Sep = @"(?:\s+|\s*,\s*|(?=[-+.]))";
         // Whitespace or comma or a '#' sign (look ahead)
         private const string ColorSep = @"(?:\s+|\s*,\s*|(?=[#]))";
 
@@ -164,7 +164,7 @@ namespace CompositionProToolkit.Win2d.Core
         private static readonly string HorizontalLineRegexString = $"{Spacer}(?<Main>(?<Command>[Hh]){Spacer}{HorizontalLineAttributes})" +
                                                                    $"(?<Additional>{Sep}{Float})*";
         // Vertical Line
-        private static readonly string VerticalLineAttributes = $"(?<X>{Float})";
+        private static readonly string VerticalLineAttributes = $"(?<Y>{Float})";
         private static readonly string VerticalLineRegexString = $"{Spacer}(?<Main>(?<Command>[Vv]){Spacer}{VerticalLineAttributes})" +
                                                                  $"(?<Additional>{Sep}{Float})*";
         // Quadratic Bezier

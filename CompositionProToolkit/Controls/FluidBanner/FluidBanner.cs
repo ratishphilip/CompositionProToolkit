@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 // 
 
 using System;
@@ -40,7 +40,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using CompositionProToolkit.Common;
 using CompositionProToolkit.Expressions;
 
 namespace CompositionProToolkit.Controls
@@ -52,18 +51,16 @@ namespace CompositionProToolkit.Controls
     {
         #region Constants
 
-        public const int DefaultDecodeWidth = 0;
-        public const int DefaultDecodeHeight = 0;
-        public const float ScaleDownFactor = 0.7f;
-        public const float HoverScaleFactor = 1.1f;
-        public const double DefaultItemGap = 30;
-        public const float TargetOpacity = 0f;
-        public static TimeSpan DefaultOpacityAnimationDuration = TimeSpan.FromMilliseconds(900);
-        public static TimeSpan DefaultScaleAnimationDuration = TimeSpan.FromMilliseconds(900);
-        public static TimeSpan InsetClipAnimationDuration = TimeSpan.FromMilliseconds(600);
-        public static TimeSpan InsetAnimationDuration = TimeSpan.FromMilliseconds(500);
-        public static TimeSpan InsetAnimationDelayDuration = TimeSpan.FromMilliseconds(500);
-        public static readonly Color DefaultItemBackground = Colors.Black;
+        private const float ScaleDownFactor = 0.7f;
+        private const float HoverScaleFactor = 1.1f;
+        private const double DefaultItemGap = 30;
+        private const float TargetOpacity = 0f;
+        private static readonly TimeSpan DefaultOpacityAnimationDuration = TimeSpan.FromMilliseconds(900);
+        private static readonly TimeSpan DefaultScaleAnimationDuration = TimeSpan.FromMilliseconds(900);
+        private static readonly TimeSpan InsetClipAnimationDuration = TimeSpan.FromMilliseconds(600);
+        private static readonly TimeSpan InsetAnimationDuration = TimeSpan.FromMilliseconds(500);
+        private static readonly TimeSpan InsetAnimationDelayDuration = TimeSpan.FromMilliseconds(500);
+        private static readonly Color DefaultItemBackground = Colors.Black;
 
         #endregion
 

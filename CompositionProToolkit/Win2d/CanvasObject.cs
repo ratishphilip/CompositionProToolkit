@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 // 
 
 using System.Numerics;
@@ -107,7 +107,7 @@ namespace CompositionProToolkit.Win2d
         /// The hexadecimal color string should be in #RRGGBB or #AARRGGBB format.
         /// The '#' character is optional.
         /// The HDR color string should be in R G B A format. 
-        /// (R, G, B & A should have value in the range between 0 and 1, inclusive)
+        /// (R, G, B &amp; A should have value in the range between 0 and 1, inclusive)
         /// </summary>
         /// <param name="colorString">Color string in Hexadecimal or HDR format</param>
         /// <returns>Color</returns>
@@ -122,7 +122,7 @@ namespace CompositionProToolkit.Win2d
         /// The hexadecimal color string should be in #RRGGBB or #AARRGGBB format.
         /// The '#' character is optional.
         /// The HDR color string should be in R G B A format. 
-        /// (R, G, B & A should have value in the range between 0 and 1, inclusive)
+        /// (R, G, B &amp; A should have value in the range between 0 and 1, inclusive)
         /// </summary>
         /// <param name="colorString">Color string in Hexadecimal or HDR format</param>
         /// <param name="color">Output Color object</param>

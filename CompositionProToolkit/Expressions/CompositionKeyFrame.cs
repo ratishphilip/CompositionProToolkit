@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 //
 
 using System;
@@ -63,6 +63,14 @@ namespace CompositionProToolkit.Expressions
 
         #region Construction / Initialization
 
+        /// <summary>
+        /// ctor    
+        /// </summary>
+        /// <param name="normalizedProgressKey">The time the key frame should occur at, 
+        /// expressed as a percentage of the animation Duration. Allowed value is from 0.0 
+        /// to 1.0.</param>
+        /// <param name="value">The expression used to calculate the value of the key frame.</param>
+        /// <param name="easing">The easing function to use when interpolating between frames.</param>
         public KeyFrame(float normalizedProgressKey, T value, CompositionEasingFunction easing = null)
         {
             Key = normalizedProgressKey;
@@ -93,6 +101,9 @@ namespace CompositionProToolkit.Expressions
 
         #region Construction / Initialization
 
+        /// <summary>
+        /// ctor
+        /// </summary>
         static KeyFrameAnimationHelper()
         {
             AnimationTypes = new Dictionary<Type, Type>()
@@ -105,11 +116,12 @@ namespace CompositionProToolkit.Expressions
                 [typeof(Vector4)] = typeof(Vector4KeyFrameAnimation)
             };
 
-            // Get all 
+            // Get all CreateXXXKeyFrameAnimation methods
             InitMethods = typeof(Compositor).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
-                                      .Where(m => m.Name.StartsWith("Create") && m.Name.EndsWith("KeyFrameAnimation"))
-                                      .ToDictionary(m => m.ReturnType, m => m);
+                .Where(m => m.Name.StartsWith("Create") && m.Name.EndsWith("KeyFrameAnimation"))
+                .ToDictionary(m => m.ReturnType, m => m);
 
+            // Get all InsertKeyFrame methods for supported types
             InsertMethods = new Dictionary<Type, MethodInfo>();
 
             foreach (var animationType in AnimationTypes)
@@ -119,8 +131,8 @@ namespace CompositionProToolkit.Expressions
                 var methodInfo = animationType.Value.GetMethods(BindingFlags.Public |
                                                                 BindingFlags.Instance |
                                                                 BindingFlags.Static)
-                                            .FirstOrDefault(m => m.Name.Equals("InsertKeyFrame") &&
-                                                                 (m.GetParameters().Length == 3));
+                    .FirstOrDefault(m => m.Name.Equals("InsertKeyFrame") &&
+                                         (m.GetParameters().Length == 3));
 
                 InsertMethods[animationType.Key] = methodInfo;
             }
@@ -130,6 +142,12 @@ namespace CompositionProToolkit.Expressions
 
         #region Internal APIs
 
+        /// <summary>
+        /// Creates the XXXKeyFrameAnimation based on the specified type
+        /// </summary>
+        /// <typeparam name="T">Type of property being animated by the KeyFrameAnimation</typeparam>
+        /// <param name="compositor">Compositor</param>
+        /// <returns>KeyFrameAnimation</returns>
         internal static KeyFrameAnimation CreateAnimation<T>(Compositor compositor)
         {
             if (compositor == null)
@@ -167,8 +185,8 @@ namespace CompositionProToolkit.Expressions
         /// </summary>
         public TimeSpan DelayTime
         {
-            get { return Animation.DelayTime; }
-            set { Animation.DelayTime = value; }
+            get => Animation.DelayTime;
+            set => Animation.DelayTime = value;
         }
 
         /// <summary>
@@ -176,8 +194,8 @@ namespace CompositionProToolkit.Expressions
         /// </summary>
         public AnimationDirection Direction
         {
-            get { return Animation.Direction; }
-            set { Animation.Direction = value; }
+            get => Animation.Direction;
+            set => Animation.Direction = value;
         }
 
         /// <summary>
@@ -185,8 +203,8 @@ namespace CompositionProToolkit.Expressions
         /// </summary>
         public TimeSpan Duration
         {
-            get { return Animation.Duration; }
-            set { Animation.Duration = value; }
+            get => Animation.Duration;
+            set => Animation.Duration = value;
         }
 
         /// <summary>
@@ -194,8 +212,8 @@ namespace CompositionProToolkit.Expressions
         /// </summary>
         public AnimationIterationBehavior IterationBehavior
         {
-            get { return Animation.IterationBehavior; }
-            set { Animation.IterationBehavior = value; }
+            get => Animation.IterationBehavior;
+            set => Animation.IterationBehavior = value;
         }
 
         /// <summary>
@@ -204,8 +222,8 @@ namespace CompositionProToolkit.Expressions
         /// </summary>
         public int IterationCount
         {
-            get { return Animation.IterationCount; }
-            set { Animation.IterationCount = value; }
+            get => Animation.IterationCount;
+            set => Animation.IterationCount = value;
         }
 
         /// <summary>
@@ -218,8 +236,8 @@ namespace CompositionProToolkit.Expressions
         /// </summary>
         public AnimationStopBehavior StopBehavior
         {
-            get { return Animation.StopBehavior; }
-            set { Animation.StopBehavior = value; }
+            get => Animation.StopBehavior;
+            set => Animation.StopBehavior = value;
         }
 
         /// <summary>
@@ -227,8 +245,8 @@ namespace CompositionProToolkit.Expressions
         /// </summary>
         public string Target
         {
-            get { return Animation.Target; }
-            set { Animation.Target = value; }
+            get => Animation.Target;
+            set => Animation.Target = value;
         }
 
         #endregion
@@ -239,7 +257,7 @@ namespace CompositionProToolkit.Expressions
         /// Ctor
         /// </summary>
         /// <param name="animation">The KeyFrameAnimation to encapsulate.</param>
-        public KeyFrameAnimation(KeyFrameAnimation animation)
+        internal KeyFrameAnimation(KeyFrameAnimation animation)
         {
             Animation = animation;
         }
@@ -262,10 +280,10 @@ namespace CompositionProToolkit.Expressions
             if (KeyFrameAnimationHelper.InsertMethods.ContainsKey(type) && KeyFrameAnimationHelper.InsertMethods[type] != null)
             {
                 KeyFrameAnimationHelper.InsertMethods[type].Invoke(Animation, new object[] {
-                                                                                               normalizedProgressKey,
-                                                                                               value,
-                                                                                               easingFunction
-                                                                                           });
+                    normalizedProgressKey,
+                    value,
+                    easingFunction
+                });
             }
         }
 
@@ -299,10 +317,34 @@ namespace CompositionProToolkit.Expressions
         /// a percentage of the animation Duration. Allowed value is from 0.0 to 1.0.</param>
         /// <param name="expression">The expression which has to be converted to string to calculate the value of the KeyFrame.</param>
         /// <param name="easingFunction">The easing function to use when interpolating between frames.</param>
-        public void InsertExpressionKeyFrame(float normalizedProgressKey, Expression<CompositionLambda<T>> expression,
+        public void InsertExpressionKeyFrame(float normalizedProgressKey, Expression<CompositionExpression<T>> expression,
             CompositionEasingFunction easingFunction = null)
         {
             Animation.InsertExpressionKeyFrame(normalizedProgressKey, expression, easingFunction);
+        }
+
+        /// <summary>
+        /// Inserts a KeyFrame in the KeyFrameAnimation by specifying the 'this.StartingValue' Expression.
+        /// </summary>
+        /// <param name="normalizedProgressKey">The time the key frame should occur at, expressed as 
+        /// a percentage of the animation Duration. Allowed value is from 0.0 to 1.0.</param>
+        /// <param name="easingFunction">The easing function to use when interpolating between frames.</param>
+        public void InsertStartingValueKeyFrame(float normalizedProgressKey, CompositionEasingFunction easingFunction = null)
+        {
+            Animation.InsertExpressionKeyFrame(normalizedProgressKey,
+                Animation.Compositor.CreateStartingValueExpression<T>(), easingFunction);
+        }
+
+        /// <summary>
+        /// Inserts a KeyFrame in the KeyFrameAnimation by specifying the 'this.FinalValue' Expression.
+        /// </summary>
+        /// <param name="normalizedProgressKey">The time the key frame should occur at, expressed as 
+        /// a percentage of the animation Duration. Allowed value is from 0.0 to 1.0.</param>
+        /// <param name="easingFunction">The easing function to use when interpolating between frames.</param>
+        public void InsertFinalValueKeyFrame(float normalizedProgressKey, CompositionEasingFunction easingFunction = null)
+        {
+            Animation.InsertExpressionKeyFrame(normalizedProgressKey,
+                Animation.Compositor.CreateFinalValueExpression<T>(), easingFunction);
         }
 
         #endregion
@@ -352,7 +394,7 @@ namespace CompositionProToolkit.Expressions
         public KeyFrameAnimation<T> Repeats(int count)
         {
             if (count < 0)
-                throw new ArgumentOutOfRangeException(nameof(count), "Repetition count should have a value greater than or equal to 0. " + 
+                throw new ArgumentOutOfRangeException(nameof(count), "Repetition count should have a value greater than or equal to 0. " +
                                                                      "Use RepeatsForever() method to repeat the animation indefinitely.");
             Animation.IterationBehavior = AnimationIterationBehavior.Count;
             Animation.IterationCount = count;
@@ -367,7 +409,7 @@ namespace CompositionProToolkit.Expressions
         public KeyFrameAnimation<T> RepeatsForever()
         {
             Animation.IterationBehavior = AnimationIterationBehavior.Forever;
-            Animation.IterationCount = -1;
+            Animation.IterationCount = 1;
             return this;
         }
 
@@ -388,7 +430,7 @@ namespace CompositionProToolkit.Expressions
         /// </summary>
         /// <param name="targetExpression">Expression for the target</param>
         /// <returns>KeyFrameAnimation&lt;T&gt;</returns>
-        public KeyFrameAnimation<T> ForTarget(Expression<Func<object>> targetExpression)
+        public KeyFrameAnimation<T> ForTarget(Expression<Func<T>> targetExpression)
         {
             Animation.Target = CompositionExpressionEngine.ParseExpression(targetExpression);
             return this;

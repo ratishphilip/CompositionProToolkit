@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 //  
 
 using Windows.Devices.Input;
@@ -48,10 +48,25 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public enum DragButtonType
         {
+            /// <summary>
+            /// Mouse Left Button
+            /// </summary>
             MouseLeftButton,
+            /// <summary>
+            /// Mouse Middle Button
+            /// </summary>
             MouseMiddleButton,
+            /// <summary>
+            /// Mouse Right Button
+            /// </summary>
             MouseRightButton,
+            /// <summary>
+            /// Pen
+            /// </summary>
             Pen,
+            /// <summary>
+            /// Touch
+            /// </summary>
             Touch
         }
 

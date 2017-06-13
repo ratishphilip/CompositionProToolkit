@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 // 
 
 using System.Collections.Generic;
@@ -132,10 +132,10 @@ namespace CompositionProToolkit.Win2d
         }
 
         /// <summary>
-        /// Creates a SpriteVisual which contains SpriteVisuals representing each of the 
-        /// render layers in the CanvasElement
+        /// Renders the layers of the CanvasElement, based on the specified dimensions,
+        /// offset, padding and rotation, on a Canvas.
         /// </summary>
-        /// <param name="generator">ICompositionGenerator</param>
+        /// <param name="session">CanvasDrawingSession</param>
         /// <param name="width">Target width of the rendered geometry</param>
         /// <param name="height">Target height of the rendered geometry</param>
         /// <param name="offset">Offset of the rendered geometry</param>
@@ -143,7 +143,44 @@ namespace CompositionProToolkit.Win2d
         /// is rendered.</param>
         /// <param name="rotation">Rotation angle (in radians) about the center of the 
         /// geometry</param>
-        /// <returns>SpriteVisual</returns>
+        /// <param name="fill">Overrides layers having valid fill with the given fill.</param>
+        /// <param name="stroke">Ovderrides layers having valid stroke with the given stroke.</param>
+        public void Render(CanvasDrawingSession session, float width, float height, Vector2 offset,
+            Vector4 padding, float rotation, ICanvasBrush fill, ICanvasStroke stroke)
+        {
+            for (var i = 0; i < Layers.Count(); i++)
+            {
+                var geometry = GetGeometry(i, width, height, offset, padding, rotation);
+                if (geometry == null)
+                    continue;
+
+                var oldFill = GetFill(i, width, height, offset, padding, rotation);
+                if (oldFill != null)
+                {
+                    session.FillGeometry(geometry, fill);
+                }
+
+                var oldStroke = GetStroke(i, width, height, offset, padding, rotation);
+                if (oldStroke != null)
+                {
+                    session.DrawGeometry(geometry, stroke.Brush, stroke.Width, stroke.Style);
+                }
+            }
+        }   
+        
+        /// <summary>
+                                                                                     /// Creates a SpriteVisual which contains SpriteVisuals representing each of the 
+                                                                                     /// render layers in the CanvasElement
+                                                                                     /// </summary>
+                                                                                     /// <param name="generator">ICompositionGenerator</param>
+                                                                                     /// <param name="width">Target width of the rendered geometry</param>
+                                                                                     /// <param name="height">Target height of the rendered geometry</param>
+                                                                                     /// <param name="offset">Offset of the rendered geometry</param>
+                                                                                     /// <param name="padding">Padding of the surface on which the geometry
+                                                                                     /// is rendered.</param>
+                                                                                     /// <param name="rotation">Rotation angle (in radians) about the center of the 
+                                                                                     /// geometry</param>
+                                                                                     /// <returns>SpriteVisual</returns>
         public SpriteVisual CreateVisual(ICompositionGenerator generator, float width, float height,
             Vector2 offset, Vector4 padding, float rotation)
         {

@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 // 
 
 using System;
@@ -41,29 +41,35 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using CompositionProToolkit.Common;
 using CompositionProToolkit.Expressions;
 
 namespace CompositionProToolkit.Controls
 {
+    /// <summary>
+    /// A wrap panel which allows you to rearrange the children simply by 
+    /// dragging and placing them in the desired location. The remaining 
+    /// children will automatically reposition themselves to accommodate the 
+    /// dragged item in the new location. The children can be instances of 
+    /// any class which derives from UIElement (or its subclasses). 
+    /// </summary>
     public sealed class FluidWrapPanel : Panel
     {
         #region Constants
 
-        public const double NormalScale = 1.0;
-        public const double DragScaleDefault = 1.2;
-        public const double NormalOpacity = 1.0;
-        public const double DragOpacityDefault = 0.7;
-        public const double OpacityMin = 0.1d;
-        public const double DefaultItemWidth = 10.0;
-        public const double DefaultItemHeight = 10.0;
-        public const int ZIndexNormal = 0;
-        public const int ZIndexIntermediate = 1;
-        public const int ZIndexDrag = 10;
-        public static TimeSpan InitializationAnimationDuration = TimeSpan.FromMilliseconds(300);
-        public static TimeSpan DefaultFluidAnimationDuration = TimeSpan.FromMilliseconds(570);
-        public static TimeSpan DefaultOpacityAnimationDuration = TimeSpan.FromMilliseconds(300);
-        public static TimeSpan DefaultScaleAnimationDuration = TimeSpan.FromMilliseconds(400);
+        private const double NormalScale = 1.0;
+        private const double DragScaleDefault = 1.2;
+        private const double NormalOpacity = 1.0;
+        private const double DragOpacityDefault = 0.7;
+        private const double OpacityMin = 0.1d;
+        private const double DefaultItemWidth = 10.0;
+        private const double DefaultItemHeight = 10.0;
+        private const int ZIndexNormal = 0;
+        private const int ZIndexIntermediate = 1;
+        private const int ZIndexDrag = 10;
+        private static readonly TimeSpan InitializationAnimationDuration = TimeSpan.FromMilliseconds(300);
+        private static readonly TimeSpan DefaultFluidAnimationDuration = TimeSpan.FromMilliseconds(570);
+        private static readonly TimeSpan DefaultOpacityAnimationDuration = TimeSpan.FromMilliseconds(300);
+        private static readonly TimeSpan DefaultScaleAnimationDuration = TimeSpan.FromMilliseconds(400);
 
         #endregion
 

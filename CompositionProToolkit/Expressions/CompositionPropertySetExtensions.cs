@@ -24,55 +24,50 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 //
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
+using Windows.UI;
 using Windows.UI.Composition;
 
 namespace CompositionProToolkit.Expressions
 {
+    /// <summary>
+    /// Extension methods for CompositionPropertySet
+    /// </summary>
     public static class CompositionPropertySetExtensions
     {
         #region Fields
 
         private static readonly Dictionary<Type, MethodInfo> InsertMethods;
         private static readonly Dictionary<Type, MethodInfo> TryGetMethods;
-        private static readonly Type[] Floatables;
 
         #endregion
 
         #region Static Constructor
 
+        /// <summary>
+        /// Static Ctor
+        /// </summary>
         static CompositionPropertySetExtensions()
         {
-            // Get all the Insertxxx methods
+            // Get all the InsertXXX methods
             InsertMethods = typeof(CompositionPropertySet)
-                                .GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                                .Where(m => m.Name.StartsWith("Insert"))
-                                .ToDictionary(m => m.GetParameters()[1].ParameterType,
-                                              m => m);
-            // Get all the TryGetxxx methods
+                .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                .Where(m => m.Name.StartsWith("Insert"))
+                .ToDictionary(m => m.GetParameters()[1].ParameterType,
+                    m => m);
+            // Get all the TryGetXXX methods
             TryGetMethods = typeof(CompositionPropertySet)
-                                .GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                                .Where(m => m.Name.StartsWith("TryGet"))
-                                .ToDictionary(m => m.GetParameters()[1].ParameterType.GetElementType(),
-                                              m => m);
-
-            Floatables = new[]{
-                                  typeof(short),
-                                  typeof(ushort),
-                                  typeof(int),
-                                  typeof(uint),
-                                  typeof(long),
-                                  typeof(ulong),
-                                  typeof(char),
-                                  typeof(double),
-                                  typeof(decimal)
-                              };
+                .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                .Where(m => m.Name.StartsWith("TryGet"))
+                .ToDictionary(m => m.GetParameters()[1].ParameterType.GetElementType(),
+                    m => m);
         }
 
         #endregion
@@ -89,23 +84,33 @@ namespace CompositionProToolkit.Expressions
         public static void Insert<T>(this CompositionPropertySet propertySet, string key, object input)
         {
             var type = typeof(T);
-            while (!type.IsPublic())
+            var parameter = input;
+
+            // Can the type be converted to float?
+            if (CompositionExpressionEngine.Floatables.Contains(type))
             {
-                type = type.BaseType();
+                type = typeof(float);
+                parameter = Convert.ToSingle(parameter);
             }
 
-            MethodInfo methodInfo;
-            // Find matching Insertxxx method for the given type
-            if (InsertMethods.TryGetValue(type, out methodInfo) ||
-                ((type.BaseType() != null) && InsertMethods.TryGetValue(type.BaseType(), out methodInfo)))
-            {
-                // Once a matching Insertxxx method is found, Invoke it!
-                methodInfo.Invoke(propertySet, new[] { key, input });
-            }
+            // Find matching InsertXXX method for the given type or if there
+            // is no InsertXXX method directly matching the parameter type, then
+            // find if the parameter type derives from any of the types which are the 
+            // keys in the InsertMethods dictionary
+            var methodKey = InsertMethods.Keys.FirstOrDefault(t => (t == type) || t.IsAssignableFrom(type));
 
             // If no matching method is found, then raise an exception
-            throw new ArgumentException($"Cannot set the key \'{key}\' for the value of type \'{type.FullName}\'");
+            if (methodKey == null)
+            {
+                throw new ArgumentException($"No suitable method was found to set the key '{key}' " +
+                                            $"for the value of type '{type}' in the CompositionPropertySet!");
+            }
+
+            // Once a matching Insertxxx method is found, Invoke it!
+            InsertMethods[methodKey].Invoke(propertySet, new[] { key, parameter });
         }
+
+        #region GetXXX Methods
 
         /// <summary>
         /// Retrieves an object for the given key, from the CompositionPropertySet
@@ -122,31 +127,147 @@ namespace CompositionProToolkit.Expressions
                 type = type.BaseType();
             }
 
-            MethodInfo methodInfo;
-            // Find matching TryGetxxx method for the given type
-            if (TryGetMethods.TryGetValue(type, out methodInfo) ||
-                ((type.BaseType() != null) && TryGetMethods.TryGetValue(type.BaseType(), out methodInfo)))
-            {
-                var result = default(T);
-                // Once a matching TryGetxxx method is found, Invoke it!
-                var methodResult = (CompositionGetValueStatus)methodInfo.Invoke(propertySet, new object[] { key, result });
-
-                switch (methodResult)
-                {
-                    case CompositionGetValueStatus.Succeeded:
-                        return result;
-                    case CompositionGetValueStatus.TypeMismatch:
-                        throw new ArgumentException($"The key \'{key}\' does not return data of type "
-                                                    + $"\'{type.FullName}\' in the CompositionPropertySet!");
-                    case CompositionGetValueStatus.NotFound:
-                        throw new ArgumentException($"The key \'{key}\' was not found in the CompositionPropertySet!");
-                }
-
-            }
+            // Find matching TryGetXXX method for the given type or if there
+            // is no TryGetXXX method directly matching the parameter type, then
+            // find if the parameter type derives from any of the types which are the 
+            // keys in the TryGetMethods dictionary
+            var methodKey = TryGetMethods.Keys.FirstOrDefault(t => (t == type) || t.IsAssignableFrom(type));
 
             // If no matching method is found, then raise an exception
+            if (methodKey == null)
+            {
+                throw new ArgumentException($"No suitable method was found to obtain the value of type '{type}' " +
+                                            $"for the key '{key}' in the CompositionPropertySet!");
+            }
+
+            var result = default(T);
+            // Once a matching TryGetXXX method is found, Invoke it!
+            var methodResult =
+                (CompositionGetValueStatus)TryGetMethods[methodKey].Invoke(propertySet, new object[] { key, result });
+
+            switch (methodResult)
+            {
+                case CompositionGetValueStatus.Succeeded:
+                    return result;
+                case CompositionGetValueStatus.TypeMismatch:
+                    throw new ArgumentException($"The key \'{key}\' does not return data of type "
+                                                + $"\'{type.FullName}\' in the CompositionPropertySet!");
+                case CompositionGetValueStatus.NotFound:
+                    throw new ArgumentException($"The key \'{key}\' was not found in the CompositionPropertySet!");
+            }
+
             throw new ArgumentException($"The key \'{key}\' was not found in the CompositionPropertySet!");
         }
+
+        /// <summary>
+        /// Retrieves a Boolean value of the property defined in 
+        /// the CompositionPropertySet using the given key
+        /// </summary>
+        /// <param name="propertySet">CompositionPropertySet</param>
+        /// <param name="key">Key of the object to retrieve</param>
+        /// <returns>Boolean</returns>
+        public static bool GetBoolean(this CompositionPropertySet propertySet, string key)
+        {
+            return propertySet.Get<bool>(key);
+        }
+
+        /// <summary>
+        /// Retrieves a Color value of the property defined in 
+        /// the CompositionPropertySet using the given key
+        /// </summary>
+        /// <param name="propertySet">CompositionPropertySet</param>
+        /// <param name="key">Key of the object to retrieve</param>
+        /// <returns>Color</returns>
+        public static Color GetColor(this CompositionPropertySet propertySet, string key)
+        {
+            return propertySet.Get<Color>(key);
+        }
+
+        /// <summary>
+        /// Retrieves a Matrix3x2 value of the property defined in 
+        /// the CompositionPropertySet using the given key
+        /// </summary>
+        /// <param name="propertySet">CompositionPropertySet</param>
+        /// <param name="key">Key of the object to retrieve</param>
+        /// <returns>Matrix3x2</returns>
+        public static Matrix3x2 GetMatrix3x2(this CompositionPropertySet propertySet, string key)
+        {
+            return propertySet.Get<Matrix3x2>(key);
+        }
+
+        /// <summary>
+        /// Retrieves a Matrix4x4 value of the property defined in 
+        /// the CompositionPropertySet using the given key
+        /// </summary>
+        /// <param name="propertySet">CompositionPropertySet</param>
+        /// <param name="key">Key of the object to retrieve</param>
+        /// <returns>Matrix4x4</returns>
+        public static Matrix4x4 GetMatrix4x4(this CompositionPropertySet propertySet, string key)
+        {
+            return propertySet.Get<Matrix4x4>(key);
+        }
+
+        /// <summary>
+        /// Retrieves a Quaternion value of the property defined in 
+        /// the CompositionPropertySet using the given key
+        /// </summary>
+        /// <param name="propertySet">CompositionPropertySet</param>
+        /// <param name="key">Key of the object to retrieve</param>
+        /// <returns>Quaternion</returns>
+        public static Quaternion GetQuaternion(this CompositionPropertySet propertySet, string key)
+        {
+            return propertySet.Get<Quaternion>(key);
+        }
+
+        /// <summary>
+        /// Retrieves a Scalar value of the property defined in 
+        /// the CompositionPropertySet using the given key
+        /// </summary>
+        /// <param name="propertySet">CompositionPropertySet</param>
+        /// <param name="key">Key of the object to retrieve</param>
+        /// <returns>Scalar</returns>
+        public static float GetScalar(this CompositionPropertySet propertySet, string key)
+        {
+            return propertySet.Get<float>(key);
+        }
+
+        /// <summary>
+        /// Retrieves a Vector2 value of the property defined in 
+        /// the CompositionPropertySet using the given key
+        /// </summary>
+        /// <param name="propertySet">CompositionPropertySet</param>
+        /// <param name="key">Key of the object to retrieve</param>
+        /// <returns>Vector2</returns>
+        public static Vector2 GetVector2(this CompositionPropertySet propertySet, string key)
+        {
+            return propertySet.Get<Vector2>(key);
+        }
+
+        /// <summary>
+        /// Retrieves a Vector3 value of the property defined in 
+        /// the CompositionPropertySet using the given key
+        /// </summary>
+        /// <param name="propertySet">CompositionPropertySet</param>
+        /// <param name="key">Key of the object to retrieve</param>
+        /// <returns>Vector3</returns>
+        public static Vector3 GetVector3(this CompositionPropertySet propertySet, string key)
+        {
+            return propertySet.Get<Vector3>(key);
+        }
+
+        /// <summary>
+        /// Retrieves a Vector4 value of the property defined in 
+        /// the CompositionPropertySet using the given key
+        /// </summary>
+        /// <param name="propertySet">CompositionPropertySet</param>
+        /// <param name="key">Key of the object to retrieve</param>
+        /// <returns>Vector4</returns>
+        public static Vector4 GetVector4(this CompositionPropertySet propertySet, string key)
+        {
+            return propertySet.Get<Vector4>(key);
+        }
+
+        #endregion
 
         #endregion
 
@@ -168,31 +289,27 @@ namespace CompositionProToolkit.Expressions
                 var parameter = property.GetValue(input);
 
                 // Can the type be converted to float?
-                if (Floatables.Contains(type))
+                if (CompositionExpressionEngine.Floatables.Contains(type))
                 {
                     type = typeof(float);
                     parameter = Convert.ToSingle(parameter);
                 }
 
-                while (!type.IsPublic())
+                // Find matching InsertXXX method for the given type or if there
+                // is no InsertXXX method directly matching the parameter type, then
+                // find if the parameter type derives from any of the types which are the 
+                // keys in the InsertMethods dictionary
+                var methodKey = InsertMethods.Keys.FirstOrDefault(t => (t == type) || t.IsAssignableFrom(type));
+
+                // If no matching method is found, then raise an exception
+                if (methodKey == null)
                 {
-                    type = type.BaseType();
+                    throw new ArgumentException($"No suitable method was found to set the key '{property.Name}' " +
+                                                $"for the value of type '{type}' in the CompositionPropertySet!");
                 }
 
-                MethodInfo methodInfo;
-                // Find matching Insertxxx method for the given type
-                if (InsertMethods.TryGetValue(type, out methodInfo) ||
-                    ((type.BaseType() != null) && InsertMethods.TryGetValue(type.BaseType(), out methodInfo)))
-                {
-                    // Once a matching Insertxxx method is found, Invoke it!
-                    methodInfo.Invoke(propertySet, new[] { property.Name, parameter });
-                }
-                else
-                {
-                    // If no matching method is found, then raise an exception
-                    throw new ArgumentException($"Cannot set the key \'{property.Name}\' " +
-                                                $"for the value of type \'{type.FullName}\'");
-                }
+                // Once a matching Insertxxx method is found, Invoke it!
+                InsertMethods[methodKey].Invoke(propertySet, new[] { property.Name, parameter });
             }
 
             return propertySet;

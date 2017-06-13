@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 // 
 
 using System;
@@ -39,7 +39,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
-using CompositionProToolkit.Common;
 using CompositionProToolkit.Expressions;
 using CompositionProToolkit.Win2d;
 using CompositionProToolkit.Win2d.Core;
@@ -55,11 +54,29 @@ namespace CompositionProToolkit.Controls
     /// </summary>
     public enum TransitionModeType
     {
+        /// <summary>
+        /// The loaded image fades into view.
+        /// </summary>
         FadeIn,
+        /// <summary>
+        /// The loaded image slides from the right to left of the ImageFrame.
+        /// </summary>
         SlideLeft,
+        /// <summary>
+        /// The loaded image slides from the left to right of the ImageFrame.
+        /// </summary>
         SlideRight,
+        /// <summary>
+        /// The loaded image slides from the bottom to top of the ImageFrame.
+        /// </summary>
         SlideUp,
+        /// <summary>
+        /// The loaded image slides from the top to the bottom of the ImageFrame.
+        /// </summary>
         SlideDown,
+        /// <summary>
+        /// The loaded image zooms into view.
+        /// </summary>
         ZoomIn
     }
 
@@ -75,6 +92,9 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public object Source { get; private set; }
 
+        /// <summary>
+        /// Optional message
+        /// </summary>
         public string Message { get; private set; }
 
         #endregion

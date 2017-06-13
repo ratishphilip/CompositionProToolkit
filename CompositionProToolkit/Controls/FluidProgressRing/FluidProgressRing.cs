@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 // 
 
 using System;
@@ -441,7 +441,7 @@ namespace CompositionProToolkit.Controls
             // gamma is the angle between adjacent nodes when maxNodes number of nodes are arranged in a circle
             _gamma = 360f / MaxNodes;
             // beta is the angle a node must travel after hitting the adjacent node
-            _beta = 2f * (float)(Math.Asin(_nodeRadius / _ringRadius) * Float.RadiansToDegree);
+            _beta = 2f * (float)(Math.Asin(_nodeRadius / _ringRadius) * Scalar.RadiansToDegrees);
             // alpha is the smallest angle a node must travel before hitting the adjacent node
             _alpha = _gamma - _beta;
             // phi is the angle occupied by (MaxNodes - ActiveNodes) number of nodes

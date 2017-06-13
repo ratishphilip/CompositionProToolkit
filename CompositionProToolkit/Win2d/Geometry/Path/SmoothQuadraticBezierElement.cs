@@ -24,14 +24,13 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 // 
 
 using System;
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
-using CompositionProToolkit.Common;
 using CompositionProToolkit.Win2d.Common;
 using CompositionProToolkit.Win2d.Core;
 using Microsoft.Graphics.Canvas.Geometry;

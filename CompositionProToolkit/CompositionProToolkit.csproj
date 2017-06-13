@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9300E54C-338C-4AD7-BAAC-BCBD32A660CF}</ProjectGuid>
+    <ProjectGuid>{7E1B6899-A1FD-4799-9BF3-B56190E9BE74}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CompositionProToolkit</RootNamespace>
     <AssemblyName>CompositionProToolkit</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.14393.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.16190.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.16190.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -26,6 +26,7 @@
     <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\CompositionProToolkit.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -46,6 +47,8 @@
     <PlatformTarget>x86</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
@@ -57,6 +60,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
+    <DocumentationFile>bin\x86\Release\CompositionProToolkit.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
@@ -79,6 +83,7 @@
     <PlatformTarget>ARM</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
+    <DocumentationFile>bin\ARM\Release\CompositionProToolkit.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
@@ -101,23 +106,12 @@
     <PlatformTarget>x64</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
+    <DocumentationFile>bin\x64\Release\CompositionProToolkit.xml</DocumentationFile>
   </PropertyGroup>
-  <ItemGroup>
-    <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <None Include="project.json" />
-  </ItemGroup>
   <PropertyGroup>
-    <GenAPIAdditionalParameters>$(GenAPIAdditionalParameters) -excludeApiList "$(MSBuildProjectDirectory)\GenAPI_ExcludeAPIs.txt"</GenAPIAdditionalParameters>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="DoubleExtensions.cs" />
-    <Compile Include="SingleConstants.cs" />
-    <Compile Include="Core\CompositionDefinitions.cs" />
-    <Compile Include="Common\Utils.cs" />
-    <Compile Include="Core\CompositionGenerator.cs" />
-    <Compile Include="Core\CompositionGeneratorFactory.cs" />
-    <Compile Include="Core\CompositionPathInfo.cs" />
-    <Compile Include="Core\CompositionExtensions.cs" />
     <Compile Include="Controls\FluidBanner\FluidBanner.cs" />
     <Compile Include="Controls\FluidProgressRing\FluidProgressRing.cs" />
     <Compile Include="Controls\FluidWrapPanel\FluidBitMatrix.cs" />
@@ -131,31 +125,59 @@
     <Compile Include="Expressions\CompositionKeyFrame.cs" />
     <Compile Include="Expressions\CompositionObjectExtensions.cs" />
     <Compile Include="Expressions\CompositionPropertySetExtensions.cs" />
-    <Compile Include="Expressions\CompositorExtensions.cs" />
+    <Compile Include="CompositorExtensions.cs" />
+    <Compile Include="Expressions\ExpressionAnimation.cs" />
+    <Compile Include="Expressions\ExpressionParameter.cs" />
     <Compile Include="Expressions\ExpressionToken.cs" />
+    <Compile Include="Expressions\Templates\AmbientLight.cs" />
+    <Compile Include="Expressions\Templates\ColorBrush.cs" />
+    <Compile Include="Expressions\Templates\DistantLight.cs" />
+    <Compile Include="Expressions\Templates\DropShadow.cs" />
+    <Compile Include="Expressions\Templates\ExpressionTemplate.cs" />
+    <Compile Include="Expressions\Templates\InsetClip.cs" />
+    <Compile Include="Expressions\Templates\InteractionTracker.cs" />
+    <Compile Include="Expressions\Templates\ManipulationPropertySet.cs" />
+    <Compile Include="Expressions\Templates\NineGridBrush.cs" />
+    <Compile Include="Expressions\Templates\PointerPositionPropertySet.cs" />
+    <Compile Include="Expressions\Templates\PointLight.cs" />
+    <Compile Include="Expressions\Templates\SpotLight.cs" />
+    <Compile Include="Expressions\Templates\SurfaceBrush.cs" />
+    <Compile Include="Expressions\Templates\Visual.cs" />
     <Compile Include="Expressions\TypeExtensions.cs" />
-    <Compile Include="Core\GeometrySurface.cs" />
-    <Compile Include="Core\IRenderSurface.cs" />
-    <Compile Include="Core\IGeometrySurface.cs" />
-    <Compile Include="Core\IImageSurface.cs" />
-    <Compile Include="ImageCache\HttpUriCacheHandler.cs" />
     <Compile Include="ImageCache\ApplicationUriCacheHandler.cs" />
+    <Compile Include="ImageCache\HttpUriCacheHandler.cs" />
     <Compile Include="ImageCache\ICacheHandlers.cs" />
     <Compile Include="ImageCache\ImageCache.cs" />
-    <Compile Include="Core\ICompositionGenerator.cs" />
-    <Compile Include="Core\ICompositionGeneratorInternal.cs" />
-    <Compile Include="Core\ImageSurface.cs" />
-    <Compile Include="Core\IMaskSurface.cs" />
-    <Compile Include="Core\MaskSurface.cs" />
     <Compile Include="ImageCache\StorageFileCacheHandler.cs" />
     <Compile Include="ImageCache\StreamCacheHandler.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="CompositionDefinitions.cs" />
+    <Compile Include="CompositionExtensions.cs" />
+    <Compile Include="CompositionGenerator.cs" />
+    <Compile Include="CompositionGeneratorFactory.cs" />
+    <Compile Include="CompositionPathInfo.cs" />
+    <Compile Include="DoubleExtensions.cs" />
+    <Compile Include="GeometrySurface.cs" />
+    <Compile Include="ICompositionGenerator.cs" />
+    <Compile Include="ICompositionGeneratorInternal.cs" />
+    <Compile Include="IGeometrySurface.cs" />
+    <Compile Include="IImageSurface.cs" />
+    <Compile Include="ImageSurface.cs" />
+    <Compile Include="IMaskSurface.cs" />
+    <Compile Include="IRenderSurface.cs" />
+    <Compile Include="MaskSurface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scalar.cs" />
     <Compile Include="Win2d\CanvasDrawingSessionExtensions.cs" />
     <Compile Include="Win2d\CanvasElement.cs" />
     <Compile Include="Win2d\CanvasObject.cs" />
+    <Compile Include="Win2d\CanvasPathBuilderExtensions.cs" />
     <Compile Include="Win2d\CanvasRenderLayer.cs" />
     <Compile Include="Win2d\CanvasStroke.cs" />
+    <Compile Include="Win2d\Common\CommonDefinitions.cs" />
     <Compile Include="Win2d\Core\CanvasRoundRect.cs" />
+    <Compile Include="Win2d\Core\PathElementFactory.cs" />
+    <Compile Include="Win2d\Core\RegexFactory.cs" />
     <Compile Include="Win2d\Geometry\Brush\AbstractCanvasBrushElement.cs" />
     <Compile Include="Win2d\Geometry\Brush\ICanvasBrushElement.cs" />
     <Compile Include="Win2d\Geometry\Brush\LinearGradientBrushElement.cs" />
@@ -166,21 +188,10 @@
     <Compile Include="Win2d\Geometry\Path\AbstractPathElement.cs" />
     <Compile Include="Win2d\Geometry\Path\ArcElement.cs" />
     <Compile Include="Win2d\Geometry\Path\CanvasEllipseFigure.cs" />
-    <Compile Include="Win2d\Geometry\Path\CanvasRectangleFigure.cs" />
-    <Compile Include="Win2d\Geometry\Path\CanvasRoundRectangleFigure.cs" />
-    <Compile Include="Win2d\Geometry\Stroke\AbstractCanvasStrokeElement.cs" />
-    <Compile Include="Win2d\Geometry\Stroke\CanvasStrokeElement.cs" />
-    <Compile Include="Win2d\Geometry\Stroke\CanvasStrokeStyleElement.cs" />
-    <Compile Include="Win2d\Geometry\Stroke\ICanvasStrokeElement.cs" />
-    <Compile Include="Win2d\Geometry\Stroke\ICanvasStrokeStyleElement.cs" />
-    <Compile Include="Win2d\ICanvasRenderLayer.cs" />
-    <Compile Include="Win2d\ICanvasStroke.cs" />
-    <Compile Include="Win2d\ICanvasElement.cs" />
-    <Compile Include="Win2d\Parsers\CanvasBrushParser.cs" />
-    <Compile Include="Win2d\Parsers\CanvasGeometryParser.cs" />
-    <Compile Include="Win2d\CanvasPathBuilderExtensions.cs" />
     <Compile Include="Win2d\Geometry\Path\CanvasPathFigure.cs" />
     <Compile Include="Win2d\Geometry\Path\CanvasPolygonFigure.cs" />
+    <Compile Include="Win2d\Geometry\Path\CanvasRectangleFigure.cs" />
+    <Compile Include="Win2d\Geometry\Path\CanvasRoundRectangleFigure.cs" />
     <Compile Include="Win2d\Geometry\Path\ClosePathElement.cs" />
     <Compile Include="Win2d\Geometry\Path\CubicBezierElement.cs" />
     <Compile Include="Win2d\Geometry\Path\FillRuleElement.cs" />
@@ -188,17 +199,41 @@
     <Compile Include="Win2d\Geometry\Path\ICanvasPathElement.cs" />
     <Compile Include="Win2d\Geometry\Path\LineElement.cs" />
     <Compile Include="Win2d\Geometry\Path\MoveToElement.cs" />
-    <Compile Include="Win2d\Core\PathElementFactory.cs" />
     <Compile Include="Win2d\Geometry\Path\QuadraticBezierElement.cs" />
-    <Compile Include="Win2d\Core\RegexFactory.cs" />
     <Compile Include="Win2d\Geometry\Path\SmoothCubicBezierElement.cs" />
     <Compile Include="Win2d\Geometry\Path\SmoothQuadraticBezierElement.cs" />
     <Compile Include="Win2d\Geometry\Path\VerticalLineElement.cs" />
-    <Compile Include="Win2d\Common\CommonDefinitions.cs" />
+    <Compile Include="Win2d\Geometry\Stroke\AbstractCanvasStrokeElement.cs" />
+    <Compile Include="Win2d\Geometry\Stroke\CanvasStrokeElement.cs" />
+    <Compile Include="Win2d\Geometry\Stroke\CanvasStrokeStyleElement.cs" />
+    <Compile Include="Win2d\Geometry\Stroke\ICanvasStrokeElement.cs" />
+    <Compile Include="Win2d\Geometry\Stroke\ICanvasStrokeStyleElement.cs" />
+    <Compile Include="Win2d\ICanvasElement.cs" />
+    <Compile Include="Win2d\ICanvasRenderLayer.cs" />
+    <Compile Include="Win2d\ICanvasStroke.cs" />
+    <Compile Include="Win2d\Parsers\CanvasBrushParser.cs" />
+    <Compile Include="Win2d\Parsers\CanvasGeometryParser.cs" />
     <Compile Include="Win2d\Parsers\CanvasStrokeParser.cs" />
     <Compile Include="Win2d\Parsers\CanvasStrokeStyleParser.cs" />
     <Compile Include="Win2d\Parsers\ColorParser.cs" />
     <EmbeddedResource Include="Properties\CompositionProToolkit.rd.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
+      <Version>5.3.3</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
+      <Version>2.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Win2D.uwp">
+      <Version>1.20.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CompositionDeviceHelper\CompositionDeviceHelper.vcxproj">
+      <Project>{7123ac5e-dee5-4373-9ac5-4f85478598c4}</Project>
+      <Name>CompositionDeviceHelper</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\Generic.xaml">
@@ -206,20 +241,10 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>@echo Copying '$(TargetFileName)' to $(ProjectDir)..\Nuget\runtimes\win10-$(PlatformName)\lib\uap10.0
-copy /Y $(TargetPath) $(ProjectDir)..\Nuget\runtimes\win10-$(PlatformName)\lib\uap10.0
-@echo Copying Theme files
-copy /Y $(ProjectDir)Themes\*.xaml $(ProjectDir)..\Nuget\runtimes\win10-$(PlatformName)\lib\uap10.0\$(TargetName)\Themes
-copy /Y $(TargetDir)*.xr.xml $(ProjectDir)..\Nuget\runtimes\win10-$(PlatformName)\lib\uap10.0\$(TargetName)
-copy /Y $(TargetDir)*.pri $(ProjectDir)..\Nuget\runtimes\win10-$(PlatformName)\lib\uap10.0
-</PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

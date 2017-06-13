@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 // 
 
 using System;
@@ -106,9 +106,9 @@ namespace CompositionProToolkit.Win2d
             }
 
             // First Semi-Ellipse
-            pathBuilder.AddArc(new Vector2(x - radiusX, y), radiusX, radiusY, Float.Pi, CanvasSweepDirection.Clockwise, CanvasArcSize.Large);
+            pathBuilder.AddArc(new Vector2(x - radiusX, y), radiusX, radiusY, Scalar.Pi, CanvasSweepDirection.Clockwise, CanvasArcSize.Large);
             // Second Semi-Ellipse
-            pathBuilder.AddArc(new Vector2(x + radiusX, y), radiusX, radiusY, Float.Pi, CanvasSweepDirection.Clockwise, CanvasArcSize.Large);
+            pathBuilder.AddArc(new Vector2(x + radiusX, y), radiusX, radiusY, Scalar.Pi, CanvasSweepDirection.Clockwise, CanvasArcSize.Large);
             // End Figure
             pathBuilder.EndFigure(CanvasFigureLoop.Closed);
         }
@@ -148,8 +148,8 @@ namespace CompositionProToolkit.Win2d
             }
 
             // Calculate the first vertex location based on the number of sides
-            var angle = Float.TwoPi / numSides;
-            var startAngle = numSides % 2 == 1 ? Float.PiByTwo : Float.PiByTwo - (angle / 2f);
+            var angle = Scalar.TwoPi / numSides;
+            var startAngle = numSides % 2 == 1 ? Scalar.PiByTwo : Scalar.PiByTwo - (angle / 2f);
 
             var startX = x + (float)(radius * Math.Cos(startAngle));
             var startY = y - (float)(radius * Math.Sin(startAngle));
@@ -279,7 +279,7 @@ namespace CompositionProToolkit.Win2d
             var radiusX = rect.TopRight.X - rect.RightTop.X;
             var radiusY = rect.TopRight.Y - rect.RightTop.Y;
             var center = new Vector2(rect.RightTop.X, rect.TopRight.Y);
-            pathBuilder.AddArc(center, radiusX, radiusY, 3f * Float.PiByTwo, Float.PiByTwo);
+            pathBuilder.AddArc(center, radiusX, radiusY, 3f * Scalar.PiByTwo, Scalar.PiByTwo);
 
             // Right line
             pathBuilder.AddLine(rect.BottomRight);
@@ -288,7 +288,7 @@ namespace CompositionProToolkit.Win2d
             radiusX = rect.BottomRight.X - rect.RightBottom.X;
             radiusY = rect.RightBottom.Y - rect.BottomRight.Y;
             center = new Vector2(rect.RightBottom.X, rect.BottomRight.Y);
-            pathBuilder.AddArc(center, radiusX, radiusY, 0f, Float.PiByTwo);
+            pathBuilder.AddArc(center, radiusX, radiusY, 0f, Scalar.PiByTwo);
 
             // Bottom line
             pathBuilder.AddLine(rect.LeftBottom);
@@ -297,7 +297,7 @@ namespace CompositionProToolkit.Win2d
             radiusX = rect.LeftBottom.X - rect.BottomLeft.X;
             radiusY = rect.LeftBottom.Y - rect.BottomLeft.Y;
             center = new Vector2(rect.LeftBottom.X, rect.BottomLeft.Y);
-            pathBuilder.AddArc(center, radiusX, radiusY, Float.PiByTwo, Float.PiByTwo);
+            pathBuilder.AddArc(center, radiusX, radiusY, Scalar.PiByTwo, Scalar.PiByTwo);
 
             // Left line
             pathBuilder.AddLine(rect.TopLeft);
@@ -306,7 +306,7 @@ namespace CompositionProToolkit.Win2d
             radiusX = rect.LeftTop.X - rect.TopLeft.X;
             radiusY = rect.TopLeft.Y - rect.LeftTop.Y;
             center = new Vector2(rect.LeftTop.X, rect.TopLeft.Y);
-            pathBuilder.AddArc(center, radiusX, radiusY, 2f * Float.PiByTwo, Float.PiByTwo);
+            pathBuilder.AddArc(center, radiusX, radiusY, 2f * Scalar.PiByTwo, Scalar.PiByTwo);
 
             // End path
             pathBuilder.EndFigure(CanvasFigureLoop.Closed);

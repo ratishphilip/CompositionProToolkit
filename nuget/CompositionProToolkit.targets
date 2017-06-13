@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="_ValidatePlatformFoo" BeforeTargets="Build">
+    <Error Condition="'$(TargetExt)' == '.exe' AND '$(Platform)' != 'x86' AND '$(Platform)' != 'x64' AND '$(Platform)' != 'ARM'"
+           Text="Unsupported platform value '$(Platform)'. The $(MSBuildThisFileName) package requires the Platform to be set to x86, x64, or ARM for executable applications." />
+  </Target>
+
+  <!-- ensure we have a reference to the C++ CRT which may not be present in C#/VB/JS applications -->
+  <ItemGroup>
+    <SDKReference Include="Microsoft.VCLibs, Version=14.0" />
+  </ItemGroup>
+
+  <!-- If the project.json file is missing assume a packages.config
+       based project and add the NuGet v3 assets.  -->
+  <ItemGroup Condition="!Exists('project.json') AND !Exists('$(MSBuildProjectName).project.json') AND '$(TargetPlatformIdentifier)' == 'UAP'">
+
+    <PropertyGroup>
+      <CompositionDeviceHelper-Platform Condition="'$(Platform)' == 'Win32'">x86</CompositionDeviceHelper-Platform>
+        <CompositionDeviceHelper-Platform Condition="'$(Platform)' != 'Win32'">$(Platform)</CompositionDeviceHelper-Platform>
+    </PropertyGroup>
+
+    <Reference Include="$(MSBuildThisFileDirectory)..\..\ref\uap10.0\CompositionDeviceHelper.winmd">
+      <!-- Native WinMDs require implementation metadata that tells the 
+           packaging tasks where to look for the native dll to generate activation
+           metadata, we use just the short name then set up the native dll as a
+           a copy local asset.  In nuget v3 projects this is done automatically by 
+           the msbuild task -->
+      <Implementation>CompositionDeviceHelper.dll</Implementation>
+    </Reference>
+    <ReferenceCopyLocalPaths Include="$(MSBuildThisFileDirectory)..\..\runtimes\win10-$(CompositionDeviceHelper-Platform)\native\CompositionDeviceHelper.dll" />
+  </ItemGroup>
+
+</Project>

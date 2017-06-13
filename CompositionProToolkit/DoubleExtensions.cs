@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 //
 
 using System;
@@ -36,25 +36,6 @@ namespace CompositionProToolkit
     /// </summary>
     public static class DoubleExtensions
     {
-        /// <summary>
-        /// Converts double value to float
-        /// </summary>
-        /// <param name="value">double value</param>
-        /// <returns>float</returns>
-        [Obsolete("This extension method is obsolete. Use the Double.ToSingle() extension method instead.")]
-        public static float Single(this double value)
-        {
-            // Double to float conversion can overflow.
-            try
-            {
-                return Convert.ToSingle(value);
-            }
-            catch (OverflowException ex)
-            {
-                throw new ArgumentOutOfRangeException("Cannot convert the double value to float!", ex);
-            }
-        }
-
         /// <summary>
         /// Converts double value to float
         /// </summary>

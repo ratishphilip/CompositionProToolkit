@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.5.1
+// CompositionProToolkit v0.6.0
 //
 
 using System.Collections.Generic;
@@ -39,16 +39,16 @@ namespace CompositionProToolkit.Expressions
     /// </summary>
     internal enum BracketType
     {
-        None = 0,               //
-        Round = 1,              // ( )
-        Square = 2,             // [ ]
-        Curly = 3,              // { }
-        Angle = 4,              // < >
-        Apostrophe = 5,         // ' '
-        Quotes = 6,             // " "
-        AngleXml = 7,           // &lt; &gt;
+        None =          0,      //
+        Round =         1,      // ( )
+        Square =        2,      // [ ]
+        Curly =         3,      // { }
+        Angle =         4,      // < >
+        Apostrophe =    5,      // ' '
+        Quotes =        6,      // " "
+        AngleXml =      7,      // &lt; &gt;
         ApostropheXml = 8,      // &apos; &apos;
-        QuotesXml = 9           // &quot; &quot;
+        QuotesXml =     9       // &quot; &quot;
     }
 
     /// <summary>
@@ -60,12 +60,21 @@ namespace CompositionProToolkit.Expressions
     {
         #region APIs
 
-        public abstract void Write(StringBuilder sb);
+        /// <summary>
+        /// Abstract write method. Converts the token to a 
+        /// corresponding string using the specified StringBuilder.
+        /// </summary>
+        /// <param name="sb">StringBuilder</param>
+        internal abstract void Write(StringBuilder sb);
 
         #endregion
 
         #region Overrides
 
+        /// <summary>
+        /// Provides the string representation of the ExpressionToken
+        /// </summary>
+        /// <returns>String</returns>
         public override string ToString()
         {
             var sb = new StringBuilder();
@@ -89,7 +98,11 @@ namespace CompositionProToolkit.Expressions
 
         #region Construction / Initialization
 
-        public SimpleExpressionToken(string text)
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="text">Content of the token.</param>
+        internal SimpleExpressionToken(string text)
         {
             Text = text;
         }
@@ -98,7 +111,12 @@ namespace CompositionProToolkit.Expressions
 
         #region Overrides
 
-        public override void Write(StringBuilder sb)
+        /// <summary>
+        /// Converts the token to a corresponding string 
+        /// using the specified StringBuilder.
+        /// </summary>
+        /// <param name="sb">StringBuilder</param>
+        internal override void Write(StringBuilder sb)
         {
             sb.Append(Text);
         }
@@ -123,27 +141,48 @@ namespace CompositionProToolkit.Expressions
 
         #region Construction / Initialization
 
-        public CompositeExpressionToken(BracketType bracketType = BracketType.None,
-                    bool addCommas = false)
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="bracketType"></param>
+        /// <param name="addCommas"></param>
+        internal CompositeExpressionToken(BracketType bracketType = BracketType.None,
+            bool addCommas = false)
         {
             SetBrackets(bracketType);
             _addCommas = addCommas;
             _tokens = new List<ExpressionToken>();
         }
 
-        public CompositeExpressionToken(string tokenStr, BracketType bracketType)
-        : this(bracketType)
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="tokenStr"></param>
+        /// <param name="bracketType"></param>
+        internal CompositeExpressionToken(string tokenStr, BracketType bracketType)
+            : this(bracketType)
         {
             AddToken(tokenStr);
         }
 
-        public CompositeExpressionToken(ExpressionToken expressionToken, BracketType bracketType)
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="expressionToken"></param>
+        /// <param name="bracketType"></param>
+        internal CompositeExpressionToken(ExpressionToken expressionToken, BracketType bracketType)
             : this(bracketType)
         {
             AddToken(expressionToken);
         }
 
-        public CompositeExpressionToken(IEnumerable<ExpressionToken> tokens, BracketType bracketType, bool addCommas)
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="tokens"></param>
+        /// <param name="bracketType"></param>
+        /// <param name="addCommas"></param>
+        internal CompositeExpressionToken(IEnumerable<ExpressionToken> tokens, BracketType bracketType, bool addCommas)
             : this(bracketType, addCommas)
         {
             _tokens.AddRange(tokens.Where(t => t != null));
@@ -153,7 +192,11 @@ namespace CompositionProToolkit.Expressions
 
         #region APIs
 
-        public void SetBrackets(BracketType bracketType)
+        /// <summary>
+        /// Sets the specified bracket type to the token
+        /// </summary>
+        /// <param name="bracketType">BracketType</param>
+        internal void SetBrackets(BracketType bracketType)
         {
             _bracketType = bracketType;
             switch (bracketType)
@@ -201,7 +244,12 @@ namespace CompositionProToolkit.Expressions
             }
         }
 
-        public void AddToken(string tokenStr)
+        /// <summary>
+        /// Creates a simple token from the specified string
+        /// and adds it to the token collection.
+        /// </summary>
+        /// <param name="tokenStr">The specified token string.</param>
+        internal void AddToken(string tokenStr)
         {
             if (!string.IsNullOrWhiteSpace(tokenStr))
             {
@@ -209,17 +257,33 @@ namespace CompositionProToolkit.Expressions
             }
         }
 
-        public void AddToken(string tokenStr, BracketType bracketType)
+        /// <summary>
+        /// Creates a simple token from the specified string and bracket
+        /// type and adds it to the token collection.
+        /// </summary>
+        /// <param name="tokenStr">The specified token string.</param>
+        /// <param name="bracketType">Bracket type.</param>
+        internal void AddToken(string tokenStr, BracketType bracketType)
         {
             AddToken(new CompositeExpressionToken(tokenStr, bracketType));
         }
 
-        public void AddToken<T>(T token) where T : ExpressionToken
+        /// <summary>
+        /// Adds a ExpressionToken object (or its derivatives)
+        /// to the tokens collection.
+        /// </summary>
+        /// <typeparam name="T">Type of the token.</typeparam>
+        /// <param name="token">Token.</param>
+        internal void AddToken<T>(T token) where T : ExpressionToken
         {
             _tokens.Add(token);
         }
 
-        public int TokenCount()
+        /// <summary>
+        /// Number of tokens in the _tokens collection.
+        /// </summary>
+        /// <returns>Number of tokens.</returns>
+        internal int TokenCount()
         {
             return _tokens.Count(t => t != null);
         }
@@ -228,7 +292,12 @@ namespace CompositionProToolkit.Expressions
 
         #region Overrides
 
-        public override void Write(StringBuilder sb)
+        /// <summary>
+        /// Converts the token to a corresponding string 
+        /// using the specified StringBuilder.
+        /// </summary>
+        /// <param name="sb">StringBuilder</param>
+        internal override void Write(StringBuilder sb)
         {
             var flag = (_bracketType != BracketType.None);
             if (flag)
