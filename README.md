@@ -1,10 +1,9 @@
 <img src="https://cloud.githubusercontent.com/assets/7021835/16889814/1784ed78-4a9e-11e6-80d0-7c2084d6c960.png" alt="CompositionProToolkit"></img>
 
-# What's new in v0.6?
-- CompositionProToolkit.Expressions namespace has been refactored.
-- Create Expressions for ExpressionAnimations in a simpler way.
-- New extension methods have been added.
-- Check out [CompositionProToolkit.Expressions documentation](https://github.com/ratishphilip/CompositionProToolkit/tree/master/CompositionProToolkit/Expressions) for more details.
+# What's new in v0.7?
+- `FluidToggleSwitch` control added.
+- `ProfileControl` added.
+- **BREAKING CHANGE** - `CompositionGeneratorFactory` class is now removed. Use `Compositor.CreateCompositionGenerator()` instead.
 
 
 # Table of Contents
@@ -29,6 +28,8 @@
     - [Using ImageFrame with FilePicker](#using-imageframe-with-filepicker)
     - [Guidelines for Disposing `ImageFrame` effectively](#guidelines-for-disposing-imageframe-effectively)
   - [FluidBanner](#4-fluidbanner)
+  - [FluidToggleSwitch](#5-fluidtoggleswitch)
+  - [ProfileControl](#6-profilecontrol)
 - [CompositionProToolkit Expressions](https://github.com/ratishphilip/CompositionProToolkit/tree/master/CompositionProToolkit/Expressions)
 - [Win2d Helpers](#win2d-helpers)
     - [ICanvasStroke and CanvasStroke](#icanvasstroke-and-canvasstroke)
@@ -97,7 +98,7 @@ The following code
 
 ```C#
 // Get the Generator
-ICompositionGenerator generator = CompositionGeneratorFactory.GetCompositionGenerator(compositor);
+ICompositionGenerator generator = compositor.CreateCompositionGenerator();
 
 //Create the visual
 SpriteVisual visual = compositor.CreateSpriteVisual();
@@ -185,7 +186,7 @@ The previous example can also be written as
 
 ```C#
 // Get the Generator
-ICompositionGenerator generator = CompositionGeneratorFactory.GetCompositionGenerator(compositor);
+ICompositionGenerator generator = compositor.CreateCompositionGenerator();
 
 //Create the visual
 SpriteVisual visual = compositor.CreateSpriteVisual();
@@ -345,7 +346,7 @@ The following example shows how you can load an image onto a **Visual**
 
 ```C#
 var compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
-var generator = CompositionGeneratorFactory.GetCompositionGenerator(compositor);
+var generator = compositor.CreateCompositionGenerator();
 
 var visual = compositor.CreateSpriteVisual();
 visual.Size = new Vector2(this.ActualWidth.Single(), this.ActualHeight.Single());
@@ -565,6 +566,49 @@ It provides the following properties which can be used to customize the **FluidB
 | **`ItemsSource`** | `IEnumerable&lt;Uri&gt;` | The collection of Uris of images to be shown in the **FluidBanner** | **null** |
 | **`Padding`** | `Thickness` | The padding inside the **FluidBanner** | **Thickness(0)** |
 | **`Stretch`** | `Stretch` | Indicates how the image is resized to fill its allocated space within each **FluidBanner** item. | **Uniform** |
+
+## 5. FluidToggleSwitch
+
+**FluidToggleSwitch** is a toggleswitch control which uses Composition Visuals to render its components and provides a richer look and feel to the ToggleSwitch control. There are three primary components within the ToggleSwitch
+
+- **Background** - The outermost circular area.
+- **Track** - The pill shaped area.
+- **Thumb** - The innermost circular area.
+
+The reason **FluidToggleSwitch** is encapsulated with a circular background component is because the hit area for a touch input is normally circular.
+
+<img src="" />
+
+The following properties allow you to customize the **FluidToggleSwitch**
+
+| Dependency Property | Type | Description | Default Value |
+|---|---|---|---|
+| **ActiveColor** | `Color` | Gets or sets the Color of the FluidToggleSwitch in Checked state. | **#4cd964** |
+| **InactiveColor** | `Color` |  Gets or sets the Color of the FluidToggleSwitch in Checked state. | **#dfdfdf  ** |
+| **DisabledColor** | `Color` |  Gets or sets the Color of the FluidToggleSwitch in Checked state. | **#eaeaea** |
+
+The above properties define the color of the Background component. The color of the Track component is derived automatically from the above properties. The color of the Thumb is white.
+
+## 6. ProfileControl
+
+**ProfileControl** allows you to display an image (normally a user profile image) in an intuitive way. This control is mainly implemented using Composition Visuals and animations which provide a rich user experience. Depending on the width and height of the **ProfileControl**, its shape can be either circular or elliptical. There are two main components within the **ProfileControl**
+
+ - **Background Visual** - The outermost circular or elliptical area. This area is filled with the CompositionBackdropBrush which blends the control with whatever is rendered beneath the control.
+ - **Image Visual** - The innermost circular or elliptical area. This area renders the image provided.
+
+<img src="" />
+
+ The following properties allow you to customize the **ProfileControl**
+
+| Dependency Property | Type | Description | Default Value |
+|---|---|---|---|
+| **BlurRadius** | `Double` | Gets or sets the amount by which the brush of the Background Visual must be blurred. | **20.0** |
+| **BorderGap** | `Double` | Gets or sets the uniform gap between the Background visual and the Image visual. | **10.0** |
+| **FluidReveal** | `Boolean` | Indicates whether the reveal animation should automatically be played when the Source property of the ProfileControl changes. If set to False, the image specified by the Source property is displayed directly without any animation. | **True** |
+| **RevealDuration** | `TimeSpan` | Gets or sets the duration of the reveal animation. | **1 sec** |
+| **Source** | `Uri` | Gets or sets the Uri of the image to be displayed in the ProfileControl. | **null** |
+| **Stretch** | `Stretch` | Indicates how the image content is resized to fill its allocated space in the Image Visual. | **Stretch.Uniform** |
+| **Tint** | `Color` | Gets or sets the color overlay on the background of the ProfileControl. | **Colors.White** |
 
 # Win2d Helpers
 
@@ -862,6 +906,8 @@ The **Single()** extension method is now replaced with **ToSingle()** extension 
 
 # Updates Chronology
 
+## v0.7.0
+(**Thursday, July 13, 2017**) - Added `FluidToggleSwitch` control and `ProfileControl`.
 ## v0.6.0  
 (**Tuesday, June 13, 2017**) - Refactored `CompositionProToolkit.Expressions` namespace, added new extension methods.
 
