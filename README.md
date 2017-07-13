@@ -570,7 +570,6 @@ It provides the following properties which can be used to customize the **FluidB
 ## 5. FluidToggleSwitch
 
 **FluidToggleSwitch** is a toggleswitch control which uses Composition Visuals to render its components and provides a richer look and feel to the ToggleSwitch control. There are three primary components within the ToggleSwitch
-
 - **Background** - The outermost circular area.
 - **Track** - The pill shaped area.
 - **Thumb** - The innermost circular area.
@@ -584,8 +583,8 @@ The following properties allow you to customize the **FluidToggleSwitch**
 | Dependency Property | Type | Description | Default Value |
 |---|---|---|---|
 | **ActiveColor** | `Color` | Gets or sets the Color of the FluidToggleSwitch in Checked state. | **#4cd964** |
-| **InactiveColor** | `Color` |  Gets or sets the Color of the FluidToggleSwitch in Checked state. | **#dfdfdf  ** |
-| **DisabledColor** | `Color` |  Gets or sets the Color of the FluidToggleSwitch in Checked state. | **#eaeaea** |
+| **InactiveColor** | `Color` |  Gets or sets the Color of the FluidToggleSwitch in Unchecked state. | **#dfdfdf  ** |
+| **DisabledColor** | `Color` |  Gets or sets the Color of the FluidToggleSwitch in Disabled state. | **#eaeaea** |
 
 The above properties define the color of the Background component. The color of the Track component is derived automatically from the above properties. The color of the Thumb is white.
 
