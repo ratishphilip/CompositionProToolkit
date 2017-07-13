@@ -24,13 +24,14 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.6.0
+// CompositionProToolkit v0.7.0
 // 
 
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Windows.Foundation;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
@@ -305,6 +306,18 @@ namespace CompositionProToolkit
             }
 
             return newValue;
+        }
+
+        /// <summary>
+        /// Calculates the linear interpolated value based on the given values.
+        /// </summary>
+        /// <param name="start">Starting value.</param>
+        /// <param name="end">Ending value.</param>
+        /// <param name="amount">Weightage given to the ending value.</param>
+        /// <returns>Linear interpolated value.</returns>
+        public static float Lerp(this float start, float end, float amount)
+        {
+            return start + (end - start) * amount;
         }
 
         #endregion
@@ -810,6 +823,63 @@ namespace CompositionProToolkit
         public static Size ToSize(this Vector4 vector)
         {
             return new Size(vector.X + vector.Z, vector.Y + vector.W);
+        }
+
+        #endregion
+
+        #region Color
+
+        /// <summary>
+        /// Calculates the linear interpolated Color based on the given Color values.
+        /// </summary>
+        /// <param name="colorFrom">Source Color.</param>
+        /// <param name="colorTo">Target Color.</param>
+        /// <param name="amount">Weightage given to the target color.</param>
+        /// <returns>Linear Interpolated Color.</returns>
+        public static Color Lerp(this Color colorFrom, Color colorTo, float amount)
+        {
+            // Convert colorFrom components to lerp-able floats
+            float sa = colorFrom.A,
+                sr = colorFrom.R,
+                sg = colorFrom.G,
+                sb = colorFrom.B;
+
+            // Convert colorTo components to lerp-able floats
+            float ea = colorTo.A,
+                er = colorTo.R,
+                eg = colorTo.G,
+                eb = colorTo.B;
+
+            // lerp the colors to get the difference
+            byte a = (byte)Math.Max(0, Math.Min(255, sa.Lerp(ea, amount))),
+                r = (byte)Math.Max(0, Math.Min(255, sr.Lerp(er, amount))),
+                g = (byte)Math.Max(0, Math.Min(255, sg.Lerp(eg, amount))),
+                b = (byte)Math.Max(0, Math.Min(255, sb.Lerp(eb, amount)));
+
+            // return the new color
+            return Color.FromArgb(a, r, g, b);
+        }
+
+        /// <summary>
+        /// Darkens the color by the given percentage.
+        /// </summary>
+        /// <param name="color">Source color.</param>
+        /// <param name="amount">Percentage to darken. Value should be between 0 and 1.</param>
+        /// <returns>Color</returns>
+        public static Color DarkerBy(this Color color, float amount)
+        {
+            return color.Lerp(Colors.Black, amount);
+        }
+
+        /// <summary>
+        /// Lightens the color by the given percentage.
+        /// </summary>
+        /// <param name="color">Source color.</param>
+        /// <param name="amount">Percentage to lighten. Value should be between 0 and 1.</param>
+        /// <returns>Color</returns>
+        public static Color LighterBy(this Color color, float amount)
+        {
+            return color.Lerp(Colors.White, amount);
         }
 
         #endregion

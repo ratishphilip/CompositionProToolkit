@@ -11,8 +11,8 @@
     <AssemblyName>CompositionProToolkit</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.16190.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.16190.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.16225.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.15063.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -114,10 +114,12 @@
   <ItemGroup>
     <Compile Include="Controls\FluidBanner\FluidBanner.cs" />
     <Compile Include="Controls\FluidProgressRing\FluidProgressRing.cs" />
+    <Compile Include="Controls\FluidToggleSwitch\FluidToggleSwitch.cs" />
     <Compile Include="Controls\FluidWrapPanel\FluidBitMatrix.cs" />
     <Compile Include="Controls\FluidWrapPanel\FluidPointerDragBehavior.cs" />
     <Compile Include="Controls\FluidWrapPanel\FluidWrapPanel.cs" />
     <Compile Include="Controls\ImageFrame\ImageFrame.cs" />
+    <Compile Include="Controls\ProfileControl\ProfileControl.cs" />
     <Compile Include="Expressions\CompositionAnimationExtensions.cs" />
     <Compile Include="Expressions\CompositionExpressionContext.cs" />
     <Compile Include="Expressions\CompositionExpressionEngine.cs" />
@@ -154,7 +156,6 @@
     <Compile Include="CompositionDefinitions.cs" />
     <Compile Include="CompositionExtensions.cs" />
     <Compile Include="CompositionGenerator.cs" />
-    <Compile Include="CompositionGeneratorFactory.cs" />
     <Compile Include="CompositionPathInfo.cs" />
     <Compile Include="DoubleExtensions.cs" />
     <Compile Include="GeometrySurface.cs" />
@@ -226,20 +227,20 @@
       <Version>2.0.0</Version>
     </PackageReference>
     <PackageReference Include="Win2D.uwp">
-      <Version>1.20.0</Version>
+      <Version>1.21.0</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CompositionDeviceHelper\CompositionDeviceHelper.vcxproj">
-      <Project>{7123ac5e-dee5-4373-9ac5-4f85478598c4}</Project>
-      <Name>CompositionDeviceHelper</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CompositionDeviceHelper\CompositionDeviceHelper.vcxproj">
+      <Project>{7123ac5e-dee5-4373-9ac5-4f85478598c4}</Project>
+      <Name>CompositionDeviceHelper</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

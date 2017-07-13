@@ -29,7 +29,8 @@
                              ShadowOffsetX="10"
                              ShadowOffsetY="10"
                              ShadowOpacity="0.65"
-                             ShowPlaceholder="True" />
+                             ShowPlaceholder="True" 
+                             Stretch="Uniform"/>
 
         <StackPanel Grid.Row="1"
                     Margin="10,0"

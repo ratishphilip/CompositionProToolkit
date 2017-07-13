@@ -140,6 +140,32 @@
                                Text="CanvasElement" />
                 </StackPanel>
             </controls:HamburgerButtonInfo>
+            <!--  CanvasElement button  -->
+            <controls:HamburgerButtonInfo ClearHistory="True"
+                                          PageType="local:FluidToggleSwitchPage">
+                <StackPanel Orientation="Horizontal">
+                    <localControls:GlyphIcon Width="48"
+                                             Height="48"
+                                             Foreground="White"
+                                             Glyph="{StaticResource FluidToggleSwitch.Glyph}" />
+                    <TextBlock Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               Text="FluidToggleSwitch" />
+                </StackPanel>
+            </controls:HamburgerButtonInfo>
+            <!--  CanvasElement button  -->
+            <controls:HamburgerButtonInfo ClearHistory="True"
+                                          PageType="local:ProfileControlPage">
+                <StackPanel Orientation="Horizontal">
+                    <localControls:GlyphIcon Width="48"
+                                             Height="48"
+                                             Foreground="White"
+                                             Glyph="{StaticResource ProfileControl.Glyph}" />
+                    <TextBlock Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               Text="ProfileControl" />
+                </StackPanel>
+            </controls:HamburgerButtonInfo>
         </controls:HamburgerMenu.PrimaryButtons>
 
         <!--<controls:HamburgerMenu.SecondaryButtons>

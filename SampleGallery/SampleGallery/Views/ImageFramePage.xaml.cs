@@ -30,6 +30,7 @@ namespace SampleGallery.Views
         private Dictionary<int, AlignmentX> _alignXModes;
         private Dictionary<int, AlignmentY> _alignYModes;
         private List<Uri> _uris;
+        private int _currentIndex;
 
         public ImageFramePage()
         {
@@ -131,9 +132,9 @@ namespace SampleGallery.Views
 
         private void OnImageSelected(object sender, SelectionChangedEventArgs e)
         {
-            var index = (sender as ComboBox).SelectedIndex;
+            _currentIndex = (sender as ComboBox).SelectedIndex;
 
-            ImageFrame.Source = _uris[index];
+            ImageFrame.Source = _uris[_currentIndex];
         }
 
         private void OnStretchChanged(object sender, SelectionChangedEventArgs e)

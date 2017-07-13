@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.6.0
+// CompositionProToolkit v0.7.0
 // 
 
 using System;
@@ -600,7 +600,7 @@ namespace CompositionProToolkit.Controls
             // Compositor
             _compositor = rootVisual.Compositor;
             // Composition Generator
-            _generator = CompositionGeneratorFactory.GetCompositionGenerator(_compositor);
+            _generator = _compositor.CreateCompositionGenerator();
 
             // Final Value Expressions
             var vector3Expr = _compositor.CreateFinalValueExpression<Vector3>();

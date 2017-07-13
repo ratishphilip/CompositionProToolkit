@@ -45,7 +45,7 @@ namespace SampleGallery.Views
             //SampleHelper deviceHelper = new SampleHelper();
             DeviceLostHelper lostHelper = new DeviceLostHelper();
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
-            _generator = CompositionGeneratorFactory.GetCompositionGenerator(_compositor);
+            _generator = _compositor.CreateCompositionGenerator();
             _width = 300f;
             _height = 300f;
             // Create the combined geometry

@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.6.0
+// CompositionProToolkit v0.7.0
 // 
 
 using System;
@@ -341,7 +341,7 @@ namespace CompositionProToolkit.Controls
         public FluidProgressRing()
         {
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
-            _generator = CompositionGeneratorFactory.GetCompositionGenerator(_compositor);
+            _generator = _compositor.CreateCompositionGenerator();
             _isAnimationStarted = false;
             // Default Values
             Width = 70;

@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>CompositionProToolkit</id>
-    <version>0.6.0.0</version>
+    <version>0.7.0.1</version>
     <title>CompositionProToolkit</title>
     <authors>Ratish Philip</authors>
     <owners>Ratish Philip</owners>
@@ -11,10 +11,10 @@
     <iconUrl>https://cloud.githubusercontent.com/assets/7021835/16889815/17851c12-4a9e-11e6-87d6-9b00282011b3.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Collection of Helper classes for Windows.UI.Composition, Win2d and some UI controls.</description>
-    <releaseNotes>Refactored CompositionProToolkit.Expressions namespace, added new extension methods, added DeviceLostHelper. Bug fixes.</releaseNotes>
+    <releaseNotes>Added FluidToggleSwitch control and ProfileControl.</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <dependencies>
-        <dependency id="Win2D.uwp" version="1.20.0" />
+        <dependency id="Win2D.uwp" version="1.21.0" />
         <dependency id="Microsoft.Xaml.Behaviors.Uwp.Managed" version="2.0.0" />
     </dependencies>
   </metadata>

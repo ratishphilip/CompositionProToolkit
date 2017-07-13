@@ -41,7 +41,7 @@ namespace SampleGallery.Views
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
-            _generator = CompositionGeneratorFactory.GetCompositionGenerator(_compositor);
+            _generator = _compositor.CreateCompositionGenerator();
 
             var distance = 4f;
             var visualSize = new Vector2(225, 150);

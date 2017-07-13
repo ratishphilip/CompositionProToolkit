@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.6.0
+// CompositionProToolkit v0.7.0
 //
 
 using System;
@@ -45,6 +45,44 @@ namespace CompositionProToolkit
     /// </summary>
     public static class CompositorExtensions
     {
+        #region CompositionGenerator
+
+        /// <summary>
+        /// Creates a CompositionGenerator object
+        /// </summary>
+        /// <param name="compositor">Compositor</param>
+        /// <returns>ICompositionGenerator</returns>
+        public static ICompositionGenerator CreateCompositionGenerator(this Compositor compositor)
+        {
+            return new CompositionGenerator(compositor);
+        }
+
+        /// <summary>
+        /// Creates a CompositionGenerator object
+        /// </summary>
+        /// <param name="compositor">Compositor</param>
+        /// <param name="graphicsDevice">Composition Graphics Device</param>
+        /// <returns>ICompositionGenerator</returns>
+        public static ICompositionGenerator CreateCompositionGenerator(this Compositor compositor, CompositionGraphicsDevice graphicsDevice)
+        {
+            return new CompositionGenerator(graphicsDevice);
+        }
+
+        /// <summary>
+        /// Creates a CompositionGenerator object
+        /// </summary>
+        /// <param name="compositor">Compositor</param>
+        /// <param name="useSharedCanvasDevice">Whether to use a shared CanvasDevice or to create a new one.</param>
+        /// <param name="useSoftwareRenderer">Whether to use Software Renderer when creating a new CanvasDevice.</param>
+        /// <returns>ICompositionGenerator</returns>
+        public static ICompositionGenerator CreateCompositionGenerator(this Compositor compositor,
+            bool useSharedCanvasDevice, bool useSoftwareRenderer)
+        {
+            return new CompositionGenerator(compositor, useSharedCanvasDevice, useSoftwareRenderer);
+        }
+
+        #endregion
+
         #region StartingValue Expression
 
         /// <summary>

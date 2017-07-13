@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.6.0
+// CompositionProToolkit v0.7.0
 // 
 
 using System;
@@ -1442,7 +1442,7 @@ namespace CompositionProToolkit.Controls
             // Compositor
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
             // CompositionGenerator
-            _generator = CompositionGeneratorFactory.GetCompositionGenerator(_compositor);
+            _generator = _compositor.CreateCompositionGenerator();
 
             // Fade Out Animation
             _fadeOutAnimation = _compositor.CreateScalarKeyFrameAnimation();

@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.6.0
+// CompositionProToolkit v0.7.0
 //
 
 using System;
@@ -51,6 +51,36 @@ namespace CompositionProToolkit.Expressions
             Expression<Func<object>> expression, CompositionAnimation animation)
         {
             compositionObject.StartAnimation(CompositionExpressionEngine.ParseExpression(expression), animation);
+        }
+
+        /// <summary>
+        /// Starts the given KeyFrameAnimation&lt;&gt; on the property specified by the given expression.
+        /// The expression is converted to the appropriate property string by the
+        /// CompositionExpressionEngine
+        /// </summary>
+        /// <typeparam name="T">Type of the property to be animated.</typeparam>
+        /// <param name="compositionObject">CompositionObject</param>
+        /// <param name="targetProperty">Property on which the animation has to be started.</param>
+        /// <param name="keyframeAnimation">The KeyFrameAnimation to run on the specified property.</param>
+        public static void StartAnimation<T>(this CompositionObject compositionObject,
+            string targetProperty, KeyFrameAnimation<T> keyframeAnimation)
+        {
+            compositionObject.StartAnimation(targetProperty, keyframeAnimation.Animation);
+        }
+
+        /// <summary>
+        /// Connects an ExpressionAnimation&lt;T&gt; with the specified property of the object 
+        /// and starts the animation.
+        /// </summary>
+        /// <typeparam name="T">Type of the property to be animated</typeparam>
+        /// <param name="compositionObject">The object on whose property the animation has to
+        /// be started.</param>
+        /// <param name="targetProperty">Property on which the animation has to be started.</param>
+        /// <param name="expressionAnimation">The ExpressionAnimation&lt;T&gt; to run on the specified property.</param>
+        public static void StartAnimation<T>(this CompositionObject compositionObject,
+            string targetProperty, ExpressionAnimation<T> expressionAnimation)
+        {
+            compositionObject.StartAnimation(targetProperty, expressionAnimation.Animation);
         }
 
         /// <summary>

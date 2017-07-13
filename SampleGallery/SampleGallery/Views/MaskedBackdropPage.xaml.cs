@@ -47,7 +47,7 @@ namespace SampleGallery.Views
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
-            _generator = CompositionGeneratorFactory.GetCompositionGenerator(_compositor);
+            _generator = _compositor.CreateCompositionGenerator();
             _backdropBrush = _compositor.CreateBackdropBrush();
 
             _width = 300f;
