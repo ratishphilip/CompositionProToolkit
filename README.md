@@ -583,7 +583,7 @@ The following properties allow you to customize the **FluidToggleSwitch**
 | Dependency Property | Type | Description | Default Value |
 |---|---|---|---|
 | **ActiveColor** | `Color` | Gets or sets the Color of the FluidToggleSwitch in Checked state. | **#4cd964** |
-| **InactiveColor** | `Color` |  Gets or sets the Color of the FluidToggleSwitch in Unchecked state. | **#dfdfdf  ** |
+| **InactiveColor** | `Color` |  Gets or sets the Color of the FluidToggleSwitch in Unchecked state. | **#dfdfdf** |
 | **DisabledColor** | `Color` |  Gets or sets the Color of the FluidToggleSwitch in Disabled state. | **#eaeaea** |
 
 The above properties define the color of the Background component. The color of the Track component is derived automatically from the above properties. The color of the Thumb is white.
