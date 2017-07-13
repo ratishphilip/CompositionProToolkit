@@ -3,7 +3,7 @@
 # What's new in v0.7?
 - `FluidToggleSwitch` control added.
 - `ProfileControl` added.
-- **BREAKING CHANGE** - `CompositionGeneratorFactory` class is now removed. Use `Compositor.CreateCompositionGenerator()` instead.
+- **BREAKING CHANGE** - `CompositionGeneratorFactory` class is deprecated and removed. Use `Compositor.CreateCompositionGenerator()` instead.
 
 
 # Table of Contents
@@ -70,7 +70,7 @@ More details available [here](https://www.nuget.org/packages/CompositionProToolk
 ## 2. Creating custom shaped `Visual` using `CanvasGeometry`
 As of now, you can customize the shape of Visuals by applying a mask on the Visual. The mask is defined using a **CompositionMaskBrush**. In the **CompositionMaskBrush** the `Mask` is defined by a **CompositionSurfaceBrush**. Into the **CompositionSurfaceBrush** an image, which defines the mask, is loaded. In this image, the areas which are to masked in the Visual are transparent whereas the areas to be shown in the Visual are white.  
 
-Using **CompositionProToolkit** you can now define a mask for the **Visual** using **Win2D**'s **CanvasGeometry**. First you need an object implementing the **ICompositionGenerator** interface. It can be obtained by the static class **CompositionGeneratorFactory**. There are two APIS to obtain the **CompositionGenerator** - by providing a **Compositor** or by providing a **CompositionGraphicDevice**.
+Using **CompositionProToolkit** you can now define a mask for the **Visual** using **Win2D**'s **CanvasGeometry**. First you need an object implementing the **ICompositionGenerator** interface. It can be obtained by the **CreateCompositionGenerator()** extension method of the **Compositor**. There are two APIS to obtain the **CompositionGenerator** - by providing a **Compositor** or by providing a **CompositionGraphicDevice**.
 
 ```C#
 public static ICompositionGenerator GetCompositionGenerator(Compositor compositor,
@@ -577,7 +577,7 @@ It provides the following properties which can be used to customize the **FluidB
 
 The reason **FluidToggleSwitch** is encapsulated with a circular background component is because the hit area for a touch input is normally circular.
 
-<img src="" />
+<img src="https://user-images.githubusercontent.com/7021835/28183439-50d4e274-67c4-11e7-90ff-376b2d7116cf.gif" />
 
 The following properties allow you to customize the **FluidToggleSwitch**
 
@@ -596,7 +596,7 @@ The above properties define the color of the Background component. The color of 
  - **Background Visual** - The outermost circular or elliptical area. This area is filled with the CompositionBackdropBrush which blends the control with whatever is rendered beneath the control.
  - **Image Visual** - The innermost circular or elliptical area. This area renders the image provided.
 
-<img src="" />
+<img src="https://user-images.githubusercontent.com/7021835/28183445-55a7f4b2-67c4-11e7-9d84-5bacbc84efae.gif" />
 
  The following properties allow you to customize the **ProfileControl**
 
