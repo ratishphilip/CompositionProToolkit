@@ -574,7 +574,7 @@ It provides the following properties which can be used to customize the **FluidB
 - **Track** - The pill shaped area.
 - **Thumb** - The innermost circular area.
 
-The reason **FluidToggleSwitch** is encapsulated with a circular background component is because the hit area for a touch input is normally circular.
+> The reason **FluidToggleSwitch** is encapsulated with a circular background component is because the hit area for a touch input is normally circular.
 
 <img src="https://user-images.githubusercontent.com/7021835/28183439-50d4e274-67c4-11e7-90ff-376b2d7116cf.gif" />
 
