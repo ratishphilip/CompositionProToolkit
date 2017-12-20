@@ -41,6 +41,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using CompositionProToolkit.Expressions;
 
 namespace CompositionProToolkit.Controls
@@ -66,9 +67,9 @@ namespace CompositionProToolkit.Controls
         private const int ZIndexNormal = 0;
         private const int ZIndexIntermediate = 1;
         private const int ZIndexDrag = 10;
-        private static readonly TimeSpan InitializationAnimationDuration = TimeSpan.FromMilliseconds(300);
-        private static readonly TimeSpan DefaultFluidAnimationDuration = TimeSpan.FromMilliseconds(570);
-        private static readonly TimeSpan DefaultOpacityAnimationDuration = TimeSpan.FromMilliseconds(300);
+        private static TimeSpan DefaultInitializationAnimationDuration = TimeSpan.FromMilliseconds(300);
+        private static TimeSpan DefaultFluidAnimationDuration = TimeSpan.FromMilliseconds(570);
+        private static TimeSpan DefaultOpacityAnimationDuration = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan DefaultScaleAnimationDuration = TimeSpan.FromMilliseconds(400);
 
         #endregion
@@ -140,9 +141,48 @@ namespace CompositionProToolkit.Controls
         private ImplicitAnimationCollection _implicitDragAnimationCollection;
         private List<UIElement> _uninitializedFluidItems;
 
-        #endregion
+		#endregion
 
-        #region Dependency Properties
+		#region Dependency Properties
+
+		#region DefaultInitializationAnimationDuration
+
+	    public static readonly DependencyProperty InitializationAnimationDurationProperty = DependencyProperty.Register(
+		    "InitializationAnimationDuration", typeof(TimeSpan), typeof(FluidWrapPanel), new PropertyMetadata(DefaultInitializationAnimationDuration));
+
+	    public TimeSpan InitializationAnimationDuration
+		{
+		    get { return (TimeSpan) GetValue(InitializationAnimationDurationProperty); }
+		    set { SetValue(InitializationAnimationDurationProperty, value); }
+	    }
+
+		#endregion
+
+		#region DefaultOpacityAnimationDuration
+
+		public static readonly DependencyProperty OpacityAnimationDurationProperty = DependencyProperty.Register(
+		    "OpacityAnimationDuration", typeof(TimeSpan), typeof(FluidWrapPanel), new PropertyMetadata(DefaultOpacityAnimationDuration));
+
+	    public TimeSpan OpacityAnimationDuration
+		{
+		    get { return (TimeSpan) GetValue(OpacityAnimationDurationProperty); }
+		    set { SetValue(OpacityAnimationDurationProperty, value); }
+	    }
+
+		#endregion
+
+		#region FluidAnimationDuration
+
+		public static readonly DependencyProperty FluidAnimationDurationProperty = DependencyProperty.Register(
+		    "FluidAnimationDuration", typeof(TimeSpan), typeof(FluidWrapPanel), new PropertyMetadata(DefaultFluidAnimationDuration));
+
+	    public TimeSpan FluidAnimationDuration
+	    {
+		    get { return (TimeSpan) GetValue(FluidAnimationDurationProperty); }
+		    set { SetValue(FluidAnimationDurationProperty, value); }
+	    }
+
+	    #endregion
 
         #region DragOpacity
 
@@ -635,7 +675,7 @@ namespace CompositionProToolkit.Controls
 
             // Create the animation for the uinitialized children
             var offsetAnimation = _compositor.CreateVector3KeyFrameAnimation();
-            offsetAnimation.Duration = InitializationAnimationDuration;
+            offsetAnimation.Duration = DefaultInitializationAnimationDuration;
 
             // Calculate how many unit cells can fit in the given width (or height) when the 
             // Orientation is Horizontal (or Vertical)
@@ -766,7 +806,7 @@ namespace CompositionProToolkit.Controls
 
             // Offset Animation
             var offsetAnimation = _compositor.CreateKeyFrameAnimation<Vector3>()
-                                             .HavingDuration(DefaultFluidAnimationDuration)
+                                             .HavingDuration(FluidAnimationDuration)
                                              .ForTarget(() => rootVisual.Offset);
             offsetAnimation.InsertExpressionKeyFrame(1f, vector3Expr);
 
@@ -778,7 +818,7 @@ namespace CompositionProToolkit.Controls
 
             // Scale Animation
             var scaleAnimation = _compositor.CreateKeyFrameAnimation<Vector3>()
-                                            .HavingDuration(DefaultFluidAnimationDuration)
+                                            .HavingDuration(FluidAnimationDuration)
                                             .ForTarget(() => rootVisual.Scale);
             scaleAnimation.InsertExpressionKeyFrame(1f, vector3Expr);
 
@@ -965,22 +1005,54 @@ namespace CompositionProToolkit.Controls
             if ((child == null) || (!IsComposing))
                 return;
 
-            child.SetValue(Canvas.ZIndexProperty, ZIndexDrag);
-            // Capture further pointer events
-            child.CapturePointer(pointer);
-            _dragElement = child;
+			
+	        // Capture further pointer events
+	        child.CapturePointer(pointer);
+	        UIElement childOfPanel = findDirectChildOfPanel(child);
+			
+	        _dragElement = childOfPanel;
+	        _dragElement.SetValue(Canvas.ZIndexProperty, ZIndexDrag);
 
-            var visual = _fluidVisuals[_dragElement];
+	        var positionInDragElement = child.TransformToVisual(_dragElement).TransformPoint(position);
+
+
+			var visual = _fluidVisuals[_dragElement];
             visual.Opacity = (float)DragOpacity;
-            visual.CenterPoint = new Vector3((float)position.X, (float)position.Y, 0);
+            visual.CenterPoint = new Vector3((float)positionInDragElement.X, (float)positionInDragElement.Y, 0);
             visual.Scale = new Vector3((float)DragScale, (float)DragScale, 1);
             visual.ImplicitAnimations = _implicitDragAnimationCollection;
 
             // Set the starting position of the drag
-            _dragStartPoint = new Point(position.X, position.Y);
+            _dragStartPoint = new Point(positionInDragElement.X, positionInDragElement.Y);
         }
 
-        /// <summary>
+	    private UIElement findDirectChildOfPanel(UIElement child)
+	    {
+		    UIElement directChild = null;
+		    FrameworkElement ancestor = child as FrameworkElement;
+			while (ancestor != null)
+			{
+				//if (ancestor is ListBoxItem)
+				//{
+				//	_parentLbItem = ancestor as ListBoxItem;
+				//}
+
+				if (ancestor is FluidWrapPanel)
+				{
+					// No need to go further up
+					return directChild;
+				}
+
+				directChild = ancestor;
+
+				// Find the visual ancestor of the current item
+				ancestor = VisualTreeHelper.GetParent(ancestor) as FrameworkElement;
+			}
+
+		    return directChild;
+	    }
+
+	    /// <summary>
         /// Handler for the event when the user drags the dragElement.
         /// </summary>
         /// <param name="child">UIElement being dragged</param>
@@ -1232,7 +1304,7 @@ namespace CompositionProToolkit.Controls
             //visual.CenterPoint = new Vector3((float)(ItemWidth / 2), (float)(ItemHeight / 2), 0);
 
             // Z-Index is set to 1 so that during the animation it does not go below other elements.
-            child.SetValue(Canvas.ZIndexProperty, ZIndexIntermediate);
+            _dragElement.SetValue(Canvas.ZIndexProperty, ZIndexIntermediate);
             // Release the pointer capture
             child.ReleasePointerCapture(pointer);
 
