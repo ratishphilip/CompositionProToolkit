@@ -27,7 +27,9 @@
 // CompositionProToolkit v0.7.0
 //  
 
+using System;
 using Windows.Devices.Input;
+using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -46,28 +48,29 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// The various types of Pointers that can participate in FluidDrag
         /// </summary>
+        [Flags]
         public enum DragButtonType
         {
             /// <summary>
             /// Mouse Left Button
             /// </summary>
-            MouseLeftButton,
+            MouseLeftButton = 2,
             /// <summary>
             /// Mouse Middle Button
             /// </summary>
-            MouseMiddleButton,
+            MouseMiddleButton = 4,
             /// <summary>
             /// Mouse Right Button
             /// </summary>
-            MouseRightButton,
+            MouseRightButton = 8,
             /// <summary>
             /// Pen
             /// </summary>
-            Pen,
+            Pen = 16,
             /// <summary>
             /// Touch
             /// </summary>
-            Touch
+            Touch = 32
         }
 
         #endregion
@@ -214,12 +217,7 @@ namespace CompositionProToolkit.Controls
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
             var ptrPt = _parentLbItem != null ? e.GetCurrentPoint(_parentLbItem) : e.GetCurrentPoint(AssociatedObject);
-            var isValidPointer = (((e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)) &&
-                                   (((DragButton == DragButtonType.MouseLeftButton) && (ptrPt.Properties.IsLeftButtonPressed)) ||
-                                   ((DragButton == DragButtonType.MouseRightButton) && (ptrPt.Properties.IsRightButtonPressed)) ||
-                                   ((DragButton == DragButtonType.MouseMiddleButton) && (ptrPt.Properties.IsMiddleButtonPressed)))) ||
-                                 ((e.Pointer.PointerDeviceType == PointerDeviceType.Pen) && (DragButton == DragButtonType.Pen)) ||
-                                 ((e.Pointer.PointerDeviceType == PointerDeviceType.Touch) && (DragButton == DragButtonType.Touch));
+            var isValidPointer = isValidPointerPressed(e, ptrPt);
 
             if (!isValidPointer)
                 return;
@@ -234,7 +232,17 @@ namespace CompositionProToolkit.Controls
             }
         }
 
-        /// <summary>
+	    private bool isValidPointerPressed(PointerRoutedEventArgs e, PointerPoint ptrPt)
+	    {
+		    return (((e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)) &&
+		            ((((DragButton & DragButtonType.MouseLeftButton) == DragButtonType.MouseLeftButton) && (ptrPt.Properties.IsLeftButtonPressed)) ||
+		             (((DragButton & DragButtonType.MouseRightButton) == DragButtonType.MouseRightButton) && (ptrPt.Properties.IsRightButtonPressed)) ||
+		             (((DragButton & DragButtonType.MouseMiddleButton) == DragButtonType.MouseMiddleButton) && (ptrPt.Properties.IsMiddleButtonPressed)))) ||
+		           ((e.Pointer.PointerDeviceType == PointerDeviceType.Pen) && ((DragButton & DragButtonType.Pen) == DragButtonType.Pen)) ||
+		           ((e.Pointer.PointerDeviceType == PointerDeviceType.Touch) && ((DragButton & DragButtonType.Touch) == DragButtonType.Touch));
+	    }
+
+	    /// <summary>
         /// Handler for Pointer Moved event
         /// </summary>
         /// <param name="sender"></param>
@@ -242,12 +250,7 @@ namespace CompositionProToolkit.Controls
         private void OnPointerMoved(object sender, PointerRoutedEventArgs e)
         {
             var ptrPt = _parentLbItem != null ? e.GetCurrentPoint(_parentLbItem) : e.GetCurrentPoint(AssociatedObject);
-            var isValidPointer = (((e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)) &&
-                                   (((DragButton == DragButtonType.MouseLeftButton) && (ptrPt.Properties.IsLeftButtonPressed)) ||
-                                   ((DragButton == DragButtonType.MouseRightButton) && (ptrPt.Properties.IsRightButtonPressed)) ||
-                                   ((DragButton == DragButtonType.MouseMiddleButton) && (ptrPt.Properties.IsMiddleButtonPressed)))) ||
-                                 ((e.Pointer.PointerDeviceType == PointerDeviceType.Pen) && (DragButton == DragButtonType.Pen)) ||
-                                 ((e.Pointer.PointerDeviceType == PointerDeviceType.Touch) && (DragButton == DragButtonType.Touch));
+            var isValidPointer = isValidPointerPressed(e, ptrPt);
 
             if (!isValidPointer)
                 return;
@@ -273,10 +276,10 @@ namespace CompositionProToolkit.Controls
         {
             var ptrPt = _parentLbItem != null ? e.GetCurrentPoint(_parentLbItem) : e.GetCurrentPoint(AssociatedObject);
             var isValidPointer = ((e.Pointer.PointerDeviceType == PointerDeviceType.Mouse) &&
-                                   ((DragButton == DragButtonType.MouseLeftButton) || (DragButton == DragButtonType.MouseRightButton) ||
+                                   (((DragButton & DragButtonType.MouseLeftButton) == DragButtonType.MouseLeftButton) || ((DragButton & DragButtonType.MouseRightButton) == DragButtonType.MouseRightButton) ||
                                     (DragButton == DragButtonType.MouseMiddleButton))) ||
-                                 ((e.Pointer.PointerDeviceType == PointerDeviceType.Pen) && (DragButton == DragButtonType.Pen)) ||
-                                 ((e.Pointer.PointerDeviceType == PointerDeviceType.Touch) && (DragButton == DragButtonType.Touch));
+                                 ((e.Pointer.PointerDeviceType == PointerDeviceType.Pen) && (DragButton & DragButtonType.Pen) == DragButtonType.Pen) ||
+                                 ((e.Pointer.PointerDeviceType == PointerDeviceType.Touch) && (DragButton & DragButtonType.Touch) == DragButtonType.Touch);
 
             if (!isValidPointer)
                 return;
