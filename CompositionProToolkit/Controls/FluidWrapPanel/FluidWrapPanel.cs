@@ -41,6 +41,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using CompositionProToolkit.Expressions;
 
 namespace CompositionProToolkit.Controls
@@ -965,22 +966,54 @@ namespace CompositionProToolkit.Controls
             if ((child == null) || (!IsComposing))
                 return;
 
-            child.SetValue(Canvas.ZIndexProperty, ZIndexDrag);
-            // Capture further pointer events
-            child.CapturePointer(pointer);
-            _dragElement = child;
+			
+	        // Capture further pointer events
+	        child.CapturePointer(pointer);
+	        UIElement childOfPanel = findDirectChildOfPanel(child);
+			
+	        _dragElement = childOfPanel;
+	        _dragElement.SetValue(Canvas.ZIndexProperty, ZIndexDrag);
 
-            var visual = _fluidVisuals[_dragElement];
+	        var positionInDragElement = child.TransformToVisual(_dragElement).TransformPoint(position);
+
+
+			var visual = _fluidVisuals[_dragElement];
             visual.Opacity = (float)DragOpacity;
-            visual.CenterPoint = new Vector3((float)position.X, (float)position.Y, 0);
+            visual.CenterPoint = new Vector3((float)positionInDragElement.X, (float)positionInDragElement.Y, 0);
             visual.Scale = new Vector3((float)DragScale, (float)DragScale, 1);
             visual.ImplicitAnimations = _implicitDragAnimationCollection;
 
             // Set the starting position of the drag
-            _dragStartPoint = new Point(position.X, position.Y);
+            _dragStartPoint = new Point(positionInDragElement.X, positionInDragElement.Y);
         }
 
-        /// <summary>
+	    private UIElement findDirectChildOfPanel(UIElement child)
+	    {
+		    UIElement directChild = null;
+		    FrameworkElement ancestor = child as FrameworkElement;
+			while (ancestor != null)
+			{
+				//if (ancestor is ListBoxItem)
+				//{
+				//	_parentLbItem = ancestor as ListBoxItem;
+				//}
+
+				if (ancestor is FluidWrapPanel)
+				{
+					// No need to go further up
+					return directChild;
+				}
+
+				directChild = ancestor;
+
+				// Find the visual ancestor of the current item
+				ancestor = VisualTreeHelper.GetParent(ancestor) as FrameworkElement;
+			}
+
+		    return directChild;
+	    }
+
+	    /// <summary>
         /// Handler for the event when the user drags the dragElement.
         /// </summary>
         /// <param name="child">UIElement being dragged</param>
@@ -1232,7 +1265,7 @@ namespace CompositionProToolkit.Controls
             //visual.CenterPoint = new Vector3((float)(ItemWidth / 2), (float)(ItemHeight / 2), 0);
 
             // Z-Index is set to 1 so that during the animation it does not go below other elements.
-            child.SetValue(Canvas.ZIndexProperty, ZIndexIntermediate);
+            _dragElement.SetValue(Canvas.ZIndexProperty, ZIndexIntermediate);
             // Release the pointer capture
             child.ReleasePointerCapture(pointer);
 
