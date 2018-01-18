@@ -611,7 +611,7 @@ The above properties define the color of the Background component. The color of 
 
 **ProgressRing3d** is the three-dimensional version of the default `ProgressRing` control. It is created using Windows Composition APIs. It consists of five shapes (nodes) revolving around a 3D point.
 
-<img> </img>
+<img src="https://user-images.githubusercontent.com/7021835/35103423-a43c0c2c-fc1a-11e7-8d72-6c66b159b837.gif" />
 
 It has the following properties
 
