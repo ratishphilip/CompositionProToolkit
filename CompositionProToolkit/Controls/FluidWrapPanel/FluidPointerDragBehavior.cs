@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 Ratish Philip 
+﻿// Copyright (c) Ratish Philip 
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,15 +24,16 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.7.0
+// CompositionProToolkit v0.8.0
 //  
 
-using Windows.Devices.Input;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Microsoft.Xaml.Interactivity;
+using System;
+using System.Linq;
+using Windows.Devices.Input;
+using Windows.UI.Input;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Input;
 
 namespace CompositionProToolkit.Controls
 {
@@ -46,36 +47,36 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// The various types of Pointers that can participate in FluidDrag
         /// </summary>
+        [Flags]
         public enum DragButtonType
         {
             /// <summary>
             /// Mouse Left Button
             /// </summary>
-            MouseLeftButton,
+            MouseLeftButton = 1,
             /// <summary>
             /// Mouse Middle Button
             /// </summary>
-            MouseMiddleButton,
+            MouseMiddleButton = 2,
             /// <summary>
             /// Mouse Right Button
             /// </summary>
-            MouseRightButton,
+            MouseRightButton = 4,
             /// <summary>
             /// Pen
             /// </summary>
-            Pen,
+            Pen = 8,
             /// <summary>
             /// Touch
             /// </summary>
-            Touch
+            Touch = 16
         }
 
         #endregion
 
         #region Fields
 
-        FluidWrapPanel _parentFwPanel;
-        ListBoxItem _parentLbItem;
+        private FluidWrapPanel _parentFwPanel;
 
         #endregion
 
@@ -96,8 +97,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public DragButtonType DragButton
         {
-            get { return (DragButtonType)GetValue(DragButtonProperty); }
-            set { SetValue(DragButtonProperty, value); }
+            get => (DragButtonType)GetValue(DragButtonProperty);
+            set => SetValue(DragButtonProperty, value);
         }
 
         #endregion
@@ -113,6 +114,7 @@ namespace CompositionProToolkit.Controls
         {
             if ((AssociatedObject as FrameworkElement) == null)
                 return;
+
             // Subscribe to the Loaded event
             ((FrameworkElement)AssociatedObject).Loaded += OnAssociatedObjectLoaded;
         }
@@ -126,53 +128,10 @@ namespace CompositionProToolkit.Controls
                 return;
 
             ((FrameworkElement)AssociatedObject).Loaded -= OnAssociatedObjectLoaded;
-            if (_parentLbItem != null)
-            {
-                _parentLbItem.PointerPressed -= OnPointerPressed;
-                _parentLbItem.PointerMoved -= OnPointerMoved;
-                _parentLbItem.PointerReleased -= OnPointerReleased;
-            }
-            else
-            {
-                AssociatedObject.PointerPressed -= OnPointerPressed;
-                AssociatedObject.PointerMoved -= OnPointerMoved;
-                AssociatedObject.PointerReleased -= OnPointerReleased;
-            }
-        }
 
-        #endregion
-
-        #region Helpers
-
-        /// <summary>
-        /// Get the parent FluidWrapPanel and check if the AssociatedObject is
-        /// hosted inside a ListBoxItem (this scenario will occur if the FluidWrapPanel
-        /// is the ItemsPanel for a ListBox).
-        /// </summary>
-        private void GetParentPanel()
-        {
-            if ((AssociatedObject as FrameworkElement) == null)
-                return;
-
-            var ancestor = (FrameworkElement)AssociatedObject;
-
-            while (ancestor != null)
-            {
-                if (ancestor is ListBoxItem)
-                {
-                    _parentLbItem = ancestor as ListBoxItem;
-                }
-
-                if (ancestor is FluidWrapPanel)
-                {
-                    _parentFwPanel = ancestor as FluidWrapPanel;
-                    // No need to go further up
-                    return;
-                }
-
-                // Find the visual ancestor of the current item
-                ancestor = VisualTreeHelper.GetParent(ancestor) as FrameworkElement;
-            }
+            AssociatedObject.PointerPressed -= OnPointerPressed;
+            AssociatedObject.PointerMoved -= OnPointerMoved;
+            AssociatedObject.PointerReleased -= OnPointerReleased;
         }
 
         #endregion
@@ -186,24 +145,16 @@ namespace CompositionProToolkit.Controls
         /// <param name="e"></param>
         private void OnAssociatedObjectLoaded(object sender, RoutedEventArgs e)
         {
-            // Get the parent OldFluidWrapPanel and check if the AssociatedObject is
-            // hosted inside a ListBoxItem (this scenario will occur if the OldFluidWrapPanel
-            // is the ItemsPanel for a ListBox).
-            GetParentPanel();
+            // Get the parent FluidWrapPanel 
+            _parentFwPanel = AssociatedObject.GetAncestors().FirstOrDefault(x => x is FluidWrapPanel) as FluidWrapPanel;
+            if (_parentFwPanel == null)
+                throw new ArgumentNullException("No FluidWrapPanel found! FluidPointerDragBehavior should be applied " +
+                                                 "to a UIElement which has a FluidWrapPanel as parent or ancestor!", innerException: null);
 
-            // Subscribe to the Mouse down/move/up events
-            if (_parentLbItem != null)
-            {
-                _parentLbItem.PointerPressed += OnPointerPressed;
-                _parentLbItem.PointerMoved += OnPointerMoved;
-                _parentLbItem.PointerReleased += OnPointerReleased;
-            }
-            else
-            {
-                AssociatedObject.PointerPressed += OnPointerPressed;
-                AssociatedObject.PointerMoved += OnPointerMoved;
-                AssociatedObject.PointerReleased += OnPointerReleased;
-            }
+            // Subscribe to the Pointer Pressed/Moved/Released events
+            AssociatedObject.PointerPressed += OnPointerPressed;
+            AssociatedObject.PointerMoved += OnPointerMoved;
+            AssociatedObject.PointerReleased += OnPointerReleased;
         }
 
         /// <summary>
@@ -213,25 +164,10 @@ namespace CompositionProToolkit.Controls
         /// <param name="e"></param>
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            var ptrPt = _parentLbItem != null ? e.GetCurrentPoint(_parentLbItem) : e.GetCurrentPoint(AssociatedObject);
-            var isValidPointer = (((e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)) &&
-                                   (((DragButton == DragButtonType.MouseLeftButton) && (ptrPt.Properties.IsLeftButtonPressed)) ||
-                                   ((DragButton == DragButtonType.MouseRightButton) && (ptrPt.Properties.IsRightButtonPressed)) ||
-                                   ((DragButton == DragButtonType.MouseMiddleButton) && (ptrPt.Properties.IsMiddleButtonPressed)))) ||
-                                 ((e.Pointer.PointerDeviceType == PointerDeviceType.Pen) && (DragButton == DragButtonType.Pen)) ||
-                                 ((e.Pointer.PointerDeviceType == PointerDeviceType.Touch) && (DragButton == DragButtonType.Touch));
-
-            if (!isValidPointer)
+            if (!IsValidPointer(e.GetCurrentPoint(AssociatedObject), e))
                 return;
 
-            // Get the location with respect to the parent
-            var position = ptrPt.RawPosition;
-
-            var fElem = AssociatedObject as FrameworkElement;
-            if ((fElem != null))
-            {
-                _parentFwPanel?.BeginFluidDrag(_parentLbItem ?? AssociatedObject, position, e.Pointer);
-            }
+            _parentFwPanel?.BeginFluidDrag(AssociatedObject, e);
         }
 
         /// <summary>
@@ -241,27 +177,10 @@ namespace CompositionProToolkit.Controls
         /// <param name="e"></param>
         private void OnPointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            var ptrPt = _parentLbItem != null ? e.GetCurrentPoint(_parentLbItem) : e.GetCurrentPoint(AssociatedObject);
-            var isValidPointer = (((e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)) &&
-                                   (((DragButton == DragButtonType.MouseLeftButton) && (ptrPt.Properties.IsLeftButtonPressed)) ||
-                                   ((DragButton == DragButtonType.MouseRightButton) && (ptrPt.Properties.IsRightButtonPressed)) ||
-                                   ((DragButton == DragButtonType.MouseMiddleButton) && (ptrPt.Properties.IsMiddleButtonPressed)))) ||
-                                 ((e.Pointer.PointerDeviceType == PointerDeviceType.Pen) && (DragButton == DragButtonType.Pen)) ||
-                                 ((e.Pointer.PointerDeviceType == PointerDeviceType.Touch) && (DragButton == DragButtonType.Touch));
-
-            if (!isValidPointer)
+            if (!IsValidPointer(e.GetCurrentPoint(AssociatedObject), e))
                 return;
 
-            // Get the location
-            var position = ptrPt.RawPosition;
-
-            var fElem = AssociatedObject as FrameworkElement;
-            if ((fElem == null) || (_parentFwPanel == null))
-                return;
-
-            // Get the location with respect to the parent
-            var positionInParent = e.GetCurrentPoint(_parentFwPanel).RawPosition;
-            _parentFwPanel.OnFluidDrag(_parentLbItem ?? AssociatedObject, position, positionInParent);
+            _parentFwPanel?.OnFluidDrag(AssociatedObject, e);
         }
 
         /// <summary>
@@ -271,26 +190,31 @@ namespace CompositionProToolkit.Controls
         /// <param name="e"></param>
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            var ptrPt = _parentLbItem != null ? e.GetCurrentPoint(_parentLbItem) : e.GetCurrentPoint(AssociatedObject);
-            var isValidPointer = ((e.Pointer.PointerDeviceType == PointerDeviceType.Mouse) &&
-                                   ((DragButton == DragButtonType.MouseLeftButton) || (DragButton == DragButtonType.MouseRightButton) ||
-                                    (DragButton == DragButtonType.MouseMiddleButton))) ||
-                                 ((e.Pointer.PointerDeviceType == PointerDeviceType.Pen) && (DragButton == DragButtonType.Pen)) ||
-                                 ((e.Pointer.PointerDeviceType == PointerDeviceType.Touch) && (DragButton == DragButtonType.Touch));
-
-            if (!isValidPointer)
+            if (!IsValidPointer(e.GetCurrentPoint(AssociatedObject), e, true))
                 return;
 
-            // Get the location
-            var position = ptrPt.RawPosition;
+            _parentFwPanel?.EndFluidDrag(AssociatedObject, e);
+        }
 
-            var fElem = AssociatedObject as FrameworkElement;
-            if ((fElem == null) || (_parentFwPanel == null))
-                return;
+        #endregion
 
-            // Get the location with respect to the parent
-            var positionInParent = e.GetCurrentPoint(_parentFwPanel).RawPosition;
-            _parentFwPanel.EndFluidDrag(_parentLbItem ?? AssociatedObject, position, positionInParent, e.Pointer);
+        #region Helpers
+
+        /// <summary>
+        /// Checks if the correct pointer has raised the event
+        /// </summary>
+        /// <param name="ptrPt">PointerPoint</param>
+        /// <param name="e">PointerRoutedEventArgs</param>
+        /// <param name="isReleased">Flag to indicate if the pointer is released.</param>
+        /// <returns></returns>
+        private bool IsValidPointer(PointerPoint ptrPt, PointerRoutedEventArgs e, bool isReleased = false)
+        {
+            return (((e.Pointer.PointerDeviceType == PointerDeviceType.Mouse) &&
+                     (((DragButton & DragButtonType.MouseLeftButton) == DragButtonType.MouseLeftButton) && (ptrPt.Properties.IsLeftButtonPressed || isReleased)) ||
+                     (((DragButton & DragButtonType.MouseRightButton) == DragButtonType.MouseRightButton) && (ptrPt.Properties.IsRightButtonPressed || isReleased)) ||
+                     (((DragButton & DragButtonType.MouseMiddleButton) == DragButtonType.MouseMiddleButton) && (ptrPt.Properties.IsMiddleButtonPressed || isReleased)))) ||
+                   ((e.Pointer.PointerDeviceType == PointerDeviceType.Pen) && ((DragButton & DragButtonType.Pen) == DragButtonType.Pen)) ||
+                   ((e.Pointer.PointerDeviceType == PointerDeviceType.Touch) && ((DragButton & DragButtonType.Touch) == DragButtonType.Touch));
         }
 
         #endregion

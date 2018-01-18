@@ -166,6 +166,19 @@
                                Text="ProfileControl" />
                 </StackPanel>
             </controls:HamburgerButtonInfo>
+            <!--  CanvasElement button  -->
+            <controls:HamburgerButtonInfo ClearHistory="True"
+                                          PageType="local:ProgressRing3dPage">
+                <StackPanel Orientation="Horizontal">
+                    <localControls:GlyphIcon Width="48"
+                                             Height="48"
+                                             Foreground="White"
+                                             Glyph="{StaticResource ProgressRing3d.Glyph}" />
+                    <TextBlock Margin="12,0,0,0"
+                               VerticalAlignment="Center"
+                               Text="ProgressRing3d" />
+                </StackPanel>
+            </controls:HamburgerButtonInfo>
         </controls:HamburgerMenu.PrimaryButtons>
 
         <!--<controls:HamburgerMenu.SecondaryButtons>

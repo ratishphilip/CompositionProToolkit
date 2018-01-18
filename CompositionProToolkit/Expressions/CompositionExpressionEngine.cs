@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 Ratish Philip 
+﻿// Copyright (c) Ratish Philip 
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.7.0
+// CompositionProToolkit v0.8.0
 //
 
 using System;
@@ -388,6 +388,8 @@ namespace CompositionProToolkit.Expressions
                 _firstBinaryExpression = false;
             }
 
+            _previousBinaryOperator = expression.NodeType;
+
             var leftToken = Visit(expression.Left);
             var rightToken = Visit(expression.Right);
 
@@ -400,8 +402,6 @@ namespace CompositionProToolkit.Expressions
 
             var token = new CompositeExpressionToken(bracketType);
             token.AddToken($"{leftToken} {symbol} {rightToken}");
-
-            _previousBinaryOperator = expression.NodeType;
 
             return token;
         }
@@ -554,12 +554,14 @@ namespace CompositionProToolkit.Expressions
                 return new SimpleExpressionToken(targetName);
             }
 
-            // This check is for CompositionPropertySet. It has a property called 
-            // Properties which is of type CompositionPropertySet. So while converting to string, 'Properties' 
-            // need not be printed 
+            // This check is for CompositionObject.Properties property which is of type CompositionPropertySet. 
+            // So while converting to string, 'Properties' need not be printed 
             if ((expression.Member is PropertyInfo) &&
-                (expression.Type == typeof(CompositionPropertySet) && (expression.Member.Name == "Properties"))
-                && (expression.Expression is MemberExpression) && (expression.Expression.Type == typeof(CompositionPropertySet)))
+                (expression.Member.Name == "Properties") &&
+                (expression.Type == typeof(CompositionPropertySet)) &&
+                (expression.Expression != null) &&
+                ((typeof(CompositionObject).IsAssignableFrom(expression.Expression.Type)) ||
+                 (typeof(VisualTemplate).IsAssignableFrom(expression.Expression.Type))))
             {
                 return Visit(expression.Expression);
             }

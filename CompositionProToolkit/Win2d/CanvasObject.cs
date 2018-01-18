@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 Ratish Philip 
+﻿// Copyright (c) Ratish Philip 
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.7.0
+// CompositionProToolkit v0.8.0
 // 
 
 using System.Numerics;
@@ -34,6 +34,7 @@ using CompositionProToolkit.Win2d.Parsers;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Geometry;
+using System.Globalization;
 
 namespace CompositionProToolkit.Win2d
 {
@@ -56,17 +57,20 @@ namespace CompositionProToolkit.Win2d
         public static CanvasGeometry CreateGeometry(ICanvasResourceCreator resourceCreator, string pathData,
             StringBuilder logger = null)
         {
-            // Log command
-            logger?.AppendLine("using (var pathBuilder = new CanvasPathBuilder(resourceCreator))");
-            logger?.AppendLine("{");
+            using (new CultureShield("en-US"))
+            {
+                // Log command
+                logger?.AppendLine("using (var pathBuilder = new CanvasPathBuilder(resourceCreator))");
+                logger?.AppendLine("{");
 
-            // Get the CanvasGeometry from the path data
-            var geometry = CanvasGeometryParser.Parse(resourceCreator, pathData, logger);
+                // Get the CanvasGeometry from the path data
+                var geometry = CanvasGeometryParser.Parse(resourceCreator, pathData, logger);
 
-            // Log command
-            logger?.AppendLine("}");
+                // Log command
+                logger?.AppendLine("}");
 
-            return geometry;
+                return geometry; 
+            }
         }
 
         /// <summary>
@@ -77,18 +81,24 @@ namespace CompositionProToolkit.Win2d
         /// <returns>ICanvasBrush</returns>
         public static ICanvasBrush CreateBrush(ICanvasResourceCreator resourceCreator, string brushData)
         {
-            return CanvasBrushParser.Parse(resourceCreator, brushData);
+            using (new CultureShield("en-US"))
+            {
+                return CanvasBrushParser.Parse(resourceCreator, brushData); 
+            }
         }
 
         /// <summary>
         /// Parses the given Stroke data string and converts it to ICanvasStroke
         /// </summary>
         /// <param name="resourceCreator">ICanvasResourceCreator</param>
-        /// <param name="strokeData">Stroke data in string format</param>
+        /// <param name="strokeData">Stroke data in string format</param> 
         /// <returns>ICanvasStroke</returns>
         public static ICanvasStroke CreateStroke(ICanvasResourceCreator resourceCreator, string strokeData)
         {
-            return CanvasStrokeParser.Parse(resourceCreator, strokeData);
+            using (new CultureShield("en-US"))
+            {
+                return CanvasStrokeParser.Parse(resourceCreator, strokeData); 
+            }
         }
 
         /// <summary>
@@ -98,7 +108,10 @@ namespace CompositionProToolkit.Win2d
         /// <returns></returns>
         public static CanvasStrokeStyle CreateStrokeStyle(string styleData)
         {
-            return CanvasStrokeStyleParser.Parse(styleData);
+            using (new CultureShield("en-US"))      
+            {
+                return CanvasStrokeStyleParser.Parse(styleData); 
+            }
         }
 
         /// <summary>
@@ -113,7 +126,10 @@ namespace CompositionProToolkit.Win2d
         /// <returns>Color</returns>
         public static Color CreateColor(string colorString)
         {
-            return ColorParser.Parse(colorString);
+            using (new CultureShield("en-US"))
+            {
+                return ColorParser.Parse(colorString); 
+            }
         }
 
         /// <summary>
@@ -129,7 +145,10 @@ namespace CompositionProToolkit.Win2d
         /// <returns>True if successful, otherwise False</returns>
         public static bool TryCreateColor(string colorString, out Color color)
         {
-            return ColorParser.TryParse(colorString, out color);
+            using (new CultureShield("en-US"))
+            {
+                return ColorParser.TryParse(colorString, out color); 
+            }
         }
 
         /// <summary>
@@ -144,7 +163,10 @@ namespace CompositionProToolkit.Win2d
         /// <returns>Color</returns>
         public static Color CreateColor(Vector4 hdrColor)
         {
-            return ColorParser.Parse(hdrColor);
+            using (new CultureShield("en-US"))
+            {
+                return ColorParser.Parse(hdrColor); 
+            }
         }
 
         #endregion

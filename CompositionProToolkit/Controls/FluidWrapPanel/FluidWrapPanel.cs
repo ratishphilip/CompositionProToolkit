@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 Ratish Philip 
+﻿// Copyright (c) Ratish Philip 
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.7.0
+// CompositionProToolkit v0.8.0
 // 
 
 using System;
@@ -56,17 +56,15 @@ namespace CompositionProToolkit.Controls
     {
         #region Constants
 
-        private const double NormalScale = 1.0;
         private const double DragScaleDefault = 1.2;
         private const double NormalOpacity = 1.0;
         private const double DragOpacityDefault = 0.7;
         private const double OpacityMin = 0.1d;
         private const double DefaultItemWidth = 10.0;
         private const double DefaultItemHeight = 10.0;
-        private const int ZIndexNormal = 0;
         private const int ZIndexIntermediate = 1;
         private const int ZIndexDrag = 10;
-        private static readonly TimeSpan InitializationAnimationDuration = TimeSpan.FromMilliseconds(300);
+        private static readonly TimeSpan DefaultInitialAnimationDuration = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan DefaultFluidAnimationDuration = TimeSpan.FromMilliseconds(570);
         private static readonly TimeSpan DefaultOpacityAnimationDuration = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan DefaultScaleAnimationDuration = TimeSpan.FromMilliseconds(400);
@@ -159,8 +157,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public double DragOpacity
         {
-            get { return (double)GetValue(DragOpacityProperty); }
-            set { SetValue(DragOpacityProperty, CoerceDragOpacity(value)); }
+            get => (double)GetValue(DragOpacityProperty);
+            set => SetValue(DragOpacityProperty, CoerceDragOpacity(value));
         }
 
         /// <summary>
@@ -199,8 +197,49 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public double DragScale
         {
-            get { return (double)GetValue(DragScaleProperty); }
-            set { SetValue(DragScaleProperty, value); }
+            get => (double)GetValue(DragScaleProperty);
+            set => SetValue(DragScaleProperty, value);
+        }
+
+        #endregion
+
+        #region FluidAnimationDuration
+
+        /// <summary>
+        /// FluidAnimationDuration Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty FluidAnimationDurationProperty =
+            DependencyProperty.Register("FluidAnimationDuration", typeof(TimeSpan), typeof(FluidWrapPanel),
+                new PropertyMetadata(DefaultFluidAnimationDuration, OnFluidAnimationDurationChanged));
+
+        /// <summary>
+        /// Gets or sets the FluidAnimationDuration property. This dependency property 
+        /// indicates the Duration of the fluid animation.
+        /// </summary>
+        public TimeSpan FluidAnimationDuration
+        {
+            get => (TimeSpan)GetValue(FluidAnimationDurationProperty);
+            set => SetValue(FluidAnimationDurationProperty, value);
+        }
+
+        /// <summary>
+        /// Handles changes to the FluidAnimationDuration property.
+        /// </summary>
+        /// <param name="d">FluidWrapPanel</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnFluidAnimationDurationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var target = (FluidWrapPanel)d;
+            target.OnFluidAnimationDurationChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the FluidAnimationDuration property.
+        /// </summary>
+		private void OnFluidAnimationDurationChanged()
+        {
+            InitializeComposition();
+            InvalidateMeasure();
         }
 
         #endregion
@@ -217,12 +256,51 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Gets the FluidItems property. This dependency property 
         /// indicates the observable list of FluidWrapPanel's children.
-        /// NOTE: This property can be set internally only (or by a class deriving from this class)
         /// </summary>
         public ObservableCollection<UIElement> FluidItems
         {
-            get { return (ObservableCollection<UIElement>)GetValue(FluidItemsProperty); }
-            private set { SetValue(FluidItemsProperty, value); }
+            get => (ObservableCollection<UIElement>)GetValue(FluidItemsProperty);
+            private set => SetValue(FluidItemsProperty, value);
+        }
+
+        #endregion
+
+        #region InitialAnimationDuration
+
+        /// <summary>
+        /// InitialAnimationDuration Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty InitialAnimationDurationProperty =
+            DependencyProperty.Register("InitialAnimationDuration", typeof(TimeSpan), typeof(FluidWrapPanel),
+                new PropertyMetadata(DefaultInitialAnimationDuration, OnInitialAnimationDurationChanged));
+
+        /// <summary>
+        /// Gets or sets the InitialAnimationDuration property. This dependency property 
+        /// indicates the duration for the initial animation.
+        /// </summary>
+        public TimeSpan InitialAnimationDuration
+        {
+            get => (TimeSpan)GetValue(InitialAnimationDurationProperty);
+            set => SetValue(InitialAnimationDurationProperty, value);
+        }
+
+        /// <summary>
+        /// Handles changes to the InitialAnimationDuration property.
+        /// </summary>
+        /// <param name="d">FluidWrapPanel</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnInitialAnimationDurationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var target = (FluidWrapPanel)d;
+            target.OnInitialAnimationDurationChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the InitialAnimationDuration property.
+        /// </summary>
+		private void OnInitialAnimationDurationChanged()
+        {
+            InvalidateArrange();
         }
 
         #endregion
@@ -241,8 +319,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public bool IsComposing
         {
-            get { return (bool)GetValue(IsComposingProperty); }
-            set { SetValue(IsComposingProperty, value); }
+            get => (bool)GetValue(IsComposingProperty);
+            set => SetValue(IsComposingProperty, value);
         }
 
         #endregion
@@ -268,8 +346,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public double ItemHeight
         {
-            get { return (double)GetValue(ItemHeightProperty); }
-            set { SetValue(ItemHeightProperty, CoerceItemHeight(value)); }
+            get => (double)GetValue(ItemHeightProperty);
+            set => SetValue(ItemHeightProperty, CoerceItemHeight(value));
         }
 
         /// <summary>
@@ -305,8 +383,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public double ItemWidth
         {
-            get { return (double)GetValue(ItemWidthProperty); }
-            set { SetValue(ItemWidthProperty, CoerceItemWidth(value)); }
+            get => (double)GetValue(ItemWidthProperty);
+            set => SetValue(ItemWidthProperty, CoerceItemWidth(value));
         }
 
         /// <summary>
@@ -336,8 +414,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public IEnumerable ItemsSource
         {
-            get { return (ObservableCollection<UIElement>)GetValue(ItemsSourceProperty); }
-            set { SetValue(ItemsSourceProperty, value); }
+            get => (ObservableCollection<UIElement>)GetValue(ItemsSourceProperty);
+            set => SetValue(ItemsSourceProperty, value);
         }
 
         /// <summary>
@@ -349,6 +427,7 @@ namespace CompositionProToolkit.Controls
         {
             var panel = (FluidWrapPanel)d;
             var newItemsSource = panel.ItemsSource;
+
             panel.OnItemsSourceChanged(newItemsSource);
         }
 
@@ -368,6 +447,88 @@ namespace CompositionProToolkit.Controls
             }
 
             // Refresh Layout
+            InvalidateMeasure();
+        }
+
+        #endregion
+
+        #region ItemTemplate
+
+        /// <summary>
+        /// ItemTemplate Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty ItemTemplateProperty =
+            DependencyProperty.Register("ItemTemplate", typeof(DataTemplate), typeof(FluidWrapPanel),
+                new PropertyMetadata(null, OnItemTemplateChanged));
+
+        /// <summary>
+        /// Gets or sets the ItemTemplate property. This dependency property 
+        /// indicates the data template that is used to display the content of 
+        /// the FluidWrapPanel's children (if they derive from ContentControl).
+        /// </summary>
+        public DataTemplate ItemTemplate
+        {
+            get => (DataTemplate)GetValue(ItemTemplateProperty);
+            set => SetValue(ItemTemplateProperty, value);
+        }
+
+        /// <summary>
+        /// Handles changes to the ItemTemplate property.
+        /// </summary>
+        /// <param name="d">FluidWrapPanel</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnItemTemplateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var panel = (FluidWrapPanel)d;
+            panel.OnItemTemplateChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the ItemTemplate property.
+        /// </summary>
+		private void OnItemTemplateChanged()
+        {
+            InvalidateMeasure();
+        }
+
+        #endregion
+
+        #region OpacityAnimationDuration
+
+        /// <summary>
+        /// OpacityAnimationDuration Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty OpacityAnimationDurationProperty =
+            DependencyProperty.Register("OpacityAnimationDuration", typeof(TimeSpan), typeof(FluidWrapPanel),
+                new PropertyMetadata(DefaultOpacityAnimationDuration, OnOpacityAnimationDurationChanged));
+
+        /// <summary>
+        /// Gets or sets the OpacityAnimationDuration property. This dependency property 
+        /// indicates the duration for the opacity animation.
+        /// </summary>
+        public TimeSpan OpacityAnimationDuration
+        {
+            get => (TimeSpan)GetValue(OpacityAnimationDurationProperty);
+            set => SetValue(OpacityAnimationDurationProperty, value);
+        }
+
+        /// <summary>
+        /// Handles changes to the OpacityAnimationDuration property.
+        /// </summary>
+        /// <param name="d">FluidWrapPanel</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnOpacityAnimationDurationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var target = (FluidWrapPanel)d;
+            target.OnOpacityAnimationDurationChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the OpacityAnimationDuration property.
+        /// </summary>
+		private void OnOpacityAnimationDurationChanged()
+        {
+            InitializeComposition();
             InvalidateMeasure();
         }
 
@@ -398,8 +559,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public bool OptimizeChildPlacement
         {
-            get { return (bool)GetValue(OptimizeChildPlacementProperty); }
-            set { SetValue(OptimizeChildPlacementProperty, value); }
+            get => (bool)GetValue(OptimizeChildPlacementProperty);
+            set => SetValue(OptimizeChildPlacementProperty, value);
         }
 
         #endregion
@@ -419,8 +580,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public Orientation Orientation
         {
-            get { return (Orientation)GetValue(OrientationProperty); }
-            set { SetValue(OrientationProperty, value); }
+            get => (Orientation)GetValue(OrientationProperty);
+            set => SetValue(OrientationProperty, value);
         }
 
         /// <summary>
@@ -440,6 +601,47 @@ namespace CompositionProToolkit.Controls
         private void OnOrientationChanged()
         {
             // Refresh the layout
+            InvalidateMeasure();
+        }
+
+        #endregion
+
+        #region ScaleAnimationDuration
+
+        /// <summary>
+        /// ScaleAnimationDuration Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty ScaleAnimationDurationProperty =
+            DependencyProperty.Register("ScaleAnimationDuration", typeof(TimeSpan), typeof(FluidWrapPanel),
+                new PropertyMetadata(DefaultScaleAnimationDuration, OnScaleAnimationDurationChanged));
+
+        /// <summary>
+        /// Gets or sets the ScaleAnimationDuration property. This dependency property 
+        /// indicates the duration for the scale animation.
+        /// </summary>
+        public TimeSpan ScaleAnimationDuration
+        {
+            get => (TimeSpan)GetValue(ScaleAnimationDurationProperty);
+            set => SetValue(ScaleAnimationDurationProperty, value);
+        }
+
+        /// <summary>
+        /// Handles changes to the ScaleAnimationDuration property.
+        /// </summary>
+        /// <param name="d">FluidWrapPanel</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnScaleAnimationDurationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var target = (FluidWrapPanel)d;
+            target.OnScaleAnimationDurationChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the ScaleAnimationDuration property.
+        /// </summary>
+		private void OnScaleAnimationDurationChanged()
+        {
+            InitializeComposition();
             InvalidateMeasure();
         }
 
@@ -502,11 +704,27 @@ namespace CompositionProToolkit.Controls
             // Clear any previously uninitialized items
             _uninitializedFluidItems.Clear();
 
+            // Clear visuals of children which are removed
+            var removables = new List<UIElement>(_fluidVisuals.Keys.Where(c => !Children.Contains(c)));
+
+            foreach (var child in removables)
+            {
+                _fluidVisuals.Remove(child);
+                FluidItems.Remove(child);
+            }
+
+            removables.Clear();
+
             var availableItemSize = new Size(Double.PositiveInfinity, Double.PositiveInfinity);
 
             // Iterate through all the UIElements in the Children collection
             foreach (var child in Children.Where(c => c != null))
             {
+                if ((ItemTemplate != null) && (child is ContentControl contentChild))
+                {
+                    contentChild.ContentTemplate = ItemTemplate;
+                }
+
                 // Ask the child how much size it needs
                 child.Measure(availableItemSize);
                 // Check if the child is already added to the fluidElements collection
@@ -521,7 +739,6 @@ namespace CompositionProToolkit.Controls
                 _uninitializedFluidItems.Add(child);
                 // Get the visual of the child
                 var visual = ElementCompositionPreview.GetElementVisual(child);
-
                 visual.ImplicitAnimations = _implicitAnimationCollection;
                 visual.CenterPoint = new Vector3((float)(child.DesiredSize.Width / 2), (float)(child.DesiredSize.Height / 2), 0);
                 visual.Offset = new Vector3((float)-child.DesiredSize.Width, (float)-child.DesiredSize.Height, 0);
@@ -584,8 +801,7 @@ namespace CompositionProToolkit.Controls
                 var width = child.Width;
                 var height = child.Height;
 
-                MatrixCell cell;
-                if (matrix.TryFindRegion(startIndex, width, height, out cell))
+                if (matrix.TryFindRegion(startIndex, width, height, out var cell))
                 {
                     matrix.SetRegion(cell, width, height);
                 }
@@ -632,10 +848,6 @@ namespace CompositionProToolkit.Controls
             {
                 return finalSize;
             }
-
-            // Create the animation for the uinitialized children
-            var offsetAnimation = _compositor.CreateVector3KeyFrameAnimation();
-            offsetAnimation.Duration = InitializationAnimationDuration;
 
             // Calculate how many unit cells can fit in the given width (or height) when the 
             // Orientation is Horizontal (or Vertical)
@@ -684,13 +896,12 @@ namespace CompositionProToolkit.Controls
                 var width = child.Value.Width;
                 var height = child.Value.Height;
 
-                MatrixCell cell;
-                if (matrix.TryFindRegion(startIndex, width, height, out cell))
+                if (matrix.TryFindRegion(startIndex, width, height, out var cell))
                 {
                     // Set the bits
                     matrix.SetRegion(cell, width, height);
                     // Arrange the child
-                    child.Key.Arrange(new Rect(0, 0, child.Key.DesiredSize.Width, child.Key.DesiredSize.Height));
+                    child.Key.Arrange(new Rect(new Point(), child.Key.DesiredSize));
                     // Convert MatrixCell location to actual location
                     var pos = new Vector3((float)(cell.Col * cellSize.Width), (float)(cell.Row * cellSize.Height), 0);
                     // Get the Bit Information for this child
@@ -709,10 +920,19 @@ namespace CompositionProToolkit.Controls
                         if (_uninitializedFluidItems.Contains(child.Key))
                         {
                             // Use explicit animation to position the uninitialized child to the new location
-                            // because implicit property animations do not run the first time 
-                            // a Visual shows up on screen
-                            offsetAnimation.InsertKeyFrame(1f, pos);
-                            visual.StartAnimation(() => visual.Offset, offsetAnimation);
+                            // because implicit property animations do not run the first time a Visual shows up on screen
+                            _compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
+                                () =>
+                                {
+                                    var offsetAnimation = _compositor.CreateVector3KeyFrameAnimation();
+                                    offsetAnimation.Duration = InitialAnimationDuration;
+                                    offsetAnimation.InsertKeyFrame(1f, pos, _compositor.CreateEaseOutBackEasingFunction());
+                                    visual.StartAnimation(() => visual.Offset, offsetAnimation);
+                                },
+                                () =>
+                                {
+                                    _fluidVisuals[child.Key].Offset = pos;
+                                });
                         }
                         else
                         {
@@ -766,21 +986,21 @@ namespace CompositionProToolkit.Controls
 
             // Offset Animation
             var offsetAnimation = _compositor.CreateKeyFrameAnimation<Vector3>()
-                                             .HavingDuration(DefaultFluidAnimationDuration)
+                                             .HavingDuration(FluidAnimationDuration)
                                              .ForTarget(() => rootVisual.Offset);
-            offsetAnimation.InsertExpressionKeyFrame(1f, vector3Expr);
+            offsetAnimation.InsertExpressionKeyFrame(1f, vector3Expr, _compositor.CreateEaseOutBackEasingFunction());
 
             // Opacity Animation
             var opacityAnimation = _compositor.CreateKeyFrameAnimation<float>()
-                                              .HavingDuration(DefaultOpacityAnimationDuration)
+                                              .HavingDuration(OpacityAnimationDuration)
                                               .ForTarget(() => rootVisual.Opacity);
             opacityAnimation.InsertExpressionKeyFrame(1f, scalarExpr);
 
             // Scale Animation
             var scaleAnimation = _compositor.CreateKeyFrameAnimation<Vector3>()
-                                            .HavingDuration(DefaultFluidAnimationDuration)
+                                            .HavingDuration(ScaleAnimationDuration)
                                             .ForTarget(() => rootVisual.Scale);
-            scaleAnimation.InsertExpressionKeyFrame(1f, vector3Expr);
+            scaleAnimation.InsertExpressionKeyFrame(1f, vector3Expr, _compositor.CreateEaseOutBackEasingFunction());
 
             // ImplicitAnimation
             _implicitAnimationCollection = _compositor.CreateImplicitAnimationCollection();
@@ -799,6 +1019,7 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         private void ClearItemsSource()
         {
+            _fluidVisuals.Clear();
             FluidItems.Clear();
             Children.Clear();
         }
@@ -957,18 +1178,40 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handler for the event when the user starts dragging the dragElement.
         /// </summary>
-        /// <param name="child">UIElement being dragged</param>
-        /// <param name="position">Position in the child where the user clicked</param>
-        /// <param name="pointer">Pointer</param>
-        internal void BeginFluidDrag(UIElement child, Point position, Pointer pointer)
+        /// <param name="source">UIElement which was being dragged.</param>
+        /// <param name="e">PointerRoutedEventArgs</param>
+        internal void BeginFluidDrag(UIElement source, PointerRoutedEventArgs e)
         {
-            if ((child == null) || (!IsComposing))
+            if ((source == null) || (!IsComposing))
                 return;
 
-            child.SetValue(Canvas.ZIndexProperty, ZIndexDrag);
             // Capture further pointer events
-            child.CapturePointer(pointer);
+            source.CapturePointer(e.Pointer);
+            // Find the UIElement which hosts the source and is a child of the FluidWrapPanel
+            UIElement child;
+            // Is the source directly hosted within a FluidWrapPanel?
+            if (Children.Contains(source))
+            {
+                child = source;
+            }
+            else
+            {
+                child = source.GetAncestors().FirstOrDefault(x => Children.Contains(x)) as UIElement;
+            }
+
+            if (child == null)
+                return;
+
+
+            if (!IsItemsHost)
+            {
+                ElementCompositionPreview.SetIsTranslationEnabled(child, false);
+            }
+
+            child.SetValue(Canvas.ZIndexProperty, ZIndexDrag);
             _dragElement = child;
+
+            var position = e.GetCurrentPoint(child).RawPosition;
 
             var visual = _fluidVisuals[_dragElement];
             visual.Opacity = (float)DragOpacity;
@@ -983,20 +1226,21 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handler for the event when the user drags the dragElement.
         /// </summary>
-        /// <param name="child">UIElement being dragged</param>
-        /// <param name="position">Position where the user clicked w.r.t. the UIElement being dragged</param>
-        /// <param name="positionInParent">Position where the user clicked w.r.t. the FluidWrapPanel</param>
-        internal void OnFluidDrag(UIElement child, Point position, Point positionInParent)
+        /// <param name="source">UIElement which was being dragged.</param>
+        /// <param name="e">PointerRoutedEventArgs</param>
+        internal void OnFluidDrag(UIElement source, PointerRoutedEventArgs e)
         {
-            if ((child == null) || (!IsComposing) || (_dragElement == null))
+            if ((source == null) || (!IsComposing) || (_dragElement == null))
                 return;
 
-
             // Set the offset of the _dragElement's visual
+            var position = e.GetCurrentPoint(_dragElement).RawPosition;
+            var positionInParent = e.GetCurrentPoint(this).RawPosition;
+
             var visual = _fluidVisuals[_dragElement];
             visual.Offset = new Vector3((float)(positionInParent.X - _dragStartPoint.X),
-                                        (float)(positionInParent.Y - _dragStartPoint.Y),
-                                        0);
+                (float)(positionInParent.Y - _dragStartPoint.Y),
+                0);
 
             // Are all the children are of unit cell size?
             if (_isOptimized)
@@ -1132,8 +1376,7 @@ namespace CompositionProToolkit.Controls
                 var width = item.Value.Width;
                 var height = item.Value.Height;
 
-                MatrixCell cell;
-                if (tempMatrix.TryFindRegion(startIndex, width, height, out cell))
+                if (tempMatrix.TryFindRegion(startIndex, width, height, out var cell))
                 {
                     // Set the bits
                     tempMatrix.SetRegion(cell, width, height);
@@ -1212,29 +1455,27 @@ namespace CompositionProToolkit.Controls
         /// <summary>
         /// Handler for the event when the user stops dragging the dragElement and releases it.
         /// </summary>
-        /// <param name="child">UIElement being dragged</param>
-        /// <param name="position">Position where the user clicked w.r.t. the UIElement being dragged</param>
-        /// <param name="positionInParent">Position where the user clicked w.r.t. the FluidWrapPanel</param>
-        /// <param name="pointer">Pointer</param>
-        internal void EndFluidDrag(UIElement child, Point position, Point positionInParent, Pointer pointer)
+        /// <param name="source">UIElement which was being dragged.</param>
+        /// <param name="e">PointerRoutedEventArgs</param>
+        internal void EndFluidDrag(UIElement source, PointerRoutedEventArgs e)
         {
-            if ((child == null) || (!IsComposing) || (_dragElement == null))
+            if ((source == null) || (!IsComposing) || (_dragElement == null))
                 return;
 
             // Set the offset of the _dragElement's visual
+            var positionInParent = e.GetCurrentPoint(this).RawPosition;
             var visual = _fluidVisuals[_dragElement];
             visual.ImplicitAnimations = _implicitAnimationCollection;
             visual.Opacity = 1f;
             visual.Scale = Vector3.One;
             visual.Offset = new Vector3((float)(positionInParent.X - _dragStartPoint.X),
-                                                            (float)(positionInParent.Y - _dragStartPoint.Y),
-                                                            0);
-            //visual.CenterPoint = new Vector3((float)(ItemWidth / 2), (float)(ItemHeight / 2), 0);
+                (float)(positionInParent.Y - _dragStartPoint.Y),
+                0);
 
             // Z-Index is set to 1 so that during the animation it does not go below other elements.
-            child.SetValue(Canvas.ZIndexProperty, ZIndexIntermediate);
+            _dragElement.SetValue(Canvas.ZIndexProperty, ZIndexIntermediate);
             // Release the pointer capture
-            child.ReleasePointerCapture(pointer);
+            source.ReleasePointerCapture(e.Pointer);
 
             _dragElement = null;
             _lastExchangedElement = null;

@@ -1,10 +1,7 @@
 <img src="https://cloud.githubusercontent.com/assets/7021835/16889814/1784ed78-4a9e-11e6-80d0-7c2084d6c960.png" alt="CompositionProToolkit"></img>
 
-# What's new in v0.7?
-- `FluidToggleSwitch` control added.
-- `ProfileControl` added.
-- **BREAKING CHANGE** - `CompositionGeneratorFactory` class is deprecated and removed. Use `Compositor.CreateCompositionGenerator()` instead.
-
+# What's new in v0.8?
+- `ProgressRing3d` control added.
 
 # Table of Contents
 
@@ -30,6 +27,7 @@
   - [FluidBanner](#4-fluidbanner)
   - [FluidToggleSwitch](#5-fluidtoggleswitch)
   - [ProfileControl](#6-profilecontrol)
+  - [ProgressRing3d](#7-progressring3d)
 - [CompositionProToolkit Expressions](https://github.com/ratishphilip/CompositionProToolkit/tree/master/CompositionProToolkit/Expressions)
 - [Win2d Helpers](#win2d-helpers)
     - [ICanvasStroke and CanvasStroke](#icanvasstroke-and-canvasstroke)
@@ -609,6 +607,21 @@ The above properties define the color of the Background component. The color of 
 | **Stretch** | `Stretch` | Indicates how the image content is resized to fill its allocated space in the Image Visual. | **Stretch.Uniform** |
 | **Tint** | `Color` | Gets or sets the color overlay on the background of the ProfileControl. | **Colors.White** |
 
+## 7. ProgressRing3d
+
+**ProgressRing3d** is the three-dimensional version of the default `ProgressRing` control. It is created using Windows Composition APIs. It consists of five shapes (nodes) revolving around a 3D point.
+
+<img> </img>
+
+It has the following properties
+
+| Dependency Property | Type | Description | Default Value |
+|---|---|---|---|
+| **NodeColor** | `Color` | Gets or sets Color of each of the nodes. | **Blue** |
+| **NodeShape** | `ProgressRing3d.NodeShapeType` | Gets or sets the shape of the node (circle or square). | **ProgressRing3d.NodeShapeType.Circle** |
+| **SyncAccentColor** | `Boolean` | Gets or sets the property which indicates whether the NodeColor should be synced with the SystemAccent color. If _SyncAccentColor is set to true, the NodeColor property will be ignored_. | **True** |
+
+
 # Win2d Helpers
 
 ## ICanvasStroke and CanvasStroke
@@ -905,8 +918,12 @@ The **Single()** extension method is now replaced with **ToSingle()** extension 
 
 # Updates Chronology
 
+## v0.8.0
+(**Thursday, January 18, 2018**) - Added `ProgressRing3d` control.
+
 ## v0.7.0
 (**Thursday, July 13, 2017**) - Added `FluidToggleSwitch` control and `ProfileControl`.
+
 ## v0.6.0  
 (**Tuesday, June 13, 2017**) - Refactored `CompositionProToolkit.Expressions` namespace, added new extension methods.
 

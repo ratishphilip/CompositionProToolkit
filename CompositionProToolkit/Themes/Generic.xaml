@@ -126,4 +126,31 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="controls:ProgressRing3d">
+        <Setter Property="Background"
+                Value="Transparent" />
+        <Setter Property="Foreground"
+                Value="Transparent" />
+        <Setter Property="Padding"
+                Value="0" />
+        <Setter Property="BorderThickness"
+                Value="0" />
+        <Setter Property="BorderBrush"
+                Value="Transparent">
+        </Setter>
+        <Setter Property="NodeColor"
+                Value="{ThemeResource SystemAccentColor}" />
+        <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+        <Setter Property="VerticalAlignment" Value="Stretch"></Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ProgressRing3d">
+                    <Grid x:Name="PART_RootGrid"
+                          Background="Transparent">
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

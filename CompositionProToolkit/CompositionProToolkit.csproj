@@ -11,8 +11,8 @@
     <AssemblyName>CompositionProToolkit</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.16225.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.15063.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.17069.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -120,6 +120,7 @@
     <Compile Include="Controls\FluidWrapPanel\FluidWrapPanel.cs" />
     <Compile Include="Controls\ImageFrame\ImageFrame.cs" />
     <Compile Include="Controls\ProfileControl\ProfileControl.cs" />
+    <Compile Include="Controls\ProgressRing3d\ProgressRing3d.cs" />
     <Compile Include="Expressions\CompositionAnimationExtensions.cs" />
     <Compile Include="Expressions\CompositionExpressionContext.cs" />
     <Compile Include="Expressions\CompositionExpressionEngine.cs" />
@@ -221,7 +222,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>5.3.3</Version>
+      <Version>6.0.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.0</Version>

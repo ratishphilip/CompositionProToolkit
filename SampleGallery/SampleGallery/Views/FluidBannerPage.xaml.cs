@@ -54,7 +54,7 @@ namespace SampleGallery.Views
 
             using (var client = new HttpClient())
             {
-                xml = await client.GetStringAsync("http://www.apple.com/trailers/home/xml/current.xml");
+                xml = await client.GetStringAsync("http://trailers.apple.com/trailers/home/xml/current.xml");
             }
 
             xml = xml.Replace("\u001f", "");
@@ -74,15 +74,11 @@ namespace SampleGallery.Views
 
                 return result;
             }
-            catch (Exception exception)
+            catch (Exception)
             {
 
                 throw;
             }
-
-            
-
-            return null;
         }
     }
 }

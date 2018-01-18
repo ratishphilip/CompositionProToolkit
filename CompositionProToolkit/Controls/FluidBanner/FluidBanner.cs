@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 Ratish Philip 
+﻿// Copyright (c) Ratish Philip 
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.7.0
+// CompositionProToolkit v0.8.0
 // 
 
 using System;
@@ -113,8 +113,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public AlignmentX AlignX
         {
-            get { return (AlignmentX)GetValue(AlignXProperty); }
-            set { SetValue(AlignXProperty, value); }
+            get => (AlignmentX)GetValue(AlignXProperty);
+            set => SetValue(AlignXProperty, value);
         }
 
         /// <summary>
@@ -154,8 +154,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public AlignmentY AlignY
         {
-            get { return (AlignmentY)GetValue(AlignYProperty); }
-            set { SetValue(AlignYProperty, value); }
+            get => (AlignmentY)GetValue(AlignYProperty);
+            set => SetValue(AlignYProperty, value);
         }
 
         /// <summary>
@@ -195,8 +195,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public Color ItemBackground
         {
-            get { return (Color)GetValue(ItemBackgroundProperty); }
-            set { SetValue(ItemBackgroundProperty, value); }
+            get => (Color)GetValue(ItemBackgroundProperty);
+            set => SetValue(ItemBackgroundProperty, value);
         }
 
         /// <summary>
@@ -236,8 +236,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public double ItemGap
         {
-            get { return (double)GetValue(ItemGapProperty); }
-            set { SetValue(ItemGapProperty, value); }
+            get => (double)GetValue(ItemGapProperty);
+            set => SetValue(ItemGapProperty, value);
         }
 
         /// <summary>
@@ -277,8 +277,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public IEnumerable<Uri> ItemsSource
         {
-            get { return (IEnumerable<Uri>)GetValue(ItemsSourceProperty); }
-            set { SetValue(ItemsSourceProperty, value); }
+            get => (IEnumerable<Uri>)GetValue(ItemsSourceProperty);
+            set => SetValue(ItemsSourceProperty, value);
         }
 
         /// <summary>
@@ -323,8 +323,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public Thickness Padding
         {
-            get { return (Thickness)GetValue(PaddingProperty); }
-            set { SetValue(PaddingProperty, value); }
+            get => (Thickness)GetValue(PaddingProperty);
+            set => SetValue(PaddingProperty, value);
         }
 
         /// <summary>
@@ -363,8 +363,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public Stretch Stretch
         {
-            get { return (Stretch)GetValue(StretchProperty); }
-            set { SetValue(StretchProperty, value); }
+            get => (Stretch)GetValue(StretchProperty);
+            set => SetValue(StretchProperty, value);
         }
 
         /// <summary>

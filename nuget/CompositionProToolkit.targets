@@ -8,7 +8,7 @@
 
   <!-- ensure we have a reference to the C++ CRT which may not be present in C#/VB/JS applications -->
   <ItemGroup>
-    <SDKReference Include="Microsoft.VCLibs, Version=14.0" />
+    <SDKReference Include="Microsoft.VCLibs, Version=15.0" />
   </ItemGroup>
 
   <!-- If the project.json file is missing assume a packages.config

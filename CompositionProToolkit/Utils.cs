@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 Ratish Philip 
+﻿// Copyright (c) Ratish Philip 
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,10 +24,11 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.7.0
+// CompositionProToolkit v0.8.0
 // 
 
 using System;
+using System.Globalization;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Windows.Foundation;
@@ -43,7 +44,7 @@ namespace CompositionProToolkit
     /// </summary>
     public static class Utils
     {
-        #region Double & Float
+        #region Double and Float
 
         // Constant values 
 
@@ -880,6 +881,70 @@ namespace CompositionProToolkit
         public static Color LighterBy(this Color color, float amount)
         {
             return color.Lerp(Colors.White, amount);
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Class which can be used to encapsulate code statement(s)
+    /// so that they are executed in a specific culture.
+    /// <para />
+    /// Usage example:
+    /// <para />
+    /// The following code block will be executed using the French culture.
+    /// <para />
+    /// using (new CultureShield("fr-FR"))
+    /// <para />
+    /// {
+    /// <para />
+    ///    ...
+    /// <para />
+    /// }
+    /// </summary>
+    public class CultureShield : IDisposable
+    {
+        #region Fields
+
+        private CultureInfo _prevCulture;
+
+        #endregion
+
+        #region Construction / Initialization
+
+        /// <summary>
+        /// Instantiates a culture wrapper so that the encapsulated code
+        /// statement(s) can be executed using the specified culture.
+        /// <para />
+        /// Usage example:
+        /// <para />
+        /// The following code block will be executed using the French culture.
+        /// <para />
+        /// using (new CultureShield("fr-FR"))
+        /// <para />
+        /// {
+        /// <para />
+        ///   ...
+        /// <para />
+        /// }
+        /// </summary>
+        /// <param name="culture">The culture in which the encapsulated code statement(s) are to be executed.</param>
+        public CultureShield(string culture)
+        {
+            _prevCulture = CultureInfo.CurrentCulture;
+            CultureInfo.CurrentCulture = new CultureInfo(culture);
+        }
+
+        #endregion
+
+        #region APIs
+
+        /// <summary>
+        /// Disposes the CultureShield object.
+        /// </summary>
+        public void Dispose()
+        {
+            CultureInfo.CurrentCulture = _prevCulture;
         }
 
         #endregion
