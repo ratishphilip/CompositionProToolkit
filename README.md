@@ -441,13 +441,17 @@ Here is a demo of the **FluidWrapPanel** in action
 |---|---|---|---|
 | **DragOpacity** | `Double` | Gets or sets the Opacity of the element when it is being dragged by the user. _**Range: 0.1 - 1.0 inclusive.**_ | **0.7** |
 | **DragScale** | `Double` | Gets or sets the Scale Factor of the element when it is being dragged by the user. | **1.2** |
+| **FluidAnimationDuration** | `TimeSpan` | Indicates the duration of the rearrangement animation. | **570 ms** |
 | **FluidItems** | `ObservableCollection<UIElement>` | Indicates the Observable Collection of the rearranged children | **null** |
+| **InitialAnimationDuration** | `TimeSpan` | Indicates the duration of the first layout animation. | **300 ms** |
 | **IsComposing** | `Boolean` | Flag to indicate whether the children in the FluidWrapPanel can be rearranged or not. | **False** |
 | **ItemHeight** | `Double` | Gets or sets the minimum height each child can have in the FluidWrapPanel. _The child's height should be a multiple of the **ItemHeight**_. | **0** |
 | **ItemWidth** | `Double` | Gets or sets the minimum width each child can have in the FluidWrapPanel. _The child's width should be a multiple of the **ItemWidth**_. | **0** |
 | **ItemsSource** | `IEnumerable` | Bindable property to which a collection of UIElement can be bound. | **null** |
+| **OpacityAnimationDuration** | `TimeSpan` | Indicates the duration of the animation to change the opacity of a child item when it is selected or deselected. | **300 ms** |
 | **OptimizeChildPlacement** | `Boolean` | Gets or sets the property that indicates whether the placement of the children is optimized. If set to true, the child is placed at the first available position from the beginning of the FluidWrapPanel. If set to false, each child occupies the same (or greater) row and/or column than the previous child. | **True** |
 | **Orientation** | `System.Windows.Controls.Orientation` | Gets or sets the different orientations the FluidWrapPanel can have. _Possible values are **Horizontal** and **Vertical**_. | **Horizontal** | 
+| **ScaleAnimationDuration** | `TimeSpan` | Indicates the uration of the animation to change the scale of a child item when it is selected or deselected. | **400 ms** |
 
 ## 3. ImageFrame
 **ImageFrame** is a control which can be used for displaying images asynchronously. It encapsulates a **ImageSurface** object which is used for loading and rendering the images. It also supports Pointer interactions and raises events accordingly.
