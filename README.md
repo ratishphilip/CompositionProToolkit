@@ -628,8 +628,9 @@ It has the following properties
 # CompositionProToolkit Expressions
 <img src="https://cloud.githubusercontent.com/assets/7021835/18138158/41f5d4aa-6f60-11e6-8373-9e1085130bff.png" />
 
-*ExpressionAnimations* allow a developer to define a mathematical equation that can be used to calculate the value of a targeted animating property each frame. The mathematical equation can be defined using references to properties of Composition objects, mathematical functions and operators and Input. 
-*CompositionProToolkit.Expressions* namespace provides a set of helper classes and extension methods which facilitate the developer to define the mathematical equation in the form of a lambda expression. They provide type-safety, IntelliSense support and allows catching of errors during compile time.
+**ExpressionAnimations** allow a developer to define a mathematical equation that can be used to calculate the value of a targeted animating property each frame. The mathematical equation can be defined using references to properties of Composition objects, mathematical functions and operators and Input. 
+
+**CompositionProToolkit.Expressions** namespace provides a set of helper classes and extension methods which facilitate the developer to define the mathematical equation in the form of a lambda expression. They provide type-safety, IntelliSense support and allows catching of errors during compile time.
 
 More details [here](https://github.com/ratishphilip/CompositionProToolkit/tree/master/CompositionProToolkit/Expressions).
 
