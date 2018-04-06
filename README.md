@@ -28,7 +28,7 @@
   - [FluidToggleSwitch](#5-fluidtoggleswitch)
   - [ProfileControl](#6-profilecontrol)
   - [ProgressRing3d](#7-progressring3d)
-- [CompositionProToolkit Expressions](https://github.com/ratishphilip/CompositionProToolkit/tree/master/CompositionProToolkit/Expressions)
+- [CompositionProToolkit Expressions](#compositionprotoolkit-expressions)
 - [Win2d Helpers](#win2d-helpers)
     - [ICanvasStroke and CanvasStroke](#icanvasstroke-and-canvasstroke)
     - [CanvasDrawingSession extension methods](#canvasdrawingsession-extension-methods)
@@ -625,6 +625,13 @@ It has the following properties
 | **NodeShape** | `ProgressRing3d.NodeShapeType` | Gets or sets the shape of the node (circle or square). | **ProgressRing3d.NodeShapeType.Circle** |
 | **SyncAccentColor** | `Boolean` | Gets or sets the property which indicates whether the NodeColor should be synced with the SystemAccent color. If _SyncAccentColor is set to true, the NodeColor property will be ignored_. | **True** |
 
+# CompositionProToolkit Expressions
+<img src="https://cloud.githubusercontent.com/assets/7021835/18138158/41f5d4aa-6f60-11e6-8373-9e1085130bff.png" />
+
+*ExpressionAnimations* allow a developer to define a mathematical equation that can be used to calculate the value of a targeted animating property each frame. The mathematical equation can be defined using references to properties of Composition objects, mathematical functions and operators and Input. 
+*CompositionProToolkit.Expressions* namespace provides a set of helper classes and extension methods which facilitate the developer to define the mathematical equation in the form of a lambda expression. They provide type-safety, IntelliSense support and allows catching of errors during compile time.
+
+More details [here](https://github.com/ratishphilip/CompositionProToolkit/tree/master/CompositionProToolkit/Expressions).
 
 # Win2d Helpers
 
