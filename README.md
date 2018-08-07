@@ -1,7 +1,8 @@
 <img src="https://cloud.githubusercontent.com/assets/7021835/16889814/1784ed78-4a9e-11e6-80d0-7c2084d6c960.png" alt="CompositionProToolkit"></img>
 
-# What's new in v0.8?
-- `ProgressRing3d` control added.
+# What's new in v0.9?
+- `FrostedGlass` control added.
+- New extension methods added.
 
 # Table of Contents
 
@@ -15,6 +16,7 @@
   - [Creating a Frosted Glass Effect Brush using `IMaskSurface`](#4-creating-a-frosted-glass-effect-brush-using-imasksurface)
   - [Loading Images on Visual using `IImageSurface`](#5-loading-images-on-visual-using-iimagesurface)
   - [Creating the Reflection of a `ContainerVisual`](#6-creating-the-reflection-of-a-containervisual)
+  - [Creating Composition Geometry](#7-creating-composition-geometry)
 - [CompositionProToolkit Controls](#compositionprotoolkit-controls)
   - [FluidProgressRing](#1-fluidprogressring)
   - [FluidWrapPanel](#2-fluidwrappanel)
@@ -28,6 +30,7 @@
   - [FluidToggleSwitch](#5-fluidtoggleswitch)
   - [ProfileControl](#6-profilecontrol)
   - [ProgressRing3d](#7-progressring3d)
+  - [FrostedGlass](#8-frostedglass)
 - [CompositionProToolkit Expressions](#compositionprotoolkit-expressions)
 - [Win2d Helpers](#win2d-helpers)
     - [ICanvasStroke and CanvasStroke](#icanvasstroke-and-canvasstroke)
@@ -405,6 +408,27 @@ If the visual has multiple other visuals in its visual tree, then the entire vis
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/17491823/0f3e67fc-5d5e-11e6-9116-91fb3fb55b83.png" />
 
+## 7. Creating Composition Geometry
+
+You can now use the Win2d Mini Path Language to create `CompositionPath`, `CompositionPathGeometry`, `CompositionGeometricClip`, `CompositionSpriteShape`.
+
+Here are the APIs
+```C#
+public static CompositionPath CreatePath(this Compositor compositor, string pathData);
+public static CompositionPathGeometry CreatePathGeometry(this Compositor compositor, string pathData);
+public static CompositionSpriteShape CreateSpriteShape(this Compositor compositor, string pathData);
+public static CompositionGeometricClip CreateGeometricClip(this Compositor compositor, CanvasGeometry geometry);
+public static CompositionGeometricClip CreateGeometricClip(this Compositor compositor, string pathData);
+```
+
+Example
+```C#
+var pathData = "M 100, 100 L 200, 200 L100,300Z";
+var shape = compositor.CreateSpriteShape(pathData);
+
+var clipGeometry = compositor.CreateGeometricClip("O 200 200 150 150");
+```
+
 # CompositionProToolkit Controls
 
 ## 1. FluidProgressRing
@@ -625,6 +649,81 @@ It has the following properties
 | **NodeShape** | `ProgressRing3d.NodeShapeType` | Gets or sets the shape of the node (circle or square). | **ProgressRing3d.NodeShapeType.Circle** |
 | **SyncAccentColor** | `Boolean` | Gets or sets the property which indicates whether the NodeColor should be synced with the SystemAccent color. If _SyncAccentColor is set to true, the NodeColor property will be ignored_. | **True** |
 
+## 8. FrostedGlass
+This new control has been added to CompositionProToolkit and it provides an efficient way of displaying an acrylic background (with rounded corners) to floating dialogs like Flyout, ContentDialog etc.
+
+`FrostedGlass` control has the following properties
+| Dependency Property | Type | Description | Default Value |
+|---|---|---|---|
+| **TintColor** | `Color` | The tint of the FrostedGlass. | **Colors.White** |
+| **TintOpacity** | `Double` | The opacity of the tint color | **0.6** |
+| **MultiplyAmount** | `Double` | Indicates how much the multiplication result (Tint * Backdrop) should be included in the output image | **1.0** |
+| **BlurAmount** | `Double` | The amount of blurring that should be done. | **15.0** |
+| **BackdropAmount** | `Double` | The amount of backdrop brush that should be present in the Frosted Glass. Value should be within 0 and 1 (inclusive). | **0.75** |
+| **DisplayShadow** | `Boolean` | Whether the shadow of the FrostedGlass should be displayed. | **True** |
+| **ShadowColor** | `Color` | The color of the shadow. | **Colors.Black** |
+| **ShadowOpacity** | `Double` | The opacity of the shadow. | **0.5** |
+| **ShadowBlurRadius** | `Double` | The Blur Radius of the shadow. | **16.0** |
+| **ShadowOffsetX** | `Double` | The offset of the shadow on the x-axis | **4.0** |
+| **ShadowOffsetY** | `Double` | The offset of the shadow on the y-axis | **4.0** |
+
+Here is an example of creating a custom acrylic flyout
+
+```XML
+<Page.Resources>
+    <Style x:Key="CustomFlyoutPresenterStyle" TargetType="FlyoutPresenter">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundChromeHighBrush}" />
+        <Setter Property="BorderThickness" Value="{ThemeResource FlyoutBorderThemeThickness}" />
+        <Setter Property="Padding" Value="{ThemeResource FlyoutContentThemePadding}" />
+        <Setter Property="MinWidth" Value="800" />
+        <Setter Property="MaxWidth" Value="800" />
+        <Setter Property="MinHeight" Value="650" />
+        <Setter Property="MaxHeight" Value="650" />
+        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Auto" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.ZoomMode" Value="Disabled" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="FlyoutPresenter">
+                    <Grid Background="Transparent">
+                        <ContentPresenter
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <Flyout x:Key="CustomFlyout" FlyoutPresenterStyle="{StaticResource CustomFlyoutPresenterStyle}">
+        <Grid>
+            <toolkit:FrostedGlass CornerRadius="8"
+                                  MultiplyAmount="1"
+                                  TintColor="#EFEFEF" />
+            <!-- Additional Content goes below -->
+        </Grid>
+    </Flyout>
+</Page.Resources>
+
+<Button
+    x:Name="CalligraphyPenButton"
+    Margin="10,4,0,4"
+    VerticalAlignment="Center"
+    HorizontalAlignment="Center"
+    FlyoutBase.AttachedFlyout="{StaticResource CustomFlyout}">    
+</Button>
+```
+
 # CompositionProToolkit Expressions
 <img src="https://cloud.githubusercontent.com/assets/7021835/18138158/41f5d4aa-6f60-11e6-8373-9e1085130bff.png" />
 
@@ -811,11 +910,11 @@ In the **AddPolygonFigure**, the **radius** parameter denotes the radius of the 
 
 **Note**: _These methods add the required curves or line segments to your path internally. Since these methods add a figure to your path, you can invoke them only after closing the current figure in the path. They must not be called in between **BeginFigure()** and **EndFigure()** calls, otherwise an **ArgumentException** will be raised. These extension methods call the **BeginFigure()** and **EndFigure()** **CanvasPathBuilder** methods internally._
 
-Check out the [Sample Gallery project](https://github.com/ratishphilip/CompositionProToolkit/tree/master/SampleGallery) where you can interact with the **CanvasObject** class by providing the SVG/XAML path data and converting it to **CanvasGeometry**. You can alter the **StrokeThickness**, **StrokeColor** and **FillColor** of the rendered geometry.
+Check out the [Sample Gallery project](https://github.com/ratishphilip/CompositionProToolkit/tree/master/SampleGallery) where you can interact with the **CanvasObject** class by providing the SVG/XAML path data and converting it to **CanvasGeometry**. You can alter the **StrokeThickness**, **StrokeColor** and **FillColor** of the rendered geometry.
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/22484131/e58b0046-e7b4-11e6-8b31-335c57a738f0.png" />
 
-You can view the **CanvasPathBuilder** commands called to create the parsed geometry.
+You can view the **CanvasPathBuilder** commands called to create the parsed geometry.
 
 <img src="https://cloud.githubusercontent.com/assets/7021835/22484130/e58a13c0-e7b4-11e6-8764-1670dc866372.png" />
 
@@ -929,6 +1028,9 @@ The **Single()** extension method for **System.Double** is now marked as **obsol
 The **Single()** extension method is now replaced with **ToSingle()** extension method. It does the same job - converts **System.Double** to **System.Single**.
 
 # Updates Chronology
+
+## v0.9.0
+(**Tuesday, August 7, 2018**) - Added `FrostedGlass` control.
 
 ## v0.8.0
 (**Thursday, January 18, 2018**) - Added `ProgressRing3d` control.
