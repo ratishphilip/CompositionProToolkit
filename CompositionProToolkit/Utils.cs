@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 // 
 
 using System;
@@ -248,6 +248,46 @@ namespace CompositionProToolkit
             return (!rect2.IsEmpty)
                    && rect1.X.IsCloseTo(rect2.X) && rect1.Y.IsCloseTo(rect2.Y)
                    && rect1.Height.IsCloseTo(rect2.Height) && rect1.Width.IsCloseTo(rect2.Width);
+        }
+
+        /// <summary>
+        /// Restricts the given single precision number to be within the
+        /// specified min and max values (inclusive).
+        /// </summary>
+        /// <param name="num">Given single precision number</param>
+        /// <param name="min">Minimum value</param>
+        /// <param name="max">Maximum value</param>
+        /// <returns>Clamped value</returns>
+        public static float Clamp(this float num, float min, float max)
+        {
+            if (min > max)
+            {
+                var temp = min;
+                min = max;
+                max = temp;
+            }
+
+            return Math.Max(min, Math.Min(max, num));
+        }
+
+        /// <summary>
+        /// Restricts the given double precision number to be within the
+        /// specified min and max values (inclusive).
+        /// </summary>
+        /// <param name="num">Given double precision number</param>
+        /// <param name="min">Minimum value</param>
+        /// <param name="max">Maximum value</param>
+        /// <returns>Clamped value</returns>
+        public static double Clamp(this double num, double min, double max)
+        {
+            if (min > max)
+            {
+                var temp = min;
+                min = max;
+                max = temp;
+            }
+
+            return Math.Max(min, Math.Min(max, num));
         }
 
         [StructLayout(LayoutKind.Explicit)]
@@ -783,6 +823,16 @@ namespace CompositionProToolkit
                                2f * b.Y - a.Y);
         }
 
+        /// <summary>
+        /// Converts a Vector2 structure (x,y) to Vector3 structure (x, y, 0)
+        /// </summary>
+        /// <param name="v">Input Vector2</param>
+        /// <returns>Vector3</returns>
+        public static Vector3 ToVector3(this Vector2 v)
+        {
+            return new Vector3(v, 0);
+        }
+
         #endregion
 
         #region Vector4
@@ -881,6 +931,21 @@ namespace CompositionProToolkit
         public static Color LighterBy(this Color color, float amount)
         {
             return color.Lerp(Colors.White, amount);
+        }
+
+        #endregion
+
+        #region Point
+
+        /// <summary>
+        /// Converts the Point structure P (X,Y) to Vector3 structure
+        /// V (P.X, P.Y, 0);
+        /// </summary>
+        /// <param name="p">Point structure</param>
+        /// <returns>Vector3</returns>
+        public static Vector3 ToVector3(this Point p)
+        {
+            return new Vector3((float)p.X, (float)p.Y, 0f);
         }
 
         #endregion

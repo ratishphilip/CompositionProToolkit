@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 // 
 
 using System.Numerics;
@@ -68,13 +68,21 @@ namespace CompositionProToolkit.Expressions.Templates
         /// </summary>
         public Color Color { get; }
         /// <summary>
-        /// The direction in which the light is pointing relative to its coordinate space Visual.
+        /// The intensity of the light.
         /// </summary>
-        public Vector3 Direction { get; }
+        public float Intensity { get; }
         /// <summary>
         /// Offset of the light source relative to its coordinate space Visual.
         /// </summary>
         public Vector3 Offset { get; }
+        /// <summary>
+        /// Gets the Minimun Attenuation Cutoff
+        /// </summary>
+        public float MinAttenuationCutoff { get; }
+        /// <summary>
+        /// Gets the Maximun Attenuation Cutoff
+        /// </summary>
+        public float MaxAttenuationCutoff { get; }
     }
 
     /// <summary>

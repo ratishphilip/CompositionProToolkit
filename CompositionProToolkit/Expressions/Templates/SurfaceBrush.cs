@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 // 
 
 using System.Numerics;
@@ -62,26 +62,6 @@ namespace CompositionProToolkit.Expressions.Templates
         /// this is set to 0.0f.
         /// </summary>
         public float VerticalAlignmentRatio { get; }
-        /// <summary>
-        /// Inset from the bottom edge of the source content that specifies the thickness
-        /// of the bottom row. Defaults to 0.0f.
-        /// </summary>
-        public float BottomInset { get; }
-        /// <summary>
-        /// Inset from the left edge of the source content that specifies the thickness of
-        /// the left column. Defaults to 0.0f.
-        /// </summary>
-        public float LeftInset { get; }
-        /// <summary>
-        /// Inset from the right edge of the source content that specifies the thickness of
-        /// the right column. Defaults to 0.0f.
-        /// </summary>
-        public float RightInset { get; }
-        /// <summary>
-        /// Inset from the top edge of the source content that specifies the thickness
-        /// of the top row. Defaults to 0.0f.
-        /// </summary>
-        public float TopInset { get; }
         /// <summary>
         /// The angle of rotation of the brush in radians.
         /// </summary>

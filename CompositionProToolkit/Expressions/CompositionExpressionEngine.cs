@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 //
 
 using System;
@@ -645,8 +645,8 @@ namespace CompositionProToolkit.Expressions
             var token = new CompositeExpressionToken();
             var constExpr = expression.Expression as ConstantExpression;
             if ((constExpr?.Value != null)
-                && constExpr.Value.GetType().IsNested
-                && constExpr.Value.GetType().Name.StartsWith("<", StringComparison.Ordinal))
+                /*&& constExpr.Value.GetType().IsNested
+                && constExpr.Value.GetType().Name.StartsWith("<", StringComparison.Ordinal)*/)
             {
                 // Add to the parameters dictionary
                 if (!_parameters.ContainsKey(expression.Member.Name))

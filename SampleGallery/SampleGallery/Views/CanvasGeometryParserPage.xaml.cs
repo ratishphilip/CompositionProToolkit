@@ -1,21 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using CompositionProToolkit;
-using CompositionProToolkit.Expressions;
 using CompositionProToolkit.Win2d;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI.Xaml;
@@ -144,7 +134,7 @@ namespace SampleGallery.Views
                 args.DrawingSession.FillGeometry(geometry, _fillColor);
                 args.DrawingSession.DrawGeometry(geometry, _strokeColor, _strokeThickness);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 args.DrawingSession.FillGeometry(_errorGeometry, Colors.Red);
                 CommandsList.Text = "Parsing error! Invalid input data!";

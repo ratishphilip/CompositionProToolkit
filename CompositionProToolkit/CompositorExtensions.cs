@@ -24,18 +24,19 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 //
 
 using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
-using Windows.Foundation;
 using Windows.Graphics.Effects;
 using Windows.UI;
 using Windows.UI.Composition;
 using CompositionProToolkit.Expressions;
+using CompositionProToolkit.Win2d;
+using Microsoft.Graphics.Canvas.Geometry;
 
 namespace CompositionProToolkit
 {
@@ -314,6 +315,16 @@ namespace CompositionProToolkit
             return compositor.CreateKeyFrameAnimation<Vector4>();
         }
 
+        /// <summary>
+        /// Creates an instance of KeyFrameAnimation&lt;CompositionPath&gt; which animates a CompositionPath.
+        /// </summary>
+        /// <param name="compositor">Compositor</param>
+        /// <returns>KeyFrameAnimation&lt;CompositionPath&gt;</returns>
+        public static KeyFrameAnimation<CompositionPath> GeneratePathKeyFrameAnimation(this Compositor compositor)
+        {
+            return compositor.CreateKeyFrameAnimation<CompositionPath>();
+        }
+
         #endregion
 
         #region Expression Animation
@@ -366,7 +377,7 @@ namespace CompositionProToolkit
         public static ExpressionAnimation<Color> CreateColorExpressionAnimation(this Compositor compositor,
             Expression<CompositionExpression<Color>> expression)
         {
-            return compositor.CreateExpressionAnimation<Color>(expression);
+            return compositor.CreateExpressionAnimation(expression);
         }
 
         /// <summary>
@@ -389,7 +400,7 @@ namespace CompositionProToolkit
         public static ExpressionAnimation<Quaternion> CreateQuaternionExpressionAnimation(this Compositor compositor,
             Expression<CompositionExpression<Quaternion>> expression)
         {
-            return compositor.CreateExpressionAnimation<Quaternion>(expression);
+            return compositor.CreateExpressionAnimation(expression);
         }
 
         /// <summary>
@@ -412,7 +423,7 @@ namespace CompositionProToolkit
         public static ExpressionAnimation<float> CreateScalarExpressionAnimation(this Compositor compositor,
             Expression<CompositionExpression<float>> expression)
         {
-            return compositor.CreateExpressionAnimation<float>(expression);
+            return compositor.CreateExpressionAnimation(expression);
         }
 
         /// <summary>
@@ -435,7 +446,7 @@ namespace CompositionProToolkit
         public static ExpressionAnimation<Vector2> CreateVector2ExpressionAnimation(this Compositor compositor,
             Expression<CompositionExpression<Vector2>> expression)
         {
-            return compositor.CreateExpressionAnimation<Vector2>(expression);
+            return compositor.CreateExpressionAnimation(expression);
         }
 
         /// <summary>
@@ -458,7 +469,7 @@ namespace CompositionProToolkit
         public static ExpressionAnimation<Vector3> CreateVector3ExpressionAnimation(this Compositor compositor,
             Expression<CompositionExpression<Vector3>> expression)
         {
-            return compositor.CreateExpressionAnimation<Vector3>(expression);
+            return compositor.CreateExpressionAnimation(expression);
         }
 
         /// <summary>
@@ -481,7 +492,7 @@ namespace CompositionProToolkit
         public static ExpressionAnimation<Vector4> CreateVector4ExpressionAnimation(this Compositor compositor,
             Expression<CompositionExpression<Vector4>> expression)
         {
-            return compositor.CreateExpressionAnimation<Vector4>(expression);
+            return compositor.CreateExpressionAnimation(expression);
         }
 
         /// <summary>
@@ -504,7 +515,7 @@ namespace CompositionProToolkit
         public static ExpressionAnimation<Matrix4x4> CreateMatrix4x4ExpressionAnimation(this Compositor compositor,
             Expression<CompositionExpression<Matrix4x4>> expression)
         {
-            return compositor.CreateExpressionAnimation<Matrix4x4>(expression);
+            return compositor.CreateExpressionAnimation(expression);
         }
 
         #endregion
@@ -561,15 +572,14 @@ namespace CompositionProToolkit
             var batch = compositor.CreateScopedBatch(batchType);
 
             // Handler for the Completed Event
-            TypedEventHandler<object, CompositionBatchCompletedEventArgs> handler = null;
-            handler = (s, ea) =>
+            void BatchCompletedHandler(object s, CompositionBatchCompletedEventArgs ea)
             {
                 var scopedBatch = s as CompositionScopedBatch;
 
                 // Unsubscribe the handler from the Completed event
                 if (scopedBatch != null)
                 {
-                    scopedBatch.Completed -= handler;
+                    scopedBatch.Completed -= BatchCompletedHandler;
                 }
 
                 try
@@ -581,10 +591,10 @@ namespace CompositionProToolkit
                 {
                     scopedBatch?.Dispose();
                 }
-            };
+            }
 
             // Subscribe to the Completed event
-            batch.Completed += handler;
+            batch.Completed += BatchCompletedHandler;
 
             // Invoke the action
             action();
@@ -623,15 +633,14 @@ namespace CompositionProToolkit
             var batch = compositor.CreateScopedBatch(batchType);
 
             // Handler for the Completed Event
-            TypedEventHandler<object, CompositionBatchCompletedEventArgs> handler = null;
-            handler = (s, ea) =>
+            void BatchCompletedHandler(object s, CompositionBatchCompletedEventArgs ea)
             {
                 var scopedBatch = s as CompositionScopedBatch;
 
                 // Unsubscribe the handler from the Completed event
                 if (scopedBatch != null)
                 {
-                    scopedBatch.Completed -= handler;
+                    scopedBatch.Completed -= BatchCompletedHandler;
                 }
 
                 try
@@ -643,10 +652,10 @@ namespace CompositionProToolkit
                 {
                     scopedBatch?.Dispose();
                 }
-            };
+            }
 
             // Subscribe to the Completed event
-            batch.Completed += handler;
+            batch.Completed += BatchCompletedHandler;
 
             // Invoke the action
             action(batch);
@@ -913,7 +922,85 @@ namespace CompositionProToolkit
         {
             return compositor.CreateSurfaceBrush(renderSurface.Surface);
         }
-        
+
+        #endregion
+
+        #region CompositionGeometry
+
+        /// <summary>
+        /// Creates a CompositionPath based on the given path data.
+        /// </summary>
+        /// <param name="compositor">Compositor</param>
+        /// <param name="pathData">Path data in string format.</param>
+        /// <returns>CompositionPath</returns>
+        public static CompositionPath CreatePath(this Compositor compositor, string pathData)
+        {
+            // Create CanvasGeometry
+            var geometry = CanvasObject.CreateGeometry(pathData);
+            // Create CompositionPath
+            return new CompositionPath(geometry);
+        }
+
+        /// <summary>
+        /// Creates a CompositionPathGeometry based on the given path data.
+        /// </summary>
+        /// <param name="compositor">Compositor</param>
+        /// <param name="pathData">Path data in string format.</param>
+        /// <returns>CompositionPathGeometry</returns>
+        public static CompositionPathGeometry CreatePathGeometry(this Compositor compositor, string pathData)
+        {
+            // Create CanvasGeometry
+            var geometry = CanvasObject.CreateGeometry(pathData);
+            // Create CompositionPathGeometry
+            return compositor.CreatePathGeometry(new CompositionPath(geometry));
+        }
+
+        /// <summary>
+        /// Creates a CompositionSpriteShape based on the given path data.
+        /// </summary>
+        /// <param name="compositor">Compositor</param>
+        /// <param name="pathData">Path data in string format.</param>
+        /// <returns>CompositionSpriteShape</returns>
+        public static CompositionSpriteShape CreateSpriteShape(this Compositor compositor, string pathData)
+        {
+            // Create CanvasGeometry
+            var geometry = CanvasObject.CreateGeometry(pathData);
+            // Create CompositionPathGeometry
+            var pathGeometry = compositor.CreatePathGeometry(new CompositionPath(geometry));
+            // Create CompositionSpriteShape
+            return compositor.CreateSpriteShape(pathGeometry);
+        }
+
+        /// <summary>
+        /// Creates a CompositionGeometricClip from the given CanvasGeometry
+        /// </summary>
+        /// <param name="compositor">Compositor</param>
+        /// <param name="geometry">CanvasGeometry</param>
+        /// <returns>CompositionGeometricClip</returns>
+        public static CompositionGeometricClip CreateGeometricClip(this Compositor compositor, CanvasGeometry geometry)
+        {
+            // Create the CompositionPath
+            var path = new CompositionPath(geometry);
+            // Create the CompositionPathGeometry
+            var pathGeometry = compositor.CreatePathGeometry(path);
+            // Create the CompositionGeometricClip
+            return compositor.CreateGeometricClip(pathGeometry);
+        }
+
+        /// <summary>
+        /// Parses the given Path data and converts it to CompositionGeometricClip
+        /// </summary>
+        /// <param name="compositor">Compositor</param>
+        /// <param name="pathData">Path data in string format.</param>
+        /// <returns>CompositionGeometricClip</returns>
+        public static CompositionGeometricClip CreateGeometricClip(this Compositor compositor, string pathData)
+        {
+            // Create the CanvasGeometry from the path data
+            var geometry = CanvasObject.CreateGeometry(pathData);
+            // Create the CompositionGeometricClip
+            return compositor.CreateGeometricClip(geometry);
+        }
+
         #endregion
     }
 }

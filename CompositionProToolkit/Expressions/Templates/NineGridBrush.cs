@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 // 
 
 using Windows.UI.Composition;
@@ -81,6 +81,10 @@ namespace CompositionProToolkit.Expressions.Templates
         /// Scale to be applied to TopInset. Defaults to 1.0f.
         /// </summary>
         public float TopInsetScale { get; }
+        /// <summary>
+        /// Indicates whether the center of the Nine-Grid is drawn.
+        /// </summary>
+        public bool IsCenterHollow { get; }
     }
 
     /// <summary>

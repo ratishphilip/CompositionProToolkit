@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 // 
 
 using System;
@@ -306,48 +306,6 @@ namespace CompositionProToolkit.Controls
         /// Provides the class instance an opportunity to handle changes to the AlignY property.
         /// </summary>
         private void OnAlignYChanged()
-        {
-            // Refresh Layout
-            InvalidateArrange();
-        }
-
-        #endregion
-
-        #region CornerRadius
-
-        /// <summary>
-        /// CornerRadius Dependency Property
-        /// </summary>
-        public static readonly DependencyProperty CornerRadiusProperty =
-            DependencyProperty.Register("CornerRadius", typeof(CornerRadius), typeof(ImageFrame),
-                new PropertyMetadata(new CornerRadius(0.0), OnCornerRadiusChanged));
-
-        /// <summary>
-        /// Gets or sets the CornerRadius property. This dependency property 
-        /// indicates the corner radius of the the ImageFrame. The image will
-        /// be rendered with rounded corners.
-        /// </summary>
-        public CornerRadius CornerRadius
-        {
-            get { return (CornerRadius)GetValue(CornerRadiusProperty); }
-            set { SetValue(CornerRadiusProperty, value); }
-        }
-
-        /// <summary>
-        /// Handles changes to the CornerRadius property.
-        /// </summary>
-        /// <param name="d">ImageFrame</param>
-		/// <param name="e">DependencyProperty changed event arguments</param>
-        private static void OnCornerRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var frame = (ImageFrame)d;
-            frame.OnCornerRadiusChanged();
-        }
-
-        /// <summary>
-        /// Provides the class instance an opportunity to handle changes to the CornerRadius property.
-        /// </summary>
-        private void OnCornerRadiusChanged()
         {
             // Refresh Layout
             InvalidateArrange();
@@ -1133,6 +1091,9 @@ namespace CompositionProToolkit.Controls
         {
             // Set the default Style Key
             DefaultStyleKey = typeof(ImageFrame);
+
+            // Handle the CornerRadius Change
+            RegisterPropertyChangedCallback(ImageFrame.CornerRadiusProperty, OnCornerRadiusChanged);
 
             // Setting the background to transparent so that it will
             // receive Pointer events
@@ -2048,6 +2009,19 @@ namespace CompositionProToolkit.Controls
         {
             _placeholderContentVisual.Opacity = 0;
             _placeholderBackgroundVisual.Opacity = 0;
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the CornerRadius property.
+        /// </summary>
+        private void OnCornerRadiusChanged(DependencyObject d, DependencyProperty dp)
+        {
+            // Refresh Layout
+            InvalidateArrange();
         }
 
         #endregion

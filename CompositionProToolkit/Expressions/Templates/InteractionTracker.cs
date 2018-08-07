@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 // 
 
 using System.Numerics;
@@ -45,6 +45,11 @@ namespace CompositionProToolkit.Expressions.Templates
         {
             Type = typeof(InteractionTracker);
         }
+
+        /// <summary>
+        /// Boolean value indicating whether Inertia is from Impulse.
+        /// </summary>
+        public bool IsInertiaFromImpulse { get; }
 
         /// <summary>
         /// Boolean value indicating whether position rounding is currently suggested.
@@ -73,7 +78,7 @@ namespace CompositionProToolkit.Expressions.Templates
         /// <summary>
         /// Inertia decay rate for scale. Range is from 0 to 1.
         /// </summary>
-        public float ScaleInertiaDecayRate { get; }
+        public float? ScaleInertiaDecayRate { get; }
         /// <summary>
         /// The rate of change for scale.
         /// </summary>
@@ -102,11 +107,13 @@ namespace CompositionProToolkit.Expressions.Templates
         /// <summary>
         /// Inertia decay rate for position. Range is from 0 to 1.
         /// </summary>
-        public Vector3 PositionInertiaDecayRate { get; }
+        public Vector3? PositionInertiaDecayRate { get; }
         /// <summary>
         /// The velocity currently applied to position.
         /// </summary>
         public Vector3 PositionVelocityInPixelsPerSecond { get; }
+
+
     }
 
     /// <summary>

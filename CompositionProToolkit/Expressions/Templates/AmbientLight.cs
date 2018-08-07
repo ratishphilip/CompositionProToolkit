@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 // 
 
 using Windows.UI;
@@ -47,9 +47,14 @@ namespace CompositionProToolkit.Expressions.Templates
         }
 
         /// <summary>
-        /// The color of the ambient light.
+        /// Gets the color of the ambient light.
         /// </summary>
         public Color Color { get; }
+
+        /// <summary>
+        /// Gets the intensity of the light.
+        /// </summary>
+        public float Intensity { get; }
     }
 
     /// <summary>

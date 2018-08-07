@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 // 
 
 using System;
@@ -37,7 +37,7 @@ namespace CompositionProToolkit
     /// </summary>
     public static class Scalar
     {
-        // Pi related constants
+        // Pi related floating point constants
 
         /// <summary>
         /// (float)Math.PI radians ( or 180 degrees).
@@ -56,11 +56,11 @@ namespace CompositionProToolkit
         /// </summary>
         public const float PiByThree = Pi / 3f;
         /// <summary>
-        /// One fourth of (float)Math.PI radians ( or 60 degrees).
+        /// One fourth of (float)Math.PI radians ( or 45 degrees).
         /// </summary>
         public const float PiByFour = Pi / 4f;
         /// <summary>
-        /// One sizth of (float)Math.PI radians ( or 60 degrees).
+        /// One sixth of (float)Math.PI radians ( or 30 degrees).
         /// </summary>
         public const float PiBySix = Pi / 6f;
         /// <summary>

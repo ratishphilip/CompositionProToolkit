@@ -6,7 +6,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using CompositionProToolkit;
-using CompositionProToolkit.Expressions;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 
@@ -44,7 +43,7 @@ namespace SampleGallery.Views
             SizeChanged += OnSizeChanged;
         }
 
-        private async void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
             _generator = _compositor.CreateCompositionGenerator();

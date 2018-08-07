@@ -7,7 +7,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using CompositionDeviceHelper;
 using CompositionProToolkit;
-using CompositionProToolkit.Expressions;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 

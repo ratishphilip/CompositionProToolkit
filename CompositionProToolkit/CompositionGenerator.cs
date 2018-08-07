@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 // 
 
 using System;
@@ -159,6 +159,22 @@ namespace CompositionProToolkit
         #region APIs
 
         /// <summary>
+        /// Creates an Empty MaskSurface having the no size and geometry. 
+        /// NOTE: Use this API if you want to create an Empty IMaskSurface first
+        /// and change its geometry and/or size of the MaskSurface later.
+        /// </summary>
+        /// <returns>IMaskSurface</returns>
+        public IMaskSurface CreateMaskSurface()
+        {
+            // Initialize the mask
+            IMaskSurface mask = new MaskSurface(this, new Size(), null);
+            // Render the mask
+            mask.Redraw();
+
+            return mask;
+        }
+
+        /// <summary>
         /// Creates a MaskSurface having the given size and geometry with MaskMode as True.
         /// The geometry is filled with white color. The surface not covered by the geometry is
         /// transparent.
@@ -174,6 +190,22 @@ namespace CompositionProToolkit
             mask.Redraw();
 
             return mask;
+        }
+
+        /// <summary>
+        /// Creates an empty GeometrySurface having the no size and geometry.
+        /// NOTE: Use this API if you want to create an Empty IGeometrySurface 
+        /// first and change its geometry and/or size, fillColor or stroke later.
+        /// </summary>
+        /// <returns>IGeometrySurface</returns>
+        public IGeometrySurface CreateGeometrySurface()
+        {
+            // Initialize the geometrySurface
+            IGeometrySurface geometrySurface = new GeometrySurface(this, new Size(), null, null, Colors.Transparent, Colors.Transparent);
+            // Render the geometrySurface
+            geometrySurface.Redraw();
+
+            return geometrySurface;
         }
 
         /// <summary>
@@ -389,7 +421,7 @@ namespace CompositionProToolkit
         /// <param name="backgroundColor">Fill color of the GeometrySurface background which is 
         /// not covered by the geometry</param>
         /// <returns>IGeometrySurface</returns>
-        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke, 
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke,
             ICanvasBrush fillBrush, Color backgroundColor)
         {
             // Create the background brush
@@ -438,7 +470,7 @@ namespace CompositionProToolkit
         /// <param name="backgroundBrush">The brush to fill the GeometrySurface background which is 
         /// not covered by the geometry</param>
         /// <returns>IGeometrySurface</returns>
-        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke, 
+        public IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke,
             Color fillColor, ICanvasBrush backgroundBrush)
         {
             // Create the foreground brush
@@ -721,8 +753,8 @@ namespace CompositionProToolkit
                         // surface.
                         if (stroke != null)
                         {
-                            var scaleX = (float) ((surface.Size.Width - stroke.Width) / (surface.Size.Width));
-                            var scaleY = (float) ((surface.Size.Height - stroke.Width) / (surface.Size.Height));
+                            var scaleX = (float)((surface.Size.Width - stroke.Width) / (surface.Size.Width));
+                            var scaleY = (float)((surface.Size.Height - stroke.Width) / (surface.Size.Height));
 
                             geometry = geometry.Transform(
                                 Matrix3x2.CreateScale(new Vector2(scaleX, scaleY), surface.Size.ToVector2() * 0.5f));
@@ -913,7 +945,7 @@ namespace CompositionProToolkit
             else if (visual is SpriteVisual spriteVisual)
             {
                 reflectedVisual = _compositor.CreateSpriteVisual();
-                ((SpriteVisual)reflectedVisual).Brush =  spriteVisual.Brush;
+                ((SpriteVisual)reflectedVisual).Brush = spriteVisual.Brush;
                 ((SpriteVisual)reflectedVisual).Shadow = spriteVisual.Shadow;
             }
             else

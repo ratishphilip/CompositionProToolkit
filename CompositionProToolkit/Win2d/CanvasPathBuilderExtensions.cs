@@ -24,10 +24,12 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 // 
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using CompositionProToolkit.Win2d.Core;
 using Microsoft.Graphics.Canvas.Geometry;
@@ -39,6 +41,29 @@ namespace CompositionProToolkit.Win2d
     /// </summary>
     public static class CanvasPathBuilderExtensions
     {
+        /// <summary>
+        /// Adds a line in the form of a cubic bezier. The control point of the quadratic bezier
+        /// will be the endpoint of the line itself.
+        /// </summary>
+        /// <param name="pathBuilder">CanvasPathBuilder</param>
+        /// <param name="end">Ending location of the line segment.</param>
+        public static void AddLineAsQuadraticBezier(this CanvasPathBuilder pathBuilder, Vector2 end)
+        {
+            pathBuilder.AddQuadraticBezier(end, end);
+        }
+
+        /// <summary>
+        /// Adds a line in the form of a cubic bezier. The two control points of the cubic bezier
+        /// will be the endpoints of the line itself.
+        /// </summary>
+        /// <param name="pathBuilder">CanvasPathBuilder</param>
+        /// <param name="start">Starting location of the line segment.</param>
+        /// <param name="end">Ending location of the line segment.</param>
+        public static void AddLineAsCubicBezier(this CanvasPathBuilder pathBuilder, Vector2 start, Vector2 end)
+        {
+            pathBuilder.AddCubicBezier(start, end, end);
+        }
+
         /// <summary>
         /// Adds a circle figure to the path.
         /// </summary>
@@ -310,6 +335,51 @@ namespace CompositionProToolkit.Win2d
 
             // End path
             pathBuilder.EndFigure(CanvasFigureLoop.Closed);
+        }
+
+        /// <summary>
+        /// Builds a path with the given collection of points.
+        /// </summary>
+        /// <param name="builder">CanvasPathBuilder</param>
+        /// <param name="canvasFigureLoop">Specifies whether the figure is open or closed. 
+        /// This affects the appearance of fills and strokes, as well as geometry operations.</param>
+        /// <param name="points">Collection of Vector2 points on the path.</param>
+        /// <returns>CanvasPathBuilder</returns>
+        public static CanvasPathBuilder BuildPathWithLines(this CanvasPathBuilder builder,
+            CanvasFigureLoop canvasFigureLoop, IEnumerable<Vector2> points)
+        {
+            var first = true;
+
+            foreach (var point in points)
+            {
+                if (first)
+                {
+                    builder.BeginFigure(point);
+                    first = false;
+                }
+                else
+                {
+                    builder.AddLine(point);
+                }
+            }
+
+            builder.EndFigure(canvasFigureLoop);
+            return builder;
+        }
+
+        /// <summary>
+        /// Builds a path with the given collection of points in the (x, y) pattern.
+        /// </summary>
+        /// <param name="builder">CanvasPathBuilder</param>
+        /// <param name="canvasFigureLoop">Specifies whether the figure is open or closed. 
+        /// This affects the appearance of fills and strokes, as well as geometry operations.</param>
+        /// <param name="nodes">Collection of points in the (x, y) pattern on the path.</param>
+        /// <returns>CanvasPathBuilder</returns>
+        public static CanvasPathBuilder BuildPathWithLines(this CanvasPathBuilder builder,
+            CanvasFigureLoop canvasFigureLoop, IEnumerable<(float x, float y)> nodes)
+        {
+            var vectors = nodes.Select(n => new Vector2(n.x, n.y));
+            return BuildPathWithLines(builder, canvasFigureLoop, vectors);
         }
     }
 }

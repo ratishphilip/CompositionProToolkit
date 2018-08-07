@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 // 
 
 using System;
@@ -60,6 +60,14 @@ namespace CompositionProToolkit
         CanvasDevice Device { get; }
 
         /// <summary>
+        /// Creates an Empty MaskSurface having the no size and geometry. 
+        /// NOTE: Use this API if you want to create an Empty IMaskSurface first
+        /// and change its geometry and/or size of the MaskSurface later.
+        /// </summary>
+        /// <returns>IMaskSurface</returns>
+        IMaskSurface CreateMaskSurface();
+
+        /// <summary>
         /// Creates a MaskSurface having the given size and geometry. The geometry is filled 
         /// with white color. The surface not covered by the geometry is transparent.
         /// </summary>
@@ -68,6 +76,14 @@ namespace CompositionProToolkit
         /// <returns>IMaskSurface</returns>
         IMaskSurface CreateMaskSurface(Size size, CanvasGeometry geometry);
 
+        /// <summary>
+        /// Creates an Empty GeometrySurface having the no size and geometry.
+        /// NOTE: Use this API if you want to create an Empty IGeometrySurface 
+        /// first and change its geometry and/or size, fillColor or stroke later.
+        /// </summary>
+        /// <returns>IGeometrySurface</returns>
+        IGeometrySurface CreateGeometrySurface();
+        
         /// <summary>
         /// Creates a GeometrySurface having the given size, geometry, stroke 
         /// </summary>

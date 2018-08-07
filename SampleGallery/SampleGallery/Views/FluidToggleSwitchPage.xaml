@@ -1,33 +1,37 @@
-﻿<Page x:Class="SampleGallery.Views.FluidToggleSwitchPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:SampleGallery.Views"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:controls="using:CompositionProToolkit.Controls"
-      mc:Ignorable="d">
+﻿<Page
+    x:Class="SampleGallery.Views.FluidToggleSwitchPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CompositionProToolkit.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:SampleGallery.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
 
     <Grid Background="#fafafa">
-        <StackPanel HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
-            <controls:FluidToggleSwitch x:Name="fluidTS"
-                                        Margin="25"
-                                        Width="56"
-                                        Height="56"
-                                        ActiveColor="#4cd964"
-                                        HorizontalAlignment="Center"></controls:FluidToggleSwitch>
-            <controls:FluidToggleSwitch Width="56"
-                                        Height="56"
-                                        Margin="25"
-                                        ActiveColor="#5ac8ff"></controls:FluidToggleSwitch>
-            <controls:FluidToggleSwitch Width="56"
-                                        Height="56"
-                                        Margin="25"
-                                        ActiveColor="#f08839"></controls:FluidToggleSwitch>
-            <controls:FluidToggleSwitch Width="56"
-                                        Height="56"
-                                        Margin="25"
-                                        ActiveColor="#c66df7"></controls:FluidToggleSwitch>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <controls:FluidToggleSwitch
+                x:Name="fluidTS"
+                Width="56"
+                Height="56"
+                Margin="25"
+                HorizontalAlignment="Center"
+                ActiveColor="#4cd964" />
+            <controls:FluidToggleSwitch
+                Width="56"
+                Height="56"
+                Margin="25"
+                ActiveColor="#5ac8ff" />
+            <controls:FluidToggleSwitch
+                Width="56"
+                Height="56"
+                Margin="25"
+                ActiveColor="#f08839" />
+            <controls:FluidToggleSwitch
+                Width="56"
+                Height="56"
+                Margin="25"
+                ActiveColor="#c66df7" />
         </StackPanel>
     </Grid>
 </Page>

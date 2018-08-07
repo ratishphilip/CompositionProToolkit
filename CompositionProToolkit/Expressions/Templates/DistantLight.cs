@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 // 
 
 using System.Numerics;
@@ -57,6 +57,16 @@ namespace CompositionProToolkit.Expressions.Templates
         /// relative to its Windows.UI.Composition.DistantLight.CoordinateSpace Visual.
         /// </summary>
         public Vector3 Direction { get; }
+
+        /// <summary>
+        /// Gets the intensity of the light.
+        /// </summary>
+        public float Intensity { get; }
+        
+        /// <summary>
+        /// Gets the CoordinateSpace Visual
+        /// </summary>
+        public Visual CoordinateSpace { get; }
     }
 
     /// <summary>

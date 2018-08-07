@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 // 
 
 using System;
@@ -196,7 +196,15 @@ namespace CompositionProToolkit
         public void Redraw(Color fillColor)
         {
             // Set the fill
-            _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            if (_fill is CanvasSolidColorBrush fillBrush)
+            {
+                fillBrush.Color = fillColor;
+            }
+            else
+            {
+                _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            }
+
             // Redraw the GeometrySurface
             RedrawSurfaceInternal();
         }
@@ -212,7 +220,14 @@ namespace CompositionProToolkit
             // Set the new stroke
             _stroke = stroke;
             // Set the fill
-            _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            if (_fill is CanvasSolidColorBrush fillBrush)
+            {
+                fillBrush.Color = fillColor;
+            }
+            else
+            {
+                _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            }
             // Redraw the GeometrySurface
             RedrawSurfaceInternal();
         }
@@ -226,9 +241,24 @@ namespace CompositionProToolkit
         public void Redraw(Color fillColor, Color backgroundColor)
         {
             // Set the fill
-            _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            if (_fill is CanvasSolidColorBrush fillBrush)
+            {
+                fillBrush.Color = fillColor;
+            }
+            else
+            {
+                _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            }
             // Set the backgroundBrush
-            _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
+            if (_backgroundBrush is CanvasSolidColorBrush backBrush)
+            {
+                backBrush.Color = backgroundColor;
+            }
+            else
+            {
+                _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
+            }
+
             // Redraw the GeometrySurface
             RedrawSurfaceInternal();
         }
@@ -245,9 +275,23 @@ namespace CompositionProToolkit
             // Set the new stroke
             _stroke = stroke;
             // Set the fill
-            _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            if (_fill is CanvasSolidColorBrush fillBrush)
+            {
+                fillBrush.Color = fillColor;
+            }
+            else
+            {
+                _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            }
             // Set the backgroundBrush
-            _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
+            if (_backgroundBrush is CanvasSolidColorBrush backBrush)
+            {
+                backBrush.Color = backgroundColor;
+            }
+            else
+            {
+                _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
+            }
             // Redraw the GeometrySurface
             RedrawSurfaceInternal();
         }
@@ -325,7 +369,14 @@ namespace CompositionProToolkit
         public void Redraw(Color fillColor, ICanvasBrush backgroundBrush)
         {
             // Set the fill
-            _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            if (_fill is CanvasSolidColorBrush fillBrush)
+            {
+                fillBrush.Color = fillColor;
+            }
+            else
+            {
+                _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            }
             // Set the backgroundBrush
             _backgroundBrush = backgroundBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Redraw the GeometrySurface
@@ -344,7 +395,14 @@ namespace CompositionProToolkit
             // Set the new stroke
             _stroke = stroke;
             // Set the fill
-            _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            if (_fill is CanvasSolidColorBrush fillBrush)
+            {
+                fillBrush.Color = fillColor;
+            }
+            else
+            {
+                _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            }
             // Set the backgroundBrush
             _backgroundBrush = backgroundBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Redraw the GeometrySurface
@@ -362,7 +420,14 @@ namespace CompositionProToolkit
             // Set the fill
             _fill = fillBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Set the backgroundBrush
-            _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
+            if (_backgroundBrush is CanvasSolidColorBrush backBrush)
+            {
+                backBrush.Color = backgroundColor;
+            }
+            else
+            {
+                _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
+            }
             // Redraw the GeometrySurface
             RedrawSurfaceInternal();
         }
@@ -381,7 +446,14 @@ namespace CompositionProToolkit
             // Set the fill
             _fill = fillBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Set the backgroundBrush
-            _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
+            if (_backgroundBrush is CanvasSolidColorBrush backBrush)
+            {
+                backBrush.Color = backgroundColor;
+            }
+            else
+            {
+                _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
+            }
             // Redraw the GeometrySurface
             RedrawSurfaceInternal();
         }
@@ -440,7 +512,14 @@ namespace CompositionProToolkit
             // Set the new geometry
             _geometry = geometry;
             // Set the fill
-            _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            if (_fill is CanvasSolidColorBrush fillBrush)
+            {
+                fillBrush.Color = fillColor;
+            }
+            else
+            {
+                _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            }
             // Redraw the GeometrySurface
             RedrawSurfaceInternal();
         }
@@ -465,7 +544,14 @@ namespace CompositionProToolkit
             // Set the new stroke
             _stroke = stroke;
             // Set the fill
-            _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            if (_fill is CanvasSolidColorBrush fillBrush)
+            {
+                fillBrush.Color = fillColor;
+            }
+            else
+            {
+                _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            }
             // Redraw the GeometrySurface
             RedrawSurfaceInternal();
         }
@@ -488,9 +574,23 @@ namespace CompositionProToolkit
             // Set the new geometry
             _geometry = geometry;
             // Set the fill
-            _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            if (_fill is CanvasSolidColorBrush fillBrush)
+            {
+                fillBrush.Color = fillColor;
+            }
+            else
+            {
+                _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            }
             // Set the backgroundBrush
-            _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
+            if (_backgroundBrush is CanvasSolidColorBrush backBrush)
+            {
+                backBrush.Color = backgroundColor;
+            }
+            else
+            {
+                _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
+            }
             // Redraw the GeometrySurface
             RedrawSurfaceInternal();
         }
@@ -517,9 +617,23 @@ namespace CompositionProToolkit
             // Set the new stroke
             _stroke = stroke;
             // Set the fill
-            _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            if (_fill is CanvasSolidColorBrush fillBrush)
+            {
+                fillBrush.Color = fillColor;
+            }
+            else
+            {
+                _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            }
             // Set the backgroundBrush
-            _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
+            if (_backgroundBrush is CanvasSolidColorBrush backBrush)
+            {
+                backBrush.Color = backgroundColor;
+            }
+            else
+            {
+                _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
+            }
             // Redraw the GeometrySurface
             RedrawSurfaceInternal();
         }
@@ -619,7 +733,14 @@ namespace CompositionProToolkit
             // Set the fill
             _fill = fillBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Set the backgroundBrush
-            _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
+            if (_backgroundBrush is CanvasSolidColorBrush backBrush)
+            {
+                backBrush.Color = backgroundColor;
+            }
+            else
+            {
+                _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
+            }
             // Redraw the GeometrySurface
             RedrawSurfaceInternal();
         }
@@ -648,7 +769,14 @@ namespace CompositionProToolkit
             // Set the fill
             _fill = fillBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Set the backgroundBrush
-            _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
+            if (_backgroundBrush is CanvasSolidColorBrush backBrush)
+            {
+                backBrush.Color = backgroundColor;
+            }
+            else
+            {
+                _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
+            }
             // Redraw the GeometrySurface
             RedrawSurfaceInternal();
         }
@@ -671,7 +799,14 @@ namespace CompositionProToolkit
             // Set the new geometry
             _geometry = geometry;
             // Set the fill
-            _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            if (_fill is CanvasSolidColorBrush fillBrush)
+            {
+                fillBrush.Color = fillColor;
+            }
+            else
+            {
+                _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            }
             // Set the backgroundBrush
             _backgroundBrush = backgroundBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Redraw the GeometrySurface
@@ -700,7 +835,14 @@ namespace CompositionProToolkit
             // Set the new stroke
             _stroke = stroke;
             // Set the fill
-            _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            if (_fill is CanvasSolidColorBrush fillBrush)
+            {
+                fillBrush.Color = fillColor;
+            }
+            else
+            {
+                _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
+            }
             // Set the backgroundBrush
             _backgroundBrush = backgroundBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Redraw the GeometrySurface

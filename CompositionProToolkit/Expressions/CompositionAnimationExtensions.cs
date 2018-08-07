@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 //
 
 using System;
@@ -138,7 +138,7 @@ namespace CompositionProToolkit.Expressions
             if (type == typeof(Point))
             {
                 var point = (Point)parameter;
-                parameter = new Vector3((float)point.X, (float)point.Y, 0);
+                parameter = point.ToVector3();
                 type = typeof(Vector3);
             }
 
@@ -170,9 +170,9 @@ namespace CompositionProToolkit.Expressions
 
             // Try to set the parameter for each of the keys
             foreach (var key in from key in parameters.Keys
-                let parameter = parameters[key]
-                where (!animation.SetParameter(key, parameter))
-                select key)
+                                let parameter = parameters[key]
+                                where (!animation.SetParameter(key, parameter))
+                                select key)
             {
                 // If SetParameter fails, then convert the parameter into a CompositionPropertySet
                 // Since we cannot modify the parameters dictionary while we are inside the loop, add the key and the

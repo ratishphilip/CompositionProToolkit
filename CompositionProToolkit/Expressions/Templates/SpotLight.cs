@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 // 
 
 using System.Numerics;
@@ -100,6 +100,22 @@ namespace CompositionProToolkit.Expressions.Templates
         /// Offset of the light source relative to its coordinate space Visual.
         /// </summary>
         public Vector3 Offset { get; }
+        /// <summary>
+        /// Gets the intensity of the light in the spotlight's outer cone.
+        /// </summary>
+        public float OuterConeIntensity { get; }
+        /// <summary>
+        /// Gets the intensity of the light in the spotlight's inner cone.
+        /// </summary>
+        public float InnerConeIntensity { get; }
+        /// <summary>
+        /// Gets the Minimun Attenuation Cutoff
+        /// </summary>
+        public float MinAttenuationCutoff { get; }
+        /// <summary>
+        /// Gets the Maximun Attenuation Cutoff
+        /// </summary>
+        public float MaxAttenuationCutoff { get; }
     }
 
     /// <summary>

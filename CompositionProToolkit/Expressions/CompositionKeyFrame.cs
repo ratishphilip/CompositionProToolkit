@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 //
 
 using System;
@@ -113,7 +113,8 @@ namespace CompositionProToolkit.Expressions
                 [typeof(float)] = typeof(ScalarKeyFrameAnimation),
                 [typeof(Vector2)] = typeof(Vector2KeyFrameAnimation),
                 [typeof(Vector3)] = typeof(Vector3KeyFrameAnimation),
-                [typeof(Vector4)] = typeof(Vector4KeyFrameAnimation)
+                [typeof(Vector4)] = typeof(Vector4KeyFrameAnimation),
+                [typeof(CompositionPath)] = typeof(PathKeyFrameAnimation)
             };
 
             // Get all CreateXXXKeyFrameAnimation methods
@@ -375,6 +376,18 @@ namespace CompositionProToolkit.Expressions
         }
 
         /// <summary>
+        /// Sets the specified number of milliseconds by which the animation, defined by
+        /// the encapsulated KeyFrameAnimation object, should be delayed.
+        /// </summary>
+        /// <param name="milliseconds">Specified number of milliseconds.</param>
+        /// <returns>KeyFrameAnimation&lt;T&gt;</returns>
+        public KeyFrameAnimation<T> DelayBy(double milliseconds)
+        {
+            Animation.DelayTime = TimeSpan.FromMilliseconds(milliseconds);
+            return this;
+        }
+
+        /// <summary>
         /// Sets the animation Duration of encapsulated KeyFrameAnimation object.
         /// </summary>
         /// <param name="duration">Duration</param>
@@ -382,6 +395,18 @@ namespace CompositionProToolkit.Expressions
         public KeyFrameAnimation<T> HavingDuration(TimeSpan duration)
         {
             Animation.Duration = duration;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the animation Duration of encapsulated KeyFrameAnimation object
+        /// to the specified number of milliseconds.
+        /// </summary>
+        /// <param name="milliseconds">Specified number of milliseconds.</param>
+        /// <returns>KeyFrameAnimation&lt;T&gt;</returns>
+        public KeyFrameAnimation<T> HavingDuration(double milliseconds)
+        {
+            Animation.Duration = TimeSpan.FromMilliseconds(milliseconds);
             return this;
         }
 

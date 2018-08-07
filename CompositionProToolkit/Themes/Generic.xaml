@@ -1,71 +1,63 @@
 <!--
- Copyright (c) 2016 Ratish Philip 
-
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal 
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is 
- furnished to do so, subject to the following conditions: 
- 
- 
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software. 
- 
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE. 
-
- This file is part of the CompositionProToolkit project: 
- https://github.com/ratishphilip/CompositionProToolkit
-
- CompositionProToolkit v0.7.0    
+    Copyright (c) 2016 Ratish Philip
+    
+    
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+    
+    
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+    
+    
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+    
+    This file is part of the CompositionProToolkit project:
+    https://github.com/ratishphilip/CompositionProToolkit
+    
+    CompositionProToolkit v0.7.0
 -->
 
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:controls="using:CompositionProToolkit.Controls">
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CompositionProToolkit.Controls">
     <Style TargetType="controls:ImageFrame">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:ImageFrame">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}">
-                    </Border>
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style TargetType="controls:FluidToggleSwitch">
-        <Setter Property="Width"
-                Value="56"></Setter>
-        <Setter Property="Height"
-                Value="56"></Setter>
-        <Setter Property="Background"
-                Value="Transparent" />
-        <Setter Property="Foreground"
-                Value="Transparent" />
-        <Setter Property="Padding"
-                Value="0" />
-        <Setter Property="BorderThickness"
-                Value="0" />
-        <Setter Property="BorderBrush"
-                Value="Transparent">
-        </Setter>
+        <Setter Property="Width" Value="56" />
+        <Setter Property="Height" Value="56" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="Transparent" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:FluidToggleSwitch">
-                    <Border x:Name="PART_Border"
-                            Background="Transparent">
+                    <Border x:Name="PART_Border" Background="Transparent">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -89,26 +81,17 @@
     </Style>
 
     <Style TargetType="controls:ProfileControl">
-        <Setter Property="Width"
-                Value="150"></Setter>
-        <Setter Property="Height"
-                Value="150"></Setter>
-        <Setter Property="Background"
-                Value="Transparent" />
-        <Setter Property="Foreground"
-                Value="Transparent" />
-        <Setter Property="Padding"
-                Value="0" />
-        <Setter Property="BorderThickness"
-                Value="0" />
-        <Setter Property="BorderBrush"
-                Value="Transparent">
-        </Setter>
+        <Setter Property="Width" Value="150" />
+        <Setter Property="Height" Value="150" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="Transparent" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:ProfileControl">
-                    <Border x:Name="PART_Border"
-                            Background="Transparent">
+                    <Border x:Name="PART_Border" Background="Transparent">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -128,27 +111,35 @@
     </Style>
 
     <Style TargetType="controls:ProgressRing3d">
-        <Setter Property="Background"
-                Value="Transparent" />
-        <Setter Property="Foreground"
-                Value="Transparent" />
-        <Setter Property="Padding"
-                Value="0" />
-        <Setter Property="BorderThickness"
-                Value="0" />
-        <Setter Property="BorderBrush"
-                Value="Transparent">
-        </Setter>
-        <Setter Property="NodeColor"
-                Value="{ThemeResource SystemAccentColor}" />
-        <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
-        <Setter Property="VerticalAlignment" Value="Stretch"></Setter>
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="Transparent" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="NodeColor" Value="{ThemeResource SystemAccentColor}" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:ProgressRing3d">
-                    <Grid x:Name="PART_RootGrid"
-                          Background="Transparent">
-                    </Grid>
+                    <Grid x:Name="PART_RootGrid" Background="Transparent" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:FrostedGlass">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="Transparent" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:FrostedGlass">
+                    <Grid x:Name="PART_RootGrid" Background="Transparent" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

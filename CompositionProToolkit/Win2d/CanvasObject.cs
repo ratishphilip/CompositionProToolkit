@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 // 
 
 using System.Numerics;
@@ -34,7 +34,6 @@ using CompositionProToolkit.Win2d.Parsers;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Geometry;
-using System.Globalization;
 
 namespace CompositionProToolkit.Win2d
 {
@@ -70,6 +69,32 @@ namespace CompositionProToolkit.Win2d
                 logger?.AppendLine("}");
 
                 return geometry; 
+            }
+        }
+
+        /// <summary>
+        /// Parses the Path data string and converts it to CanvasGeometry.
+        /// </summary>
+        /// <param name="pathData">Path data</param>
+        /// <param name="logger">(Optional) For logging purpose. To log the set of  
+        /// CanvasPathBuilder commands, used for creating the CanvasGeometry, in 
+        /// string format.</param>
+        /// <returns>CanvasGeometry</returns>
+        public static CanvasGeometry CreateGeometry(string pathData, StringBuilder logger = null)
+        {
+            using (new CultureShield("en-US"))
+            {
+                // Log command
+                logger?.AppendLine("using (var pathBuilder = new CanvasPathBuilder(resourceCreator))");
+                logger?.AppendLine("{");
+
+                // Get the CanvasGeometry from the path data
+                var geometry = CanvasGeometryParser.Parse(null, pathData, logger);
+
+                // Log command
+                logger?.AppendLine("}");
+
+                return geometry;
             }
         }
 

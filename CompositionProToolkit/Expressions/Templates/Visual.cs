@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.8.0
+// CompositionProToolkit v0.9.0
 // 
 
 using System.Numerics;
@@ -101,6 +101,10 @@ namespace CompositionProToolkit.Expressions.Templates
         /// The transformation matrix to apply to the visual.
         /// </summary>
         public Matrix4x4 TransformMatrix { get; }
+        /// <summary>
+        /// The translation to apply to the visual.
+        /// </summary>
+        public Vector3 Translation { get; }
         /// <summary>
         /// The internal PropertySet of the Visual
         /// </summary>
