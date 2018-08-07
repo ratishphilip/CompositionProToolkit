@@ -724,6 +724,10 @@ Here is an example of creating a custom acrylic flyout
 </Button>
 ```
 
+Here is an example of a flyout using <code>FrostedGlass</code> in my <strong>Symmetro</strong> app
+
+<img class="alignnone size-full wp-image-937" src="https://user-images.githubusercontent.com/7021835/43807905-4ef8d996-9a5f-11e8-825e-94ac2bf90ccf.png" alt="Flyout" width="774" height="725" />
+
 # CompositionProToolkit Expressions
 <img src="https://cloud.githubusercontent.com/assets/7021835/18138158/41f5d4aa-6f60-11e6-8373-9e1085130bff.png" />
 
