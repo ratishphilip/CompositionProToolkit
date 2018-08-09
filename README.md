@@ -4,6 +4,8 @@
 - `FrostedGlass` control added.
 - New extension methods added.
 
+> NOTE: _**CompositioProToolkit v0.9** is built using **Windows Insider SDK 17723**. If you are not a Windows Insider and you are still on the April 2018 Update, this version might not work for you. Kindly use v0.8._
+
 # Table of Contents
 
 - [Installing from NuGet](#installing-from-nuget)
