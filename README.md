@@ -1032,6 +1032,9 @@ The **Single()** extension method is now replaced with **ToSingle()** extension 
 
 # Updates Chronology
 
+## v0.9.1
+(**Friday, December 14, 2018**) - Based on Windows SDK 17763.
+
 ## v0.9.0
 (**Tuesday, August 7, 2018**) - Added `FrostedGlass` control.
 
