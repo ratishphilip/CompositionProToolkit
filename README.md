@@ -1,10 +1,7 @@
 <img src="https://cloud.githubusercontent.com/assets/7021835/16889814/1784ed78-4a9e-11e6-80d0-7c2084d6c960.png" alt="CompositionProToolkit"></img>
 
-# What's new in v0.9?
-- `FrostedGlass` control added.
-- New extension methods added.
-
-> NOTE: _**CompositioProToolkit v0.9** is built using **Windows Insider SDK 17723**. If you are not a Windows Insider and you are still on the April 2018 Update, v0.9 might not work for you. Kindly use v0.8._
+# What's new in v0.9.1?
+_**CompositioProToolkit v0.9.1** is built using **Windows Insider SDK 17763** and is based on **Microsoft.NETCore.UniversalWindowsPlatform v6.1.9**. Since v0.9 was based on an Insider SDK, it has been deprecated._
 
 # Table of Contents
 
