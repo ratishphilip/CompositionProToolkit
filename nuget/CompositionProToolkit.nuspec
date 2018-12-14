@@ -2,16 +2,16 @@
 <package >
   <metadata>
     <id>CompositionProToolkit</id>
-    <version>0.9.0.0</version>
+    <version>0.9.1.0</version>
     <title>CompositionProToolkit</title>
     <authors>Ratish Philip</authors>
     <owners>Ratish Philip</owners>
-    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+    <license type="expression">MIT</license>
     <projectUrl>https://github.com/ratishphilip/CompositionProToolkit</projectUrl>
     <iconUrl>https://cloud.githubusercontent.com/assets/7021835/16889815/17851c12-4a9e-11e6-87d6-9b00282011b3.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Collection of Helper classes for Windows.UI.Composition, Win2d and some UI controls.</description>
-    <releaseNotes>Added FrostedGlass control. Support for CompositionGeometry. Bug fixes.</releaseNotes>
+    <releaseNotes>Built using Windows SDK 17763 and based on Microsoft.NETCore.UniversalWindowsPlatform v6.1.9.</releaseNotes>
     <copyright>Copyright 2018</copyright>
     <dependencies>
         <dependency id="Win2D.uwp" version="1.23.0" />
