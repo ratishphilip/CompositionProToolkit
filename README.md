@@ -652,6 +652,7 @@ It has the following properties
 This new control has been added to CompositionProToolkit and it provides an efficient way of displaying an acrylic background (with rounded corners) to floating dialogs like Flyout, ContentDialog etc.
 
 `FrostedGlass` control has the following properties
+
 | Dependency Property | Type | Description | Default Value |
 |---|---|---|---|
 | **TintColor** | `Color` | The tint of the FrostedGlass. | **Colors.White** |
