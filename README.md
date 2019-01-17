@@ -16,6 +16,7 @@ _**CompositioProToolkit v0.9.1** is built using **Windows Insider SDK 17763** an
   - [Loading Images on Visual using `IImageSurface`](#5-loading-images-on-visual-using-iimagesurface)
   - [Creating the Reflection of a `ContainerVisual`](#6-creating-the-reflection-of-a-containervisual)
   - [Creating Composition Geometry](#7-creating-composition-geometry)
+  - [Custom Cubic Bezier Easing Functions](#8-custom-cubic-bezier-easing-functions)
 - [CompositionProToolkit Controls](#compositionprotoolkit-controls)
   - [FluidProgressRing](#1-fluidprogressring)
   - [FluidWrapPanel](#2-fluidwrappanel)
@@ -426,6 +427,39 @@ var pathData = "M 100, 100 L 200, 200 L100,300Z";
 var shape = compositor.CreateSpriteShape(pathData);
 
 var clipGeometry = compositor.CreateGeometricClip("O 200 200 150 150");
+```
+
+## 8. Custom Cubic Bezier Easing Functions
+
+The following extension methods have been added to Compositor to create predefined CubicBezierEasingFunctions (these custom cubic bezier easing functions are based on the [Robert Penner’s Easing Equations](http://robertpenner.com/easing/) and the values are obtained from [Ceaser CSS Easing Animation Tool](https://matthewlein.com/ceaser/) )
+
+```C#
+public static CubicBezierEasingFunction CreateEaseInBackEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInCircleEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInCubicEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInExponentialFunction();
+public static CubicBezierEasingFunction CreateEaseInQuadraticEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInQuarticEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInQuinticEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInSineEasingFunction();
+
+public static CubicBezierEasingFunction CreateEaseOutBackEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutCircleEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutCubicEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutExponentialFunction();
+public static CubicBezierEasingFunction CreateEaseOutQuadraticEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutQuarticEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutQuinticEasingFunction();
+public static CubicBezierEasingFunction CreateEaseOutSineEasingFunction();
+
+public static CubicBezierEasingFunction CreateEaseInOutBackEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutCircleEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutCubicEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutExponentialFunction();
+public static CubicBezierEasingFunction CreateEaseInOutQuadraticEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutQuarticEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutQuinticEasingFunction();
+public static CubicBezierEasingFunction CreateEaseInOutSineEasingFunction();
 ```
 
 # CompositionProToolkit Controls
