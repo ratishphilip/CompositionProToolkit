@@ -431,7 +431,7 @@ var clipGeometry = compositor.CreateGeometricClip("O 200 200 150 150");
 
 ## 8. Custom Cubic Bezier Easing Functions
 
-The following extension methods have been added to Compositor to create predefined CubicBezierEasingFunctions (these custom cubic bezier easing functions are based on the [Robert Penner’s Easing Equations](http://robertpenner.com/easing/) and the values are obtained from [Ceaser CSS Easing Animation Tool](https://matthewlein.com/ceaser/) )
+The following extension methods have been added to `Compositor` to create predefined `CubicBezierEasingFunctions` (these custom cubic bezier easing functions are based on the [Robert Penner’s Easing Equations](http://robertpenner.com/easing/) and the values are obtained from [Ceaser CSS Easing Animation Tool](https://matthewlein.com/ceaser/) )
 
 ```C#
 public static CubicBezierEasingFunction CreateEaseInBackEasingFunction();
