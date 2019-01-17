@@ -17,6 +17,7 @@ _**CompositioProToolkit v0.9.1** is built using **Windows Insider SDK 17763** an
   - [Creating the Reflection of a `ContainerVisual`](#6-creating-the-reflection-of-a-containervisual)
   - [Creating Composition Geometry](#7-creating-composition-geometry)
   - [Custom Cubic Bezier Easing Functions](#8-custom-cubic-bezier-easing-functions)
+  - [Composition and Win2d Mini Path Language](#9-composition-and-win2d-mini-path-language)
 - [CompositionProToolkit Controls](#compositionprotoolkit-controls)
   - [FluidProgressRing](#1-fluidprogressring)
   - [FluidWrapPanel](#2-fluidwrappanel)
@@ -460,6 +461,27 @@ public static CubicBezierEasingFunction CreateEaseInOutQuadraticEasingFunction()
 public static CubicBezierEasingFunction CreateEaseInOutQuarticEasingFunction();
 public static CubicBezierEasingFunction CreateEaseInOutQuinticEasingFunction();
 public static CubicBezierEasingFunction CreateEaseInOutSineEasingFunction();
+```
+## 9. Composition and Win2d Mini Path Language
+You can now use the <strong>Win2d Mini Path Language</strong> to create `CompositionPath`, `CompositionPathGeometry`, `CompositionGeometricClip`, `CompositionSpriteShape` objects. 
+
+Here are the APIs
+
+```C#
+public static CompositionPath CreatePath(this Compositor compositor, string pathData);
+public static CompositionPathGeometry CreatePathGeometry(this Compositor compositor, string pathData);
+public static CompositionSpriteShape CreateSpriteShape(this Compositor compositor, string pathData);
+public static CompositionGeometricClip CreateGeometricClip(this Compositor compositor, CanvasGeometry geometry);
+public static CompositionGeometricClip CreateGeometricClip(this Compositor compositor, string pathData);
+```
+
+Example
+
+```C#
+var pathData = "M 100, 100 L 200, 200 L100,300Z";
+var shape = compositor.CreateSpriteShape(pathData);
+
+var clipGeometry = compositor.CreateGeometricClip("O 200 200 150 150");
 ```
 
 # CompositionProToolkit Controls
