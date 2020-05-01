@@ -1,7 +1,7 @@
 <img src="https://cloud.githubusercontent.com/assets/7021835/16889814/1784ed78-4a9e-11e6-80d0-7c2084d6c960.png" alt="CompositionProToolkit"></img>
 
 # What's new in v0.9.5?
-_**CompositioProToolkit v0.9.5** is built using **Windows Insider SDK 17362** and is based on **Microsoft.NETCore.UniversalWindowsPlatform v6.2.1**. 
+**CompositioProToolkit v0.9.5** is built using **Windows Insider SDK 17362** and is based on **Microsoft.NETCore.UniversalWindowsPlatform v6.2.1**. 
 The project is split into two Nuget packages
 - **CompositionProToolkit** - contains the core helper classes for Composition and Win2d.
 - **CompositionProToolkit.Controls** - contains UI controls made using Composition.
