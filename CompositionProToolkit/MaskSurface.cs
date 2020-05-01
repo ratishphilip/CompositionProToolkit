@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.0
+// CompositionProToolkit v0.9.5
 // 
 
 using System;
@@ -36,7 +36,7 @@ namespace CompositionProToolkit
 {
     /// <summary>
     /// Class for rendering custom shaped geometries onto ICompositionSurface
-    /// so that they can be useds as masks on Composition Visuals.
+    /// so that they can be used as masks on Composition Visuals.
     /// </summary>
     internal sealed class MaskSurface : IMaskSurface
     {
@@ -44,7 +44,6 @@ namespace CompositionProToolkit
 
         private ICompositionGeneratorInternal _generator;
         private CompositionDrawingSurface _surface;
-        private CanvasGeometry _geometry;
         private readonly object _surfaceLock;
 
         #endregion
@@ -62,7 +61,7 @@ namespace CompositionProToolkit
         /// <summary>
         /// Gets the Geometry of the MaskSurface
         /// </summary>
-        public CanvasGeometry Geometry => _geometry;
+        public CanvasGeometry Geometry { get; private set; }
         /// <summary>
         /// Gets the Size of the MaskSurface
         /// </summary>
@@ -80,12 +79,9 @@ namespace CompositionProToolkit
         /// <param name="geometry">Geometry of the MaskSurface</param>
         public MaskSurface(ICompositionGeneratorInternal generator, Size size, CanvasGeometry geometry)
         {
-            if (generator == null)
-                throw new ArgumentNullException(nameof(generator), "CompositionGenerator cannot be null!");
-
-            _generator = generator;
+            _generator = generator ?? throw new ArgumentNullException(nameof(generator), "CompositionGenerator cannot be null!");
             _surfaceLock = new object();
-            _geometry = geometry;
+            Geometry = geometry;
             // Create Mask Surface
             _surface = _generator.CreateDrawingSurface(_surfaceLock, size);
             // Set the size
@@ -114,7 +110,7 @@ namespace CompositionProToolkit
         public void Redraw(CanvasGeometry geometry)
         {
             // Set the new geometry
-            _geometry = geometry;
+            Geometry = geometry;
             // Redraw the mask surface
             RedrawSurfaceInternal();
         }
@@ -134,7 +130,7 @@ namespace CompositionProToolkit
             // Set the size
             Size = _surface?.Size ?? new Size(0, 0);
             // Set the new geometry
-            _geometry = geometry;
+            Geometry = geometry;
             // Redraw the mask surface
             RedrawSurfaceInternal();
         }
@@ -159,12 +155,12 @@ namespace CompositionProToolkit
         public void Dispose()
         {
             _surface?.Dispose();
-            _geometry?.Dispose();
+            Geometry?.Dispose();
             if (_generator != null)
                 _generator.DeviceReplaced -= OnDeviceReplaced;
             _surface = null;
             _generator = null;
-            _geometry = null;
+            Geometry = null;
         }
 
         #endregion
@@ -193,7 +189,7 @@ namespace CompositionProToolkit
         /// </summary>
         private void RedrawSurfaceInternal()
         {
-            _generator.RedrawMaskSurface(_surfaceLock, _surface, Size, _geometry);
+            _generator.RedrawMaskSurface(_surfaceLock, _surface, Size, Geometry);
         }
 
         #endregion

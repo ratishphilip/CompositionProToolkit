@@ -32,6 +32,7 @@
                 Height="56"
                 Margin="25"
                 ActiveColor="#c66df7" />
+
         </StackPanel>
     </Grid>
 </Page>

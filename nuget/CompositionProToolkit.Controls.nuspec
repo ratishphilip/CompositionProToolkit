@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>CompositionProToolkit.Controls</id>
+    <version>0.9.5.0</version>
+    <title>CompositionProToolkit.Controls</title>
+    <authors>Ratish Philip</authors>
+    <owners>Ratish Philip</owners>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/ratishphilip/CompositionProToolkit</projectUrl>
+    <icon>CompositionProToolkit_logo.png</icon>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Collection of UI controls made using Composition.</description>
+    <releaseNotes>Built using Windows SDK 18362 and based on Microsoft.NETCore.UniversalWindowsPlatform v6.2.10.</releaseNotes>
+    <copyright>Copyright 2020</copyright>
+    <dependencies>
+        <dependency id="CompositionProToolkit" version="0.9.5.0" />
+    </dependencies>
+  </metadata>
+  <files>
+	<!-- ====================== x86 ====================== -->
+	<!-- CompositionProToolkit.Controls -->
+	<file target="runtimes\win10-x86\lib\uap10.0" src="..\CompositionProToolkit.Controls\bin\x86\Release\CompositionProToolkit.Controls.dll" />
+	<file target="runtimes\win10-x86\lib\uap10.0" src="..\CompositionProToolkit.Controls\bin\x86\Release\CompositionProToolkit.Controls.pri" />
+	<file target="runtimes\win10-x86\lib\uap10.0" src="..\CompositionProToolkit.Controls\bin\x86\Release\CompositionProToolkit.Controls.XML" />
+
+	<file target="runtimes\win10-x86\lib\uap10.0\CompositionProToolkit.Controls" src="..\CompositionProToolkit.Controls\bin\x86\Release\CompositionProToolkit.Controls\CompositionProToolkit.Controls.xr.xml" />
+	<file target="runtimes\win10-x86\lib\uap10.0\CompositionProToolkit.Controls\Themes" src="..\CompositionProToolkit.Controls\bin\x86\Release\CompositionProToolkit.Controls\Themes\Generic.xaml" />
+
+    <file target="runtimes\win10-x86\native" src="..\CompositionProToolkit.Controls\bin\x86\Release\CompositionProToolkit.Controls.dll" />
+	<file target="runtimes\win10-x86\native" src="..\CompositionProToolkit.Controls\bin\x86\Release\CompositionProToolkit.Controls.pri" />
+	<file target="runtimes\win10-x86\native" src="..\CompositionProToolkit.Controls\bin\x86\Release\CompositionProToolkit.Controls.XML" />
+	<file target="runtimes\win10-x86\native\CompositionProToolkit.Controls" src="..\CompositionProToolkit.Controls\bin\x86\Release\CompositionProToolkit.Controls\CompositionProToolkit.Controls.xr.xml" />
+
+	<!-- ====================== x64 ====================== -->
+	<!-- CompositionProToolkit.Controls -->
+	<file target="runtimes\win10-x64\lib\uap10.0" src="..\CompositionProToolkit.Controls\bin\x64\Release\CompositionProToolkit.Controls.dll" />
+	<file target="runtimes\win10-x64\lib\uap10.0" src="..\CompositionProToolkit.Controls\bin\x64\Release\CompositionProToolkit.Controls.pri" />
+	<file target="runtimes\win10-x64\lib\uap10.0" src="..\CompositionProToolkit.Controls\bin\x64\Release\CompositionProToolkit.Controls.XML" />
+
+	<file target="runtimes\win10-x64\lib\uap10.0\CompositionProToolkit.Controls" src="..\CompositionProToolkit.Controls\bin\x64\Release\CompositionProToolkit.Controls\CompositionProToolkit.Controls.xr.xml" />
+	<file target="runtimes\win10-x64\lib\uap10.0\CompositionProToolkit.Controls\Themes" src="..\CompositionProToolkit.Controls\bin\x64\Release\CompositionProToolkit.Controls\Themes\Generic.xaml" />
+
+	<file target="runtimes\win10-x64\native" src="..\CompositionProToolkit.Controls\bin\x64\Release\CompositionProToolkit.Controls.dll" />
+	<file target="runtimes\win10-x64\native" src="..\CompositionProToolkit.Controls\bin\x64\Release\CompositionProToolkit.Controls.pri" />
+	<file target="runtimes\win10-x64\native" src="..\CompositionProToolkit.Controls\bin\x64\Release\CompositionProToolkit.Controls.XML" />
+	<file target="runtimes\win10-x64\native\CompositionProToolkit.Controls" src="..\CompositionProToolkit.Controls\bin\x64\Release\CompositionProToolkit.Controls\CompositionProToolkit.Controls.xr.xml" />
+
+	<!-- ====================== ARM ====================== -->
+	<!-- CompositionProToolkit.Controls -->
+	<file target="runtimes\win10-arm\lib\uap10.0" src="..\CompositionProToolkit.Controls\bin\arm\Release\CompositionProToolkit.Controls.dll" />
+	<file target="runtimes\win10-arm\lib\uap10.0" src="..\CompositionProToolkit.Controls\bin\arm\Release\CompositionProToolkit.Controls.pri" />
+	<file target="runtimes\win10-arm\lib\uap10.0" src="..\CompositionProToolkit.Controls\bin\arm\Release\CompositionProToolkit.Controls.XML" />
+
+	<file target="runtimes\win10-arm\lib\uap10.0\CompositionProToolkit.Controls" src="..\CompositionProToolkit.Controls\bin\arm\Release\CompositionProToolkit.Controls\CompositionProToolkit.Controls.xr.xml" />
+	<file target="runtimes\win10-arm\lib\uap10.0\CompositionProToolkit.Controls\Themes" src="..\CompositionProToolkit.Controls\bin\arm\Release\CompositionProToolkit.Controls\Themes\Generic.xaml" />
+
+	<file target="runtimes\win10-arm\native" src="..\CompositionProToolkit.Controls\bin\arm\Release\CompositionProToolkit.Controls.dll" />
+	<file target="runtimes\win10-arm\native" src="..\CompositionProToolkit.Controls\bin\arm\Release\CompositionProToolkit.Controls.pri" />
+	<file target="runtimes\win10-arm\native" src="..\CompositionProToolkit.Controls\bin\arm\Release\CompositionProToolkit.Controls.XML" />
+	<file target="runtimes\win10-arm\native\CompositionProToolkit.Controls" src="..\CompositionProToolkit.Controls\bin\arm\Release\CompositionProToolkit.Controls\CompositionProToolkit.Controls.xr.xml" />
+
+	<!-- ====================== ref ====================== -->
+	<file target="ref\uap10.0" src="..\CompositionProToolkit.Controls\bin\AnyCPU\Release\CompositionProToolkit.Controls.dll" />
+	<file target="ref\uap10.0" src="..\CompositionProToolkit.Controls\bin\x86\Release\CompositionProToolkit.Controls.pri" />
+	<file target="ref\uap10.0" src="..\CompositionProToolkit.Controls\bin\x86\Release\CompositionProToolkit.Controls.XML" />
+	<file target="ref\uap10.0\CompositionProToolkit.Controls" src="..\CompositionProToolkit.Controls\bin\x86\Release\CompositionProToolkit.Controls\CompositionProToolkit.Controls.xr.xml" />
+	<file target="ref\uap10.0\CompositionProToolkit.Controls\Themes" src="..\CompositionProToolkit.Controls\bin\x86\Release\CompositionProToolkit.Controls\Themes\Generic.xaml" />
+	
+	<!-- =================== .targets ==================== -->
+    <!-- <file src="CompositionProToolkit.Controls.targets" target="build\native"/> -->
+	
+	<file src="..\CompositionProToolkit_logo.png" target="" />
+
+  </files>
+</package>

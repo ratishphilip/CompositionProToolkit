@@ -21,6 +21,18 @@ namespace SampleGallery.Views
             this.InitializeComponent();
 
             Loaded += OnLoaded;
+            Banner.ItemsLoading += Banner_ItemsLoading;
+            Banner.ItemsLoaded += Banner_ItemsLoaded;
+        }
+
+        private void Banner_ItemsLoading(object sender, EventArgs e)
+        {
+            LoadingIndicator.Visibility = Visibility.Visible;
+        }
+
+        private void Banner_ItemsLoaded(object sender, EventArgs e)
+        {
+            LoadingIndicator.Visibility = Visibility.Collapsed;
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)

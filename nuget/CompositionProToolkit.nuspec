@@ -2,20 +2,22 @@
 <package >
   <metadata>
     <id>CompositionProToolkit</id>
-    <version>0.9.1.0</version>
+    <version>0.9.5.0</version>
     <title>CompositionProToolkit</title>
     <authors>Ratish Philip</authors>
     <owners>Ratish Philip</owners>
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/ratishphilip/CompositionProToolkit</projectUrl>
-    <iconUrl>https://cloud.githubusercontent.com/assets/7021835/16889815/17851c12-4a9e-11e6-87d6-9b00282011b3.png</iconUrl>
+    <icon>CompositionProToolkit_logo.png</icon>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>Collection of Helper classes for Windows.UI.Composition, Win2d and some UI controls.</description>
-    <releaseNotes>Built using Windows SDK 17763 and based on Microsoft.NETCore.UniversalWindowsPlatform v6.1.9.</releaseNotes>
-    <copyright>Copyright 2018</copyright>
+    <description>Collection of Helper classes for Windows.UI.Composition, Win2d.</description>
+    <releaseNotes>Built using Windows SDK 18362 and based on Microsoft.NETCore.UniversalWindowsPlatform v6.2.10.</releaseNotes>
+    <copyright>Copyright 2020</copyright>
     <dependencies>
-        <dependency id="Win2D.uwp" version="1.23.0" />
-        <dependency id="Microsoft.Xaml.Behaviors.Uwp.Managed" version="2.0.0" />
+		<group targetFramework="uap10.0">
+			<dependency id="Win2D.uwp" version="1.25.0" />
+			<dependency id="Microsoft.Xaml.Behaviors.Uwp.Managed" version="2.0.1" />
+		</group>
     </dependencies>
   </metadata>
   <files>
@@ -24,9 +26,6 @@
 	<file target="runtimes\win10-x86\lib\uap10.0" src="..\CompositionProToolkit\bin\x86\Release\CompositionProToolkit.dll" />
 	<file target="runtimes\win10-x86\lib\uap10.0" src="..\CompositionProToolkit\bin\x86\Release\CompositionProToolkit.pri" />
 	<file target="runtimes\win10-x86\lib\uap10.0" src="..\CompositionProToolkit\bin\x86\Release\CompositionProToolkit.XML" />
-
-	<file target="runtimes\win10-x86\lib\uap10.0\CompositionProToolkit" src="..\CompositionProToolkit\bin\x86\Release\CompositionProToolkit.xr.xml" />
-	<file target="runtimes\win10-x86\lib\uap10.0\CompositionProToolkit\Themes" src="..\CompositionProToolkit\bin\x86\Release\Themes\Generic.xbf" />
 
 	<!-- CompositionDeviceHelper -->
 	<file target="runtimes\win10-x86\lib\uap10.0" src="..\CompositionDeviceHelper\bin\x86\Release\CompositionDeviceHelper.winmd" />
@@ -41,9 +40,6 @@
 	<file target="runtimes\win10-x64\lib\uap10.0" src="..\CompositionProToolkit\bin\x64\Release\CompositionProToolkit.pri" />
 	<file target="runtimes\win10-x64\lib\uap10.0" src="..\CompositionProToolkit\bin\x64\Release\CompositionProToolkit.XML" />
 
-	<file target="runtimes\win10-x64\lib\uap10.0\CompositionProToolkit" src="..\CompositionProToolkit\bin\x64\Release\CompositionProToolkit.xr.xml" />
-	<file target="runtimes\win10-x64\lib\uap10.0\CompositionProToolkit\Themes" src="..\CompositionProToolkit\bin\x64\Release\Themes\Generic.xbf" />
-
 	<!-- CompositionDeviceHelper -->
 	<file target="runtimes\win10-x64\lib\uap10.0" src="..\CompositionDeviceHelper\bin\x64\Release\CompositionDeviceHelper.winmd" />
 	
@@ -56,9 +52,6 @@
 	<file target="runtimes\win10-arm\lib\uap10.0" src="..\CompositionProToolkit\bin\ARM\Release\CompositionProToolkit.dll" />
 	<file target="runtimes\win10-arm\lib\uap10.0" src="..\CompositionProToolkit\bin\ARM\Release\CompositionProToolkit.pri" />
 	<file target="runtimes\win10-arm\lib\uap10.0" src="..\CompositionProToolkit\bin\ARM\Release\CompositionProToolkit.XML" />
-
-	<file target="runtimes\win10-arm\lib\uap10.0\CompositionProToolkit" src="..\CompositionProToolkit\bin\ARM\Release\CompositionProToolkit.xr.xml" />
-	<file target="runtimes\win10-arm\lib\uap10.0\CompositionProToolkit\Themes" src="..\CompositionProToolkit\bin\ARM\Release\Themes\Generic.xbf" />
 
 	<!-- CompositionDeviceHelper -->
 	<file target="runtimes\win10-arm\lib\uap10.0" src="..\CompositionDeviceHelper\bin\ARM\Release\CompositionDeviceHelper.winmd" />
@@ -74,11 +67,10 @@
 	<file target="ref\uap10.0" src="..\CompositionDeviceHelper\bin\x86\Release\CompositionDeviceHelper.winmd" />
 	<file target="ref\uap10.0" src="..\CompositionDeviceHelper\bin\x86\Release\CompositionDeviceHelper.xml" />
 
-	<file target="ref\uap10.0\CompositionProToolkit" src="..\CompositionProToolkit\bin\x86\Release\CompositionProToolkit.xr.xml" />
-	<file target="ref\uap10.0\CompositionProToolkit\Themes" src="..\CompositionProToolkit\bin\x86\Release\Themes\Generic.xbf" />
-	
 	<!-- =================== .targets ==================== -->
     <file src="CompositionProToolkit.targets" target="build\native"/>
+	
+	<file src="..\CompositionProToolkit_logo.png" target="" />
 
   </files>
 </package>

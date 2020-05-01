@@ -52,38 +52,42 @@ namespace CompositionProToolkit.Controls
     {
         #region Constants
 
-        private const float DefaultBaseLength = 256f;
-        private const float DefaultBaseRadius = 128f;
-        private const float DefaultTrackWidth = 240f;
-        private const float DefaultTrackHeight = 144f;
-        private const float DefaultTrackCornerRadius = 72f;
-        private const float DefaultThumbRadius = 64f;
-        private const float DefaultShadowBlurRadius = 16f;
+        private const float DefaultBaseWidth = 216f;
+        private const float DefaultBaseHeight = 128f;
+        private const float DefaultBaseCornerRadius = 64f;
+        private const float DefaultTrackWidth = 200f;
+        private const float DefaultTrackHeight = 112f;
+        private const float DefaultTrackCornerRadius = 56f;
+        private const float DefaultThumbRadius = 60f;
+        private const float DefaultInnerThumbRadius = 56f;
 
-        private const float ActiveTrackDarkFactor = 0.3f;
-        private const float InactiveTrackDarkFactor = 0.15f;
+        private const float DefaultShadowBlurRadius = 16f;
+        private const float ActiveTrackDarkFactor = 0.05f;
+        private const float InactiveTrackDarkFactor = 0.05f;
         private const float DisabledTrackDarkFactor = 0.1f;
         private const float DisabledThumbLightFactor = 0.5f;
         private const float EnabledShadowDarkFactor = 0.8f;
-        private const float DiasbledShadowLightFactor = 0.2f;
+        private const float DisabledShadowLightFactor = 0.2f;
         private const float BloomStrokeDarkFactor = 0.4f;
         private const float DropShadowOpacity = 0.99f;
         private const float BaseBloomTargetScaleFactor = 1.1f;
         private const float TrackBloomTargetScaleFactor = 1.1f;
 
-        private static readonly Vector2 DefaultBaseSize = new Vector2(DefaultBaseLength, DefaultBaseLength);
+        private static readonly Vector2 DefaultBaseSize = new Vector2(DefaultBaseWidth, DefaultBaseHeight);
         private static readonly Vector2 DefaultTrackSize = new Vector2(DefaultTrackWidth, DefaultTrackHeight);
         private static readonly Vector2 DefaultThumbSize = new Vector2(DefaultThumbRadius * 2, DefaultThumbRadius * 2);
-        private static readonly Vector3 DefaultTrackOffset = new Vector3(8f, 56f, 0f);
-        private static readonly Vector3 DefaultThumbCheckedOffset = new Vector3(112f, 64f, 0f);
-        private static readonly Vector3 DefaultThumbUncheckedOffset = new Vector3(16f, 64f, 0f);
-        private static readonly Vector3 DefaultShadowCheckedOffset = new Vector3(8f, 8f, 0f);
-        private static readonly Vector3 DefaultShadowUncheckedOffset = new Vector3(-8f, 8f, 0f);
+        private static readonly Vector2 DefaultInnerThumbSize = new Vector2(DefaultInnerThumbRadius * 2, DefaultInnerThumbRadius * 2);
+        private static readonly Vector3 DefaultTrackOffset = new Vector3(8f, 8f, 0f);
+        private static readonly Vector3 DefaultInnerThumbOffset = new Vector3(4f, 4f, 0f);
+        private static readonly Vector3 DefaultThumbCheckedOffset = new Vector3(92f, 4f, 0f);
+        private static readonly Vector3 DefaultThumbUncheckedOffset = new Vector3(4f, 4f, 0f);
+        private static readonly Vector3 DefaultShadowCheckedOffset = new Vector3(4f, 4f, 0f);
+        private static readonly Vector3 DefaultShadowUncheckedOffset = new Vector3(-4f, 4f, 0f);
         private static readonly Color DefaultActiveColor = CanvasObject.CreateColor("#4cd964");
         private static readonly Color DefaultInactiveColor = CanvasObject.CreateColor("#dfdfdf");
         private static readonly Color DefaultDisabledColor = CanvasObject.CreateColor("#eaeaea");
-        private static readonly TimeSpan DefaultAnimationDuration = TimeSpan.FromMilliseconds(300);
-        private static readonly TimeSpan DefaultTrackBloomAnimationDuration = TimeSpan.FromMilliseconds(280);
+        private static readonly TimeSpan DefaultAnimationDuration = TimeSpan.FromMilliseconds(200);
+        private static readonly TimeSpan DefaultTrackBloomAnimationDuration = TimeSpan.FromMilliseconds(180);
 
         #endregion
 
@@ -106,6 +110,7 @@ namespace CompositionProToolkit.Controls
         private SpriteVisual _baseVisual;
         private SpriteVisual _trackVisual;
         private SpriteVisual _thumbVisual;
+        private SpriteVisual _innerThumbVisual;
         private SpriteVisual _baseBloomVisual;
         private SpriteVisual _trackBloomVisual;
 
@@ -114,6 +119,7 @@ namespace CompositionProToolkit.Controls
         private IMaskSurface _baseMask;
         private IMaskSurface _trackMask;
         private IGeometrySurface _thumbSurface;
+        private IGeometrySurface _innerThumbSurface;
         private CanvasGeometry _baseGeometry;
         private CanvasGeometry _trackGeometry;
         private IGeometrySurface _baseBloomSurface;
@@ -320,18 +326,24 @@ namespace CompositionProToolkit.Controls
             var offsetX = (float)((finalSize.Width - baseLength) / 2);
             var offsetY = (float)((finalSize.Height - baseLength) / 2);
             // Calculate the scale factor
-            var scale = baseLength / DefaultBaseLength;
+            var scale = baseLength / DefaultBaseWidth;
 
             //
             // Base Visual
             //
             _baseVisual.Size = DefaultBaseSize * scale;
             var baseColor = IsEnabled ? (IsChecked == true ? _baseActiveColor : _baseInactiveColor) : _baseDisabledColor;
-            var baseRadius = DefaultBaseRadius * scale;
             _baseColorBrush.ImplicitAnimations = null;
             _baseColorBrush.Color = baseColor;
             _baseColorBrush.ImplicitAnimations = _colorImplicitAnimation;
-            _baseGeometry = CanvasGeometry.CreateCircle(_generator.Device, baseRadius, baseRadius, baseRadius);
+            var baseCornerRadius = DefaultBaseCornerRadius * scale;
+            _baseGeometry = CanvasGeometry.CreateRoundedRectangle(_generator.Device,
+                0,
+                0,
+                DefaultBaseWidth * scale,
+                DefaultBaseHeight * scale,
+                baseCornerRadius,
+                baseCornerRadius);
             _baseMask.Redraw(_baseVisual.Size.ToSize(), _baseGeometry);
 
             //
@@ -365,7 +377,7 @@ namespace CompositionProToolkit.Controls
                 trackCornerRadius,
                 trackCornerRadius);
             _trackMask.Redraw(_trackVisual.Size.ToSize(), _trackGeometry);
-            _trackVisual.Offset = DefaultTrackOffset * scale;
+            _trackVisual.Offset = new Vector3(8f, 8f, 0f) * scale;
 
             //
             // Track Bloom
@@ -377,10 +389,23 @@ namespace CompositionProToolkit.Controls
                 _trackBloomVisual.Size * 0.5f))*/;
             _trackBloomSurface.Redraw(_trackBloomVisual.Size.ToSize(),
                 trackBloomGeometry,
-                new CanvasStroke(_generator.Device, trackBloomColor.DarkerBy(BloomStrokeDarkFactor), 3f),
+                //new CanvasStroke(_generator.Device, trackBloomColor.DarkerBy(BloomStrokeDarkFactor), 3f),
                 trackBloomColor);
             // Update the brush center
             _trackBloomBrush.CenterPoint = _trackBloomVisual.Size * 0.5f;
+
+            //
+            // Inner Thumb
+            //
+            _innerThumbVisual.Size = DefaultThumbSize * scale;
+            var innerThumbColor = IsEnabled ? (IsChecked == true ? _thumbActiveColor : _thumbInactiveColor) : _thumbDisabledColor;
+            var innerThumbRadius = DefaultInnerThumbRadius * scale;
+            _innerThumbSurface.Redraw(_thumbVisual.Size.ToSize(),
+                CanvasGeometry.CreateCircle(_generator.Device, innerThumbRadius, innerThumbRadius, innerThumbRadius),innerThumbColor);
+            _thumbCheckedOffset = DefaultThumbCheckedOffset * scale;
+            _thumbUncheckedOffset = DefaultThumbUncheckedOffset * scale;
+            _thumbVisual.ImplicitAnimations = null;
+            _thumbVisual.Offset = DefaultInnerThumbOffset * scale;
 
             //
             // Thumb
@@ -406,7 +431,7 @@ namespace CompositionProToolkit.Controls
             _dropShadow.ImplicitAnimations = null;
             _dropShadow.Color = IsEnabled ?
                 trackColor.DarkerBy(EnabledShadowDarkFactor) :
-                trackColor.LighterBy(DiasbledShadowLightFactor);
+                trackColor.LighterBy(DisabledShadowLightFactor);
             _dropShadow.Offset = IsChecked == true ? _shadowCheckedOffset : _shadowUncheckedOffset;
             _dropShadow.ImplicitAnimations = _thumbShadowImplicitAnimation;
             _dropShadow.Mask = _thumbVisual.Brush;
@@ -487,7 +512,7 @@ namespace CompositionProToolkit.Controls
             {
                 _baseColorBrush.Color = _baseDisabledColor;
                 _trackColorBrush.Color = _trackDisabledColor;
-                _dropShadow.Color = _trackDisabledColor.LighterBy(DiasbledShadowLightFactor);
+                _dropShadow.Color = _trackDisabledColor.LighterBy(DisabledShadowLightFactor);
             }
         }
 
@@ -502,16 +527,16 @@ namespace CompositionProToolkit.Controls
         private void UpdateColors()
         {
             // Active
-            _baseActiveColor = ActiveColor;
-            _trackActiveColor = _baseActiveColor.DarkerBy(ActiveTrackDarkFactor);
+            _baseActiveColor = ActiveColor.DarkerBy(ActiveTrackDarkFactor);
+            _trackActiveColor = ActiveColor;
             _thumbActiveColor = Colors.White;
             // Inactive
-            _baseInactiveColor = InactiveColor;
-            _trackInactiveColor = _baseInactiveColor.DarkerBy(InactiveTrackDarkFactor);
+            _baseInactiveColor = InactiveColor.DarkerBy(InactiveTrackDarkFactor);
+            _trackInactiveColor = InactiveColor;
             _thumbInactiveColor = _thumbActiveColor;
             // Disabled
-            _baseDisabledColor = DisabledColor;
-            _trackDisabledColor = _baseDisabledColor.DarkerBy(DisabledTrackDarkFactor);
+            _baseDisabledColor = DisabledColor.DarkerBy(DisabledTrackDarkFactor);
+            _trackDisabledColor = DisabledColor;
             _thumbDisabledColor = _baseDisabledColor.LighterBy(DisabledThumbLightFactor);
         }
 
@@ -529,10 +554,13 @@ namespace CompositionProToolkit.Controls
             _baseVisual = _compositor.CreateSpriteVisual();
             _baseVisual.Size = DefaultBaseSize;
             _baseColorBrush = _compositor.CreateColorBrush(IsChecked == true ? _baseActiveColor : _baseInactiveColor);
-            _baseGeometry = CanvasGeometry.CreateCircle(_generator.Device,
-                DefaultBaseRadius,
-                DefaultBaseRadius,
-                DefaultBaseRadius);
+            _baseGeometry = CanvasGeometry.CreateRoundedRectangle(_generator.Device,
+                0,
+                0,
+                DefaultBaseWidth,
+                DefaultBaseHeight,
+                DefaultBaseCornerRadius,
+                DefaultBaseCornerRadius);
             _baseMask = _generator.CreateMaskSurface(DefaultBaseSize.ToSize(), _baseGeometry);
             var baseMaskBrush = _compositor.CreateMaskBrush();
             baseMaskBrush.Mask = _compositor.CreateSurfaceBrush(_baseMask);
@@ -587,7 +615,7 @@ namespace CompositionProToolkit.Controls
                 _generator.CreateGeometrySurface(_trackBloomVisual.Size.ToSize(),
                     _trackGeometry/*.Transform(Matrix3x2.CreateScale(TrackBloomScaleFactor,
                         _trackBloomVisual.Size * 0.5f))*/,
-                    new CanvasStroke(_generator.Device, bloomColor.DarkerBy(BloomStrokeDarkFactor), 3f),
+                    //new CanvasStroke(_generator.Device, bloomColor.DarkerBy(BloomStrokeDarkFactor), 3f),
                     bloomColor);
             _trackBloomBrush = _compositor.CreateSurfaceBrush(_trackBloomSurface);
             _trackBloomBrush.CenterPoint = _trackBloomVisual.Size * 0.5f;
@@ -596,6 +624,20 @@ namespace CompositionProToolkit.Controls
             _trackBloomMaskBrush.Source = _trackBloomBrush;
 
             _trackVisual.Children.InsertAtTop(_trackBloomVisual);
+
+            //
+            // Inner Thumb Visual
+            //
+            _innerThumbVisual = _compositor.CreateSpriteVisual();
+            _innerThumbVisual.Size = DefaultInnerThumbSize;
+            _innerThumbSurface = _generator.CreateGeometrySurface(DefaultInnerThumbSize.ToSize(),
+                CanvasGeometry.CreateCircle(_generator.Device,
+                    DefaultInnerThumbRadius,
+                    DefaultInnerThumbRadius,
+                    DefaultInnerThumbRadius),
+                IsChecked == true ? _thumbActiveColor : _thumbInactiveColor);
+            _innerThumbVisual.Brush = _compositor.CreateSurfaceBrush(_innerThumbSurface);
+            _innerThumbVisual.Offset = DefaultInnerThumbOffset;
 
             //
             // Thumb Visual
@@ -607,9 +649,10 @@ namespace CompositionProToolkit.Controls
                     DefaultThumbRadius,
                     DefaultThumbRadius,
                     DefaultThumbRadius),
-                IsChecked == true ? _thumbActiveColor : _trackInactiveColor);
+                IsChecked == true ? _thumbActiveColor : _thumbInactiveColor);
             _thumbVisual.Brush = _compositor.CreateSurfaceBrush(_thumbSurface);
             _thumbVisual.Offset = IsChecked == true ? DefaultThumbCheckedOffset : DefaultThumbUncheckedOffset;
+            _thumbVisual.Children.InsertAtTop(_innerThumbVisual);
 
             //
             // Thumb Drop Shadow
@@ -620,7 +663,7 @@ namespace CompositionProToolkit.Controls
             var currentTrackColor = (IsChecked == true ? _trackActiveColor : _trackInactiveColor);
             _dropShadow.Color = IsEnabled
                 ? currentTrackColor.DarkerBy(EnabledShadowDarkFactor)
-                : currentTrackColor.LighterBy(DiasbledShadowLightFactor);
+                : currentTrackColor.LighterBy(DisabledShadowLightFactor);
             _dropShadow.Opacity = DropShadowOpacity;
             _dropShadow.Mask = _thumbVisual.Brush;
             _thumbVisual.Shadow = _dropShadow;

@@ -17,6 +17,7 @@
             VerticalAlignment="Center"
             Background="White"
             Stretch="Fill" />
+        <controls:ProgressRing3d x:Name="LoadingIndicator" HorizontalAlignment="Stretch" Margin="100"  NodeColor="Maroon" SyncAccentColor="False"></controls:ProgressRing3d>
     </Grid>
 </Page>
 

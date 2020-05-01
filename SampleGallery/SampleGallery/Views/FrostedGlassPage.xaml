@@ -13,7 +13,7 @@
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="VerticalContentAlignment" Value="Stretch" />
             <Setter Property="IsTabStop" Value="False" />
-            <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" />
+            <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundChromeHighBrush}" />
             <Setter Property="BorderThickness" Value="{ThemeResource FlyoutBorderThemeThickness}" />
             <Setter Property="Padding" Value="{ThemeResource FlyoutContentThemePadding}" />
@@ -21,6 +21,7 @@
             <Setter Property="MaxWidth" Value="800" />
             <Setter Property="MinHeight" Value="650" />
             <Setter Property="MaxHeight" Value="650" />
+            <Setter Property="IsDefaultShadowEnabled" Value="False" />
             <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Auto" />
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
             <Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto" />
@@ -29,7 +30,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="FlyoutPresenter">
-                        <Grid Background="Transparent">
+                        <Grid Background="Transparent" Margin="0">
                             <ContentPresenter
                                 Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -44,12 +45,13 @@
         </Style>
 
         <Flyout x:Key="CustomFlyout" FlyoutPresenterStyle="{StaticResource CustomFlyoutPresenterStyle}">
-            <Grid Margin="30,5">
+            <Grid>
                 <controls:FrostedGlass
-                    CornerRadius="8"
+                    CornerRadius="12"
                     MultiplyAmount="1"
                     TintColor="#b7b7b7"
-                    TintOpacity="0.3" />
+                    TintOpacity="0.24"
+                    ShadowBlurRadius="8"/>
                 <Border
                     Width="500"
                     Height="60"

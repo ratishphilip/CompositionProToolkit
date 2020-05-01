@@ -55,6 +55,7 @@
             <ToggleSwitch Margin="10,0,0,0" IsOn="{Binding ElementName=ImageFrame, Path=ShowPlaceholder, Mode=TwoWay}">
                 Placeholder
             </ToggleSwitch>
+            <!--<controls:FluidToggleSwitch Margin="10,10,0,0" Width="48" IsChecked="{Binding ElementName=ImageFrame, Path=ShowPlaceholder, Mode=TwoWay}"></controls:FluidToggleSwitch>-->
 
             <TextBlock
                 Margin="-50,10,0,10"

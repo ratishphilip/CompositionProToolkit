@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.0
+// CompositionProToolkit v0.9.5
 // 
 
 using Windows.Foundation;
@@ -34,7 +34,7 @@ namespace CompositionProToolkit
 {
     /// <summary>
     /// Interface for rendering custom shaped geometries onto ICompositionSurface
-    /// so that they can be useds as masks on Composition Visuals.
+    /// so that they can be used as masks on Composition Visuals.
     /// </summary>
     public interface IMaskSurface : IRenderSurface
     {
