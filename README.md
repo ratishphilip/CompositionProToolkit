@@ -1,7 +1,11 @@
 <img src="https://cloud.githubusercontent.com/assets/7021835/16889814/1784ed78-4a9e-11e6-80d0-7c2084d6c960.png" alt="CompositionProToolkit"></img>
 
-# What's new in v0.9.1?
-_**CompositioProToolkit v0.9.1** is built using **Windows Insider SDK 17763** and is based on **Microsoft.NETCore.UniversalWindowsPlatform v6.1.9**. Since v0.9 was based on an Insider SDK, it has been deprecated._
+# What's new in v0.9.5?
+_**CompositioProToolkit v0.9.5** is built using **Windows Insider SDK 17362** and is based on **Microsoft.NETCore.UniversalWindowsPlatform v6.2.1**. 
+The project is split into two Nuget packages
+- **CompositionProToolkit** - contains the core helper classes for Composition and Win2d.
+- **CompositionProToolkit.Controls** - contains UI controls made using Composition.
+
 
 # Table of Contents
 
@@ -50,10 +54,18 @@ _**CompositioProToolkit v0.9.1** is built using **Windows Insider SDK 17763** an
 To install **CompositionProToolkit**, run the following command in the **Package Manager Console**
 
 ```
-Install-Package CompositionProToolkit
+Install-Package CompositionProToolkit -Version 0.9.5
 ```
 
 More details available [here](https://www.nuget.org/packages/CompositionProToolkit/).
+
+To install **CompositionProToolkit.Controls**, run the following command in the **Package Manager Console**
+
+```
+Install-Package CompositionProToolkit.Controls -Version 0.9.5
+```
+
+More details available [here](https://www.nuget.org/packages/CompositionProToolkit.Controls/).
 
 # CompositionProToolkit Internals
 
@@ -1088,6 +1100,9 @@ The **Single()** extension method for **System.Double** is now marked as **obsol
 The **Single()** extension method is now replaced with **ToSingle()** extension method. It does the same job - converts **System.Double** to **System.Single**.
 
 # Updates Chronology
+
+## v0.9.5
+(**Friday, May 01, 2020**) - Based on Windows SDK 18362. Split project into two - CompositionProToolkit and CompositionProToolkit.Controls.
 
 ## v0.9.1
 (**Friday, December 14, 2018**) - Based on Windows SDK 17763.
