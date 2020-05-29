@@ -24,14 +24,16 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 // 
 
 using System;
+using System.Numerics;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Xaml;
 using CompositionProToolkit.Win2d;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Brushes;
@@ -60,9 +62,9 @@ namespace CompositionProToolkit
         CanvasDevice Device { get; }
 
         /// <summary>
-        /// Creates an Empty MaskSurface having the no size and geometry. 
-        /// NOTE: Use this API if you want to create an Empty IMaskSurface first
-        /// and change its geometry and/or size of the MaskSurface later.
+        /// <para>Creates an Empty MaskSurface having the no size and geometry.</para> 
+        /// <para>NOTE: Use this API if you want to create an Empty IMaskSurface first
+        /// and change its geometry and/or size of the MaskSurface later.</para>
         /// </summary>
         /// <returns>IMaskSurface</returns>
         IMaskSurface CreateMaskSurface();
@@ -77,83 +79,114 @@ namespace CompositionProToolkit
         IMaskSurface CreateMaskSurface(Size size, CanvasGeometry geometry);
 
         /// <summary>
-        /// Creates an Empty GeometrySurface having the no size and geometry.
-        /// NOTE: Use this API if you want to create an Empty IGeometrySurface 
-        /// first and change its geometry and/or size, fillColor or stroke later.
+        /// Creates a MaskSurface having the given size and geometry. The geometry is filled 
+        /// with white color. The surface not covered by the geometry is transparent.
+        /// </summary>
+        /// <param name="size">Size of the mask</param>
+        /// <param name="geometry">Geometry of the mask</param>
+        /// <param name="offset">The offset from the top left corner of the ICompositionSurface where
+        /// the Geometry is rendered.</param>
+        /// <returns>IMaskSurface</returns>
+        IMaskSurface CreateMaskSurface(Size size, CanvasGeometry geometry, Vector2 offset);
+
+        /// <summary>
+        /// <para>Creates an Empty IGaussianMaskSurface having the no size and geometry.</para>
+        /// <para>NOTE: Use this API if you want to create an Empty IGaussianMaskSurface first
+        /// and change its geometry, size and/or blurRadius of the IGaussianMaskSurface later.</para>
+        /// </summary>
+        /// <returns>IMaskSurface</returns>
+        IGaussianMaskSurface CreateGaussianMaskSurface();
+
+        /// <summary>
+        /// Creates an IGaussianMaskSurface having the given size and geometry. The geometry is filled 
+        /// with white color and a Gaussian blur is applied to it. The surface not covered by the geometry is transparent.
+        /// </summary>
+        /// <param name="size">Size of the mask</param>
+        /// <param name="geometry">Geometry of the mask</param>
+        /// <param name="blurRadius">Radius of Gaussian Blur to be applied on the IGaussianMaskSurface</param>
+        /// <param name="offset">The offset from the top left corner of the ICompositionSurface where
+        /// the Geometry is rendered.</param>
+        /// <returns>IGaussianMaskSurface</returns>
+        IGaussianMaskSurface CreateGaussianMaskSurface(Size size, CanvasGeometry geometry, Vector2 offset, float blurRadius);
+
+        /// <summary>
+        /// <para>Creates an Empty IGeometrySurface having the no size and geometry.</para>
+        /// <para>NOTE: Use this API if you want to create an Empty IGeometrySurface 
+        /// first and change its geometry and/or size, fillColor or stroke later.</para>
         /// </summary>
         /// <returns>IGeometrySurface</returns>
         IGeometrySurface CreateGeometrySurface();
-        
+
         /// <summary>
-        /// Creates a GeometrySurface having the given size, geometry, stroke 
+        /// Creates an IGeometrySurface having the given size, geometry, stroke 
         /// </summary>
-        /// <param name="size">Size of the GeometrySurface</param>
-        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="size">Size of the IGeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the IGeometrySurface</param>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <returns>IGeometrySurface</returns>
         IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke);
 
         /// <summary>
-        /// Creates a GeometrySurface having the given size, geometry, fill color
+        /// Creates an IGeometrySurface having the given size, geometry, fill color
         /// </summary>
-        /// <param name="size">Size of the GeometrySurface</param>
-        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="size">Size of the IGeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the IGeometrySurface</param>
         /// <param name="fillColor">Fill color of the geometry.</param>
         /// <returns>IGeometrySurface</returns>
         IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, Color fillColor);
 
         /// <summary>
-        /// Creates a GeometrySurface having the given size, geometry, stroke and fill color
+        /// Creates an IGeometrySurface having the given size, geometry, stroke and fill color
         /// </summary>
-        /// <param name="size">Size of the GeometrySurface</param>
-        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="size">Size of the IGeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the IGeometrySurface</param>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <param name="fillColor">Fill color of the geometry.</param>
         /// <returns>IGeometrySurface</returns>
-        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke, 
+        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke,
             Color fillColor);
 
         /// <summary>
-        /// Creates a GeometrySurface having the given size, geometry, fill color and
+        /// Creates an IGeometrySurface having the given size, geometry, fill color and
         /// background color.
         /// </summary>
-        /// <param name="size">Size of the GeometrySurface</param>
-        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="size">Size of the IGeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the IGeometrySurface</param>
         /// <param name="fillColor">Fill color of the geometry</param>
-        /// <param name="backgroundColor">Fill color of the GeometrySurface background which is 
+        /// <param name="backgroundColor">Fill color of the IGeometrySurface background which is 
         /// not covered by the geometry</param>
         /// <returns>IGeometrySurface</returns>
-        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, Color fillColor, 
+        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, Color fillColor,
             Color backgroundColor);
 
         /// <summary>
-        /// Creates a GeometrySurface having the given size, geometry, stroke, fill color and
+        /// Creates an IGeometrySurface having the given size, geometry, stroke, fill color and
         /// background color.
         /// </summary>
-        /// <param name="size">Size of the GeometrySurface</param>
-        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="size">Size of the IGeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the IGeometrySurface</param>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <param name="fillColor">Fill color of the geometry</param>
-        /// <param name="backgroundColor">Fill color of the GeometrySurface background which is 
+        /// <param name="backgroundColor">Fill color of the IGeometrySurface background which is 
         /// not covered by the geometry</param>
         /// <returns>IGeometrySurface</returns>
         IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke,
             Color fillColor, Color backgroundColor);
 
         /// <summary>
-        /// Creates a GeometrySurface having the given size, geometry and fill brush.
+        /// Creates an IGeometrySurface having the given size, geometry and fill brush.
         /// </summary>
-        /// <param name="size">Size of the GeometrySurface</param>
-        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="size">Size of the IGeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the IGeometrySurface</param>
         /// <param name="fillBrush">The brush with which the geometry has to be filled</param>
         /// <returns>IGeometrySurface</returns>
         IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasBrush fillBrush);
 
         /// <summary>
-        /// Creates a GeometrySurface having the given size, geometry, stroke and fill brush.
+        /// Creates an IGeometrySurface having the given size, geometry, stroke and fill brush.
         /// </summary>
-        /// <param name="size">Size of the GeometrySurface</param>
-        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="size">Size of the IGeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the IGeometrySurface</param>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <param name="fillBrush">The brush with which the geometry has to be filled</param>
         /// <returns>IGeometrySurface</returns>
@@ -161,95 +194,166 @@ namespace CompositionProToolkit
             ICanvasBrush fillBrush);
 
         /// <summary>
-        /// Creates a GeometrySurface having the given size, geometry, fill brush and
+        /// Creates an IGeometrySurface having the given size, geometry, fill brush and
         /// background brush.
         /// </summary>
-        /// <param name="size">Size of the GeometrySurface</param>
-        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="size">Size of the IGeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the IGeometrySurface</param>
         /// <param name="fillBrush">The brush with which the geometry has to be filled</param>
-        /// <param name="backgroundBrush">The brush to fill the GeometrySurface background which is 
+        /// <param name="backgroundBrush">The brush to fill the IGeometrySurface background which is 
         /// not covered by the geometry</param>
         /// <returns>IGeometrySurface</returns>
-        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasBrush fillBrush, 
+        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasBrush fillBrush,
             ICanvasBrush backgroundBrush);
 
         /// <summary>
-        /// Creates a GeometrySurface having the given size, geometry, stroke, fill brush and
+        /// Creates an IGeometrySurface having the given size, geometry, stroke, fill brush and
         /// background brush.
         /// </summary>
-        /// <param name="size">Size of the GeometrySurface</param>
-        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="size">Size of the IGeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the IGeometrySurface</param>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <param name="fillBrush">The brush with which the geometry has to be filled</param>
-        /// <param name="backgroundBrush">The brush to fill the GeometrySurface background which is 
+        /// <param name="backgroundBrush">The brush to fill the IGeometrySurface background which is 
         /// not covered by the geometry</param>
         /// <returns>IGeometrySurface</returns>
-        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke, 
+        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke,
             ICanvasBrush fillBrush, ICanvasBrush backgroundBrush);
 
         /// <summary>
-        /// Creates a GeometrySurface having the given size, geometry, fill brush and
+        /// Creates an IGeometrySurface having the given size, geometry, fill brush and
         /// background color.
         /// </summary>
-        /// <param name="size">Size of the GeometrySurface</param>
-        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="size">Size of the IGeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the IGeometrySurface</param>
         /// <param name="fillBrush">The brush with which the geometry has to be filled</param>
-        /// <param name="backgroundColor">Fill color of the GeometrySurface background which is 
+        /// <param name="backgroundColor">Fill color of the IGeometrySurface background which is 
         /// not covered by the geometry</param>
         /// <returns>IGeometrySurface</returns>
         IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasBrush fillBrush,
             Color backgroundColor);
 
         /// <summary>
-        /// Creates a GeometrySurface having the given size, geometry, stroke, fill brush and
+        /// Creates an IGeometrySurface having the given size, geometry, stroke, fill brush and
         /// background color.
         /// </summary>
-        /// <param name="size">Size of the GeometrySurface</param>
-        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="size">Size of the IGeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the IGeometrySurface</param>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <param name="fillBrush">The brush with which the geometry has to be filled</param>
-        /// <param name="backgroundColor">Fill color of the GeometrySurface background which is 
+        /// <param name="backgroundColor">Fill color of the IGeometrySurface background which is 
         /// not covered by the geometry</param>
         /// <returns>IGeometrySurface</returns>
-        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke, 
+        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke,
             ICanvasBrush fillBrush, Color backgroundColor);
 
         /// <summary>
-        /// Creates a GeometrySurface having the given size, geometry, fill color and
+        /// Creates an IGeometrySurface having the given size, geometry, fill color and
         /// background brush.
         /// </summary>
-        /// <param name="size">Size of the GeometrySurface</param>
-        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="size">Size of the IGeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the IGeometrySurface</param>
         /// <param name="fillColor">Fill color of the geometry</param>
-        /// <param name="backgroundBrush">The brush to fill the GeometrySurface background which is 
+        /// <param name="backgroundBrush">The brush to fill the IGeometrySurface background which is 
         /// not covered by the geometry</param>
         /// <returns>IGeometrySurface</returns>
         IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, Color fillColor,
             ICanvasBrush backgroundBrush);
 
         /// <summary>
-        /// Creates a GeometrySurface having the given size, geometry, stroke, fill color and
+        /// Creates an IGeometrySurface having the given size, geometry, stroke, fill color and
         /// background brush.
         /// </summary>
-        /// <param name="size">Size of the GeometrySurface</param>
-        /// <param name="geometry">Geometry to be rendered on the GeometrySurface</param>
+        /// <param name="size">Size of the IGeometrySurface</param>
+        /// <param name="geometry">Geometry to be rendered on the IGeometrySurface</param>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <param name="fillColor">Fill color of the geometry</param>
-        /// <param name="backgroundBrush">The brush to fill the GeometrySurface background which is 
+        /// <param name="backgroundBrush">The brush to fill the IGeometrySurface background which is 
         /// not covered by the geometry</param>
         /// <returns>IGeometrySurface</returns>
-        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke, 
+        IGeometrySurface CreateGeometrySurface(Size size, CanvasGeometry geometry, ICanvasStroke stroke,
             Color fillColor, ICanvasBrush backgroundBrush);
+
+        /// <summary>
+        /// Creates an IImageSurface having the given size onto which an image (based on the Uri
+        /// and the options) is loaded.
+        /// </summary>
+        /// <param name="uri">Uri of the image to be loaded onto the IImageSurface.</param>
+        /// <param name="size">New size of the IImageSurface</param>
+        /// <param name="options">The image's resize and alignment options in the allocated space.</param>
+        /// <returns>Task&lt;IImageSurface&gt;</returns>
+        Task<IImageSurface> CreateImageSurfaceAsync(Uri uri, Size size, ImageSurfaceOptions options);
+
+        /// <summary>
+        /// Creates an IImageSurface having the given size onto which the given image is loaded.
+        /// </summary>
+        /// <param name="bitmap">Image that will be loaded onto the IImageSurface.</param>
+        /// <param name="size">Size of the IImageSurface</param>
+        /// <param name="options">The image's resize and alignment options in the allocated space.</param>
+        /// <returns>IImageSurface</returns>
+        IImageSurface CreateImageSurface(CanvasBitmap bitmap, Size size, ImageSurfaceOptions options);
+
+        /// <summary>
+        /// Creates a copy of the given IImageSurface
+        /// </summary>
+        /// <param name="imageSurface">IImageSurface to copy</param>
+        /// <returns>IImageSurface</returns>
+        IImageSurface CreateImageSurface(IImageSurface imageSurface);
+
+        /// <summary>
+        /// Creates a copy of the given IImageMaskSurface
+        /// </summary>
+        /// <param name="imageMaskSurface">IImageMaskSurface to copy</param>
+        /// <returns>IImageMaskSurface</returns>
+        IImageMaskSurface CreateImageMaskSurface(IImageMaskSurface imageMaskSurface);
+
+        /// <summary>
+        /// Creates an IImageMaskSurface having the given size onto which an image (based on the Uri
+        /// and the options) is loaded.
+        /// </summary>
+        /// <param name="surfaceBitmap">The CanvasBitmap whose alpha values will be used to create the Mask.</param>
+        /// <param name="size">Size of the IImageSurface</param>
+        /// <param name="padding">The padding between the IImageMaskSurface outer bounds and the bounds of the area where
+        /// the mask, created from the given image's alpha values, should be rendered.</param>
+        /// <param name="blurRadius">Radius of the Gaussian blur applied to the the mask.</param>
+        /// <returns>IImageMaskSurface</returns>
+        IImageMaskSurface CreateImageMaskSurface(CanvasBitmap surfaceBitmap, Size size, Thickness padding, float blurRadius);
+
+        /// <summary>
+        /// Creates an IImageMaskSurface having the given size onto which an image (based on the Uri
+        /// and the options) is loaded.
+        /// </summary>
+        /// <param name="surfaceBitmap">The CanvasBitmap whose alpha values will be used to create the Mask.</param>
+        /// <param name="size">Size of the IImageSurface</param>
+        /// <param name="padding">The padding between the IImageMaskSurface outer bounds and the bounds of the area where
+        /// the mask, created from the given image's alpha values, should be rendered.</param>
+        /// <param name="options">The image's resize, alignment options and blur radius in the allocated space.</param>
+        /// <returns>IImageMaskSurface</returns>
+        IImageMaskSurface CreateImageMaskSurface(CanvasBitmap surfaceBitmap, Size size, Thickness padding, ImageSurfaceOptions options);
+
+        /// <summary>
+        /// Creates an IImageMaskSurface having the given size onto which an image (based on the Uri
+        /// and the options) is loaded.
+        /// </summary>
+        /// <param name="imageSurface">The IImageSurface whose image's alpha values will be used to create the Mask.</param>
+        /// <param name="size">Size of the IImageMaskSurface</param>
+        /// <param name="padding">The padding between the IImageMaskSurface outer bounds and the bounds of the area where
+        /// the mask, created from the given image's alpha values, should be rendered.</param>
+        /// <param name="options">The image's resize, alignment options and blur radius in the allocated space.</param>
+        /// <returns>IImageMaskSurface</returns>
+        IImageMaskSurface CreateImageMaskSurface(IImageSurface imageSurface, Size size, Thickness padding, ImageSurfaceOptions options);
 
         /// <summary>
         /// Creates a ImageSurface having the given size onto which an image (based on the Uri
         /// and the options) is loaded.
         /// </summary>
-        /// <param name="uri">Uri of the image to be loaded onto the SurfaceImage.</param>
-        /// <param name="size">New size of the SurfaceImage</param>
-        /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
-        /// <returns>ICompositionSurfaceImage</returns>
-        Task<IImageSurface> CreateImageSurfaceAsync(Uri uri, Size size, ImageSurfaceOptions options);
+        /// <param name="uri">Uri of the image whose alpha values will be used to create the Mask.</param>
+        /// <param name="size">Size of the IImageMaskSurface</param>
+        /// <param name="padding">The padding between the IImageMaskSurface outer bounds and the bounds of the area where
+        /// the mask, created from the given image's alpha values, should be rendered.</param>
+        /// <param name="options">The image's resize, alignment options and blur radius in the allocated space.</param>
+        /// <returns>Task&lt;IImageMaskSurface&gt;</returns>
+        Task<IImageMaskSurface> CreateImageMaskSurfaceAsync(Uri uri, Size size, Thickness padding, ImageSurfaceOptions options);
 
         /// <summary>
         /// Creates a reflection of the given Visual

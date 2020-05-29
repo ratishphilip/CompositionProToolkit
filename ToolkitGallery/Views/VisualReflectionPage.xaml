@@ -1,0 +1,52 @@
+﻿<Page x:Class="ToolkitGallery.Views.VisualReflectionPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:ToolkitGallery.Views"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+      mc:Ignorable="d">
+
+    <Grid Background="#373737">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid x:Name="CompositionGrid1"
+              Grid.Row="0"
+              Grid.Column="0">
+            <TextBlock Margin="6"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       Text="ReflectionLocation = Bottom" />
+        </Grid>
+        <Grid x:Name="CompositionGrid2"
+              Grid.Row="0"
+              Grid.Column="1">
+            <TextBlock Margin="6"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       Text="ReflectionLocation = Right" />
+        </Grid>
+        <Grid x:Name="CompositionGrid3"
+              Grid.Row="1"
+              Grid.Column="0">
+            <TextBlock Margin="6,20"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       Text="(Multiple Visuals) ReflectionLocation = Bottom" />
+        </Grid>
+        <Grid x:Name="CompositionGrid4"
+              Grid.Row="1"
+              Grid.Column="1">
+            <TextBlock Margin="6,20"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       Text="(Multiple Visuals) ReflectionLocation = Right" />
+        </Grid>
+    </Grid>
+</Page>

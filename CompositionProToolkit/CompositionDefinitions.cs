@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 // 
 
 using Windows.UI;
@@ -66,40 +66,50 @@ namespace CompositionProToolkit
         #region Properties
 
         /// <summary>
-        /// Specifies whether the surface should resize itself
-        /// automatically to match the loaded image size
+        /// <para>Specifies whether the IImageSurface should resize itself automatically to match the loaded image size.</para>
+        /// <para>NOTE: This property is not used by IImageMaskSurface.</para> 
         /// </summary>
-        public bool AutoResize { get; set; }
+        public bool AutoResize { get; set; } = false;
+
         /// <summary>
-        /// Describes how image is resized to fill its allocated space.
-        /// NOTE: This property is taken into consideration only if AutoResize is False.
+        /// <para>Describes how image is resized to fill its allocated space.</para>
+        /// <para>NOTE: This property is taken into consideration only if AutoResize is False.</para>
         /// </summary>
-        public Stretch Stretch { get; set; }
+        public Stretch Stretch { get; set; } = Stretch.None;
+
         /// <summary>
-        /// Describes how image is positioned horizontally in 
-        /// the ImageSurface
-        /// NOTE: This property is taken into consideration only if AutoResize is False.
+        /// <para>Describes how image is positioned horizontally in the IImageSurface or IImageMaskSurface.</para>
+        /// <para>NOTE: This property is taken into consideration only if AutoResize is False.</para>
         /// </summary>
-        public AlignmentX HorizontalAlignment { get; set; }
+        public AlignmentX HorizontalAlignment { get; set; } = AlignmentX.Center;
+
         /// <summary>
-        /// Describes how image is positioned vertically in 
-        /// the ImageSurface
-        /// NOTE: This property is taken into consideration only if AutoResize is False.
+        /// <para>Describes how image is positioned vertically in the IImageSurface or IImageMaskSurface.</para>
+        /// <para>NOTE: This property is taken into consideration only if AutoResize is False.</para>
         /// </summary>
-        public AlignmentY VerticalAlignment { get; set; }
+        public AlignmentY VerticalAlignment { get; set; } = AlignmentY.Center;
+
         /// <summary>
-        /// Specifies the opacity of the rendered image
+        /// Specifies the opacity of the rendered the image in an IImageSurface or the mask in an IImageMaskSurface.
         /// </summary>
-        public float Opacity { get; set; }
+        public float Opacity { get; set; } = 1f;
+
         /// <summary>
-        /// Specifies the interpolation used to render the image
+        /// Specifies the interpolation used to render the image in an IImageSurface or the mask in an IImageMaskSurface.
         /// </summary>
-        public CanvasImageInterpolation Interpolation { get; set; }
+        public CanvasImageInterpolation Interpolation { get; set; } = CanvasImageInterpolation.HighQualityCubic;
+
         /// <summary>
-        /// Color which will be used to fill the SurfaceImage 
-        /// in case the image is not rendered
+        /// Color which will be used to fill the IImageSurface in an IImageSurface or the mask in an IImageMaskSurface
+        /// in case the image is not rendered.
         /// </summary>
-        public Color SurfaceBackgroundColor { get; set; }
+        public Color SurfaceBackgroundColor { get; set; } = Colors.Transparent;
+
+        /// <summary>
+        /// <para>Radius of the Gaussian blur to be applied to the IImageMaskSurface.</para>
+        /// <para>NOTE: This property is not used by IImageSurface.</para>
+        /// </summary>
+        public float BlurRadius { get; set; } = 0f;
 
         #endregion
 
@@ -118,7 +128,8 @@ namespace CompositionProToolkit
                         Stretch = Stretch.Uniform,
                         HorizontalAlignment = AlignmentX.Center,
                         VerticalAlignment = AlignmentY.Center,
-                        SurfaceBackgroundColor = Colors.Transparent
+                        SurfaceBackgroundColor = Colors.Transparent,
+                        BlurRadius = 0f
                     };
 
         /// <summary>
@@ -134,8 +145,46 @@ namespace CompositionProToolkit
                         Stretch = Stretch.Uniform,
                         HorizontalAlignment = AlignmentX.Center,
                         VerticalAlignment = AlignmentY.Center,
-                        SurfaceBackgroundColor = Colors.Transparent
+                        SurfaceBackgroundColor = Colors.Transparent,
+                        BlurRadius = 0f
                     };
+
+        /// <summary>
+        /// Default ImageSurfaceOptions for IImageMaskSurface
+        /// Uniform Stretch and Center alignment
+        /// </summary>
+        public static ImageSurfaceOptions DefaultImageMaskOptions =>
+            new ImageSurfaceOptions()
+            {
+                AutoResize = false,
+                Interpolation = CanvasImageInterpolation.HighQualityCubic,
+                Opacity = 1f,
+                Stretch = Stretch.Uniform,
+                HorizontalAlignment = AlignmentX.Center,
+                VerticalAlignment = AlignmentY.Center,
+                SurfaceBackgroundColor = Colors.Transparent,
+                BlurRadius = 0f
+            };
+
+        /// <summary>
+        /// Creates ImageSurfaceOptions for IImageMaskSurface for the given blurRadius -
+        /// Uniform Stretch and Center alignment
+        /// </summary>
+        /// <param name="blurRadius">Radius of the Gaussian Blur to be applied on the IImageMaskSurface.</param>
+        public static ImageSurfaceOptions GetDefaultImageMaskOptionsForBlur(float blurRadius)
+        {
+            return new ImageSurfaceOptions()
+            {
+                AutoResize = false,
+                Interpolation = CanvasImageInterpolation.HighQualityCubic,
+                Opacity = 1f,
+                Stretch = Stretch.Uniform,
+                HorizontalAlignment = AlignmentX.Center,
+                VerticalAlignment = AlignmentY.Center,
+                SurfaceBackgroundColor = Colors.Transparent,
+                BlurRadius = blurRadius
+            };
+        }
 
         #endregion
     }

@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 // 
 
 using System.Numerics;
@@ -73,6 +73,27 @@ namespace CompositionProToolkit.Win2d
         }
 
         /// <summary>
+        /// Creates a Squircle geometry with the specified extents.
+        /// </summary>
+        /// <param name="resourceCreator"></param>
+        /// <param name="x">X offset of the TopLeft corner of the Squircle</param>
+        /// <param name="y">Y offset of the TopLeft corner of the Squircle</param>
+        /// <param name="width">Width of the Squircle</param>
+        /// <param name="height">Height of the Squircle</param>
+        /// <param name="radiusX">Corner Radius on the x-axis</param>
+        /// <param name="radiusY">Corner Radius on the y-axis</param>
+        /// <returns>CanvasGeometry</returns>
+        public static CanvasGeometry CreateSquircle(ICanvasResourceCreator resourceCreator, float x, float y,
+            float width, float height, float radiusX, float radiusY)
+        {
+            using (var pathBuilder = new CanvasPathBuilder(resourceCreator))
+            {
+                pathBuilder.AddSquircleFigure(x, y, width, height, radiusX, radiusY);
+                return CanvasGeometry.CreatePath(pathBuilder);
+            }
+        }
+
+        /// <summary>
         /// Parses the Path data string and converts it to CanvasGeometry.
         /// </summary>
         /// <param name="pathData">Path data</param>
@@ -85,7 +106,7 @@ namespace CompositionProToolkit.Win2d
             using (new CultureShield("en-US"))
             {
                 // Log command
-                logger?.AppendLine("using (var pathBuilder = new CanvasPathBuilder(resourceCreator))");
+                logger?.AppendLine("using (var pathBuilder = new CanvasPathBuilder(null))");
                 logger?.AppendLine("{");
 
                 // Get the CanvasGeometry from the path data

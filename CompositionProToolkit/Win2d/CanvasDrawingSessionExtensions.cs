@@ -24,12 +24,14 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 // 
 
 using System.Numerics;
 using Windows.Foundation;
+using Windows.UI;
 using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Geometry;
 
 namespace CompositionProToolkit.Win2d
@@ -243,6 +245,133 @@ namespace CompositionProToolkit.Win2d
             float radiusX, float radiusY, ICanvasStroke stroke)
         {
             session.DrawRoundedRectangle(x, y, w, h, radiusX, radiusY, stroke.Brush, stroke.Width, stroke.Style);
+        }
+
+        /// <summary>
+        /// Draws a Squircle of the specified dimensions, using a CanvasStroke to define the stroke 
+        /// width, the stroke color and stroke style.
+        /// </summary>
+        /// <param name="session">CanvasDrawingSession</param>
+        /// <param name="x">Offset of the top left corner of the  Squircle on the x-axis</param>
+        /// <param name="y">Offset of the top left corner of the  Squircle on the y-axis</param>
+        /// <param name="w">Width of the  Squircle</param>
+        /// <param name="h">Height of the  Squircle</param>
+        /// <param name="radiusX">Corner Radius on the x axis</param>
+        /// <param name="radiusY">Corner Radius on the y axis</param>
+        /// <param name="stroke">CanvasStroke defining the stroke width, the stroke 
+        /// color and stroke style.</param>
+        public static void DrawSquircle(this CanvasDrawingSession session, float x, float y, float w, float h,
+            float radiusX, float radiusY, ICanvasStroke stroke)
+        {
+            using (var geometry = CanvasObject.CreateSquircle(session.Device, x, y, w, h, radiusX, radiusY))
+            {
+                session.DrawGeometry(geometry, stroke);
+            }
+        }
+
+        /// <summary>
+        /// Draws a Squircle of the specified dimensions, using a CanvasStroke to define the stroke 
+        /// width, the stroke color and stroke style.
+        /// </summary>
+        /// <param name="session">CanvasDrawingSession</param>
+        /// <param name="x">Offset of the top left corner of the  Squircle on the x-axis</param>
+        /// <param name="y">Offset of the top left corner of the  Squircle on the y-axis</param>
+        /// <param name="w">Width of the  Squircle</param>
+        /// <param name="h">Height of the  Squircle</param>
+        /// <param name="radiusX">Corner Radius on the x axis</param>
+        /// <param name="radiusY">Corner Radius on the y axis</param>
+        /// <param name="offset">Offset of the Squircle from the origin.</param>
+        /// <param name="stroke">CanvasStroke defining the stroke width, the stroke 
+        /// color and stroke style.</param>
+        public static void DrawSquircle(this CanvasDrawingSession session, float x, float y, float w, float h,
+            float radiusX, float radiusY, Vector2 offset, ICanvasStroke stroke)
+        {
+            using (var geometry = CanvasObject.CreateSquircle(session.Device, x, y, w, h, radiusX, radiusY))
+            {
+                session.DrawGeometry(geometry, offset, stroke);
+            }
+        }
+
+        /// <summary>
+        /// Fills a Squircle of the specified dimensions, using the given color
+        /// </summary>
+        /// <param name="session">CanvasDrawingSession</param>
+        /// <param name="x">Offset of the top left corner of the  Squircle on the x-axis</param>
+        /// <param name="y">Offset of the top left corner of the  Squircle on the y-axis</param>
+        /// <param name="w">Width of the  Squircle</param>
+        /// <param name="h">Height of the  Squircle</param>
+        /// <param name="radiusX">Corner Radius on the x axis</param>
+        /// <param name="radiusY">Corner Radius on the y axis</param>
+        /// <param name="color">Color to fill the Squircle.</param>
+        public static void FillSquircle(this CanvasDrawingSession session, float x, float y, float w, float h,
+            float radiusX, float radiusY, Color color)
+        {
+            using (var geometry = CanvasObject.CreateSquircle(session.Device, x, y, w, h, radiusX, radiusY))
+            {
+                session.FillGeometry(geometry, color);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="session">CanvasDrawingSession</param>
+        /// <param name="x">Offset of the top left corner of the  Squircle on the x-axis</param>
+        /// <param name="y">Offset of the top left corner of the  Squircle on the y-axis</param>
+        /// <param name="w">Width of the  Squircle</param>
+        /// <param name="h">Height of the  Squircle</param>
+        /// <param name="radiusX">Corner Radius on the x axis</param>
+        /// <param name="radiusY">Corner Radius on the y axis</param>
+        /// <param name="brush">Brush to fill the Squircle.</param>
+        public static void FillSquircle(this CanvasDrawingSession session, float x, float y, float w, float h,
+            float radiusX, float radiusY, ICanvasBrush brush)
+        {
+            using (var geometry = CanvasObject.CreateSquircle(session.Device, x, y, w, h, radiusX, radiusY))
+            {
+                session.FillGeometry(geometry, brush);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="session">CanvasDrawingSession</param>
+        /// <param name="x">Offset of the top left corner of the  Squircle on the x-axis</param>
+        /// <param name="y">Offset of the top left corner of the  Squircle on the y-axis</param>
+        /// <param name="w">Width of the  Squircle</param>
+        /// <param name="h">Height of the  Squircle</param>
+        /// <param name="radiusX">Corner Radius on the x axis</param>
+        /// <param name="radiusY">Corner Radius on the y axis</param>
+        /// <param name="offset">Offset of the Squircle from the origin.</param>
+        /// <param name="color">Color to fill the Squircle.</param>
+        public static void FillSquircle(this CanvasDrawingSession session, float x, float y, float w, float h,
+            float radiusX, float radiusY, Vector2 offset, Color color)
+        {
+            using (var geometry = CanvasObject.CreateSquircle(session.Device, x, y, w, h, radiusX, radiusY))
+            {
+                session.FillGeometry(geometry, offset, color);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="session">CanvasDrawingSession</param>
+        /// <param name="x">Offset of the top left corner of the  Squircle on the x-axis</param>
+        /// <param name="y">Offset of the top left corner of the  Squircle on the y-axis</param>
+        /// <param name="w">Width of the  Squircle</param>
+        /// <param name="h">Height of the  Squircle</param>
+        /// <param name="radiusX">Corner Radius on the x axis</param>
+        /// <param name="radiusY">Corner Radius on the y axis</param>
+        /// <param name="offset">Offset of the Squircle from the origin.</param>
+        /// <param name="brush">Brush to fill the Squircle.</param>
+        public static void FillSquircle(this CanvasDrawingSession session, float x, float y, float w, float h,
+            float radiusX, float radiusY, Vector2 offset, ICanvasBrush brush)
+        {
+            using (var geometry = CanvasObject.CreateSquircle(session.Device, x, y, w, h, radiusX, radiusY))
+            {
+                session.FillGeometry(geometry, offset, brush);
+            }
         }
     }
 }

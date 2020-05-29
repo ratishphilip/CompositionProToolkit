@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 // 
 
 using Windows.Foundation;
@@ -47,7 +47,7 @@ namespace CompositionProToolkit
         /// </summary>
         CanvasGeometry Geometry { get; }
         /// <summary>
-        /// Gets the Stroke with which the Geometry is outined.
+        /// Gets the Stroke with which the Geometry is outlined.
         /// </summary>
         ICanvasStroke Stroke { get; }
         /// <summary>
@@ -55,7 +55,7 @@ namespace CompositionProToolkit
         /// </summary>
         ICanvasBrush Fill { get; }
         /// <summary>
-        /// Gets the Brush with which the GeometrySurface background is filled.
+        /// Gets the Brush with which the IGeometrySurface background is filled.
         /// </summary>
         ICanvasBrush BackgroundBrush { get; }
 
@@ -64,27 +64,27 @@ namespace CompositionProToolkit
         #region APIs
 
         /// <summary>
-        /// Redraws the GeometrySurface with the new geometry
+        /// Redraws the IGeometrySurface with the new geometry
         /// </summary>
-        /// <param name="geometry">New CanvasGeometry to be applied to the GeometrySurface</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IGeometrySurface</param>
         void Redraw(CanvasGeometry geometry);
 
         /// <summary>
-        /// Redraws the GeometrySurface by outlining the existing geometry with 
+        /// Redraws the IGeometrySurface by outlining the existing geometry with 
         /// the given ICanvasStroke
         /// </summary>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         void Redraw(ICanvasStroke stroke);
 
         /// <summary>
-        /// Redraws the GeometrySurface by filling the existing geometry with
+        /// Redraws the IGeometrySurface by filling the existing geometry with
         /// the fill color. 
         /// </summary>
         /// <param name="fillColor">Color with which the geometry is to be filled</param>
         void Redraw(Color fillColor);
 
         /// <summary>
-        /// Redraws the GeometrySurface by filling the existing geometry with
+        /// Redraws the IGeometrySurface by filling the existing geometry with
         /// the given fill color and outlining it with the given ICanvasStroke.
         /// </summary>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
@@ -92,31 +92,31 @@ namespace CompositionProToolkit
         void Redraw(ICanvasStroke stroke, Color fillColor);
 
         /// <summary>
-        /// Redraws the GeometrySurface by filling the existing geometry with
+        /// Redraws the IGeometrySurface by filling the existing geometry with
         /// the fill color and the background with the background color. 
         /// </summary>
         /// <param name="fillColor">Color with which the geometry is to be filled</param>
-        /// <param name="backgroundColor">Color with which the GeometrySurface background is to be filled</param>
+        /// <param name="backgroundColor">Color with which the IGeometrySurface background is to be filled</param>
         void Redraw(Color fillColor, Color backgroundColor);
 
         /// <summary>
-        /// Redraws the GeometrySurface by outlining the existing geometry with the
+        /// Redraws the IGeometrySurface by outlining the existing geometry with the
         /// given ICanvasStroke, filling it with the fill color and the background with the background color. 
         /// </summary>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <param name="fillColor">Color with which the geometry is to be filled</param>
-        /// <param name="backgroundColor">Color with which the GeometrySurface background is to be filled</param>
+        /// <param name="backgroundColor">Color with which the IGeometrySurface background is to be filled</param>
         void Redraw(ICanvasStroke stroke, Color fillColor, Color backgroundColor);
 
         /// <summary>
-        /// Redraws the GeometrySurface by filling the existing geometry with
+        /// Redraws the IGeometrySurface by filling the existing geometry with
         /// the fill brush. 
         /// </summary>
         /// <param name="fillBrush">Brush with which the geometry is to be filled</param>
         void Redraw(ICanvasBrush fillBrush);
 
         /// <summary>
-        /// Redraws the GeometrySurface by outlining the existing geometry with the
+        /// Redraws the IGeometrySurface by outlining the existing geometry with the
         /// given ICanvasStroke, filling it with the fill brush. 
         /// </summary>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
@@ -124,195 +124,195 @@ namespace CompositionProToolkit
         void Redraw(ICanvasStroke stroke, ICanvasBrush fillBrush);
 
         /// <summary>
-        /// Redraws the GeometrySurface by filling the existing geometry with
+        /// Redraws the IGeometrySurface by filling the existing geometry with
         /// the fill brush and the background with the background brush.
         /// </summary>
         /// <param name="fillBrush">Brush with which the geometry is to be filled</param>
-        /// <param name="backgroundBrush">Brush with which the GeometrySurface background is to be filled</param>
+        /// <param name="backgroundBrush">Brush with which the IGeometrySurface background is to be filled</param>
         void Redraw(ICanvasBrush fillBrush, ICanvasBrush backgroundBrush);
 
         /// <summary>
-        /// Redraws the GeometrySurface by outlining the existing geometry with the
+        /// Redraws the IGeometrySurface by outlining the existing geometry with the
         /// given ICanvasStroke, filling it with the fill brush and the background with the background brush.
         /// </summary>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <param name="fillBrush">Brush with which the geometry is to be filled</param>
-        /// <param name="backgroundBrush">Brush with which the GeometrySurface background is to be filled</param>
+        /// <param name="backgroundBrush">Brush with which the IGeometrySurface background is to be filled</param>
         void Redraw(ICanvasStroke stroke, ICanvasBrush fillBrush, ICanvasBrush backgroundBrush);
 
         /// <summary>
-        /// Redraws the GeometrySurface by filling the existing geometry with
+        /// Redraws the IGeometrySurface by filling the existing geometry with
         /// the fill color and the background with the background brush.
         /// </summary>
         /// <param name="fillColor">Color with which the geometry is to be filled</param>
-        /// <param name="backgroundBrush">Brush with which the GeometrySurface background is to be filled</param>
+        /// <param name="backgroundBrush">Brush with which the IGeometrySurface background is to be filled</param>
         void Redraw(Color fillColor, ICanvasBrush backgroundBrush);
 
         /// <summary>
-        /// Redraws the GeometrySurface by outlining the existing geometry with the
+        /// Redraws the IGeometrySurface by outlining the existing geometry with the
         /// given ICanvasStroke, filling it with the fill color and the background with the background brush.
         /// </summary>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <param name="fillColor">Color with which the geometry is to be filled</param>
-        /// <param name="backgroundBrush">Brush with which the GeometrySurface background is to be filled</param>
+        /// <param name="backgroundBrush">Brush with which the IGeometrySurface background is to be filled</param>
         void Redraw(ICanvasStroke stroke, Color fillColor, ICanvasBrush backgroundBrush);
 
         /// <summary>
-        /// Redraws the GeometrySurface by filling the existing geometry with
+        /// Redraws the IGeometrySurface by filling the existing geometry with
         /// the fill brush and the background with the background color.
         /// </summary>
         /// <param name="fillBrush">Brush with which the geometry is to be filled</param>
-        /// <param name="backgroundColor">Color with which the GeometrySurface background is to be filled</param>
+        /// <param name="backgroundColor">Color with which the IGeometrySurface background is to be filled</param>
         void Redraw(ICanvasBrush fillBrush, Color backgroundColor);
 
         /// <summary>
-        /// Redraws the GeometrySurface by outlining the existing geometry with the
+        /// Redraws the IGeometrySurface by outlining the existing geometry with the
         /// given ICanvasStroke, filling it with the fill brush and the background with the background color.
         /// </summary>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <param name="fillBrush">Brush with which the geometry is to be filled</param>
-        /// <param name="backgroundColor">Color with which the GeometrySurface background is to be filled</param>
+        /// <param name="backgroundColor">Color with which the IGeometrySurface background is to be filled</param>
         void Redraw(ICanvasStroke stroke, ICanvasBrush fillBrush, Color backgroundColor);
 
         /// <summary>
-        /// Resizes the GeometrySurface with the given size and redraws the GeometrySurface
+        /// Resizes the IGeometrySurface with the given size and redraws the IGeometrySurface
         /// with the new geometry.
         /// </summary>
-        /// <param name="size">New size of the GeometrySurface</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the GeometrySurface</param>
+        /// <param name="size">New size of the IGeometrySurface</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IGeometrySurface</param>
         void Redraw(Size size, CanvasGeometry geometry);
 
         /// <summary>
-        /// Resizes the GeometrySurface with the given size and redraws the GeometrySurface
+        /// Resizes the IGeometrySurface with the given size and redraws the IGeometrySurface
         /// with the new geometry and outlines it with the given ICanvasStroke.
         /// </summary>
-        /// <param name="size">New size of the GeometrySurface</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the GeometrySurface</param>
+        /// <param name="size">New size of the IGeometrySurface</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IGeometrySurface</param>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         void Redraw(Size size, CanvasGeometry geometry, ICanvasStroke stroke);
 
         /// <summary>
-        /// Resizes the GeometrySurface with the given size and redraws the GeometrySurface
+        /// Resizes the IGeometrySurface with the given size and redraws the IGeometrySurface
         /// with the new geometry and fills it with the fill color.
         /// </summary>
-        /// <param name="size">New size of the GeometrySurface</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the GeometrySurface</param>
+        /// <param name="size">New size of the IGeometrySurface</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IGeometrySurface</param>
         /// <param name="fillColor">Fill color for the geometry</param>
         void Redraw(Size size, CanvasGeometry geometry, Color fillColor);
 
         /// <summary>
-        /// Resizes the GeometrySurface with the given size and redraws the GeometrySurface
+        /// Resizes the IGeometrySurface with the given size and redraws the IGeometrySurface
         /// with the new geometry, outlines it with the given ICanvasStroke and fills 
         /// it with the fill color.
         /// </summary>
-        /// <param name="size">New size of the GeometrySurface</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the GeometrySurface</param>
+        /// <param name="size">New size of the IGeometrySurface</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IGeometrySurface</param>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <param name="fillColor">Fill color for the geometry</param>
         void Redraw(Size size, CanvasGeometry geometry, ICanvasStroke stroke, Color fillColor);
 
         /// <summary>
-        /// Resizes the GeometrySurface with the given size and redraws the GeometrySurface
+        /// Resizes the IGeometrySurface with the given size and redraws the IGeometrySurface
         /// with the new geometry and fills it with the fill color and
         /// fills the background with the background color. 
         /// </summary>
-        /// <param name="size">New size of the GeometrySurface</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the GeometrySurface</param>
+        /// <param name="size">New size of the IGeometrySurface</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IGeometrySurface</param>
         /// <param name="fillColor">Fill color for the geometry</param>
-        /// <param name="backgroundColor">Fill color for the GeometrySurface background</param>
+        /// <param name="backgroundColor">Fill color for the IGeometrySurface background</param>
         void Redraw(Size size, CanvasGeometry geometry, Color fillColor, Color backgroundColor);
 
         /// <summary>
-        /// Resizes the GeometrySurface with the given size and redraws the GeometrySurface
+        /// Resizes the IGeometrySurface with the given size and redraws the IGeometrySurface
         /// with the new geometry, outlines it with the given ICanvasStroke and fills it with 
         /// the fill color and fills the background with the background color. 
         /// </summary>
-        /// <param name="size">New size of the GeometrySurface</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the GeometrySurface</param>
+        /// <param name="size">New size of the IGeometrySurface</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IGeometrySurface</param>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <param name="fillColor">Fill color for the geometry</param>
-        /// <param name="backgroundColor">Fill color for the GeometrySurface background</param>
+        /// <param name="backgroundColor">Fill color for the IGeometrySurface background</param>
         void Redraw(Size size, CanvasGeometry geometry, ICanvasStroke stroke, Color fillColor, 
             Color backgroundColor);
 
         /// <summary>
-        /// Resizes the GeometrySurface with the given size and redraws the GeometrySurface
+        /// Resizes the IGeometrySurface with the given size and redraws the IGeometrySurface
         /// with the new geometry and fills it with the fill brush.
         /// </summary>
-        /// <param name="size">New size of the GeometrySurface</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the GeometrySurface</param>
+        /// <param name="size">New size of the IGeometrySurface</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IGeometrySurface</param>
         /// <param name="fillBrush">Brush to fill the geometry</param>
         void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush fillBrush);
 
         /// <summary>
-        /// Resizes the GeometrySurface with the given size and redraws the GeometrySurface
+        /// Resizes the IGeometrySurface with the given size and redraws the IGeometrySurface
         /// with the new geometry and fills it with the fill brush and fills
         /// the background with the background brush.
         /// </summary>
-        /// <param name="size">New size of the GeometrySurface</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the GeometrySurface</param>
+        /// <param name="size">New size of the IGeometrySurface</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IGeometrySurface</param>
         /// <param name="fillBrush">Brush to fill the geometry</param>
-        /// <param name="backgroundBrush">Brush to fill the GeometrySurface background</param>
+        /// <param name="backgroundBrush">Brush to fill the IGeometrySurface background</param>
         void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush fillBrush, ICanvasBrush backgroundBrush);
 
         /// <summary>
-        /// Resizes the GeometrySurface with the given size and redraws the GeometrySurface
+        /// Resizes the IGeometrySurface with the given size and redraws the IGeometrySurface
         /// with the new geometry, outlines it with the given ICanvasStroke and fills it with the 
         /// fill brush and fills the background with the background brush.
         /// </summary>
-        /// <param name="size">New size of the GeometrySurface</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the GeometrySurface</param>
+        /// <param name="size">New size of the IGeometrySurface</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IGeometrySurface</param>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <param name="fillBrush">Brush to fill the geometry</param>
-        /// <param name="backgroundBrush">Brush to fill the GeometrySurface background</param>
+        /// <param name="backgroundBrush">Brush to fill the IGeometrySurface background</param>
         void Redraw(Size size, CanvasGeometry geometry, ICanvasStroke stroke, ICanvasBrush fillBrush, 
             ICanvasBrush backgroundBrush);
 
         /// <summary>
-        /// Resizes the GeometrySurface with the given size and redraws the GeometrySurface
+        /// Resizes the IGeometrySurface with the given size and redraws the IGeometrySurface
         /// with the new geometry and fills it with the fill brush and the background
         /// with the background color.
         /// </summary>
-        /// <param name="size">New size of the GeometrySurface</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the GeometrySurface</param>
+        /// <param name="size">New size of the IGeometrySurface</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IGeometrySurface</param>
         /// <param name="fillBrush">Brush to fill the geometry</param>
-        /// <param name="backgroundColor">Fill color for the GeometrySurface background</param>
+        /// <param name="backgroundColor">Fill color for the IGeometrySurface background</param>
         void Redraw(Size size, CanvasGeometry geometry, ICanvasBrush fillBrush, Color backgroundColor);
 
         /// <summary>
-        /// Resizes the GeometrySurface with the given size and redraws the GeometrySurface
+        /// Resizes the IGeometrySurface with the given size and redraws the IGeometrySurface
         /// with the new geometry, outlines it with the given ICanvasStroke and fills it with 
         /// the fill brush and the background with the background color.
         /// </summary>
-        /// <param name="size">New size of the GeometrySurface</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the GeometrySurface</param>
+        /// <param name="size">New size of the IGeometrySurface</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IGeometrySurface</param>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <param name="fillBrush">Brush to fill the geometry</param>
-        /// <param name="backgroundColor">Fill color for the GeometrySurface background</param>
+        /// <param name="backgroundColor">Fill color for the IGeometrySurface background</param>
         void Redraw(Size size, CanvasGeometry geometry, ICanvasStroke stroke, ICanvasBrush fillBrush, 
             Color backgroundColor);
 
         /// <summary>
-        /// Resizes the GeometrySurface with the given size and redraws the GeometrySurface
+        /// Resizes the IGeometrySurface with the given size and redraws the IGeometrySurface
         /// with the new geometry and fills it with the fill color and the background 
         /// with the background brush.
         /// </summary>
-        /// <param name="size">New size of the GeometrySurface</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the GeometrySurface</param>
+        /// <param name="size">New size of the IGeometrySurface</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IGeometrySurface</param>
         /// <param name="fillColor">Fill color for the geometry</param>
-        /// <param name="backgroundBrush">Brush to fill the GeometrySurface background</param>
+        /// <param name="backgroundBrush">Brush to fill the IGeometrySurface background</param>
         void Redraw(Size size, CanvasGeometry geometry, Color fillColor, ICanvasBrush backgroundBrush);
 
         /// <summary>
-        /// Resizes the GeometrySurface with the given size and redraws the GeometrySurface
+        /// Resizes the IGeometrySurface with the given size and redraws the IGeometrySurface
         /// with the new geometry, outlines it with the given ICanvasStroke and fills it with 
         /// the fill color and the background with the background brush.
         /// </summary>
-        /// <param name="size">New size of the GeometrySurface</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the GeometrySurface</param>
+        /// <param name="size">New size of the IGeometrySurface</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IGeometrySurface</param>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <param name="fillColor">Fill color for the geometry</param>
-        /// <param name="backgroundBrush">Brush to fill the GeometrySurface background</param>
+        /// <param name="backgroundBrush">Brush to fill the IGeometrySurface background</param>
         void Redraw(Size size, CanvasGeometry geometry, ICanvasStroke stroke, Color fillColor, 
             ICanvasBrush backgroundBrush);
 

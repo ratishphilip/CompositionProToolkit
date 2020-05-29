@@ -1,0 +1,956 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CompositionProToolkit.ImageSurfaceOptions" Collapsed="true">
+    <Position X="62" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAEAAgAABAAAAAgAAAIABAAAAAEQAAAEAQAAAAAAA=</HashCode>
+      <FileName>CompositionDefinitions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.CompositionExtensions" Collapsed="true">
+    <Position X="65.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAICAAAEAAAEAAQAAAAAAAARICABARAQAAAAAAAAAAA=</HashCode>
+      <FileName>CompositionExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.CompositionGenerator" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="67.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAKEEACAEAhBEAAAwAihAIBAERAAAAQFBwQAiASA=</HashCode>
+      <FileName>CompositionGenerator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CompositionProToolkit.CompositorExtensions" Collapsed="true">
+    <Position X="72.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>kB0ohQCApDQAMAAACJBAkIFgSQFECgOCWAACCACEoJE=</HashCode>
+      <FileName>CompositorExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.DoubleExtensions" Collapsed="true">
+    <Position X="63.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>DoubleExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.GaussianMaskSurface" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="67.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAACBQgAAgEAAAAAAEAAAEAAAAAABEAAEAkAA=</HashCode>
+      <FileName>GaussianMaskSurface.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CompositionProToolkit.GeometrySurface" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="69" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAACBQgAAgAEQAAAIEIAgECAAAAABEAAEAkAA=</HashCode>
+      <FileName>GeometrySurface.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CompositionProToolkit.ImageMaskSurface" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="70.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEACBQgEAgEAAEAgAEACAEAAAACABkQANAEAA=</HashCode>
+      <FileName>ImageMaskSurface.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CompositionProToolkit.ImageSurface" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="72.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEACBQgEAgAAAEAgAEACAEAAAACABkQANAEAA=</HashCode>
+      <FileName>ImageSurface.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CompositionProToolkit.MaskSurface" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="69" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACBQgAAgAAAAAAAEAAAEAAAAAABEAAEAkAA=</HashCode>
+      <FileName>MaskSurface.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CompositionProToolkit.Scalar" Collapsed="true">
+    <Position X="62" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAIAAAAAAAgAAAAAACACAAAgAAAAAAQIEAAAAAAAA=</HashCode>
+      <FileName>Scalar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Utils" Collapsed="true">
+    <Position X="65.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ARAogACBQASAAAgBAAoAgAgBFAQFBIAIgAgAABAAACA=</HashCode>
+      <FileName>Utils.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.CultureShield" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="62" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Utils.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.CompositionAnimationExtensions" Collapsed="true">
+    <Position X="70.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAEAAAAAAARAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Expressions\CompositionAnimationExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.CompositionExpressionContext&lt;T&gt;" Collapsed="true">
+    <Position X="72.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QQQABA5BidEhACoQlAMF0AZLoIeBQmpEhIhwlEIQEUI=</HashCode>
+      <FileName>Expressions\CompositionExpressionContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.CompositionExpressionEngine" Collapsed="true">
+    <Position X="62" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>wBAhAACAABAUKIQAAIBiAAACAAEAIAABBAAEgQCAAKA=</HashCode>
+      <FileName>Expressions\CompositionExpressionEngine.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.CompositionExpressionResult" Collapsed="true">
+    <Position X="63.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAIAAAAAAAAA=</HashCode>
+      <FileName>Expressions\CompositionExpressionResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.KeyFrame&lt;T&gt;" Collapsed="true">
+    <Position X="63.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAgACAAAAA=</HashCode>
+      <FileName>Expressions\CompositionKeyFrame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.KeyFrameAnimationHelper" Collapsed="true">
+    <Position X="67.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAJAAAAAAAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\CompositionKeyFrame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.KeyFrameAnimation&lt;T&gt;" Collapsed="true">
+    <Position X="65.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAUAQAECAAAAgCAEAiIAAAAQAAIEAEAAAAAECAU=</HashCode>
+      <FileName>Expressions\CompositionKeyFrame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.CompositionObjectExtensions" Collapsed="true">
+    <Position X="69" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAACAAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>Expressions\CompositionObjectExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.CompositionPropertySetExtensions" Collapsed="true">
+    <Position X="70.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAABwAABBAAAAABAAAACEAACAABAAAAIAAEI=</HashCode>
+      <FileName>Expressions\CompositionPropertySetExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.ExpressionAnimation&lt;T&gt;" Collapsed="true">
+    <Position X="65.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIEIAAAAAAAAAIgAAQAAAAgAAAgAAQAAIEgAAAAAA=</HashCode>
+      <FileName>Expressions\ExpressionAnimation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.ExpressionToken" Collapsed="true">
+    <Position X="11.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Expressions\ExpressionToken.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.SimpleExpressionToken" Collapsed="true">
+    <Position X="10.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAEAAAA=</HashCode>
+      <FileName>Expressions\ExpressionToken.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.CompositeExpressionToken" Collapsed="true">
+    <Position X="12.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAJAAIBAAAAAAAAAAAAAAAAQAAAAAQAAAAAFAIAA=</HashCode>
+      <FileName>Expressions\ExpressionToken.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.TypeExtensions" Collapsed="true">
+    <Position X="63.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAhCAIAAQAIAAAAAABSAAAAAKAAAAAUAAAAA=</HashCode>
+      <FileName>Expressions\TypeExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.AmbientLightTemplate" Collapsed="true">
+    <Position X="31.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\AmbientLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.AmbientLightTarget" Collapsed="true">
+    <Position X="30.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\AmbientLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.AmbientLightReference" Collapsed="true">
+    <Position X="32.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\AmbientLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.ColorBrushTemplate" Collapsed="true">
+    <Position X="49.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\ColorBrush.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.ColorBrushTarget" Collapsed="true">
+    <Position X="50.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\ColorBrush.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.ColorBrushReference" Collapsed="true">
+    <Position X="48.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\ColorBrush.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.DistantLightTemplate" Collapsed="true">
+    <Position X="4.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAAAIAACAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\DistantLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.DistantLightTarget" Collapsed="true">
+    <Position X="3.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\DistantLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.DistantLightReference" Collapsed="true">
+    <Position X="5.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\DistantLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.DropShadowTemplate" Collapsed="true">
+    <Position X="17.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAgAA=</HashCode>
+      <FileName>Expressions\Templates\DropShadow.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.DropShadowTarget" Collapsed="true">
+    <Position X="16.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\DropShadow.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.DropShadowReference" Collapsed="true">
+    <Position X="19" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\DropShadow.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.ExpressionTemplate" Collapsed="true">
+    <Position X="31.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\ExpressionTemplate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.InsetClipTemplate" Collapsed="true">
+    <Position X="35.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAIAAAAAIAAAAAAABAAAAIBAAAAAAAiBg=</HashCode>
+      <FileName>Expressions\Templates\InsetClip.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.InsetClipTarget" Collapsed="true">
+    <Position X="34.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\InsetClip.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.InsetClipReference" Collapsed="true">
+    <Position X="37" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\InsetClip.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.InteractionTrackerTemplate" Collapsed="true">
+    <Position X="53.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAACAIAAAAAAAAxAIIIAAAAAAhAAIAAgAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\InteractionTracker.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.InteractionTrackerTarget" Collapsed="true">
+    <Position X="52.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\InteractionTracker.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.InteractionTrackerReference" Collapsed="true">
+    <Position X="55" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\InteractionTracker.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.ManipulationPropertySetTemplate" Collapsed="true">
+    <Position X="8.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgACAAIAAAAAAAAgAAAABAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\ManipulationPropertySet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.ManipulationPropertySetTarget" Collapsed="true">
+    <Position X="7.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\ManipulationPropertySet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.ManipulationPropertySetReference" Collapsed="true">
+    <Position X="10" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\ManipulationPropertySet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.NineGridBrushTemplate" Collapsed="true">
+    <Position X="22.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAIAAAAAAAAAAAACAAAAAABAAAAgAAEBAAAACBA=</HashCode>
+      <FileName>Expressions\Templates\NineGridBrush.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.NineGridBrushTarget" Collapsed="true">
+    <Position X="21.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\NineGridBrush.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.NineGridBrushReference" Collapsed="true">
+    <Position X="23.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\NineGridBrush.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.PointerPositionPropertySetTemplate" Collapsed="true">
+    <Position X="40.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\PointerPositionPropertySet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.PointerPositionPropertySetTarget" Collapsed="true">
+    <Position X="39.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\PointerPositionPropertySet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.PointerPositionPropertySetReference" Collapsed="true">
+    <Position X="41.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\PointerPositionPropertySet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.PointLightTemplate" Collapsed="true">
+    <Position X="58.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAACAAAAAAAAAAAACAAAAIAAAAAAAAgAAAgAAAgAA=</HashCode>
+      <FileName>Expressions\Templates\PointLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.PointLightTarget" Collapsed="true">
+    <Position X="57.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\PointLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.PointLightReference" Collapsed="true">
+    <Position X="59.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\PointLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.SpotLightTemplate" Collapsed="true">
+    <Position X="13.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gACAgCBAARAAAAAAACCAAAAAAAAAAAAggAgAkAAAgAA=</HashCode>
+      <FileName>Expressions\Templates\SpotLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.SpotLightTarget" Collapsed="true">
+    <Position X="12.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\SpotLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.SpotLightReference" Collapsed="true">
+    <Position X="14.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\SpotLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.SurfaceBrushTemplate" Collapsed="true">
+    <Position X="26.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAIAAAAAKAAAAAAAAAAAAIBAAAAAAAiAg=</HashCode>
+      <FileName>Expressions\Templates\SurfaceBrush.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.SurfaceBrushTarget" Collapsed="true">
+    <Position X="25.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\SurfaceBrush.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.SurfaceBrushReference" Collapsed="true">
+    <Position X="28" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\SurfaceBrush.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.VisualTemplate" Collapsed="true">
+    <Position X="44.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAEAAAAQAAoAACAAIAAAAAAAAAAAFIBAAAAAACiAg=</HashCode>
+      <FileName>Expressions\Templates\Visual.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.VisualTarget" Collapsed="true">
+    <Position X="43.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\Visual.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Expressions.Templates.VisualReference" Collapsed="true">
+    <Position X="46" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expressions\Templates\Visual.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.CanvasDrawingSessionExtensions" Collapsed="true">
+    <Position X="63.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAAAAAAAAAgAAAAAAAABAAAEEAAAAAAgA=</HashCode>
+      <FileName>Win2d\CanvasDrawingSessionExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.CanvasElement" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="65.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAgBAAAAABAAAAAIAAAAAAAAAEABgAAAEAAAA=</HashCode>
+      <FileName>Win2d\CanvasElement.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.CanvasObject" Collapsed="true">
+    <Position X="69" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACCAgAAAABAAAAAAAAAAAAAIAAAAAAgAAAAAAAIA=</HashCode>
+      <FileName>Win2d\CanvasObject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.CanvasPathBuilderExtensions" Collapsed="true">
+    <Position X="70.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAkAAAAAEAgAAEgAECAAAAAAAAAIAAAAAAABAAEAAA=</HashCode>
+      <FileName>Win2d\CanvasPathBuilderExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.CanvasRenderLayer" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="72.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAgAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Win2d\CanvasRenderLayer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.CanvasStroke" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="62" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAABAAEQAAAAAAAAABAAAAAQAAAA=</HashCode>
+      <FileName>Win2d\CanvasStroke.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Core.PathElementFactory" Collapsed="true">
+    <Position X="70.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAIAAAAAAAAAAAAAAAgAAAAAAAAAAAAEAABAA=</HashCode>
+      <FileName>Win2d\Core\PathElementFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Core.RegexFactory" Collapsed="true">
+    <Position X="72.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>A5aOEGmcSmQQ5i6ZeAW9GJQkFpjI6/YULSZABRCjOTw=</HashCode>
+      <FileName>Win2d\Core\RegexFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Brush.AbstractCanvasBrushElement" Collapsed="true">
+    <Position X="5.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAQAAQAAAAIAgAAAABAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Brush\AbstractCanvasBrushElement.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Brush.LinearGradientBrushElement" Collapsed="true">
+    <Position X="0.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAUAAAACAAABEAAAADABIAIAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Brush\LinearGradientBrushElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Brush.LinearGradientHdrBrushElement" Collapsed="true">
+    <Position X="3" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAQAAAACAEABEAAAADABIAIAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Brush\LinearGradientHdrBrushElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Brush.RadialGradientBrushElement" Collapsed="true">
+    <Position X="5.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABABAgAAUAAAACAAAhEAAAADAAAAIAAAAAAAEAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Brush\RadialGradientBrushElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Brush.RadialGradientHdrBrushElement" Collapsed="true">
+    <Position X="7.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABABAgAAQAAAACAEAhEAAAADAAAAIAAAAAAAEAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Brush\RadialGradientHdrBrushElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Brush.SolidColorBrushElement" Collapsed="true">
+    <Position X="9.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAQIAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Brush\SolidColorBrushElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.AbstractPathElement" Collapsed="true">
+    <Position X="19" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAQEAYAAAAIAAAAAABAAABAAAAEAAAAAACA=</HashCode>
+      <FileName>Win2d\Geometry\Path\AbstractPathElement.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.ArcElement" Collapsed="true">
+    <Position X="33.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABACAIgAQAAAAACAAgAAAAABAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Win2d\Geometry\Path\ArcElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.CanvasEllipseFigure" Collapsed="true">
+    <Position X="2" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAIgAQAAAAAAAAgAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Path\CanvasEllipseFigure.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.CanvasPathFigure" Collapsed="true">
+    <Position X="6.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAhAQAAQAAAAAAAAAAABAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Win2d\Geometry\Path\CanvasPathFigure.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.CanvasPolygonFigure" Collapsed="true">
+    <Position X="11" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAIgBQAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Path\CanvasPolygonFigure.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.CanvasRectangleFigure" Collapsed="true">
+    <Position X="15.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIgASAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Path\CanvasRectangleFigure.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.CanvasRoundRectangleFigure" Collapsed="true">
+    <Position X="20" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAIgASAAAAAAAAgAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Path\CanvasRoundRectangleFigure.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.ClosePathElement" Collapsed="true">
+    <Position X="22.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAQAAQAAAAAAAAAAABAAAAAAAIAAAAAAACA=</HashCode>
+      <FileName>Win2d\Geometry\Path\ClosePathElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.CubicBezierElement" Collapsed="true">
+    <Position X="24.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIgAQAAAABAgAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Path\CubicBezierElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.FillRuleElement" Collapsed="true">
+    <Position X="26.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAQAAAAAAAAAAAAAABACAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Win2d\Geometry\Path\FillRuleElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.HorizontalLineElement" Collapsed="true">
+    <Position X="29" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIgAQAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Path\HorizontalLineElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.LineElement" Collapsed="true">
+    <Position X="31.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIgAQAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Path\LineElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.MoveToElement" Collapsed="true">
+    <Position X="35.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIgAQAAAAAAAAAAAAAABAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Win2d\Geometry\Path\MoveToElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.QuadraticBezierElement" Collapsed="true">
+    <Position X="4.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIgARAAAAAAgAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Path\QuadraticBezierElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.SmoothCubicBezierElement" Collapsed="true">
+    <Position X="8.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIgAQAAAABAgAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Path\SmoothCubicBezierElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.SmoothQuadraticBezierElement" Collapsed="true">
+    <Position X="13.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIgARAAAAAAgAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Path\SmoothQuadraticBezierElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Path.VerticalLineElement" Collapsed="true">
+    <Position X="17.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAQAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Path\VerticalLineElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Stroke.AbstractCanvasStrokeElement" Collapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAQAAAAIAAAAAABIAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Stroke\AbstractCanvasStrokeElement.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Stroke.CanvasStrokeElement" Collapsed="true">
+    <Position X="0.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAACAAAAAAAAAAAAAABIAAAAAAIAAACAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Stroke\CanvasStrokeElement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Geometry.Stroke.CanvasStrokeStyleElement" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="65.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAIAAAAAAAAAABAABAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Stroke\CanvasStrokeStyleElement.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Parsers.CanvasBrushParser" Collapsed="true">
+    <Position X="62" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Parsers\CanvasBrushParser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Parsers.CanvasGeometryParser" Collapsed="true">
+    <Position X="67.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Parsers\CanvasGeometryParser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Parsers.CanvasStrokeParser" Collapsed="true">
+    <Position X="63.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Parsers\CanvasStrokeParser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Parsers.CanvasStrokeStyleParser" Collapsed="true">
+    <Position X="67.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Parsers\CanvasStrokeStyleParser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CompositionProToolkit.Win2d.Parsers.ColorParser" Collapsed="true">
+    <Position X="69" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Parsers\ColorParser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="CompositionProToolkit.CompositionPathInfo" Collapsed="true">
+    <Position X="63.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAIAAAAQBAAAAAAAAAAAAAAAQAAAAACEAAAAEA=</HashCode>
+      <FileName>CompositionPathInfo.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CompositionProToolkit.Expressions.ExpressionParameter" Collapsed="true">
+    <Position X="65.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Expressions\ExpressionParameter.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CompositionProToolkit.Win2d.Core.CanvasRoundRect" Collapsed="true">
+    <Position X="62" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAABIAAAIwBAAIwAAAAQAAAAAAQAAAAQCkEAAAEA=</HashCode>
+      <FileName>Win2d\Core\CanvasRoundRect.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="CompositionProToolkit.ICompositionGenerator" Collapsed="true">
+    <Position X="0.5" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAhBAAAAgACAAABAAAAAAAABAwAAAAQA=</HashCode>
+      <FileName>ICompositionGenerator.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CompositionProToolkit.ICompositionGeneratorInternal" Collapsed="true">
+    <Position X="0.5" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEEAAAAAAAAAAAAAAgAAAAABAAAAAEBQQACAAA=</HashCode>
+      <FileName>ICompositionGeneratorInternal.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CompositionProToolkit.IGaussianMaskSurface" Collapsed="true">
+    <Position X="7.5" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAEAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>IGaussianMaskSurface.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CompositionProToolkit.IGeometrySurface" Collapsed="true">
+    <Position X="0.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAIAgACAAAAABAAAAAgAA=</HashCode>
+      <FileName>IGeometrySurface.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CompositionProToolkit.IImageMaskSurface" Collapsed="true">
+    <Position X="3" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAABAAAMAAAA=</HashCode>
+      <FileName>IImageMaskSurface.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CompositionProToolkit.IImageMaskSurfaceInternal" Collapsed="true">
+    <Position X="3" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IImageMaskSurface.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CompositionProToolkit.IImageSurface" Collapsed="true">
+    <Position X="4" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAgEAAAAAAAAAAAAAAAAAACABAQANAAAA=</HashCode>
+      <FileName>IImageSurface.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CompositionProToolkit.IImageSurfaceInternal" Collapsed="true">
+    <Position X="5.25" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IImageSurface.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CompositionProToolkit.IMaskSurface" Collapsed="true">
+    <Position X="7.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAgAA=</HashCode>
+      <FileName>IMaskSurface.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CompositionProToolkit.IRenderSurface" Collapsed="true">
+    <Position X="4" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQgAAAAAAAAAAEAAAAAAAAAABAAAEAAAA=</HashCode>
+      <FileName>IRenderSurface.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CompositionProToolkit.Win2d.ICanvasElement" Collapsed="true">
+    <Position X="63.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAgAAAAAAAAAAAAAAAAAAAAAAEABAAAAAAAAA=</HashCode>
+      <FileName>Win2d\ICanvasElement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CompositionProToolkit.Win2d.ICanvasRenderLayer" Collapsed="true">
+    <Position X="67.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAgAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Win2d\ICanvasRenderLayer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CompositionProToolkit.Win2d.ICanvasStroke" Collapsed="true">
+    <Position X="69" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAEQAAAAAAAAABAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\ICanvasStroke.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CompositionProToolkit.Win2d.Geometry.Brush.ICanvasBrushElement" Collapsed="true">
+    <Position X="62" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAQAAAAIAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Brush\ICanvasBrushElement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CompositionProToolkit.Win2d.Geometry.Path.ICanvasPathElement" Collapsed="true">
+    <Position X="65.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAYAAAAIAAAAAAAAAABAAAAEAAAAAACA=</HashCode>
+      <FileName>Win2d\Geometry\Path\ICanvasPathElement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CompositionProToolkit.Win2d.Geometry.Stroke.ICanvasStrokeElement" Collapsed="true">
+    <Position X="70.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAIAAAAAAAIAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Stroke\ICanvasStrokeElement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="CompositionProToolkit.Win2d.Geometry.Stroke.ICanvasStrokeStyleElement" Collapsed="true">
+    <Position X="72.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAIAAAAAAAAAABAABAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Geometry\Stroke\ICanvasStrokeStyleElement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="CompositionProToolkit.ReflectionLocation" Collapsed="true">
+    <Position X="72.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAQAAAAAAAIAAAACACAAAAAAAA=</HashCode>
+      <FileName>CompositionDefinitions.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CompositionProToolkit.ImageSurfaceLoadStatus" Collapsed="true">
+    <Position X="67.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAgAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IImageSurface.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CompositionProToolkit.Expressions.BracketType" Collapsed="true">
+    <Position X="62" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AMAAAAAAAAAAAAAAAACAAAAAgQAAAAAAAEAgAAcAAAA=</HashCode>
+      <FileName>Expressions\ExpressionToken.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CompositionProToolkit.Win2d.Common.PathFigureType" Collapsed="true">
+    <Position X="70.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAEAAgEAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAg=</HashCode>
+      <FileName>Win2d\Common\CommonDefinitions.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CompositionProToolkit.Win2d.Common.PathElementType" Collapsed="true">
+    <Position X="69" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEEAAIAIAECCIAAAABAAQ=</HashCode>
+      <FileName>Win2d\Common\CommonDefinitions.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CompositionProToolkit.Win2d.Common.BrushType" Collapsed="true">
+    <Position X="63.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAADAAAAAAAAAAAAgACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Win2d\Common\CommonDefinitions.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CompositionProToolkit.Win2d.Common.GradientStopAttributeType" Collapsed="true">
+    <Position X="65.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAACAAAIAAABAAAAAA=</HashCode>
+      <FileName>Win2d\Common\CommonDefinitions.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="CompositionProToolkit.Expressions.CompositionExpression&lt;T&gt;" Collapsed="true">
+    <Position X="62" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>Expressions\CompositionExpressionEngine.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

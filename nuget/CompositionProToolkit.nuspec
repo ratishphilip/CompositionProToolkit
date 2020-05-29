@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>CompositionProToolkit</id>
-    <version>0.9.5.0</version>
+    <version>1.0.1.0</version>
     <title>CompositionProToolkit</title>
     <authors>Ratish Philip</authors>
     <owners>Ratish Philip</owners>
@@ -16,7 +16,6 @@
     <dependencies>
 		<group targetFramework="uap10.0">
 			<dependency id="Win2D.uwp" version="1.25.0" />
-			<dependency id="Microsoft.Xaml.Behaviors.Uwp.Managed" version="2.0.1" />
 		</group>
     </dependencies>
   </metadata>
@@ -24,48 +23,31 @@
 	<!-- ====================== x86 ====================== -->
 	<!-- CompositionProToolkit -->
 	<file target="runtimes\win10-x86\lib\uap10.0" src="..\CompositionProToolkit\bin\x86\Release\CompositionProToolkit.dll" />
-	<file target="runtimes\win10-x86\lib\uap10.0" src="..\CompositionProToolkit\bin\x86\Release\CompositionProToolkit.pri" />
-	<file target="runtimes\win10-x86\lib\uap10.0" src="..\CompositionProToolkit\bin\x86\Release\CompositionProToolkit.XML" />
-
 	<!-- CompositionDeviceHelper -->
 	<file target="runtimes\win10-x86\lib\uap10.0" src="..\CompositionDeviceHelper\bin\x86\Release\CompositionDeviceHelper.winmd" />
-	
 	<file target="runtimes\win10-x86\native" src="..\CompositionDeviceHelper\bin\x86\Release\CompositionDeviceHelper.dll" />
-	<file target="runtimes\win10-x86\native" src="..\CompositionDeviceHelper\bin\x86\Release\CompositionDeviceHelper.pri" />
-	<file target="runtimes\win10-x86\native" src="..\CompositionDeviceHelper\bin\x86\Release\CompositionDeviceHelper.xml" />
 
 	<!-- ====================== x64 ====================== -->
 	<!-- CompositionProToolkit -->
 	<file target="runtimes\win10-x64\lib\uap10.0" src="..\CompositionProToolkit\bin\x64\Release\CompositionProToolkit.dll" />
-	<file target="runtimes\win10-x64\lib\uap10.0" src="..\CompositionProToolkit\bin\x64\Release\CompositionProToolkit.pri" />
-	<file target="runtimes\win10-x64\lib\uap10.0" src="..\CompositionProToolkit\bin\x64\Release\CompositionProToolkit.XML" />
-
 	<!-- CompositionDeviceHelper -->
 	<file target="runtimes\win10-x64\lib\uap10.0" src="..\CompositionDeviceHelper\bin\x64\Release\CompositionDeviceHelper.winmd" />
-	
 	<file target="runtimes\win10-x64\native" src="..\CompositionDeviceHelper\bin\x64\Release\CompositionDeviceHelper.dll" />
-	<file target="runtimes\win10-x64\native" src="..\CompositionDeviceHelper\bin\x64\Release\CompositionDeviceHelper.pri" />
-	<file target="runtimes\win10-x64\native" src="..\CompositionDeviceHelper\bin\x64\Release\CompositionDeviceHelper.xml" />
 
 	<!-- ====================== ARM ====================== -->
 	<!-- CompositionProToolkit -->
 	<file target="runtimes\win10-arm\lib\uap10.0" src="..\CompositionProToolkit\bin\ARM\Release\CompositionProToolkit.dll" />
-	<file target="runtimes\win10-arm\lib\uap10.0" src="..\CompositionProToolkit\bin\ARM\Release\CompositionProToolkit.pri" />
-	<file target="runtimes\win10-arm\lib\uap10.0" src="..\CompositionProToolkit\bin\ARM\Release\CompositionProToolkit.XML" />
-
 	<!-- CompositionDeviceHelper -->
 	<file target="runtimes\win10-arm\lib\uap10.0" src="..\CompositionDeviceHelper\bin\ARM\Release\CompositionDeviceHelper.winmd" />
-	
 	<file target="runtimes\win10-arm\native" src="..\CompositionDeviceHelper\bin\ARM\Release\CompositionDeviceHelper.dll" />
-	<file target="runtimes\win10-arm\native" src="..\CompositionDeviceHelper\bin\ARM\Release\CompositionDeviceHelper.pri" />
-	<file target="runtimes\win10-arm\native" src="..\CompositionDeviceHelper\bin\ARM\Release\CompositionDeviceHelper.xml" />
-
+	
 	<!-- ====================== ref ====================== -->
-	<file target="ref\uap10.0" src="..\CompositionProToolkit\bin\AnyCPU\Release\CompositionProToolkit.dll" />
-	<file target="ref\uap10.0" src="..\CompositionProToolkit\bin\x86\Release\CompositionProToolkit.pri" />
-	<file target="ref\uap10.0" src="..\CompositionProToolkit\bin\x86\Release\CompositionProToolkit.XML" />
-	<file target="ref\uap10.0" src="..\CompositionDeviceHelper\bin\x86\Release\CompositionDeviceHelper.winmd" />
-	<file target="ref\uap10.0" src="..\CompositionDeviceHelper\bin\x86\Release\CompositionDeviceHelper.xml" />
+	<file target="lib\uap10.0" src="..\CompositionProToolkit\bin\AnyCPU\Release\CompositionProToolkit.dll" />
+	<file target="lib\uap10.0" src="..\CompositionProToolkit\bin\x86\Release\CompositionProToolkit.pri" />
+	<file target="lib\uap10.0" src="..\CompositionProToolkit\bin\x86\Release\CompositionProToolkit.XML" />
+	<file target="lib\uap10.0" src="..\CompositionDeviceHelper\bin\x86\Release\CompositionDeviceHelper.winmd" />
+	<file target="lib\uap10.0" src="..\CompositionDeviceHelper\bin\x86\Release\CompositionDeviceHelper.pri" />
+	<file target="lib\uap10.0" src="..\CompositionDeviceHelper\bin\x86\Release\CompositionDeviceHelper.xml" />
 
 	<!-- =================== .targets ==================== -->
     <file src="CompositionProToolkit.targets" target="build\native"/>

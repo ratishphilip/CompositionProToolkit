@@ -24,9 +24,10 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit.Controls v1.0.1
 // 
 
+using CompositionProToolkit.Expressions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -41,8 +42,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using CompositionProToolkit;
-using CompositionProToolkit.Expressions;
 
 namespace CompositionProToolkit.Controls
 {

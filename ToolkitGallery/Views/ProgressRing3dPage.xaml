@@ -1,0 +1,34 @@
+﻿<Page x:Class="ToolkitGallery.Views.ProgressRing3dPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:CompositionProToolkit.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:ToolkitGallery.Views"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+      mc:Ignorable="d">
+
+    <Grid Background="#373737">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <controls:ProgressRing3d x:Name="progress3d"
+                                 Height="10"
+                                 Margin="100,0"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Center"
+                                 NodeColor="White"
+                                 SyncAccentColor="False" />
+
+        <Button x:Name="btn"
+                Grid.Row="1"
+                Width="200"
+                Height="40"
+                Margin="30"
+                Click="OnSwitchNodes"
+                CornerRadius="4"
+                Foreground="White" />
+
+    </Grid>
+</Page>

@@ -24,9 +24,10 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 // 
 
+using System.Numerics;
 using Windows.Foundation;
 using Microsoft.Graphics.Canvas.Geometry;
 
@@ -44,6 +45,11 @@ namespace CompositionProToolkit
         /// Gets the Geometry of the MaskSurface
         /// </summary>
         CanvasGeometry Geometry { get; }
+        /// <summary>
+        /// The offset from the top left corner of the ICompositionSurface where
+        /// the Geometry is rendered.
+        /// </summary>
+        Vector2 Offset { get; }
 
         #endregion
 
@@ -52,16 +58,34 @@ namespace CompositionProToolkit
         /// <summary>
         /// Redraws the MaskSurface with the new geometry
         /// </summary>
-        /// <param name="geometry">New CanvasGeometry to be applied to the MaskSurface</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IMaskSurface</param>
         void Redraw(CanvasGeometry geometry);
 
         /// <summary>
-        /// Resizes the MaskSurface with the given size and redraws the MaskSurface
+        /// Resizes the MaskSurface with the given size and redraws the IMaskSurface
         /// with the new geometry and fills it with White color
         /// </summary>
         /// <param name="size">New size of the mask</param>
-        /// <param name="geometry">New CanvasGeometry to be applied to the MaskSurface</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IMaskSurface</param>
         void Redraw(Size size, CanvasGeometry geometry);
+
+        /// <summary>
+        /// Redraws the IMaskSurface with the new geometry
+        /// </summary>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IMaskSurface</param>
+        /// <param name="offset">The offset from the top left corner of the ICompositionSurface where
+        /// the Geometry is rendered.</param>
+        void Redraw(CanvasGeometry geometry, Vector2 offset);
+
+        /// <summary>
+        /// Resizes the IMaskSurface with the given size and redraws the IMaskSurface
+        /// with the new geometry and fills it with White color
+        /// </summary>
+        /// <param name="size">New size of the mask</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IMaskSurface</param>
+        /// <param name="offset">The offset from the top left corner of the ICompositionSurface where
+        /// the Geometry is rendered.</param>
+        void Redraw(Size size, CanvasGeometry geometry, Vector2 offset);
 
         #endregion
     }

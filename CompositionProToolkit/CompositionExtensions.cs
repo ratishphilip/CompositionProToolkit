@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 // 
 
 using System;
@@ -47,7 +47,7 @@ namespace CompositionProToolkit
     public static class CompositionExtensions
     {
         /// <summary>
-        /// Creates a custom shaped Effect Brush using BackdropBrush and a Mask
+        /// Creates a custom shaped Effect Brush using BackdropBrush and an IMaskSurface
         /// </summary>
         /// <param name="compositor">Compositor</param>
         /// <param name="mask">IMaskSurface</param>
@@ -56,6 +56,36 @@ namespace CompositionProToolkit
         /// <param name="backdropBrush">Backdrop Brush (optional). If not provided, then compositor creates it.</param>
         /// <returns>CompositionEffectBrush</returns>
         public static CompositionEffectBrush CreateMaskedBackdropBrush(this Compositor compositor, IMaskSurface mask,
+            Color blendColor, float blurAmount, CompositionBackdropBrush backdropBrush = null)
+        {
+            return CompositionExtensions.CreateBackdropBrush(compositor, mask, blendColor, blurAmount, backdropBrush);
+        }
+
+        /// <summary>
+        /// Creates a custom shaped Effect Brush using BackdropBrush and an IGaussianMaskSurface
+        /// </summary>
+        /// <param name="compositor">Compositor</param>
+        /// <param name="mask">IMaskSurface</param>
+        /// <param name="blendColor">Color to blend in the BackdropBrush</param>
+        /// <param name="blurRadius">Blur Amount of the Backdrop Brush</param>
+        /// <param name="backdropBrush">Backdrop Brush (optional). If not provided, then compositor creates it.</param>
+        /// <returns>CompositionEffectBrush</returns>
+        public static CompositionEffectBrush CreateGaussianMaskedBackdropBrush(this Compositor compositor, IGaussianMaskSurface mask,
+            Color blendColor, float blurRadius, CompositionBackdropBrush backdropBrush = null)
+        {
+            return CompositionExtensions.CreateBackdropBrush(compositor, mask, blendColor, blurRadius, backdropBrush);
+        }
+
+        /// <summary>
+        /// Creates a custom shaped Effect Brush using BackdropBrush and an IMaskSurface or an IGaussianMaskSurface
+        /// </summary>
+        /// <param name="compositor">Compositor</param>
+        /// <param name="mask">IMaskSurface or IGaussianMaskSurface</param>
+        /// <param name="blendColor">Color to blend in the BackdropBrush</param>
+        /// <param name="blurAmount">Blur Amount of the Backdrop Brush</param>
+        /// <param name="backdropBrush">Backdrop Brush (optional). If not provided, then compositor creates it.</param>
+        /// <returns>CompositionEffectBrush</returns>
+        internal static CompositionEffectBrush CreateBackdropBrush(Compositor compositor, IRenderSurface mask,
             Color blendColor, float blurAmount, CompositionBackdropBrush backdropBrush = null)
         {
             // Blur Effect

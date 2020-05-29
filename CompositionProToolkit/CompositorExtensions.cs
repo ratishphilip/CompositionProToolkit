@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 //
 
 using System;
@@ -703,7 +703,7 @@ namespace CompositionProToolkit
         /// </summary>
         /// <param name="compositor">Compositor</param>
         /// <returns>CubicBezierEasingFunction</returns>
-        public static CubicBezierEasingFunction CreateEaseInExponentialFunction(this Compositor compositor)
+        public static CubicBezierEasingFunction CreateEaseInExponentialEasingFunction(this Compositor compositor)
         {
             return compositor.CreateCubicBezierEasingFunction(new Vector2(0.950f, 0.050f), new Vector2(0.795f, 0.035f));
         }
@@ -783,7 +783,7 @@ namespace CompositionProToolkit
         /// </summary>
         /// <param name="compositor">Compositor</param>
         /// <returns>CubicBezierEasingFunction</returns>
-        public static CubicBezierEasingFunction CreateEaseOutExponentialFunction(this Compositor compositor)
+        public static CubicBezierEasingFunction CreateEaseOutExponentialEasingFunction(this Compositor compositor)
         {
             return compositor.CreateCubicBezierEasingFunction(new Vector2(0.190f, 1.000f), new Vector2(0.220f, 1.000f));
         }
@@ -863,7 +863,7 @@ namespace CompositionProToolkit
         /// </summary>
         /// <param name="compositor">Compositor</param>
         /// <returns>CubicBezierEasingFunction</returns>
-        public static CubicBezierEasingFunction CreateEaseInOutExponentialFunction(this Compositor compositor)
+        public static CubicBezierEasingFunction CreateEaseInOutExponentialEasingFunction(this Compositor compositor)
         {
             return compositor.CreateCubicBezierEasingFunction(new Vector2(1.000f, 0.000f), new Vector2(0.000f, 1.000f));
         }
@@ -916,7 +916,7 @@ namespace CompositionProToolkit
         /// Creates the CompositionSurfaceBrush from the specified render surface.
         /// </summary>
         /// <param name="compositor">Compositor</param>
-        /// <param name="renderSurface">An object deriving from IMaskSurface, IGeometrySurface or IImageSurface</param>
+        /// <param name="renderSurface">An object deriving from IMaskSurface, IGaussianMaskSurface, IGeometrySurface or IImageSurface</param>
         /// <returns>CompositionSurfaceBrush</returns>
         public static CompositionSurfaceBrush CreateSurfaceBrush(this Compositor compositor, IRenderSurface renderSurface)
         {

@@ -24,9 +24,13 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit.Controls v1.0.1
 // 
 
+using CompositionProToolkit.Expressions;
+using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -38,10 +42,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
-using CompositionProToolkit.Expressions;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Effects;
-using Microsoft.Graphics.Canvas.Geometry;
 
 namespace CompositionProToolkit.Controls
 {
@@ -402,8 +402,7 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public ProfileControl()
         {
-            _imageOptions = ImageSurfaceOptions.Default;
-            _imageOptions.AutoResize = false;
+            _imageOptions = ImageSurfaceOptions.DefaultOptimized;
 
             _revealOnLoad = false;
             Loaded += OnLoaded;

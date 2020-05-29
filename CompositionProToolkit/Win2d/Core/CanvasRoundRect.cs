@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 // 
 
 using System;
@@ -227,7 +227,7 @@ namespace CompositionProToolkit.Win2d.Core
             var bottomLeft = new Vector2(0, (Size.Y - _bottomLeftHeight));
             var topLeft = new Vector2(0, _topLeftHeight);
 
-            //  check achors for overlap and resolve by partitioning corners according to
+            //  check anchors for overlap and resolve by partitioning corners according to
             //  the percentage of each one.  
 
             //  top edge

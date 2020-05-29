@@ -24,9 +24,9 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit.Controls v1.0.1
 //
- 
+
 using System;
 using System.Linq;
 using Windows.Foundation;
@@ -233,7 +233,7 @@ namespace CompositionProToolkit.Controls
             var mask = (((UInt64)1) << width) - 1;
             for (var row = startIndex; row < (_rowsInternal - height + 1); row++)
             {
-                // Quickcheck: If the row is empty then no need to check individual bits in the row
+                // Quick-check: If the row is empty then no need to check individual bits in the row
                 if (!RowHasData(row))
                 {
                     // Current column has no bits set. Check the bits in the next (height - 1)
@@ -452,7 +452,7 @@ namespace CompositionProToolkit.Controls
             // contiguous unset bit, check the remaining of the rows
             for (var rowOffset = 1; rowOffset < height; rowOffset++)
             {
-                // Quickcheck: If the row is empty then no need to check individual bits in the row
+                // Quick-check: If the row is empty then no need to check individual bits in the row
                 if (!RowHasData(row + rowOffset))
                 {
                     continue;

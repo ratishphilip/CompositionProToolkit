@@ -24,11 +24,17 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 // 
 
+using CompositionDeviceHelper;
+using CompositionProToolkit.Win2d;
+using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Brushes;
+using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.UI.Composition;
 using System;
-using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -38,14 +44,7 @@ using Windows.Graphics.DirectX;
 using Windows.Graphics.Display;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Xaml.Media;
-using CompositionDeviceHelper;
-using CompositionProToolkit.Win2d;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Brushes;
-using Microsoft.Graphics.Canvas.Effects;
-using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.Graphics.Canvas.UI.Composition;
+using Windows.UI.Xaml;
 
 namespace CompositionProToolkit
 {
@@ -124,8 +123,6 @@ namespace CompositionProToolkit
             _isGraphicsDeviceCreator = true;
 
             _graphicsDevice.RenderingDeviceReplaced += RenderingDeviceReplaced;
-            if (!DesignMode.DesignModeEnabled)
-                DisplayInformation.DisplayContentsInvalidated += OnDisplayContentsInvalidated;
         }
 
         /// <summary>
@@ -138,8 +135,6 @@ namespace CompositionProToolkit
             _graphicsDevice = graphicsDevice ?? throw new ArgumentNullException(nameof(graphicsDevice), "GraphicsDevice cannot be null!");
             _isGraphicsDeviceCreator = false;
             _graphicsDevice.RenderingDeviceReplaced += RenderingDeviceReplaced;
-            if (!DesignMode.DesignModeEnabled)
-                DisplayInformation.DisplayContentsInvalidated += OnDisplayContentsInvalidated;
 
             // Compositor
             _compositor = _graphicsDevice.Compositor;
@@ -158,24 +153,21 @@ namespace CompositionProToolkit
 
         #region APIs
 
+        #region Create Mask Surface
+
         /// <summary>
-        /// Creates an Empty MaskSurface having the no size and geometry. 
-        /// NOTE: Use this API if you want to create an Empty IMaskSurface first
-        /// and change its geometry and/or size of the MaskSurface later.
+        /// <para>Creates an Empty IMaskSurface having the no size and geometry.</para> 
+        /// <para>NOTE: Use this API if you want to create an Empty IMaskSurface first
+        /// and change its geometry and/or size of the IMaskSurface later.</para>
         /// </summary>
         /// <returns>IMaskSurface</returns>
         public IMaskSurface CreateMaskSurface()
         {
-            // Initialize the mask
-            IMaskSurface mask = new MaskSurface(this, new Size(), null);
-            // Render the mask
-            mask.Redraw();
-
-            return mask;
+            return CreateMaskSurface(new Size(), null, Vector2.Zero);
         }
 
         /// <summary>
-        /// Creates a MaskSurface having the given size and geometry with MaskMode as True.
+        /// Creates an IMaskSurface having the given size and geometry with MaskMode as True.
         /// The geometry is filled with white color. The surface not covered by the geometry is
         /// transparent.
         /// </summary>
@@ -184,18 +176,72 @@ namespace CompositionProToolkit
         /// <returns>IMaskSurface</returns>
         public IMaskSurface CreateMaskSurface(Size size, CanvasGeometry geometry)
         {
+            return CreateMaskSurface(size, geometry, Vector2.Zero);
+        }
+
+        /// <summary>
+        /// Creates an IMaskSurface having the given size and geometry with MaskMode as True.
+        /// The geometry is filled with white color. The surface not covered by the geometry is
+        /// transparent.
+        /// </summary>
+        /// <param name="size">Size of the mask</param>
+        /// <param name="geometry">Geometry of the mask</param>
+        /// <param name="offset">The offset from the top left corner of the ICompositionSurface where
+        /// the Geometry is rendered.</param>
+        /// <returns>IMaskSurface</returns>
+        public IMaskSurface CreateMaskSurface(Size size, CanvasGeometry geometry, Vector2 offset)
+        {
             // Initialize the mask
-            IMaskSurface mask = new MaskSurface(this, size, geometry);
+            IMaskSurface mask = new MaskSurface(this, size, geometry, offset);
             // Render the mask
             mask.Redraw();
 
             return mask;
         }
 
+        #endregion
+
+        #region Create Gaussian Mask Surface
+
         /// <summary>
-        /// Creates an empty GeometrySurface having the no size and geometry.
-        /// NOTE: Use this API if you want to create an Empty IGeometrySurface 
-        /// first and change its geometry and/or size, fillColor or stroke later.
+        /// <para>Creates an Empty IGaussianMaskSurface having the no size and geometry.</para>
+        /// <para>NOTE: Use this API if you want to create an Empty IGaussianMaskSurface first
+        /// and change its geometry, size, offset and/or blurRadius of the IGaussianMaskSurface later.</para>
+        /// </summary>
+        /// <returns>IGaussianMaskSurface</returns>
+        public IGaussianMaskSurface CreateGaussianMaskSurface()
+        {
+            return CreateGaussianMaskSurface(new Size(), null, Vector2.Zero, 0);
+        }
+
+        /// <summary>
+        /// Creates a IGaussianMaskSurface having the given size and geometry. The geometry is filled 
+        /// with white color and a Gaussian blur is applied to it. The surface not covered by the geometry is transparent.
+        /// </summary>
+        /// <param name="size">Size of the mask</param>
+        /// <param name="geometry">Geometry of the mask</param>
+        /// <param name="offset">The offset from the top left corner of the ICompositionSurface where
+        /// the Geometry is rendered.</param>
+        /// <param name="blurRadius">Radius of Gaussian Blur to be applied on the IGaussianMaskSurface</param>
+        /// <returns>IGaussianMaskSurface</returns>
+        public IGaussianMaskSurface CreateGaussianMaskSurface(Size size, CanvasGeometry geometry, Vector2 offset, float blurRadius)
+        {
+            // Initialize the mask
+            IGaussianMaskSurface mask = new GaussianMaskSurface(this, size, geometry, offset, blurRadius);
+            // Render the mask
+            mask.Redraw();
+
+            return mask;
+        }
+
+        #endregion
+
+        #region Create Geometry Surface
+
+        /// <summary>
+        /// <para>Creates an empty GeometrySurface having the no size and geometry.</para>
+        /// <para>NOTE: Use this API if you want to create an Empty IGeometrySurface 
+        /// first and change its geometry and/or size, fillColor or stroke later.</para>
         /// </summary>
         /// <returns>IGeometrySurface</returns>
         public IGeometrySurface CreateGeometrySurface()
@@ -484,24 +530,172 @@ namespace CompositionProToolkit
             return geometrySurface;
         }
 
+        #endregion
+
+        #region Create ImageSurface
+
         /// <summary>
-        /// Creates a ImageSurface having the given size onto which an image (based on the Uri
+        /// Creates an IImageSurface having the given size onto which an image (based on the Uri
         /// and the options) is loaded.
         /// </summary>
-        /// <param name="uri">Uri of the image to be loaded onto the SurfaceImage.</param>
-        /// <param name="size">New size of the SurfaceImage</param>
+        /// <param name="uri">Uri of the image to be loaded onto the IImageSurface.</param>
+        /// <param name="size">New size of the IImageSurface</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <returns>ICompositionSurfaceImage</returns>
         public async Task<IImageSurface> CreateImageSurfaceAsync(Uri uri, Size size, ImageSurfaceOptions options)
         {
-            // Initialize the SurfaceImage
-            var surfaceImage = new ImageSurface(this, uri, size, options);
+            // Initialize the IImageSurface
+            var imageSurface = new ImageSurface(this, uri, size, options);
 
             // Render the image onto the surface
-            await surfaceImage.RedrawAsync();
+            await imageSurface.RedrawAsync();
 
-            return surfaceImage;
+            return imageSurface;
         }
+
+        /// <summary>
+        /// Creates an IImageSurface having the given size onto which the given image is loaded.
+        /// </summary>
+        /// <param name="bitmap">Image that will be loaded onto the IImageSurface.</param>
+        /// <param name="size">Size of the IImageSurface</param>
+        /// <param name="options">The image's resize and alignment options in the allocated space.</param>
+        /// <returns>IImageSurface</returns>
+        public IImageSurface CreateImageSurface(CanvasBitmap bitmap, Size size, ImageSurfaceOptions options)
+        {
+            // Create a new IImageSurface using the given imageSurface
+            var imageSurface = new ImageSurface(this, bitmap, size, options);
+            // Render the image onto the surface
+            imageSurface.Redraw();
+
+            return imageSurface;
+        }
+
+        /// <summary>
+        /// Creates a copy of the given IImageSurface
+        /// </summary>
+        /// <param name="imageSurface">IImageSurface to copy</param>
+        /// <returns>Copy of the given IImageSurface</returns>
+        public IImageSurface CreateImageSurface(IImageSurface imageSurface)
+        {
+            if (imageSurface != null)
+            {
+                // Create a new IImageSurface using the given imageSurface
+                var newImageSurface = new ImageSurface(this, imageSurface.SurfaceBitmap, imageSurface.Size, imageSurface.Options);
+                // Render the image onto the surface
+                newImageSurface.Redraw();
+
+                return newImageSurface;
+            }
+
+            // return an empty ImageSurface
+            return CreateImageSurface(null, new Size(0,0), ImageSurfaceOptions.Default);
+        }
+
+        #endregion
+
+        #region Create Image Mask Surface
+
+        /// <summary>
+        /// Creates a copy of the given IImageMaskSurface
+        /// </summary>
+        /// <param name="imageMaskSurface">IImageMaskSurface to copy</param>
+        /// <returns>IImageMaskSurface</returns>
+        public IImageMaskSurface CreateImageMaskSurface(IImageMaskSurface imageMaskSurface)
+        {
+            if (imageMaskSurface != null)
+            {
+                // Create a new IImageMaskSurface using the given imageMaskSurface
+                var newImageSurface = new ImageMaskSurface(this, 
+                                                           imageMaskSurface.SurfaceBitmap, 
+                                                           imageMaskSurface.Size, 
+                                                           imageMaskSurface.MaskPadding, 
+                                                           imageMaskSurface.Options);
+                // Render the image onto the surface
+                newImageSurface.Redraw();
+
+                return newImageSurface;
+            }
+
+            // return an empty ImageSurface
+            return CreateImageMaskSurface(surfaceBitmap:null, new Size(0, 0), new Thickness(0),  ImageSurfaceOptions.DefaultImageMaskOptions);
+        }
+        
+        /// <summary>
+        /// Creates an IImageMaskSurface using the alpha values of the given image at the specified offset using
+        /// the given blur radius.
+        /// </summary>
+        /// <param name="surfaceBitmap">The CanvasBitmap whose alpha values will be used to create the Mask.</param>
+        /// <param name="size">Size of the IImageMaskSurface</param>
+        /// <param name="padding">The padding between the IImageMaskSurface outer bounds and the bounds of the area where
+        /// the mask, created from the given image's alpha values, should be rendered.</param>
+        /// <param name="blurRadius">Radius of the Gaussian blur applied to the the mask.</param>
+        /// <returns>IImageMaskSurface</returns>
+        public IImageMaskSurface CreateImageMaskSurface(CanvasBitmap surfaceBitmap, Size size, Thickness padding, float blurRadius)
+        {
+            return CreateImageMaskSurface(surfaceBitmap, size, padding, ImageSurfaceOptions.GetDefaultImageMaskOptionsForBlur(blurRadius));
+        }
+
+        /// <summary>
+        /// Creates an IImageMaskSurface using the alpha values of the given image at the specified offset using
+        /// the given options.
+        /// </summary>
+        /// <param name="surfaceBitmap">The CanvasBitmap whose alpha values will be used to create the Mask.</param>
+        /// <param name="size">Size of the IImageMaskSurface</param>
+        /// <param name="padding">The padding between the IImageMaskSurface outer bounds and the bounds of the area where
+        /// the mask, created from the given image's alpha values, should be rendered.</param>
+        /// <param name="options">The image's resize, alignment and blur radius options in the allocated space.</param>
+        /// <returns>IImageMaskSurface</returns>
+        public IImageMaskSurface CreateImageMaskSurface(CanvasBitmap surfaceBitmap, Size size, Thickness padding, ImageSurfaceOptions options)
+        {
+            var imageMaskSurface = new ImageMaskSurface(this, surfaceBitmap, size, padding, options);
+            // Render the image onto the surface
+            imageMaskSurface.Redraw();
+
+            return imageMaskSurface;
+        }
+
+        /// <summary>
+        /// Creates an IImageMaskSurface using the alpha values of the given IImageSurface's image at the specified offset using
+        /// the given options.
+        /// </summary>
+        /// <param name="imageSurface">The IImageSurface whose image's alpha values will be used to create the Mask.</param>
+        /// <param name="size">Size of the IImageMaskSurface</param>
+        /// <param name="padding">The padding between the IImageMaskSurface outer bounds and the bounds of the area where
+        /// the mask, created from the given image's alpha values, should be rendered.</param>
+        /// <param name="options">The image's resize, alignment and blur radius options in the allocated space.</param>
+        /// <returns>IImageMaskSurface</returns>
+        public IImageMaskSurface CreateImageMaskSurface(IImageSurface imageSurface, Size size, Thickness padding, ImageSurfaceOptions options)
+        {
+            if (imageSurface != null)
+            {
+                // Create a new IImageSurface using the given imageSurface
+                return CreateImageMaskSurface(imageSurface.SurfaceBitmap, size, padding, options);
+            }
+
+            // Create an empty ImageMaskSurface
+            return CreateImageMaskSurface(surfaceBitmap: null, size, padding, options);
+        }
+
+        /// <summary>
+        /// Creates an IImageMaskSurface using the alpha values of the image loaded from the Uri
+        /// and rendered at the specified offset using the given options.
+        /// </summary>
+        /// <param name="uri">The URI of the image whose alpha values will be used to create the Mask.</param>
+        /// <param name="size">Size of the IImageMaskSurface</param>
+        /// <param name="padding">The padding between the IImageMaskSurface outer bounds and the bounds of the area where
+        /// the mask, created from the given image's alpha values, should be rendered.</param>
+        /// <param name="options">The image's resize, alignment and blur radius options in the allocated space.</param>
+        /// <returns>IImageMaskSurface</returns>
+        public async Task<IImageMaskSurface> CreateImageMaskSurfaceAsync(Uri uri, Size size, Thickness padding, ImageSurfaceOptions options)
+        {
+            var imageMaskSurface = new ImageMaskSurface(this, uri, size, padding, options);
+            // Render the image onto the surface
+            await imageMaskSurface.RedrawAsync();
+
+            return imageMaskSurface;
+        }
+
+        #endregion
 
         /// <summary>
         /// Creates a reflection of the given Visual
@@ -651,15 +845,17 @@ namespace CompositionProToolkit
         }
 
         /// <summary>
-        /// Redraws the MaskSurface with the given size and geometry
+        /// Redraws the IMaskSurface with the given size and geometry
         /// </summary>
         /// <param name="surfaceLock">The object to lock to prevent multiple threads
         /// from accessing the surface at the same time.</param>
         /// <param name="surface">CompositionDrawingSurface</param>
-        /// <param name="size">Size ofthe MaskSurface</param>
-        /// <param name="geometry">Geometry of the MaskSurface</param>
+        /// <param name="size">Size of the IMaskSurface</param>
+        /// <param name="geometry">Geometry of the IMaskSurface</param>
+        /// <param name="offset">The offset from the top left corner of the ICompositionSurface where
+        /// the Geometry is rendered.</param>
         public void RedrawMaskSurface(object surfaceLock, CompositionDrawingSurface surface, Size size,
-            CanvasGeometry geometry)
+            CanvasGeometry geometry, Vector2 offset)
         {
             // If the surface is not created, create it
             if (surface == null)
@@ -680,20 +876,97 @@ namespace CompositionProToolkit
                 // Render the mask to the surface
                 using (var session = CanvasComposition.CreateDrawingSession(surface))
                 {
+                    session.Clear(Colors.Transparent);
                     if (geometry != null)
                     {
-                        // If the geometry is not null then fill the geometry area
-                        // with the White color. The rest of the area on the surface will be transparent.
+                        // If the geometry is not null then fill the geometry area at the given offset
+                        // with White color. The rest of the area on the surface will be transparent.
                         // When this mask is applied to a visual, only the area that is white will be visible.
-                        session.Clear(Colors.Transparent);
-                        session.FillGeometry(geometry, Colors.White);
+                        session.FillGeometry(geometry, offset, Colors.White);
                     }
                     else
                     {
-                        // If the geometry is null, then the entire mask should be filled the 
-                        // the given color. If the color is white, then the masked visual will be seen completely.
-                        session.FillRectangle(0, 0, size.Width.ToSingle(), size.Height.ToSingle(), Colors.White);
+                        // If the geometry is null, then the entire mask with a padding, provided by the offset,
+                        // should be filled with White. If the color is White.
+                        // When this mask is applied to a visual, only the area that is white will be visible.
+                        var width = Math.Max(0, size.Width.ToSingle() - 2 * offset.X);
+                        var height = Math.Max(0, size.Height.ToSingle() - 2 * offset.Y);
+                        var maskRect = new Rect(offset.X, offset.Y, width, height);
+                        session.FillRectangle(maskRect, Colors.White);
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Redraws the GaussianMaskSurface with the given size and geometry
+        /// </summary>
+        /// <param name="surfaceLock">The object to lock to prevent multiple threads
+        /// from accessing the surface at the same time.</param>
+        /// <param name="surface">CompositionDrawingSurface</param>
+        /// <param name="size">Size of the GaussianMaskSurface</param>
+        /// <param name="geometry">Geometry of the GaussianMaskSurface</param>
+        /// <param name="offset">The offset from the top left corner of the ICompositionSurface where
+        /// the Geometry is rendered.</param>
+        /// <param name="blurRadius">Radius of Gaussian Blur to be applied.</param>
+        public void RedrawGaussianMaskSurface(object surfaceLock, CompositionDrawingSurface surface, Size size,
+            CanvasGeometry geometry, Vector2 offset, float blurRadius)
+        {
+            // If the surface is not created, create it
+            if (surface == null)
+            {
+                surface = CreateDrawingSurface(surfaceLock, size);
+            }
+
+            // No need to render if the width and/or height of the surface is zero
+            if (surface.Size.Width.IsZero() || surface.Size.Height.IsZero())
+                return;
+
+            //
+            // Since multiple threads could be trying to get access to the device/surface 
+            // at the same time, we need to do any device/surface work under a lock.
+            //
+            lock (surfaceLock)
+            {
+                // Render the mask to the surface
+                using (var session = CanvasComposition.CreateDrawingSession(surface))
+                {
+                    var cl = new CanvasCommandList(Device);
+                    using (var ds = cl.CreateDrawingSession())
+                    {
+                        ds.Clear(Colors.Transparent);
+                        if (geometry != null)
+                        {
+                            // If the geometry is not null then fill the geometry area with the White color at the specified offset.
+                            // The rest of the area on the surface will be transparent.
+                            // When this mask is applied to a visual, only the area that is white will be visible.
+                            ds.FillGeometry(geometry, offset, Colors.White);
+                        }
+                        else
+                        {
+                            // If the geometry is null, then the entire mask with a padding, provided by the offset,
+                            // should be filled with  white color.
+                            // When this mask is applied to a visual, only the area that is white will be visible.
+                            var width = Math.Max(0, size.Width.ToSingle() - 2 * offset.X);
+                            var height = Math.Max(0, size.Height.ToSingle() - 2 * offset.Y);
+                            var maskRect = new Rect(offset.X, offset.Y, width, height);
+                            ds.FillRectangle(maskRect, Colors.White);
+                        }
+                    }
+
+                    //  Apply the Gaussian blur
+                    var blurGeometry = new GaussianBlurEffect()
+                    {
+                        BlurAmount = blurRadius,
+                        Source = cl,
+                        BorderMode = EffectBorderMode.Soft,
+                        Optimization = EffectOptimization.Quality
+                    };
+
+                    // Clear previously rendered mask (if any)
+                    session.Clear(Colors.Transparent);
+                    // Render the mask
+                    session.DrawImage(blurGeometry);
                 }
             }
         }
@@ -704,7 +977,7 @@ namespace CompositionProToolkit
         /// <param name="surfaceLock">The object to lock to prevent multiple threads
         /// from accessing the surface at the same time.</param>
         /// <param name="surface">CompositionDrawingSurface</param>
-        /// <param name="size">Size ofthe GeometrySurface</param>
+        /// <param name="size">Size of the GeometrySurface</param>
         /// <param name="geometry">Geometry of the GeometrySurface</param>
         /// <param name="stroke">ICanvasStroke defining the outline for the geometry</param>
         /// <param name="fillBrush">The brush with which the geometry has to be filled</param>
@@ -731,9 +1004,10 @@ namespace CompositionProToolkit
                 // Render the geometry to the surface
                 using (var session = CanvasComposition.CreateDrawingSession(surface))
                 {
+                    // Clear the surface
+                    session.Clear(Colors.Transparent);
                     // First fill the background
-                    var brush = backgroundBrush as CanvasSolidColorBrush;
-                    if (brush != null)
+                    if (backgroundBrush is CanvasSolidColorBrush brush)
                     {
                         // If the backgroundBrush is a SolidColorBrush then use the Clear()
                         // method to fill the surface with background color. It is faster.
@@ -795,7 +1069,7 @@ namespace CompositionProToolkit
         /// <param name="surfaceLock">The object to lock to prevent multiple threads
         /// from accessing the surface at the same time.</param>
         /// <param name="surface">CompositionDrawingSurface</param>
-        /// <param name="uri">Uri of the image to be loaded onto the SurfaceImage.</param>
+        /// <param name="uri">Uri of the image to be loaded onto the IImageSurface.</param>
         /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
         /// <param name="canvasBitmap">The CanvasBitmap on which the image is loaded.</param>
         /// <returns>CanvasBitmap</returns>
@@ -808,7 +1082,7 @@ namespace CompositionProToolkit
                 {
                     canvasBitmap = await CanvasBitmap.LoadAsync(_canvasDevice, uri);
                 }
-                catch (IOException)
+                catch (Exception)
                 {
                     // Do nothing here as RenderBitmap method will fill the surface
                     // with options.SurfaceBackgroundColor as the image failed to load
@@ -823,6 +1097,59 @@ namespace CompositionProToolkit
         }
 
         /// <summary>
+        /// Resizes the ImageMaskSurface to the given size and redraws the ImageMaskSurface
+        /// by rendering the mask using the image's alpha values onto the surface. 
+        /// </summary>
+        /// <param name="surfaceLock">The object to lock to prevent multiple threads from accessing the surface at the same time.</param>
+        /// <param name="surface">CompositionDrawingSurface</param>
+        /// <param name="options">Describes the image's resize and alignment options and blur radius in the allocated space.</param>
+        /// <param name="padding">The padding between the IImageMaskSurface outer bounds and the bounds of the area where
+        /// the mask, created from the loaded image's alpha values, should be rendered.</param>
+        /// <param name="surfaceBitmap">The image whose alpha values is used to create the IImageMaskSurface.</param>
+        public void RedrawImageMaskSurface(object surfaceLock, CompositionDrawingSurface surface, Thickness padding,
+            ImageSurfaceOptions options, CanvasBitmap surfaceBitmap)
+        {
+            // Render the image mask to the surface
+            RenderBitmapMask(Device, surfaceLock, surface, surfaceBitmap, padding, options);
+        }
+
+        /// <summary>
+        /// Resizes the ImageMaskSurface to the given size and redraws the ImageMaskSurface by loading the image from the new Uri and
+        /// rendering the mask using the image's alpha values onto the surface.
+        /// </summary>
+        /// <param name="surfaceLock">The object to lock to prevent multiple threads
+        /// from accessing the surface at the same time.</param>
+        /// <param name="surface">CompositionDrawingSurface</param>
+        /// <param name="uri">Uri of the image to be loaded onto the IImageMaskSurface.</param>
+        /// <param name="padding">The padding between the IImageMaskSurface outer bounds and the bounds of the area where
+        /// the mask, created from the given image's alpha values, should be rendered.</param>
+        /// <param name="options">Describes the image's resize and alignment options and blur radius in the allocated space.</param>
+        /// <param name="surfaceBitmap">The CanvasBitmap on which the image is loaded.</param>
+        /// <returns>The CanvasBitmap whose alpha values is used to create the IImageMaskSurface.</returns>
+        public async Task<CanvasBitmap> RedrawImageMaskSurfaceAsync(object surfaceLock, CompositionDrawingSurface surface,
+            Uri uri, Thickness padding, ImageSurfaceOptions options, CanvasBitmap surfaceBitmap)
+        {
+            if ((surfaceBitmap == null) && (uri != null))
+            {
+                try
+                {
+                    surfaceBitmap = await CanvasBitmap.LoadAsync(_canvasDevice, uri);
+                }
+                catch (Exception)
+                {
+                    // Do nothing here as RenderBitmap method will fill the surface
+                    // with options.SurfaceBackgroundColor as the image failed to load
+                    // from Uri
+                }
+            }
+
+            // Render the image mask to the surface
+            RenderBitmapMask(Device, surfaceLock, surface, surfaceBitmap, padding, options);
+
+            return surfaceBitmap;
+        }
+
+        /// <summary>
         /// Disposes the resources used by the CompositionMaskGenerator
         /// </summary>
         public void Dispose()
@@ -830,7 +1157,6 @@ namespace CompositionProToolkit
             lock (_disposingLock)
             {
                 _compositor = null;
-                DisplayInformation.DisplayContentsInvalidated -= OnDisplayContentsInvalidated;
 
                 if (_canvasDevice != null)
                 {
@@ -874,11 +1200,17 @@ namespace CompositionProToolkit
         /// <param name="e"></param>
         private void OnDeviceLost(object sender, DeviceLostEventArgs e)
         {
+            ReplaceDevice();
+        }
+
+        private void ReplaceDevice()
+        {
             // Stop watching the device which is lost
             _deviceLostHelper.StopWatchingCurrentDevice();
             // Get the new CanvasDevice
-            _canvasDevice = _isCanvasDeviceCreator ?
-                new CanvasDevice(_canvasDevice.ForceSoftwareRenderer) : CanvasDevice.GetSharedDevice();
+            _canvasDevice = _isCanvasDeviceCreator
+                ? new CanvasDevice(_canvasDevice.ForceSoftwareRenderer)
+                : CanvasDevice.GetSharedDevice();
 
             // Watch the new Canvas Device
             _deviceLostHelper.WatchDevice(_canvasDevice)
@@ -898,17 +1230,6 @@ namespace CompositionProToolkit
         private void RenderingDeviceReplaced(CompositionGraphicsDevice sender, RenderingDeviceReplacedEventArgs args)
         {
             RaiseDeviceReplacedEvent();
-        }
-
-        /// <summary>
-        /// Handles the DisplayContentsInvalidated event
-        /// </summary>
-        /// <param name="sender">DisplayInformation</param>
-        /// <param name="args">Event arguments</param>
-        private void OnDisplayContentsInvalidated(DisplayInformation sender, object args)
-        {
-            // This will trigger the device lost event
-            _canvasDevice.RaiseDeviceLost();
         }
 
         #endregion
@@ -1053,6 +1374,8 @@ namespace CompositionProToolkit
                     // Draw the image to the surface
                     using (var session = CanvasComposition.CreateDrawingSession(surface))
                     {
+                        // Clear the surface with the SurfaceBackgroundColor
+                        session.Clear(options.SurfaceBackgroundColor);
                         // Render the image
                         session.DrawImage(canvasBitmap,                                         // CanvasBitmap
                             new Rect(0, 0, surfaceSize.Width, surfaceSize.Height),              // Target Rectangle
@@ -1067,81 +1390,14 @@ namespace CompositionProToolkit
                     if (surfaceSize.IsEmpty || surface.Size.Width.IsZero() || surface.Size.Height.IsZero())
                         return;
 
-                    var bitmapSize = canvasBitmap.Size;
-                    var sourceWidth = bitmapSize.Width;
-                    var sourceHeight = bitmapSize.Height;
-                    var ratio = sourceWidth / sourceHeight;
-                    var targetWidth = 0d;
-                    var targetHeight = 0d;
-                    var left = 0d;
-                    var top = 0d;
-
-                    // Stretch Mode
-                    switch (options.Stretch)
-                    {
-                        case Stretch.None:
-                            targetWidth = sourceWidth;
-                            targetHeight = sourceHeight;
-                            break;
-                        case Stretch.Fill:
-                            targetWidth = surfaceSize.Width;
-                            targetHeight = surfaceSize.Height;
-                            break;
-                        case Stretch.Uniform:
-                            // If width is greater than height
-                            if (ratio > 1.0)
-                            {
-                                targetHeight = Math.Min(surfaceSize.Width / ratio, surfaceSize.Height);
-                                targetWidth = targetHeight * ratio;
-                            }
-                            else
-                            {
-                                targetWidth = Math.Min(surfaceSize.Height * ratio, surfaceSize.Width);
-                                targetHeight = targetWidth / ratio;
-                            }
-                            break;
-                        case Stretch.UniformToFill:
-                            // If width is greater than height
-                            if (ratio > 1.0)
-                            {
-                                targetHeight = Math.Max(surfaceSize.Width / ratio, surfaceSize.Height);
-                                targetWidth = targetHeight * ratio;
-                            }
-                            else
-                            {
-                                targetWidth = Math.Max(surfaceSize.Height * ratio, surfaceSize.Width);
-                                targetHeight = targetWidth / ratio;
-                            }
-                            break;
-                    }
-
-                    // Horizontal Alignment
-                    switch (options.HorizontalAlignment)
-                    {
-                        case AlignmentX.Left:
-                            left = 0;
-                            break;
-                        case AlignmentX.Center:
-                            left = (surfaceSize.Width - targetWidth) / 2.0;
-                            break;
-                        case AlignmentX.Right:
-                            left = surfaceSize.Width - targetWidth;
-                            break;
-                    }
-
-                    // Vertical Alignment
-                    switch (options.VerticalAlignment)
-                    {
-                        case AlignmentY.Top:
-                            top = 0;
-                            break;
-                        case AlignmentY.Center:
-                            top = (surfaceSize.Height - targetHeight) / 2.0;
-                            break;
-                        case AlignmentY.Bottom:
-                            top = surfaceSize.Height - targetHeight;
-                            break;
-                    }
+                    // Get the optimum size that can fit the surface
+                    var targetRect = Utils.GetOptimumSize(canvasBitmap.Size.Width,
+                                                          canvasBitmap.Size.Height,
+                                                          surfaceSize.Width,
+                                                          surfaceSize.Height,
+                                                          options.Stretch,
+                                                          options.HorizontalAlignment,
+                                                          options.VerticalAlignment);
 
                     // Draw the image to the surface
                     using (var session = CanvasComposition.CreateDrawingSession(surface))
@@ -1149,13 +1405,130 @@ namespace CompositionProToolkit
                         // Clear the surface with the SurfaceBackgroundColor
                         session.Clear(options.SurfaceBackgroundColor);
                         // Render the image
-                        session.DrawImage(canvasBitmap,                         // CanvasBitmap
-                            new Rect(left, top, targetWidth, targetHeight),     // Target Rectangle
-                            new Rect(0, 0, sourceWidth, sourceHeight),          // Source Rectangle
-                            options.Opacity,                                    // Opacity
-                            options.Interpolation);                             // Interpolation
+                        session.DrawImage(canvasBitmap,               // CanvasBitmap
+                                          targetRect,                 // Target Rectangle
+                                          canvasBitmap.Bounds,        // Source Rectangle
+                                          options.Opacity,            // Opacity
+                                          options.Interpolation);     // Interpolation
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Renders the mask using the CanvasBitmap's alpha values on the CompositionDrawingSurface based on the given options.
+        /// </summary>
+        /// <param name="device">CanvasDevice</param>
+        /// <param name="surfaceLock">The object to lock to prevent multiple threads
+        /// from accessing the surface at the same time.</param>
+        /// <param name="surface">CompositionDrawingSurface on which the CanvasBitmap has to be rendered.</param>
+        /// <param name="canvasBitmap">CanvasBitmap created by loading the image from the Uri</param>
+        /// <param name="padding">The padding between the IImageMaskSurface outer bounds and the bounds of the area where
+        /// the mask, created from the loaded image's alpha values, should be rendered.</param>
+        /// <param name="options">Describes the image's resize and alignment options in the allocated space.</param>
+        private static void RenderBitmapMask(CanvasDevice device, object surfaceLock, CompositionDrawingSurface surface,
+            CanvasBitmap canvasBitmap, Thickness padding, ImageSurfaceOptions options)
+        {
+            var surfaceSize = surface.Size;
+
+            // If the canvasBitmap is null, then just fill the surface with transparent color
+            if (canvasBitmap == null)
+            {
+                // No need to render if the width and/or height of the surface is zero
+                if (surfaceSize.IsEmpty || surfaceSize.Width.IsZero() || surfaceSize.Height.IsZero())
+                    return;
+
+                //
+                // Since multiple threads could be trying to get access to the device/surface 
+                // at the same time, we need to do any device/surface work under a lock.
+                //
+                lock (surfaceLock)
+                {
+                    using (var session = CanvasComposition.CreateDrawingSession(surface))
+                    {
+                        // Clear the surface with the transparent color
+                        session.Clear(options.SurfaceBackgroundColor);
+                    }
+
+                    // No need to proceed further
+                    return;
+                }
+            }
+
+            //
+            // Since multiple threads could be trying to get access to the device/surface 
+            // at the same time, we need to do any device/surface work under a lock.
+            //
+            lock (surfaceLock)
+            {
+                // No need to render if the width and/or height of the surface is zero
+                if (surfaceSize.IsEmpty || surface.Size.Width.IsZero() || surface.Size.Height.IsZero())
+                    return;
+
+                // Get the available size on the surface
+                var paddingSize = padding.CollapseThickness();
+                var availableWidth = Math.Max(0, surfaceSize.Width - paddingSize.Width);
+                var availableHeight = Math.Max(0, surfaceSize.Height - paddingSize.Height);
+
+                if (availableWidth.IsZero() || availableHeight.IsZero())
+                    return;
+
+                // Get the optimum size that can fit the available size on the surface
+                var targetRect = Utils.GetOptimumSize(canvasBitmap.Size.Width,
+                                                      canvasBitmap.Size.Height,
+                                                      availableWidth,
+                                                      availableHeight,
+                                                      options.Stretch,
+                                                      options.HorizontalAlignment,
+                                                      options.VerticalAlignment);
+
+                // Add the padding to the targetRect
+                targetRect.X += padding.Left;
+                targetRect.Y += padding.Top;
+
+                // Resize the image to the target size
+                var imageCmdList = new CanvasCommandList(device);
+                using (var ds = imageCmdList.CreateDrawingSession())
+                {
+                    ds.DrawImage(canvasBitmap, targetRect, canvasBitmap.Bounds, 1f, options.Interpolation);
+                }
+
+                // Fill the entire surface with White
+                var surfaceBounds = new Rect(0, 0, (float)surfaceSize.Width, (float)surfaceSize.Height);
+
+                var rectCmdList = new CanvasCommandList(device);
+                using (var ds = rectCmdList.CreateDrawingSession())
+                {
+                    ds.FillRectangle(surfaceBounds, Colors.White);
+                }
+
+                // Create the mask using the image's alpha values
+                var alphaEffect = new AlphaMaskEffect
+                {
+                    Source = rectCmdList,
+                    AlphaMask = imageCmdList
+                };
+
+                // Apply Gaussian blur on the mask to create the final mask
+                var blurEffect = new GaussianBlurEffect
+                {
+                    Source = alphaEffect,
+                    BlurAmount = options.BlurRadius
+                };
+
+                // Draw the final mask to the surface
+                using (var session = CanvasComposition.CreateDrawingSession(surface))
+                {
+                    // Clear the surface with the SurfaceBackgroundColor
+                    session.Clear(options.SurfaceBackgroundColor);
+                    // Render the mask
+                    session.DrawImage(blurEffect,               // CanvasBitmap
+                                      surfaceBounds,            // Target Rectangle
+                                      surfaceBounds,            // Source Rectangle
+                                      options.Opacity,          // Opacity
+                                      options.Interpolation);   // Interpolation
+                }
+
             }
         }
 

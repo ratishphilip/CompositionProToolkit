@@ -1,0 +1,61 @@
+﻿<Page x:Class="ToolkitGallery.Views.SquirclePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:ToolkitGallery.Views"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:toolkitGallery="using:ToolkitGallery"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+      mc:Ignorable="d">
+
+    <Grid Background="#373737">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="100 " />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+
+        <Grid x:Name="RoundedRectangleGrid" />
+        <Grid x:Name="DifferenceGrid" Grid.Column="1" />
+        <Grid x:Name="SquircleGrid" Grid.Column="2" />
+
+        <TextBlock Grid.Column="0"
+                   Margin="0,0,0,50"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Bottom"
+                   FontSize="16"
+                   Foreground="White"
+                   Text="Rounded Rectangle" />
+        <TextBlock Grid.Column="1"
+                   Margin="0,0,0,50"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Bottom"
+                   FontSize="16"
+                   Foreground="White"
+                   Text="Difference" />
+        <TextBlock Grid.Column="2"
+                   Margin="0,0,0,50"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Bottom"
+                   FontSize="16"
+                   Foreground="White"
+                   Text="Squircle" />
+
+        <Slider x:Name="RadiusSlider"
+                Grid.Row="1"
+                Grid.ColumnSpan="3"
+                Width="600"
+                FontSize="16"
+                Header="Corner Radius"
+                Maximum="200"
+                Minimum="0"
+                TickFrequency="1"
+                ValueChanged="OnRadiusChanged"
+                Value="100" />
+    </Grid>
+</Page>

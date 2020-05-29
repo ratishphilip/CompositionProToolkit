@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 // 
 
 using System;
@@ -41,6 +41,9 @@ namespace CompositionProToolkit.Win2d
     /// </summary>
     public static class CanvasPathBuilderExtensions
     {
+        private const float SquircleFactor = 1.125f;
+        private const float ControlPointFactor = 46f / 64f;
+
         /// <summary>
         /// Adds a line in the form of a cubic bezier. The control point of the quadratic bezier
         /// will be the endpoint of the line itself.
@@ -300,7 +303,7 @@ namespace CompositionProToolkit.Win2d
             // Top line
             pathBuilder.AddLine(rect.RightTop);
 
-            // Upper-right corners
+            // Upper-right corner
             var radiusX = rect.TopRight.X - rect.RightTop.X;
             var radiusY = rect.TopRight.Y - rect.RightTop.Y;
             var center = new Vector2(rect.RightTop.X, rect.TopRight.Y);
@@ -309,7 +312,7 @@ namespace CompositionProToolkit.Win2d
             // Right line
             pathBuilder.AddLine(rect.BottomRight);
 
-            // Lower-right corners
+            // Lower-right corner
             radiusX = rect.BottomRight.X - rect.RightBottom.X;
             radiusY = rect.RightBottom.Y - rect.BottomRight.Y;
             center = new Vector2(rect.RightBottom.X, rect.BottomRight.Y);
@@ -318,7 +321,7 @@ namespace CompositionProToolkit.Win2d
             // Bottom line
             pathBuilder.AddLine(rect.LeftBottom);
 
-            // Lower-left corners
+            // Lower-left corner
             radiusX = rect.LeftBottom.X - rect.BottomLeft.X;
             radiusY = rect.LeftBottom.Y - rect.BottomLeft.Y;
             center = new Vector2(rect.LeftBottom.X, rect.BottomLeft.Y);
@@ -327,11 +330,108 @@ namespace CompositionProToolkit.Win2d
             // Left line
             pathBuilder.AddLine(rect.TopLeft);
 
-            // Upper-left corners
+            // Upper-left corner
             radiusX = rect.LeftTop.X - rect.TopLeft.X;
             radiusY = rect.TopLeft.Y - rect.LeftTop.Y;
             center = new Vector2(rect.LeftTop.X, rect.TopLeft.Y);
             pathBuilder.AddArc(center, radiusX, radiusY, 2f * Scalar.PiByTwo, Scalar.PiByTwo);
+
+            // End path
+            pathBuilder.EndFigure(CanvasFigureLoop.Closed);
+        }
+
+        /// <summary>
+        /// Adds a Squircle to the Path.
+        /// </summary>
+        /// <param name="pathBuilder">CanvasPathBuilder</param>
+        /// <param name="x">X offset of the TopLeft corner of the Squircle</param>
+        /// <param name="y">Y offset of the TopLeft corner of the Squircle</param>
+        /// <param name="width">Width of the Squircle</param>
+        /// <param name="height">Height of the Squircle</param>
+        /// <param name="radiusX">Corner Radius on the x-axis</param>
+        /// <param name="radiusY">Corner Radius on the y-axis</param>
+        public static void AddSquircleFigure(this CanvasPathBuilder pathBuilder, float x, float y, float width,
+            float height, float radiusX, float radiusY)
+        {
+            // Sanitize the width by taking the absolute value
+            width = Math.Abs(width);
+            // Sanitize the height by taking the absolute value
+            height = Math.Abs(height);
+
+            var rect = new CanvasRoundRect(x, y, width, height, radiusX * SquircleFactor, radiusY * SquircleFactor);
+            pathBuilder.AddSquircleFigure(rect, true);
+        }
+
+        /// <summary>
+        /// Adds a Squircle to the Path. (To be used internally)
+        /// </summary>
+        /// <param name="pathBuilder">CanvasPathBuilder</param>
+        /// <param name="rect">CanvasRoundRect</param>
+        /// <param name="raiseException">Flag to indicate whether exception should be raised</param>
+        internal static void AddSquircleFigure(this CanvasPathBuilder pathBuilder, CanvasRoundRect rect,
+            bool raiseException = false)
+        {
+            try
+            {
+                // Begin path
+                pathBuilder.BeginFigure(rect.LeftTop);
+            }
+            catch (ArgumentException)
+            {
+                if (!raiseException)
+                    return;
+
+                // An ArgumentException will be raised if another figure was already begun( and not ended)
+                // before calling AddPolygonFigure() method.
+                throw new InvalidOperationException("A call to CanvasPathBuilder.AddSquircleFigure occurred, " +
+                                                    "when another figure was already begun. Please call CanvasPathBuilder.EndFigure method, " +
+                                                    "before calling CanvasPathBuilder.AddSquircleFigure, to end the previous figure.");
+            }
+
+            // Top line
+            pathBuilder.AddLine(rect.RightTop);
+
+            // Upper-right corner
+            var rightTopControlPoint = new Vector2(rect.RightTop.X + ((rect.TopRight.X - rect.RightTop.X) * ControlPointFactor),
+                                                   rect.RightTop.Y);
+            var topRightControlPoint = new Vector2(rect.TopRight.X, 
+                                                   rect.TopRight.Y - ((rect.TopRight.Y - rect.RightTop.Y) * ControlPointFactor));
+            // Top Right Curve
+            pathBuilder.AddCubicBezier(rightTopControlPoint, topRightControlPoint, rect.TopRight);
+
+            // Right line
+            pathBuilder.AddLine(rect.BottomRight);
+
+            // Lower-right corner
+            var bottomRightControlPoint = new Vector2(rect.BottomRight.X,
+                                                      rect.BottomRight.Y + ((rect.RightBottom.Y - rect.BottomRight.Y) * ControlPointFactor));
+            var rightBottomControlPoint = new Vector2(rect.RightBottom.X + ((rect.BottomRight.X - rect.RightBottom.X) * ControlPointFactor),
+                                                      rect.RightBottom.Y);
+            // Bottom Right Curve
+            pathBuilder.AddCubicBezier(bottomRightControlPoint, rightBottomControlPoint, rect.RightBottom);
+
+            // Bottom line
+            pathBuilder.AddLine(rect.LeftBottom);
+
+            // Lower-left corner
+            var leftBottomControlPoint = new Vector2(rect.LeftBottom.X - ((rect.LeftBottom.X - rect.BottomLeft.X) * ControlPointFactor),
+                                                     rect.LeftBottom.Y);
+            var bottomLeftControlPoint = new Vector2(rect.BottomLeft.X,
+                                                     rect.BottomLeft.Y + ((rect.LeftBottom.Y - rect.BottomLeft.Y) * ControlPointFactor));
+            // Bottom Left Curve
+            pathBuilder.AddCubicBezier(leftBottomControlPoint, bottomLeftControlPoint, rect.BottomLeft);
+
+
+            // Left line
+            pathBuilder.AddLine(rect.TopLeft);
+
+            // Upper-left corner
+            var topLeftControlPoint = new Vector2(rect.TopLeft.X,
+                                                  rect.TopLeft.Y - ((rect.TopLeft.Y - rect.LeftTop.Y) * ControlPointFactor));
+            var leftTopControlPoint = new Vector2(rect.LeftTop.X - ((rect.LeftTop.X - rect.TopLeft.X) * ControlPointFactor),
+                                                  rect.LeftTop.Y);
+            // Top Left Curve
+            pathBuilder.AddCubicBezier(topLeftControlPoint, leftTopControlPoint, rect.LeftTop);
 
             // End path
             pathBuilder.EndFigure(CanvasFigureLoop.Closed);

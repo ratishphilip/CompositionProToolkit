@@ -130,6 +130,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ColorShadow\ColorShadow.cs" />
     <Compile Include="FluidBanner\FluidBanner.cs" />
     <Compile Include="FluidProgressRing\FluidProgressRing.cs" />
     <Compile Include="FluidToggleSwitch\FluidToggleSwitch.cs" />
@@ -153,12 +154,9 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.10</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CompositionProToolkit\CompositionProToolkit.csproj">
-      <Project>{7e1b6899-a1fd-4799-9bf3-b56190e9be74}</Project>
-      <Name>CompositionProToolkit</Name>
-    </ProjectReference>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
+      <Version>2.0.1</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\Generic.xaml">
@@ -166,7 +164,12 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\CompositionProToolkit\CompositionProToolkit.csproj">
+      <Project>{7e1b6899-a1fd-4799-9bf3-b56190e9be74}</Project>
+      <Name>CompositionProToolkit</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

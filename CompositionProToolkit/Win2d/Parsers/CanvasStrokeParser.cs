@@ -24,14 +24,13 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 // 
 
 using System;
 using CompositionProToolkit.Win2d.Core;
 using CompositionProToolkit.Win2d.Geometry.Stroke;
 using Microsoft.Graphics.Canvas;
-using Win2dHelper.Win2d.Geometry.Stroke;
 
 namespace CompositionProToolkit.Win2d.Parsers
 {

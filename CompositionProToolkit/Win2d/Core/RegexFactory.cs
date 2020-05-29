@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 // 
 
 using System.Collections.Generic;
@@ -108,7 +108,7 @@ namespace CompositionProToolkit.Win2d.Core
         // CanvasPathFigure
         private static readonly string CanvasPathFigureRegexString =
             $"{MoveTo}" +                   // M x,y
-            $"(" +
+             "(" +
             $"{Line}+|" +                   // L x,y
             $"{HorizontalLine}+|" +         // H x
             $"{VerticalLine}+|" +           // V y
@@ -117,7 +117,7 @@ namespace CompositionProToolkit.Win2d.Core
             $"{CubicBezier}+|" +            // C x1,y1 x2,y2 x,y
             $"{SmoothCubicBezier}+|" +      // S x2,y2 x,y
             $"{Arc}+|" +                    // A radX, radY, angle, isLargeArc, sweepDirection, x, y
-            $")+" +
+             ")+" +
             $"{ClosePath}?";                // Close Path (Optional)
 
         // Fill Rule
@@ -139,13 +139,13 @@ namespace CompositionProToolkit.Win2d.Core
         // CanvasGeometry
         private static readonly string CanvasGeometryRegexString =
             $"{FillRule}?" +                // F0 or F1
-            $"(" +
+             "(" +
             $"{PathFigure}+|" +             // Path Figure
             $"{EllipseFigure}+|" +          // O radX, radY, centerX, centerY
             $"{PolygonFigure}+|" +          // P numSides, radius, centerX, centerY
             $"{RectangleFigure}+|" +        // R x, y, width, height
             $"{RoundedRectangleFigure}+" +  // U x, y, width, height, radiusX, radiusY
-            $")+";
+             ")+";
 
         #endregion
 

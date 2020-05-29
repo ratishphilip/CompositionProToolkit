@@ -24,11 +24,17 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit.Controls v1.0.1
 // 
 
+using CompositionProToolkit;
+using CompositionProToolkit.Expressions;
+using CompositionProToolkit.Win2d;
+using CompositionProToolkit.Win2d.Core;
+using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.Graphics.Canvas.Geometry;
 using System;
-using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -39,13 +45,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
-using CompositionProToolkit;
-using CompositionProToolkit.Expressions;
-using CompositionProToolkit.Win2d;
-using CompositionProToolkit.Win2d.Core;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Effects;
-using Microsoft.Graphics.Canvas.Geometry;
 
 namespace CompositionProToolkit.Controls
 {
@@ -158,6 +157,7 @@ namespace CompositionProToolkit.Controls
     /// <summary>
     /// Control which can be used for displaying images
     /// </summary>
+    [TemplatePart(Name = RenderBorder, Type = typeof(Border))]
     public sealed class ImageFrame : Control, IDisposable
     {
         #region Enums
@@ -185,6 +185,8 @@ namespace CompositionProToolkit.Controls
         #endregion
 
         #region Constants
+
+        private const string RenderBorder = "RenderBorder";
 
         private static readonly TimeSpan MinimumTransitionDuration = TimeSpan.FromMilliseconds(1);
         private static readonly TimeSpan DefaultTransitionDuration = TimeSpan.FromMilliseconds(700);
@@ -225,8 +227,9 @@ namespace CompositionProToolkit.Controls
         private CompositionAnimationGroup _zoomInAnimationGroup;
 
         private ImageEngineState _engineState;
-        private object _scheduledObject;
-        private object _currentObject;
+        private Uri _scheduledUri;
+        private Uri _currentUri;
+        private Border _renderBorder;
 
         #endregion
 
@@ -247,8 +250,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public AlignmentX AlignX
         {
-            get { return (AlignmentX)GetValue(AlignXProperty); }
-            set { SetValue(AlignXProperty, value); }
+            get => (AlignmentX)GetValue(AlignXProperty);
+            set => SetValue(AlignXProperty, value);
         }
 
         /// <summary>
@@ -288,8 +291,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public AlignmentY AlignY
         {
-            get { return (AlignmentY)GetValue(AlignYProperty); }
-            set { SetValue(AlignYProperty, value); }
+            get => (AlignmentY)GetValue(AlignYProperty);
+            set => SetValue(AlignYProperty, value);
         }
 
         /// <summary>
@@ -329,8 +332,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public bool DisplayShadow
         {
-            get { return (bool)GetValue(DisplayShadowProperty); }
-            set { SetValue(DisplayShadowProperty, value); }
+            get => (bool)GetValue(DisplayShadowProperty);
+            set => SetValue(DisplayShadowProperty, value);
         }
 
         /// <summary>
@@ -371,8 +374,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public Color FrameBackground
         {
-            get { return (Color)GetValue(FrameBackgroundProperty); }
-            set { SetValue(FrameBackgroundProperty, value); }
+            get => (Color)GetValue(FrameBackgroundProperty);
+            set => SetValue(FrameBackgroundProperty, value);
         }
 
         /// <summary>
@@ -412,8 +415,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public CanvasImageInterpolation Interpolation
         {
-            get { return (CanvasImageInterpolation)GetValue(InterpolationProperty); }
-            set { SetValue(InterpolationProperty, value); }
+            get => (CanvasImageInterpolation)GetValue(InterpolationProperty);
+            set => SetValue(InterpolationProperty, value);
         }
 
         /// <summary>
@@ -454,8 +457,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public bool OptimizeShadow
         {
-            get { return (bool)GetValue(OptimizeShadowProperty); }
-            set { SetValue(OptimizeShadowProperty, value); }
+            get => (bool)GetValue(OptimizeShadowProperty);
+            set => SetValue(OptimizeShadowProperty, value);
         }
 
         /// <summary>
@@ -495,8 +498,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public Color PlaceholderColor
         {
-            get { return (Color)GetValue(PlaceholderColorProperty); }
-            set { SetValue(PlaceholderColorProperty, value); }
+            get => (Color)GetValue(PlaceholderColorProperty);
+            set => SetValue(PlaceholderColorProperty, value);
         }
 
         /// <summary>
@@ -536,8 +539,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public Color PlaceholderBackground
         {
-            get { return (Color)GetValue(PlaceholderBackgroundProperty); }
-            set { SetValue(PlaceholderBackgroundProperty, value); }
+            get => (Color)GetValue(PlaceholderBackgroundProperty);
+            set => SetValue(PlaceholderBackgroundProperty, value);
         }
 
         /// <summary>
@@ -580,8 +583,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public bool RenderFast
         {
-            get { return (bool)GetValue(RenderFastProperty); }
-            set { SetValue(RenderFastProperty, value); }
+            get => (bool)GetValue(RenderFastProperty);
+            set => SetValue(RenderFastProperty, value);
         }
 
         #endregion
@@ -603,8 +606,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public bool RenderOptimized
         {
-            get { return (bool)GetValue(RenderOptimizedProperty); }
-            set { SetValue(RenderOptimizedProperty, value); }
+            get => (bool)GetValue(RenderOptimizedProperty);
+            set => SetValue(RenderOptimizedProperty, value);
         }
 
         /// <summary>
@@ -644,8 +647,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public double ShadowBlurRadius
         {
-            get { return (double)GetValue(ShadowBlurRadiusProperty); }
-            set { SetValue(ShadowBlurRadiusProperty, CoerceShadowBlurRadius(value)); }
+            get => (double)GetValue(ShadowBlurRadiusProperty);
+            set => SetValue(ShadowBlurRadiusProperty, CoerceShadowBlurRadius(value));
         }
 
         /// <summary>
@@ -698,8 +701,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public Color ShadowColor
         {
-            get { return (Color)GetValue(ShadowColorProperty); }
-            set { SetValue(ShadowColorProperty, value); }
+            get => (Color)GetValue(ShadowColorProperty);
+            set => SetValue(ShadowColorProperty, value);
         }
 
         /// <summary>
@@ -742,8 +745,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public double ShadowOffsetX
         {
-            get { return (double)GetValue(ShadowOffsetXProperty); }
-            set { SetValue(ShadowOffsetXProperty, value); }
+            get => (double)GetValue(ShadowOffsetXProperty);
+            set => SetValue(ShadowOffsetXProperty, value);
         }
 
         /// <summary>
@@ -786,8 +789,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public double ShadowOffsetY
         {
-            get { return (double)GetValue(ShadowOffsetYProperty); }
-            set { SetValue(ShadowOffsetYProperty, value); }
+            get => (double)GetValue(ShadowOffsetYProperty);
+            set => SetValue(ShadowOffsetYProperty, value);
         }
 
         /// <summary>
@@ -830,8 +833,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public double ShadowOpacity
         {
-            get { return (double)GetValue(ShadowOpacityProperty); }
-            set { SetValue(ShadowOpacityProperty, CoerceShadowOpacity(value)); }
+            get => (double)GetValue(ShadowOpacityProperty);
+            set => SetValue(ShadowOpacityProperty, CoerceShadowOpacity(value));
         }
 
         /// <summary>
@@ -887,8 +890,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public bool ShowPlaceholder
         {
-            get { return (bool)GetValue(ShowPlaceholderProperty); }
-            set { SetValue(ShowPlaceholderProperty, value); }
+            get => (bool)GetValue(ShowPlaceholderProperty);
+            set => SetValue(ShowPlaceholderProperty, value);
         }
 
         /// <summary>
@@ -929,8 +932,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public object Source
         {
-            get { return GetValue(SourceProperty); }
-            set { SetValue(SourceProperty, value); }
+            get => GetValue(SourceProperty);
+            set => SetValue(SourceProperty, value);
         }
 
         /// <summary>
@@ -979,8 +982,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public Stretch Stretch
         {
-            get { return (Stretch)GetValue(StretchProperty); }
-            set { SetValue(StretchProperty, value); }
+            get => (Stretch)GetValue(StretchProperty);
+            set => SetValue(StretchProperty, value);
         }
 
         /// <summary>
@@ -1016,13 +1019,13 @@ namespace CompositionProToolkit.Controls
 
         /// <summary>
         /// Gets or sets the TransitionDuration property. This dependency property 
-        /// indicates the duration of the crossfade animation for transitioning 
+        /// indicates the duration of the cross fade animation for transitioning 
         /// from one image to another.
         /// </summary>
         public TimeSpan TransitionDuration
         {
-            get { return (TimeSpan)GetValue(TransitionDurationProperty); }
-            set { SetValue(TransitionDurationProperty, CoerceTransitionDuration(value)); }
+            get => (TimeSpan)GetValue(TransitionDurationProperty);
+            set => SetValue(TransitionDurationProperty, CoerceTransitionDuration(value));
         }
 
         /// <summary>
@@ -1075,8 +1078,8 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         public TransitionModeType TransitionMode
         {
-            get { return (TransitionModeType)GetValue(TransitionModeProperty); }
-            set { SetValue(TransitionModeProperty, value); }
+            get => (TransitionModeType)GetValue(TransitionModeProperty);
+            set => SetValue(TransitionModeProperty, value);
         }
 
         #endregion
@@ -1118,8 +1121,8 @@ namespace CompositionProToolkit.Controls
             DataContext = null;
             Foreground = null;
             Background = null;
-            _scheduledObject = null;
-            _currentObject = null;
+            _scheduledUri = null;
+            _currentUri = null;
 
             // Clean up Composition Objects
             _imageSurface?.Dispose();
@@ -1173,7 +1176,7 @@ namespace CompositionProToolkit.Controls
             _scaleAnimation = null;
 
             // Dispose the generator at the end to allow the 
-            // dependant composition objects to unsubscribe from
+            // dependent composition objects to unsubscribe from
             // generator events
             _generator?.Dispose();
             _generator = null;
@@ -1182,6 +1185,16 @@ namespace CompositionProToolkit.Controls
         #endregion
 
         #region Overrides
+
+        /// <summary>
+        /// Called when the template is applied to the control
+        /// </summary>
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            _renderBorder = GetTemplateChild(RenderBorder) as Border;
+        }
 
         /// <summary>
         /// Handles the Measure pass during Layout
@@ -1262,7 +1275,7 @@ namespace CompositionProToolkit.Controls
 
             // Update the frameLayerMask in case the CornerRadius or 
             // BorderThickness or Padding has changed
-            var rect = new CanvasRoundRect(Vector2.Zero, frameSize, corners.ToVector4(), 
+            var rect = new CanvasRoundRect(Vector2.Zero, frameSize, corners.ToVector4(),
                 borders.ToVector4(), padding.ToVector4(), false);
 
             using (var pathBuilder = new CanvasPathBuilder(_generator.Device))
@@ -1493,7 +1506,10 @@ namespace CompositionProToolkit.Controls
             // Apply the mask effect to the frameLayer
             _frameLayer.Effect = _layerEffectBrush;
 
-            ElementCompositionPreview.SetElementChildVisual(this, _rootContainer);
+            if (_renderBorder != null)
+            {
+                ElementCompositionPreview.SetElementChildVisual(_renderBorder, _rootContainer);
+            }
         }
 
         /// <summary>
@@ -1604,13 +1620,14 @@ namespace CompositionProToolkit.Controls
         /// </summary>
         private async void ScheduleNextLoad()
         {
-            _scheduledObject = Source;
+            _scheduledUri = GetUriFromSource();
+
             switch (_engineState)
             {
                 case ImageEngineState.Idle:
                     _engineState = ImageEngineState.Loading;
                     // Load the image
-                    await LoadImageAsync(_scheduledObject, _frameLayer.Size.ToSize());
+                    await LoadImageAsync(_scheduledUri, _frameLayer.Size.ToSize());
                     break;
                 case ImageEngineState.Loading:
                     _engineState = ImageEngineState.Scheduled;
@@ -1621,29 +1638,46 @@ namespace CompositionProToolkit.Controls
         }
 
         /// <summary>
+        /// Converts the Source value to appropriate Uri object
+        /// </summary>
+        /// <returns>Uri</returns>
+        private Uri GetUriFromSource()
+        {
+            switch (Source)
+            {
+                case Uri uri:
+                    return uri;
+                case string uriString:
+                    // Try creating the Uri from the uriString
+                    return Uri.TryCreate(uriString, UriKind.RelativeOrAbsolute, out var imgUri) ? imgUri : null;
+                default:
+                    return null;
+            }
+        }
+
+        /// <summary>
         /// Loads an image asynchronously from the given object for the given size
         /// </summary>
-        /// <param name="scheduledObject">The next object to load</param>
+        /// <param name="scheduledUri">The next object to load</param>
         /// <param name="size">Render size of the image</param>
         /// <returns>Task</returns>
-        private async Task LoadImageAsync(object scheduledObject, Size size)
+        private async Task LoadImageAsync(Uri scheduledUri, Size size)
         {
             try
             {
-                bool raiseEvent;
+                bool raiseEvent = false;
                 // Does the ImageFrame contain no previously rendered image?
                 if (_imageSurface == null)
                 {
-                    // Since a new object is being loaded, ImageOpened event
-                    // must be raised on successful load 
+                    // Since a new object is being loaded, ImageOpened event must be raised on successful load 
                     raiseEvent = true;
                     // Show the placeholder, if required
                     DisplayPlaceHolder();
-                    // Create the ImageSurface and get the uri of the cached object
-                    var cachedUri = await LoadNextScheduledObject(scheduledObject, size, false);
+                    // Create the ImageSurface and get the latest Uri
+                    var latestUri = await LoadNextScheduledUriAsync(scheduledUri, size, false);
 
-                    // Object was successfully cached and loaded
-                    if ((cachedUri != null) && (_imageSurface != null))
+                    // Uri was successfully loaded
+                    if ((latestUri != null) && (_imageSurface != null))
                     {
                         // Set initial opacity to 0 so that the contentVisual can be faded in
                         _frameContentVisual.Opacity = 0;
@@ -1677,99 +1711,104 @@ namespace CompositionProToolkit.Controls
                 }
                 else
                 {
-                    var hashedUri = await ImageCache.GetHashedUriAsync(scheduledObject);
-                    // Check whether the object to load is same as the existing image
-                    // loaded in the ImageSurface
-                    if (_imageSurface.Uri.IsEqualTo(hashedUri))
+                    if (scheduledUri == null)
                     {
-                        // Since the Uri has not changed, no need to raise the ImageOpened event
-                        // Just resize the ImageSurface with the given imageOptions and
-                        // update the frameContentVisual's brush
-                        raiseEvent = false;
-                        _imageSurface.Resize(size, _imageOptions);
-                        // Update the surface brush based on the Stretch and Alignment options
-                        if (RenderFast)
-                        {
-                            // Use no animations to update alignment if we are rendering fast
-                            (_frameContentVisual.Brush as CompositionSurfaceBrush)?.UpdateSurfaceBrushOptions(Stretch,
-                                AlignX, AlignY);
-                        }
-                        else
-                        {
-                            // Update stretch and alignment using animation
-                            (_frameContentVisual.Brush as CompositionSurfaceBrush)?.UpdateSurfaceBrushOptions(Stretch,
-                                AlignX, AlignY, _alignXAnimation, _alignYAnimation);
-                        }
+                        // Clear the existing image
+                        ClearImageFrame();
                     }
                     else
                     {
-                        // Since a different Uri is being loaded, then ImageOpened event
-                        // must be raised on successful load
-                        raiseEvent = true;
-                        // Show the placeholder, if required
-                        DisplayPlaceHolder();
-
-                        // Create a temporary visual which loads the new Uri
-                        _nextVisualContent.Opacity = 0;
-                        // Load the object scheduled for load
-                        var cachedUri = await LoadNextScheduledObject(scheduledObject, size, true);
-
-                        // Object was successfully cached and loaded
-                        if (cachedUri != null)
+                        // Check whether the object to load is same as the existing image
+                        // loaded in the ImageSurface
+                        if (_imageSurface.Uri.IsEqualTo(scheduledUri))
                         {
-                            // Create the surface brush for the next image
-                            _nextSurfaceBrush = _compositor.CreateSurfaceBrush(_nextImageSurface.Surface);
+                            // Since the Uri has not changed, no need to raise the ImageOpened event
+                            // Just resize the ImageSurface with the given imageOptions and
+                            // update the frameContentVisual's brush
+                            _imageSurface.Resize(size, _imageOptions);
                             // Update the surface brush based on the Stretch and Alignment options
-                            _nextSurfaceBrush.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY);
-                            _nextVisualContent.Brush = _nextSurfaceBrush;
-
-                            // Report 100% progress
-                            ProgressHandler(100);
-
-                            // If we are rendering fast, then no need to animate.
+                            var frameBrush = (_frameContentVisual.Brush as CompositionSurfaceBrush);
                             if (RenderFast)
                             {
-                                _frameContentVisual.Opacity = 0;
-                                _nextVisualContent.Opacity = 1;
-                                // apply the new brush to the frameVisualContent
-                                _frameContentVisual.Brush = _nextSurfaceBrush;
-                                // Update the surface image
-                                _imageSurface = _nextImageSurface;
-                                // Make the frameVisualContent visible again
-                                _frameContentVisual.Opacity = 1;
-                                // Hide the placeholder
-                                HidePlaceholder();
-                                // Hide the nextVisualContent
-                                _nextVisualContent.Opacity = 0;
+                                // Use no animations to update alignment if we are rendering fast
+                                frameBrush?.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY);
                             }
                             else
                             {
-                                _compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
-                                    () =>
-                                    {
-                                        // Start transition animation
-                                        StartTransition(false);
-                                    },
-                                    () =>
-                                    {
-                                        // apply the new brush to the frameVisualContent
-                                        _frameContentVisual.Brush = _nextSurfaceBrush;
-                                        // Update the surface image
-                                        _imageSurface = _nextImageSurface;
-                                        // Make the frameVisualContent visible again
-                                        _frameContentVisual.Opacity = 1;
-                                        // Hide the placeholder
-                                        HidePlaceholder();
-                                        // Hide the nextVisualContent
-                                        _nextVisualContent.Opacity = 0;
-                                    });
+                                // Update stretch and alignment using animation
+                                frameBrush?.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY, _alignXAnimation, _alignYAnimation);
                             }
                         }
-                        // Caching or Loading of the object failed
                         else
                         {
-                            // Clear the existing image
-                            ClearImageFrame();
+                            // Since a different Uri is being loaded, then ImageOpened event
+                            // must be raised on successful load
+                            raiseEvent = true;
+                            // Show the placeholder, if required
+                            DisplayPlaceHolder();
+
+                            // Create a temporary visual which loads the new Uri
+                            _nextVisualContent.Opacity = 0;
+                            // Load the object scheduled for load
+                            var latestUri = await LoadNextScheduledUriAsync(scheduledUri, size, true);
+
+                            // Object was successfully cached and loaded
+                            if (latestUri != null)
+                            {
+                                // Create the surface brush for the next image
+                                _nextSurfaceBrush = _compositor.CreateSurfaceBrush(_nextImageSurface.Surface);
+                                // Update the surface brush based on the Stretch and Alignment options
+                                _nextSurfaceBrush.UpdateSurfaceBrushOptions(Stretch, AlignX, AlignY);
+                                _nextVisualContent.Brush = _nextSurfaceBrush;
+
+                                // Report 100% progress
+                                ProgressHandler(100);
+
+                                // If we are rendering fast, then no need to animate.
+                                if (RenderFast)
+                                {
+                                    _frameContentVisual.Opacity = 0;
+                                    _nextVisualContent.Opacity = 1;
+                                    // apply the new brush to the frameVisualContent
+                                    _frameContentVisual.Brush = _nextSurfaceBrush;
+                                    // Update the surface image
+                                    _imageSurface = _nextImageSurface;
+                                    // Make the frameVisualContent visible again
+                                    _frameContentVisual.Opacity = 1;
+                                    // Hide the placeholder
+                                    HidePlaceholder();
+                                    // Hide the nextVisualContent
+                                    _nextVisualContent.Opacity = 0;
+                                }
+                                else
+                                {
+                                    _compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
+                                        () =>
+                                        {
+                                            // Start transition animation
+                                            StartTransition(false);
+                                        },
+                                        () =>
+                                        {
+                                            // apply the new brush to the frameVisualContent
+                                            _frameContentVisual.Brush = _nextSurfaceBrush;
+                                            // Update the surface image
+                                            _imageSurface = _nextImageSurface;
+                                            // Make the frameVisualContent visible again
+                                            _frameContentVisual.Opacity = 1;
+                                            // Hide the placeholder
+                                            HidePlaceholder();
+                                            // Hide the nextVisualContent
+                                            _nextVisualContent.Opacity = 0;
+                                        });
+                                }
+                            }
+                            // Caching or Loading of the object failed
+                            else
+                            {
+                                // Clear the existing image
+                                ClearImageFrame();
+                            }
                         }
                     }
                 }
@@ -1784,18 +1823,144 @@ namespace CompositionProToolkit.Controls
                         });
                 }
             }
-            catch (IOException ex)
+            catch (Exception ex)
             {
                 // Notify to subscribers that loading of the image failed
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
                     {
-                        ImageFailed?.Invoke(this, new ImageFrameEventArgs(_currentObject, ex.ToString()));
+                        ImageFailed?.Invoke(this, new ImageFrameEventArgs(_currentUri, ex.ToString()));
                     });
             }
 
             // Update the engineState after load is completed
             PostLoadImage();
+        }
+
+        /// <summary>
+        /// Loads the Uri scheduled for load. If after loading there is another
+        /// Uri scheduled it loads that and keeps on repeating this until there
+        /// are no more Uris scheduled for load.
+        /// </summary>
+        /// <param name="nextUri">Object scheduled to be loaded in the ImageFrame</param>
+        /// <param name="size">Size of the ImageSurface</param>
+        /// <param name="isLoadingNext">Whether loading in the imageSurface or the 
+        /// nextImageSurface</param>
+        /// <returns>Uri</returns>
+        private async Task<Uri> LoadNextScheduledUriAsync(Uri nextUri, Size size, bool isLoadingNext)
+        {
+            bool loadNext;
+            Uri lastUri;
+
+            do
+            {
+                _currentUri = nextUri;
+
+                if (isLoadingNext)
+                {
+                    _nextImageSurface = await _generator.CreateImageSurfaceAsync(nextUri, size, _imageOptions);
+                }
+                else
+                {
+                    _imageSurface = await _generator.CreateImageSurfaceAsync(nextUri, size, _imageOptions);
+                }
+
+                if ((isLoadingNext && _nextImageSurface.Status == ImageSurfaceLoadStatus.Error)
+                    || (!isLoadingNext && _imageSurface.Status == ImageSurfaceLoadStatus.Error))
+                {
+                    // Notify to subscribers that loading of the image failed
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                        () =>
+                        {
+                            ImageFailed?.Invoke(this, new ImageFrameEventArgs(_currentUri, $"Failed to load image {_currentUri}"));
+                        });
+                }
+
+                // Report 99% progress
+                ProgressHandler(99);
+                lastUri = nextUri;
+
+                // Since the loading of the object takes some time, it could be possible
+                // that a new object has been scheduled for load. In that case, discard
+                // the current object and load the scheduled object
+                if (_engineState == ImageEngineState.Scheduled)
+                {
+                    loadNext = true;
+                    nextUri = _scheduledUri;
+                    _engineState = ImageEngineState.Loading;
+                }
+                else
+                {
+                    loadNext = false;
+                }
+            } while (loadNext);
+
+            return lastUri;
+        }
+
+        /// <summary>
+        /// Updates the state of the the ImageLoadEngine after loading an image
+        /// </summary>
+        private async void PostLoadImage()
+        {
+            switch (_engineState)
+            {
+                case ImageEngineState.Idle:
+                    // Do Nothing
+                    _scheduledUri = null;
+                    break;
+                case ImageEngineState.Loading:
+                    // Loading is complete. No image pending load.
+                    _engineState = ImageEngineState.Idle;
+                    _scheduledUri = null;
+                    // Now that the load has completed, Invalidate the Measure
+                    InvalidateMeasure();
+                    break;
+                case ImageEngineState.Scheduled:
+                    // New image waiting in the pipeline to be rendered.
+                    _engineState = ImageEngineState.Loading;
+                    // Load the image
+                    await LoadImageAsync(_scheduledUri, _frameLayer.Size.ToSize());
+                    break;
+            }
+        }
+
+        private void ClearImageFrame()
+        {
+            // Clear the progress in the Placeholder
+            ProgressHandler(-1);
+
+            if (RenderFast)
+            {
+                // Make the frameVisualContent transparent
+                _frameContentVisual.Brush = _compositor.CreateColorBrush(Colors.Transparent);
+                // Dispose the ImageSurface
+                _imageSurface?.Dispose();
+                _imageSurface = null;
+                // Engine is now idle
+                _engineState = ImageEngineState.Idle;
+            }
+            else
+            {
+                _compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
+                    () =>
+                    {
+                        // Fade out the frameVisualContent
+                        _frameContentVisual.StartAnimation(() => _frameContentVisual.Opacity, _fadeOutAnimation);
+                    },
+                    () =>
+                    {
+                        // Make the frameVisualContent transparent
+                        _frameContentVisual.Brush = _compositor.CreateColorBrush(Colors.Transparent);
+                        //await _imageSurface.RedrawAsync(cachedUri, size, _imageOptions);
+                        _frameContentVisual.Opacity = 1;
+                        // Dispose the ImageSurface
+                        _imageSurface?.Dispose();
+                        _imageSurface = null;
+                        // Engine is now idle
+                        _engineState = ImageEngineState.Idle;
+                    });
+            }
         }
 
         /// <summary>
@@ -1861,123 +2026,6 @@ namespace CompositionProToolkit.Controls
 
             // Fade out the previous content (if any)
             prevContent?.StartAnimation(() => prevContent.Opacity, _fadeOutAnimation);
-        }
-
-        /// <summary>
-        /// Loads the Uri scheduled for load. If after loading there is another
-        /// Uri scheduled it loads that and keeps on repeating this until there
-        /// are no more Uris scheduled for load.
-        /// </summary>
-        /// <param name="objectToLoad">Object scheduled to be loaded in the ImageFrame</param>
-        /// <param name="size">Size of the ImageSurface</param>
-        /// <param name="isLoadingNext">Whether loading in the imageSurface or the 
-        /// nextImageSurface</param>
-        /// <returns>Uri</returns>
-        private async Task<Uri> LoadNextScheduledObject(object objectToLoad, Size size, bool isLoadingNext)
-        {
-            bool loadNext;
-            Uri cachedUri;
-
-            do
-            {
-                _currentObject = objectToLoad;
-                cachedUri = await ImageCache.GetCachedUriAsync(objectToLoad, ProgressHandler);
-
-                // Load the new uri
-                if (isLoadingNext)
-                {
-                    _nextImageSurface =
-                                    await _generator.CreateImageSurfaceAsync(cachedUri, size, _imageOptions);
-                }
-                else
-                {
-                    _imageSurface = await _generator.CreateImageSurfaceAsync(cachedUri, size, _imageOptions);
-                }
-
-                // Report 99% progress
-                ProgressHandler(99);
-
-                // Since the loading of the object takes some time, it could be possible
-                // that a new object has been scheduled for load. In that case, discard
-                // the current object and load the scheduled object
-                if (_engineState == ImageEngineState.Scheduled)
-                {
-                    loadNext = true;
-                    objectToLoad = _scheduledObject;
-                    _engineState = ImageEngineState.Loading;
-                }
-                else
-                {
-                    loadNext = false;
-                }
-            } while (loadNext);
-
-            return cachedUri;
-        }
-
-        private void ClearImageFrame()
-        {
-            // Clear the progress in the Placeholder
-            ProgressHandler(-1);
-
-            if (RenderFast)
-            {
-                // Make the frameVisualContent transparent
-                _frameContentVisual.Brush = _compositor.CreateColorBrush(Colors.Transparent);
-                // Dispose the ImageSurface
-                _imageSurface?.Dispose();
-                _imageSurface = null;
-                // Engine is now idle
-                _engineState = ImageEngineState.Idle;
-            }
-            else
-            {
-                _compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
-                    () =>
-                    {
-                        // Fade out the frameVisualContent
-                        _frameContentVisual.StartAnimation(() => _frameContentVisual.Opacity, _fadeOutAnimation);
-                    },
-                    () =>
-                    {
-                        // Make the frameVisualContent transparent
-                        _frameContentVisual.Brush = _compositor.CreateColorBrush(Colors.Transparent);
-                        //await _imageSurface.RedrawAsync(cachedUri, size, _imageOptions);
-                        _frameContentVisual.Opacity = 1;
-                        // Dispose the ImageSurface
-                        _imageSurface?.Dispose();
-                        _imageSurface = null;
-                        // Engine is now idle
-                        _engineState = ImageEngineState.Idle;
-                    });
-            }
-        }
-
-        /// <summary>
-        /// Updates the state of the the ImageLoadEngine after loading an image
-        /// </summary>
-        private async void PostLoadImage()
-        {
-            switch (_engineState)
-            {
-                case ImageEngineState.Idle:
-                    // Do Nothing
-                    _scheduledObject = null;
-                    break;
-                case ImageEngineState.Loading:
-                    // Loading is complete. No image pending load.
-                    _engineState = ImageEngineState.Idle;
-                    _scheduledObject = null;
-                    // Now that the load has completed, Invalidate the Measure
-                    InvalidateMeasure();
-                    break;
-                case ImageEngineState.Scheduled:
-                    // New image waiting in the pipeline to be rendered.
-                    _engineState = ImageEngineState.Loading;
-                    // Load the image
-                    await LoadImageAsync(_scheduledObject, _frameLayer.Size.ToSize());
-                    break;
-            }
         }
 
         /// <summary>

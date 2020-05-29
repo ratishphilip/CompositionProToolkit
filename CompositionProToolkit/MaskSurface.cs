@@ -24,10 +24,11 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 // 
 
 using System;
+using System.Numerics;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Microsoft.Graphics.Canvas.Geometry;
@@ -54,18 +55,27 @@ namespace CompositionProToolkit
         /// Gets the Composition Generator
         /// </summary>
         public ICompositionGenerator Generator => _generator;
+
         /// <summary>
         /// Gets the Surface of MaskSurface
         /// </summary>
         public ICompositionSurface Surface => _surface;
+        
         /// <summary>
         /// Gets the Geometry of the MaskSurface
         /// </summary>
         public CanvasGeometry Geometry { get; private set; }
+        
         /// <summary>
         /// Gets the Size of the MaskSurface
         /// </summary>
         public Size Size { get; private set; }
+
+        /// <summary>
+        /// Gets the offset from the top left corner of the ICompositionSurface where
+        /// the Geometry is rendered.
+        /// </summary>
+        public Vector2 Offset { get; private set; }
 
         #endregion
 
@@ -77,11 +87,14 @@ namespace CompositionProToolkit
         /// <param name="generator">ICompositionMaskGeneratorInternal object</param>
         /// <param name="size">Size of the MaskSurface</param>
         /// <param name="geometry">Geometry of the MaskSurface</param>
-        public MaskSurface(ICompositionGeneratorInternal generator, Size size, CanvasGeometry geometry)
+        /// <param name="offset">The offset from the top left corner of the ICompositionSurface where
+        /// the Geometry is rendered.</param>
+        public MaskSurface(ICompositionGeneratorInternal generator, Size size, CanvasGeometry geometry, Vector2 offset)
         {
             _generator = generator ?? throw new ArgumentNullException(nameof(generator), "CompositionGenerator cannot be null!");
             _surfaceLock = new object();
             Geometry = geometry;
+            Offset = offset;
             // Create Mask Surface
             _surface = _generator.CreateDrawingSurface(_surfaceLock, size);
             // Set the size
@@ -100,7 +113,7 @@ namespace CompositionProToolkit
         public void Redraw()
         {
             // Redraw the mask surface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -109,10 +122,18 @@ namespace CompositionProToolkit
         /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
         public void Redraw(CanvasGeometry geometry)
         {
-            // Set the new geometry
-            Geometry = geometry;
-            // Redraw the mask surface
-            RedrawSurfaceInternal();
+            Redraw(Size, geometry, Offset);
+        }
+
+        /// <summary>
+        /// Redraws the IMaskSurface with the new geometry
+        /// </summary>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IMaskSurface</param>
+        /// <param name="offset">The offset from the top left corner of the ICompositionSurface where
+        /// the Geometry is rendered.</param>
+        public void Redraw(CanvasGeometry geometry, Vector2 offset)
+        {
+            Redraw(Size, geometry, offset);
         }
 
         /// <summary>
@@ -125,14 +146,33 @@ namespace CompositionProToolkit
         /// <param name="geometry">New CanvasGeometry to be applied to the mask</param>
         public void Redraw(Size size, CanvasGeometry geometry)
         {
-            // Resize the mask surface
-            _generator.ResizeDrawingSurface(_surfaceLock, _surface, size);
-            // Set the size
-            Size = _surface?.Size ?? new Size(0, 0);
+            Redraw(size, geometry, Offset);
+        }
+
+        /// <summary>
+        /// Resizes the IMaskSurface with the given size and redraws the IMaskSurface
+        /// with the new geometry and fills it with White color
+        /// </summary>
+        /// <param name="size">New size of the mask</param>
+        /// <param name="geometry">New CanvasGeometry to be applied to the IMaskSurface</param>
+        /// <param name="offset">The offset from the top left corner of the ICompositionSurface where
+        /// the Geometry is rendered.</param>
+        public void Redraw(Size size, CanvasGeometry geometry, Vector2 offset)
+        {
+            if (Size != size)
+            {
+                // Resize the mask surface
+                _generator.ResizeDrawingSurface(_surfaceLock, _surface, size);
+                // Set the size
+                Size = _surface?.Size ?? new Size(0, 0);
+            }
+
             // Set the new geometry
             Geometry = geometry;
+            // Set the offset
+            Offset = offset;
             // Redraw the mask surface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -146,7 +186,7 @@ namespace CompositionProToolkit
             // Set the size
             Size = _surface?.Size ?? new Size(0, 0);
             // Redraw the mask surface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -156,11 +196,11 @@ namespace CompositionProToolkit
         {
             _surface?.Dispose();
             Geometry?.Dispose();
+            Geometry = null;
             if (_generator != null)
                 _generator.DeviceReplaced -= OnDeviceReplaced;
             _surface = null;
             _generator = null;
-            Geometry = null;
         }
 
         #endregion
@@ -177,7 +217,7 @@ namespace CompositionProToolkit
             // Recreate the MaskSurface
             _surface = _generator.CreateDrawingSurface(_surfaceLock, Size);
             // Redraw the mask surface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         #endregion
@@ -187,9 +227,9 @@ namespace CompositionProToolkit
         /// <summary>
         /// Helper class to redraw the MaskSurface
         /// </summary>
-        private void RedrawSurfaceInternal()
+        private void RedrawSurface()
         {
-            _generator.RedrawMaskSurface(_surfaceLock, _surface, Size, Geometry);
+            _generator.RedrawMaskSurface(_surfaceLock, _surface, Size, Geometry, Offset);
         }
 
         #endregion

@@ -47,19 +47,19 @@
 @echo.
 @msbuild CompositionProToolkit.Controls\CompositionProToolkit.Controls.csproj /p:Configuration="Release" /p:Platform="x86"
 
-@echo.
-@echo ===== Building CompositionProToolkit.Controls.dll (x64) =====
-@echo.
-@msbuild CompositionProToolkit.Controls\CompositionProToolkit.Controls.csproj /p:Configuration="Release" /p:Platform="x64"
+@REM @echo.
+@REM @echo ===== Building CompositionProToolkit.Controls.dll (x64) =====
+@REM @echo.
+@REM @msbuild CompositionProToolkit.Controls\CompositionProToolkit.Controls.csproj /p:Configuration="Release" /p:Platform="x64"
 
-@echo.
-@echo ===== Building CompositionProToolkit.Controls.dll (ARM) =====
-@echo.
-@msbuild CompositionProToolkit.Controls\CompositionProToolkit.Controls.csproj /p:Configuration="Release" /p:Platform="ARM"
+@REM @echo.
+@REM @echo ===== Building CompositionProToolkit.Controls.dll (ARM) =====
+@REM @echo.
+@REM @msbuild CompositionProToolkit.Controls\CompositionProToolkit.Controls.csproj /p:Configuration="Release" /p:Platform="ARM"
 
-@echo.
-@echo ===== Building CompositionProToolkit.Controls.dll (AnyCPU) =====
-@echo.
+@REM @echo.
+@REM @echo ===== Building CompositionProToolkit.Controls.dll (AnyCPU) =====
+@REM @echo.
 
 @REM Create a copy of the x86 CompositionProToolkit.dll and remove the 32-bit flag to make it AnyCPU
 @if not exist "CompositionProToolkit.Controls\bin\AnyCPU\Release\NUL" mkdir "CompositionProToolkit.Controls\bin\AnyCPU\Release"

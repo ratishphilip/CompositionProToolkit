@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit.Controls v1.0.1
 // 
 
 using System;
@@ -64,8 +64,7 @@ namespace CompositionProToolkit.Controls
             }
 
             // Is the objectToCache a string representing a Uri?
-            var uriString = objectToCache as string;
-            if (uriString != null)
+            if (objectToCache is string uriString)
             {
                 // Try creating the Uri from the uriString
                 if (Uri.TryCreate(uriString, UriKind.RelativeOrAbsolute, out uri))
@@ -94,8 +93,7 @@ namespace CompositionProToolkit.Controls
             if (uri == null)
             {
                 // Is the objectToCache a string representing a Uri?
-                var uriString = objectToCache as string;
-                if (uriString != null)
+                if (objectToCache is string uriString)
                 {
                     // Try creating the Uri from the uriString
                     if (!(Uri.TryCreate(uriString, UriKind.RelativeOrAbsolute, out uri)))

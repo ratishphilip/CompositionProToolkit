@@ -24,70 +24,84 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit.Controls v1.0.1
 // 
 
+using CompositionProToolkit.Expressions;
+using CompositionProToolkit.Win2d;
+using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
-using CompositionProToolkit.Expressions;
-using CompositionProToolkit.Win2d;
-using Microsoft.Graphics.Canvas.Geometry;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Markup;
 
 namespace CompositionProToolkit.Controls
 {
     /// <summary>
     /// Represents a switch that can be toggled between two states.
     /// </summary>
-    [WebHostHidden]
-    [TemplatePart(Name = "PART_Border", Type = typeof(Border))]
-    public class FluidToggleSwitch : ToggleButton
+    [ContentProperty(Name = ContentHeader)]
+    [TemplatePart(Name = LayoutRoot, Type = typeof(Grid))]
+    [TemplatePart(Name = InteractionGrid, Type = typeof(Grid))]
+    [TemplatePart(Name = RenderGrid, Type = typeof(Grid))]
+    [TemplatePart(Name = HeaderContentPresenter, Type = typeof(ContentPresenter))]
+    public class FluidToggleSwitch : Control
     {
         #region Constants
 
-        private const float DefaultBaseWidth = 216f;
+        private const string ContentHeader = "Header";
+        private const string LayoutRoot = "LayoutRoot";
+        private const string InteractionGrid = "InteractionGrid";
+        private const string RenderGrid = "RenderGrid";
+        private const string HeaderContentPresenter = "HeaderContentPresenter";
+
+        private const float DefaultBaseWidth = 206f;
         private const float DefaultBaseHeight = 128f;
         private const float DefaultBaseCornerRadius = 64f;
-        private const float DefaultTrackWidth = 200f;
+        private const float DefaultTrackWidth = 190f;
         private const float DefaultTrackHeight = 112f;
         private const float DefaultTrackCornerRadius = 56f;
-        private const float DefaultThumbRadius = 60f;
-        private const float DefaultInnerThumbRadius = 56f;
+        private const float DefaultThumbRadius = 48f;
+        private const float DefaultInnerThumbRadius = 40f;
 
-        private const float DefaultShadowBlurRadius = 16f;
-        private const float ActiveTrackDarkFactor = 0.1f;
-        private const float InactiveTrackDarkFactor = 0.075f;
-        private const float DisabledTrackDarkFactor = 0.1f;
-        private const float DisabledThumbLightFactor = 0.5f;
+        private const float DefaultShadowBlurRadius = 20f;
+        private const float ActiveTrackLightFactor = 0.0f;
+        private const float ActiveTrackDarkFactor = 0.0f;
+        private const float InactiveTrackLightFactor = 0.1f;
+        private const float InactiveTrackDarkFactor = 0.01f;
+        private const float DisabledTrackLightFactor = 0.2f;
+        private const float DisabledTrackDarkFactor = 0.075f;
+        private const float DisabledThumbDarkFactor = 0.4f;
+        private const float InnerThumbDarkFactor = 0.02f;
         private const float EnabledShadowDarkFactor = 0.8f;
-        private const float DisabledShadowLightFactor = 0.2f;
-        private const float BloomStrokeDarkFactor = 0.4f;
-        private const float DropShadowOpacity = 0.99f;
-        private const float BaseBloomTargetScaleFactor = 1.1f;
-        private const float TrackBloomTargetScaleFactor = 1.1f;
+        private const float DisabledShadowDarkFactor = 0.6f;
+        private const float DropShadowOpacity = 0.7f;
 
         private static readonly Vector2 DefaultBaseSize = new Vector2(DefaultBaseWidth, DefaultBaseHeight);
         private static readonly Vector2 DefaultTrackSize = new Vector2(DefaultTrackWidth, DefaultTrackHeight);
         private static readonly Vector2 DefaultThumbSize = new Vector2(DefaultThumbRadius * 2, DefaultThumbRadius * 2);
         private static readonly Vector2 DefaultInnerThumbSize = new Vector2(DefaultInnerThumbRadius * 2, DefaultInnerThumbRadius * 2);
         private static readonly Vector3 DefaultTrackOffset = new Vector3(8f, 8f, 0f);
-        private static readonly Vector3 DefaultInnerThumbOffset = new Vector3(4f, 4f, 0f);
-        private static readonly Vector3 DefaultThumbCheckedOffset = new Vector3(92f, 4f, 0f);
-        private static readonly Vector3 DefaultThumbUncheckedOffset = new Vector3(4f, 4f, 0f);
-        private static readonly Vector3 DefaultShadowCheckedOffset = new Vector3(4f, 4f, 0f);
-        private static readonly Vector3 DefaultShadowUncheckedOffset = new Vector3(-4f, 4f, 0f);
-        private static readonly Color DefaultActiveColor = CanvasObject.CreateColor("#4cd964");
-        private static readonly Color DefaultInactiveColor = CanvasObject.CreateColor("#dfdfdf");
-        private static readonly Color DefaultDisabledColor = CanvasObject.CreateColor("#eaeaea");
-        private static readonly TimeSpan DefaultAnimationDuration = TimeSpan.FromMilliseconds(200);
-        private static readonly TimeSpan DefaultTrackBloomAnimationDuration = TimeSpan.FromMilliseconds(180);
+        private static readonly Vector3 DefaultInnerThumbOffset = new Vector3(8f, 8f, 0f);
+        private static readonly Vector3 DefaultThumbCheckedOffset = new Vector3(94f, 16f, 0f);
+        private static readonly Vector3 DefaultThumbUncheckedOffset = new Vector3(16f, 16f, 0f);
+        private static readonly Vector3 DefaultShadowCheckedOffset = new Vector3(-8f, 0f, 0f);
+        private static readonly Vector3 DefaultShadowUncheckedOffset = new Vector3(8f, 0f, 0f);
+        private static readonly Vector3 DefaultShadowDisabledOffset = new Vector3(0f, 0f, 0f);
+        private static readonly Color DefaultActiveColor = CanvasObject.CreateColor("#007aff");
+        //private static readonly Color DefaultActiveColor = CanvasObject.CreateColor("#4cd964");
+        private static readonly Color DefaultInactiveColor = CanvasObject.CreateColor("#bfbfbf");
+        private static readonly Color DefaultDarkThemeInactiveColor = CanvasObject.CreateColor("#4b4b4b");
+        private static readonly Color DefaultDisabledColor = CanvasObject.CreateColor("#bfbfbf");
+        private static readonly TimeSpan DefaultAnimationDuration = TimeSpan.FromMilliseconds(300);
+        private static readonly TimeSpan DefaultOnBloomAnimationDuration = TimeSpan.FromMilliseconds(320);
+        private static readonly TimeSpan DefaultOffBloomAnimationDuration = TimeSpan.FromMilliseconds(280);
 
         #endregion
 
@@ -95,6 +109,8 @@ namespace CompositionProToolkit.Controls
 
         private Compositor _compositor;
         private ICompositionGenerator _generator;
+
+        private bool _isDarkTheme = false;
         private Color _baseActiveColor;
         private Color _baseInactiveColor;
         private Color _baseDisabledColor;
@@ -107,45 +123,200 @@ namespace CompositionProToolkit.Controls
         private Color _thumbInactiveColor;
         private Color _thumbDisabledColor;
 
+        private Color _innerThumbActiveColor;
+        private Color _innerThumbInactiveColor;
+
+        private SpriteVisual _rootVisual;
         private SpriteVisual _baseVisual;
         private SpriteVisual _trackVisual;
         private SpriteVisual _thumbVisual;
         private SpriteVisual _innerThumbVisual;
-        private SpriteVisual _baseBloomVisual;
-        private SpriteVisual _trackBloomVisual;
+        private SpriteVisual _bloomVisual;
+        private SpriteVisual _onBloomVisual;
+        private SpriteVisual _offBloomVisual;
 
-        private CompositionColorBrush _baseColorBrush;
-        private CompositionColorBrush _trackColorBrush;
-        private IMaskSurface _baseMask;
-        private IMaskSurface _trackMask;
+        private IGeometrySurface _baseSurface;
+        private IGeometrySurface _trackSurface;
         private IGeometrySurface _thumbSurface;
         private IGeometrySurface _innerThumbSurface;
         private CanvasGeometry _baseGeometry;
         private CanvasGeometry _trackGeometry;
-        private IGeometrySurface _baseBloomSurface;
-        private IGeometrySurface _trackBloomSurface;
-        private CompositionSurfaceBrush _baseBloomBrush;
-        private CompositionSurfaceBrush _trackBloomBrush;
-        private CompositionMaskBrush _baseBloomMaskBrush;
-        private CompositionMaskBrush _trackBloomMaskBrush;
+        private IGeometrySurface _onBloomSurface;
+        private IGeometrySurface _offBloomSurface;
 
         private Vector3 _thumbCheckedOffset;
         private Vector3 _thumbUncheckedOffset;
         private Vector3 _shadowCheckedOffset;
         private Vector3 _shadowUncheckedOffset;
+        private Vector3 _bloomCenterOffset;
 
         private ImplicitAnimationCollection _thumbImplicitAnimation;
         private ImplicitAnimationCollection _thumbShadowImplicitAnimation;
-        private ImplicitAnimationCollection _colorImplicitAnimation;
-        private KeyFrameAnimation<Vector2> _bloomAnimation;
-        private KeyFrameAnimation<Vector2> _trackBloomAnimation;
+        private KeyFrameAnimation<Vector2> _onBloomAnimation;
+        private KeyFrameAnimation<Vector2> _offBloomAnimation;
         private DropShadow _dropShadow;
 
-        private Border _outerBorder;
+        private Grid _rootGrid;
+        private Grid _interactionGrid;
+        private Grid _renderGrid;
+        private ContentPresenter _headerContentPresenter;
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// This event is fired when On/Off state changes for FluidToggleSwitch.
+        /// </summary>
+        public event RoutedEventHandler Toggled;
 
         #endregion
 
         #region Dependency Properties
+
+        #region Header
+
+        /// <summary>
+        /// Header Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty HeaderProperty =
+            DependencyProperty.Register("Header", typeof(object), typeof(FluidToggleSwitch),
+                new PropertyMetadata(null, OnHeaderChanged));
+
+        /// <summary>
+        /// Gets or sets the content to display as the FluidToggleSwitch Header.
+        /// </summary>
+        public object Header
+        {
+            get => GetValue(HeaderProperty);
+            set => SetValue(HeaderProperty, value);
+        }
+
+        /// <summary>
+        /// Handles changes to the Header property.
+        /// </summary>
+        /// <param name="d">FluidToggleSwitch</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnHeaderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var target = (FluidToggleSwitch)d;
+            target.OnHeaderChanged();
+        }
+
+        /// <summary>
+        /// Handles changes to the Header property.
+        /// </summary>
+        private void OnHeaderChanged()
+        {
+            if (_headerContentPresenter == null)
+            {
+                return;
+            }
+
+            _headerContentPresenter.Visibility = Header == null ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        #endregion
+
+        #region HeaderTemplate
+
+        /// <summary>
+        /// HeaderTemplate Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty HeaderTemplateProperty =
+            DependencyProperty.Register("HeaderTemplate", typeof(DataTemplate), typeof(FluidToggleSwitch),
+                new PropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the template used for displaying the Header.
+        /// </summary>
+        public DataTemplate HeaderTemplate
+        {
+            get => (DataTemplate)GetValue(HeaderTemplateProperty);
+            set => SetValue(HeaderTemplateProperty, value);
+        }
+
+        #endregion
+
+        #region OffContent
+
+        /// <summary>
+        /// OffContent Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty OffContentProperty =
+            DependencyProperty.Register("OffContent", typeof(object), typeof(FluidToggleSwitch),
+                new PropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the content to display when the ToggleSwitch is in Off state.
+        /// </summary>
+        public object OffContent
+        {
+            get => GetValue(OffContentProperty);
+            set => SetValue(OffContentProperty, value);
+        }
+
+        #endregion
+
+        #region OffContentTemplate
+
+        /// <summary>
+        /// OffContentTemplate Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty OffContentTemplateProperty =
+            DependencyProperty.Register("OffContentTemplate", typeof(DataTemplate), typeof(FluidToggleSwitch),
+                new PropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the template used to display the Off content.
+        /// </summary>
+        public DataTemplate OffContentTemplate
+        {
+            get => (DataTemplate)GetValue(OffContentTemplateProperty);
+            set => SetValue(OffContentTemplateProperty, value);
+        }
+
+        #endregion
+
+        #region OnContent
+
+        /// <summary>
+        /// OnContent Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty OnContentProperty =
+            DependencyProperty.Register("OnContent", typeof(object), typeof(FluidToggleSwitch),
+                new PropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the content to display when the ToggleSwitch is in On state.
+        /// </summary>
+        public object OnContent
+        {
+            get => GetValue(OnContentProperty);
+            set => SetValue(OnContentProperty, value);
+        }
+
+        #endregion
+
+        #region OnContentTemplate
+
+        /// <summary>
+        /// OnContentTemplate Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty OnContentTemplateProperty =
+            DependencyProperty.Register("OnContentTemplate", typeof(DataTemplate), typeof(FluidToggleSwitch),
+                new PropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the template used to display the On content.
+        /// </summary>
+        public DataTemplate OnContentTemplate
+        {
+            get => (DataTemplate)GetValue(OnContentTemplateProperty);
+            set => SetValue(OnContentTemplateProperty, value);
+        }
+
+        #endregion
 
         #region ActiveColor
 
@@ -157,8 +328,7 @@ namespace CompositionProToolkit.Controls
                 new PropertyMetadata(DefaultActiveColor, OnActiveColorChanged));
 
         /// <summary>
-        /// Gets or sets the ActiveColor property. This dependency property 
-        /// indicates the color of the FluidToggleSwitch in Checked state.
+        /// Gets or sets the color of the FluidToggleSwitch in Checked state.
         /// </summary>
         public Color ActiveColor
         {
@@ -198,8 +368,7 @@ namespace CompositionProToolkit.Controls
                 new PropertyMetadata(DefaultInactiveColor, OnInactiveColorChanged));
 
         /// <summary>
-        /// Gets or sets the InactiveColor property. This dependency property 
-        /// indicates the color of the FluidToggleSwitch in Checked state.
+        /// Gets or sets the color of the FluidToggleSwitch in Checked state.
         /// </summary>
         public Color InactiveColor
         {
@@ -229,6 +398,46 @@ namespace CompositionProToolkit.Controls
 
         #endregion
 
+        #region DarkThemeInactiveColor
+
+        /// <summary>
+        /// DarkThemeInactiveColor Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty DarkThemeInactiveColorProperty =
+            DependencyProperty.Register("DarkThemeInactiveColor", typeof(Color), typeof(FluidToggleSwitch),
+                new PropertyMetadata(DefaultDarkThemeInactiveColor, OnDarkThemeInactiveColorChanged));
+
+        /// <summary>
+        /// Gets or sets the color of the FluidToggleSwitch in Checked state.
+        /// </summary>
+        public Color DarkThemeInactiveColor
+        {
+            get => (Color)GetValue(DarkThemeInactiveColorProperty);
+            set => SetValue(DarkThemeInactiveColorProperty, value);
+        }
+
+        /// <summary>
+        /// Handles changes to the DarkThemeInactiveColor property.
+        /// </summary>
+        /// <param name="d">FluidToggleSwitch</param>
+        /// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnDarkThemeInactiveColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var toggleSwitch = (FluidToggleSwitch)d;
+            toggleSwitch.OnDarkThemeInactiveColorChanged();
+        }
+
+        /// <summary>
+        /// Provides the class instance an opportunity to handle changes to the DarkThemeInactiveColor property.
+        /// </summary>
+        private void OnDarkThemeInactiveColorChanged()
+        {
+            UpdateColors();
+            InvalidateArrange();
+        }
+
+        #endregion
+
         #region DisabledColor
 
         /// <summary>
@@ -239,8 +448,7 @@ namespace CompositionProToolkit.Controls
                 new PropertyMetadata(DefaultDisabledColor, OnDisabledColorChanged));
 
         /// <summary>
-        /// Gets or sets the DisabledColor property. This dependency property 
-        /// indicates the color of the FluidToggleSwitch in Checked state.
+        /// Gets or sets the color of the FluidToggleSwitch in Checked state.
         /// </summary>
         public Color DisabledColor
         {
@@ -270,6 +478,88 @@ namespace CompositionProToolkit.Controls
 
         #endregion
 
+        #region IsOn
+
+        /// <summary>
+        /// IsOn Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty IsOnProperty =
+            DependencyProperty.Register("IsOn", typeof(bool), typeof(FluidToggleSwitch),
+                new PropertyMetadata(false, OnIsOnChanged));
+
+        /// <summary>
+        /// Gets or sets whether the FluidToggleSwitch is in On state.
+        /// </summary>
+        public bool IsOn
+        {
+            get => (bool)GetValue(IsOnProperty);
+            set => SetValue(IsOnProperty, value);
+        }
+
+        /// <summary>
+        /// Handles changes to the IsOn property.
+        /// </summary>
+        /// <param name="d">FluidToggleSwitch</param>
+		/// <param name="e">DependencyProperty changed event arguments</param>
+        private static void OnIsOnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue == null || e.NewValue == e.OldValue)
+            {
+                return;
+            }
+
+            var target = (FluidToggleSwitch)d;
+            target.OnToggleStateChanged();
+        }
+
+        #endregion
+
+        #region TargetVisibility
+
+        /// <summary>
+        /// TargetVisibility Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty TargetVisibilityProperty =
+            DependencyProperty.Register("TargetVisibility", typeof(Visibility), typeof(FluidToggleSwitch),
+                new PropertyMetadata(Visibility.Collapsed));
+
+        /// <summary>
+        /// <para>Converts the IsOn property to Visibility. This property can be bound to a control's
+        /// Visibility property to make it Visible when the IsOn is true and Collapsed when IsOn is false.</para>
+        /// <para>When IsOn is True, this property returns Visibility.Visible.</para>
+        /// <para>When IsOn is False, this property returns Visibility.Collapsed.</para>
+        /// </summary>
+        public Visibility TargetVisibility
+        {
+            get => (Visibility)GetValue(TargetVisibilityProperty);
+            private set => SetValue(TargetVisibilityProperty, value);
+        }
+
+        #endregion
+
+        #region InverseTargetVisibility
+
+        /// <summary>
+        /// InverseTargetVisibility Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty InverseTargetVisibilityProperty =
+            DependencyProperty.Register("InverseTargetVisibility", typeof(Visibility), typeof(FluidToggleSwitch),
+                new PropertyMetadata(Visibility.Visible));
+
+        /// <summary>
+        /// <para>Returns the inverse of the TargetVisibility property. This property can be bound to a control's
+        /// Visibility property to make it Collapsed when the IsOn is true and Visible when IsOn is false.</para>
+        /// <para>When IsOn is True, this property returns Visibility.Collapsed.</para>
+        /// <para>When IsOn is False, this property returns Visibility.Visible.</para>
+        /// </summary>
+        public Visibility InverseTargetVisibility
+        {
+            get => (Visibility)GetValue(InverseTargetVisibilityProperty);
+            private set => SetValue(InverseTargetVisibilityProperty, value);
+        }
+
+        #endregion
+
         #endregion
 
         #region Construction / Initialization
@@ -283,8 +573,8 @@ namespace CompositionProToolkit.Controls
             DefaultStyleKey = typeof(FluidToggleSwitch);
             // Subscribe to the changes of the IsEnabled dependency property
             RegisterPropertyChangedCallback(IsEnabledProperty, OnIsEnabledChanged);
-            // Subscribe to the changes of the IsChecked dependency property
-            RegisterPropertyChangedCallback(IsCheckedProperty, OnIsCheckedChanged);
+            // Subscribe to the changes of the Requested dependency property
+            RegisterPropertyChangedCallback(RequestedThemeProperty, OnRequestedThemeChanged);
 
             UpdateColors();
         }
@@ -300,7 +590,21 @@ namespace CompositionProToolkit.Controls
         {
             base.OnApplyTemplate();
 
-            _outerBorder = GetTemplateChild("PART_Border") as Border;
+            _rootGrid = GetTemplateChild("LayoutRoot") as Grid;
+            _interactionGrid = GetTemplateChild("InteractionGrid") as Grid;
+            _renderGrid = GetTemplateChild("RenderGrid") as Grid;
+            _headerContentPresenter = GetTemplateChild("HeaderContentPresenter") as ContentPresenter;
+
+            if (_renderGrid == null || _interactionGrid == null || _rootGrid == null)
+                return;
+
+            _interactionGrid.Tapped += OnFluidToggleSwitchTapped;
+
+            // Set the visual state
+            SetVisualState(false);
+
+            // Invoke the Toggled event
+            Toggled?.Invoke(this, new RoutedEventArgs());
         }
 
         /// <summary>
@@ -310,7 +614,7 @@ namespace CompositionProToolkit.Controls
         /// <returns>Size</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var size = base.ArrangeOverride(finalSize);
+            base.ArrangeOverride(finalSize);
 
             // If compositor is null, it means none of the visuals
             // have been initialized yet.
@@ -320,106 +624,92 @@ namespace CompositionProToolkit.Controls
             }
 
             // Update the visuals based on the current control Size and Padding
-            var padding = Padding.CollapseThickness();
-            var baseLength = (float)Math.Max(0, Math.Min(finalSize.Width - padding.Width,
-                finalSize.Height - padding.Height));
-            var offsetX = (float)((finalSize.Width - baseLength) / 2);
-            var offsetY = (float)((finalSize.Height - baseLength) / 2);
-            // Calculate the scale factor
-            var scale = baseLength / DefaultBaseWidth;
+            var width = (float)_renderGrid.Width;
+            var scale = width / DefaultBaseWidth;
+            var height = scale * DefaultBaseHeight;
+            var baseSize = new Vector2(width, height);
+
+            var offsetX = 0f;
+            var offsetY = (float)((_renderGrid.Height - height) / 2);
+
+            //
+            // Root Visual
+            //
+            _rootVisual.Size = baseSize;
+            _rootVisual.Offset = new Vector3(offsetX, offsetY, 0);
 
             //
             // Base Visual
             //
-            _baseVisual.Size = DefaultBaseSize * scale;
-            var baseColor = IsEnabled ? (IsChecked == true ? _baseActiveColor : _baseInactiveColor) : _baseDisabledColor;
-            _baseColorBrush.ImplicitAnimations = null;
-            _baseColorBrush.Color = baseColor;
-            _baseColorBrush.ImplicitAnimations = _colorImplicitAnimation;
+            _baseVisual.Size = baseSize;
+            var baseColor = IsEnabled ? (IsOn ? _baseActiveColor : _baseInactiveColor) : _baseDisabledColor;
             var baseCornerRadius = DefaultBaseCornerRadius * scale;
             _baseGeometry = CanvasGeometry.CreateRoundedRectangle(_generator.Device,
-                0,
-                0,
-                DefaultBaseWidth * scale,
-                DefaultBaseHeight * scale,
-                baseCornerRadius,
-                baseCornerRadius);
-            _baseMask.Redraw(_baseVisual.Size.ToSize(), _baseGeometry);
-
-            //
-            // Base Bloom
-            //
-            _baseBloomVisual.Size = _baseVisual.Size;
-            // Update the fill color and geometry
-            var baseBloomColor = (IsChecked == true ? _baseInactiveColor : _baseActiveColor);
-            var baseBloomGeometry = _baseGeometry/*.Transform(Matrix3x2.CreateScale(BaseBloomScaleFactor, _baseBloomVisual.Size * 0.5f))*/;
-            _baseBloomSurface.Redraw(_baseBloomVisual.Size.ToSize(),
-                baseBloomGeometry,
-                //new CanvasStroke(generator.Device, currentBaseBloomColor.DarkerBy(0.2f)), 
-                baseBloomColor);
-            // Update the brush center
-            _baseBloomBrush.CenterPoint = _baseBloomVisual.Size * 0.5f;
+                                                                  0,
+                                                                  0,
+                                                                  DefaultBaseWidth * scale,
+                                                                  DefaultBaseHeight * scale,
+                                                                  baseCornerRadius,
+                                                                  baseCornerRadius);
+            _baseSurface.Redraw(_baseVisual.Size.ToSize(), _baseGeometry, baseColor);
 
             //
             // Track Visual
             //
             _trackVisual.Size = DefaultTrackSize * scale;
-            var trackColor = IsEnabled ? (IsChecked == true ? _trackActiveColor : _trackInactiveColor) : _trackDisabledColor;
+            var trackColor = IsEnabled ? (IsOn ? _trackActiveColor : _trackInactiveColor) : _trackDisabledColor;
             var trackCornerRadius = DefaultTrackCornerRadius * scale;
-            _trackColorBrush.ImplicitAnimations = null;
-            _trackColorBrush.Color = trackColor;
-            _trackColorBrush.ImplicitAnimations = _colorImplicitAnimation;
             _trackGeometry = CanvasGeometry.CreateRoundedRectangle(_generator.Device,
-                0,
-                0,
-                DefaultTrackWidth * scale,
-                DefaultTrackHeight * scale,
-                trackCornerRadius,
-                trackCornerRadius);
-            _trackMask.Redraw(_trackVisual.Size.ToSize(), _trackGeometry);
-            _trackVisual.Offset = new Vector3(8f, 8f, 0f) * scale;
+                                                                   0,
+                                                                   0,
+                                                                   DefaultTrackWidth * scale,
+                                                                   DefaultTrackHeight * scale,
+                                                                   trackCornerRadius,
+                                                                   trackCornerRadius);
+            _trackSurface.Redraw(_trackVisual.Size.ToSize(), _trackGeometry, trackColor);
+            _trackVisual.Offset = DefaultTrackOffset * scale;
 
             //
-            // Track Bloom
+            // Bloom Visual
             //
-            _trackBloomVisual.Size = _trackVisual.Size;
-            // Update the fill color and geometry
-            var trackBloomColor = (IsChecked == true ? _trackInactiveColor : _trackActiveColor);
-            var trackBloomGeometry = _trackGeometry/*.Transform(Matrix3x2.CreateScale(TrackBloomScaleFactor,
-                _trackBloomVisual.Size * 0.5f))*/;
-            _trackBloomSurface.Redraw(_trackBloomVisual.Size.ToSize(),
-                trackBloomGeometry,
-                //new CanvasStroke(_generator.Device, trackBloomColor.DarkerBy(BloomStrokeDarkFactor), 3f),
-                trackBloomColor);
-            // Update the brush center
-            _trackBloomBrush.CenterPoint = _trackBloomVisual.Size * 0.5f;
+            _bloomVisual.Size = baseSize;
+            _bloomVisual.Brush = _compositor.CreateColorBrush(_trackActiveColor);
+            _bloomVisual.Clip = _compositor.CreateGeometricClip(_baseGeometry);
+            _bloomCenterOffset = (DefaultThumbCheckedOffset + new Vector3(DefaultThumbRadius, DefaultThumbRadius, 0)) * scale;
+            var radius = DefaultThumbCheckedOffset.X * scale;
+
+            _onBloomVisual.Size = new Vector2(radius * 2);
+            _onBloomVisual.Offset = _bloomCenterOffset;
+            var onBloomGeometry = CanvasGeometry.CreateCircle(_generator.Device, _onBloomVisual.Size * 0.5f, radius);
+            _onBloomSurface.Redraw(_onBloomVisual.Size.ToSize(), onBloomGeometry, _trackInactiveColor);
+
+            _offBloomVisual.Size = baseSize * 1.2f;
+            _offBloomVisual.Offset = new Vector3(baseSize * 0.5f, 0);
+            var offBloomGeometry = _baseGeometry.Transform(Matrix3x2.CreateScale(1.2f));
+            _offBloomSurface.Redraw(_offBloomVisual.Size.ToSize(), offBloomGeometry, _trackInactiveColor);
 
             //
             // Inner Thumb
             //
-            _innerThumbVisual.Size = DefaultThumbSize * scale;
-            var innerThumbColor = IsEnabled ? (IsChecked == true ? _thumbActiveColor : _thumbInactiveColor) : _thumbDisabledColor;
+            _innerThumbVisual.Size = DefaultInnerThumbSize * scale;
+            var innerThumbColor = IsEnabled ? (IsOn ? _innerThumbActiveColor : _innerThumbInactiveColor) : _thumbDisabledColor;
             var innerThumbRadius = DefaultInnerThumbRadius * scale;
-            _innerThumbSurface.Redraw(_thumbVisual.Size.ToSize(),
+            _innerThumbSurface.Redraw(_innerThumbVisual.Size.ToSize(),
                 CanvasGeometry.CreateCircle(_generator.Device, innerThumbRadius, innerThumbRadius, innerThumbRadius), innerThumbColor);
-            _thumbCheckedOffset = DefaultThumbCheckedOffset * scale;
-            _thumbUncheckedOffset = DefaultThumbUncheckedOffset * scale;
-            _thumbVisual.ImplicitAnimations = null;
-            _thumbVisual.Offset = DefaultInnerThumbOffset * scale;
+            _innerThumbVisual.Offset = DefaultInnerThumbOffset * scale;
 
             //
             // Thumb
             //
             _thumbVisual.Size = DefaultThumbSize * scale;
-            var thumbColor = IsEnabled ? (IsChecked == true ? _thumbActiveColor : _thumbInactiveColor) : _thumbDisabledColor;
+            var thumbColor = IsEnabled ? (IsOn ? _thumbActiveColor : _thumbInactiveColor) : _thumbDisabledColor;
             var thumbRadius = DefaultThumbRadius * scale;
             _thumbSurface.Redraw(_thumbVisual.Size.ToSize(),
-                CanvasGeometry.CreateCircle(_generator.Device, thumbRadius, thumbRadius, thumbRadius),
-                thumbColor);
+                CanvasGeometry.CreateCircle(_generator.Device, thumbRadius, thumbRadius, thumbRadius), thumbColor);
             _thumbCheckedOffset = DefaultThumbCheckedOffset * scale;
             _thumbUncheckedOffset = DefaultThumbUncheckedOffset * scale;
             _thumbVisual.ImplicitAnimations = null;
-            _thumbVisual.Offset = IsChecked == true ? _thumbCheckedOffset : _thumbUncheckedOffset;
+            _thumbVisual.Offset = IsOn ? _thumbCheckedOffset : _thumbUncheckedOffset;
             _thumbVisual.ImplicitAnimations = _thumbImplicitAnimation;
 
             //
@@ -429,24 +719,18 @@ namespace CompositionProToolkit.Controls
             _shadowUncheckedOffset = DefaultShadowUncheckedOffset * scale;
             _dropShadow.BlurRadius = DefaultShadowBlurRadius * scale;
             _dropShadow.ImplicitAnimations = null;
-            _dropShadow.Color = IsEnabled ?
-                trackColor.DarkerBy(EnabledShadowDarkFactor) :
-                trackColor.LighterBy(DisabledShadowLightFactor);
-            _dropShadow.Offset = IsChecked == true ? _shadowCheckedOffset : _shadowUncheckedOffset;
+            _dropShadow.Color = IsEnabled ? trackColor.DarkerBy(EnabledShadowDarkFactor) : trackColor.DarkerBy(DisabledShadowDarkFactor);
+            _dropShadow.Offset = IsOn ? _shadowCheckedOffset : _shadowUncheckedOffset;
             _dropShadow.ImplicitAnimations = _thumbShadowImplicitAnimation;
-            _dropShadow.Mask = _thumbVisual.Brush;
 
-            // Update the base visual's offset
-            _baseVisual.Offset = new Vector3(offsetX, offsetY, 0);
 
-            // Adjust the corner radius of the border so that the hit area
-            // of the FluidToggleSwitch is correct.
-            if (_outerBorder != null)
+            // Attach Visual to the RenderGrid
+            if (_renderGrid != null)
             {
-                _outerBorder.CornerRadius = new CornerRadius(_baseVisual.Size.X / 2f);
+                ElementCompositionPreview.SetElementChildVisual(_renderGrid, _rootVisual);
             }
 
-            return size;
+            return _rootGrid.DesiredSize;
         }
 
         #endregion
@@ -464,61 +748,152 @@ namespace CompositionProToolkit.Controls
         }
 
         /// <summary>
-        /// Handler method which is invoked when the IsEnabled property value changes
+        /// Handler method which is invoked when the RequestedTheme property value changes
         /// </summary>
         /// <param name="sender">FluidToggleSwitch</param>
         /// <param name="dp">Dependency Property that has changed</param>
-        private void OnIsCheckedChanged(DependencyObject sender, DependencyProperty dp)
+        private void OnRequestedThemeChanged(DependencyObject sender, DependencyProperty dp)
         {
-            _thumbVisual.Offset = IsChecked == true ? _thumbCheckedOffset : _thumbUncheckedOffset;
-            _dropShadow.Offset = IsChecked == true ? _shadowCheckedOffset : _shadowUncheckedOffset;
+            switch (RequestedTheme)
+            {
+                case ElementTheme.Dark:
+                    _isDarkTheme = true;
+                    break;
+                default:
+                    _isDarkTheme = false;
+                    break;
+            }
 
-            var thumbColor = IsEnabled ? (IsChecked == true ? _thumbActiveColor : _thumbInactiveColor) : _thumbDisabledColor;
+            UpdateColors();
+
+            InvalidateArrange();
+        }
+
+        /// <summary>
+        /// Handler method which is invoked when the FluidToggleSwitch is tapped to toggle its state
+        /// </summary>
+        /// <param name="sender">FluidToggleSwitch</param>
+        /// <param name="e">TappedRoutedEventArgs</param>
+        private void OnFluidToggleSwitchTapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (!IsEnabled)
+                return;
+
+            IsOn = !IsOn;
+        }
+
+        /// <summary>
+        /// Handles changes to the IsOn property.
+        /// </summary>
+        private void OnToggleStateChanged()
+        {
+            bool stateChangedBeforeFirstRender = false;
+            if (_compositor == null)
+            {
+                stateChangedBeforeFirstRender = IsOn;
+                InitComposition();
+            }
+
+            _thumbVisual.Offset = IsOn ? _thumbCheckedOffset : _thumbUncheckedOffset;
+
+            var thumbColor = IsEnabled ? (IsOn ? _thumbActiveColor : _thumbInactiveColor) : _thumbDisabledColor;
             _thumbSurface.Redraw(thumbColor);
 
             if (IsEnabled)
             {
-                var baseColor = IsChecked == true ? _baseActiveColor : _baseInactiveColor;
-                var trackColor = IsChecked == true ? _trackActiveColor : _trackInactiveColor;
+                var baseColor = IsOn ? _baseActiveColor : _baseInactiveColor;
+                var trackColor = IsOn ? _trackActiveColor : _trackInactiveColor;
                 _dropShadow.Color = trackColor.DarkerBy(EnabledShadowDarkFactor);
+                _dropShadow.Offset = IsOn ? _shadowCheckedOffset : _shadowUncheckedOffset;
 
-                _compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
-                    () =>
-                    {
-                        _baseBloomSurface.Redraw(/*new CanvasStroke(generator.Device, baseColor.DarkerBy(0.2f)),*/ baseColor);
-                        _baseBloomVisual.Brush = _baseBloomMaskBrush;
-                        _baseBloomBrush.StartAnimation(() => _baseBloomBrush.ScaleXY(), _bloomAnimation);
-
-                        _trackBloomSurface.Redraw(new CanvasStroke(_generator.Device, trackColor.DarkerBy(BloomStrokeDarkFactor), 3f), trackColor);
-                        _trackBloomVisual.Brush = _trackBloomMaskBrush;
-                        _trackBloomBrush.StartAnimation(() => _trackBloomBrush.ScaleXY(), _trackBloomAnimation);
-                    },
-                    () =>
-                    {
-                        _baseColorBrush.ImplicitAnimations = null;
-                        _baseColorBrush.Color = baseColor;
-                        _baseColorBrush.ImplicitAnimations = _colorImplicitAnimation;
-                        _baseBloomVisual.Brush = null;
-                        _baseBloomBrush.Scale = Vector2.One;
-
-                        _trackColorBrush.ImplicitAnimations = null;
-                        _trackColorBrush.Color = trackColor;
-                        _trackColorBrush.ImplicitAnimations = _colorImplicitAnimation;
-                        _trackBloomVisual.Brush = null;
-                        _trackBloomBrush.Scale = Vector2.One;
-                    });
+                if (stateChangedBeforeFirstRender)
+                {
+                    _baseSurface.Redraw(baseColor);
+                    _trackSurface.Redraw(trackColor);
+                }
+                else
+                {
+                    _compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
+                        () =>
+                        {
+                            _bloomVisual.Opacity = 1f;
+                            if (IsOn)
+                            {
+                                _onBloomVisual.Opacity = 1;
+                                _onBloomVisual.StartAnimation(() => _onBloomVisual.ScaleXY(), _onBloomAnimation);
+                            }
+                            else
+                            {
+                                _offBloomVisual.Scale = Vector3.Zero;
+                                _offBloomVisual.Opacity = 1;
+                                _offBloomVisual.StartAnimation(() => _offBloomVisual.ScaleXY(), _offBloomAnimation);
+                            }
+                        },
+                        () =>
+                        {
+                            _baseSurface.Redraw(baseColor);
+                            _trackSurface.Redraw(trackColor);
+                            _bloomVisual.Opacity = 0f;
+                            _onBloomVisual.Opacity = 0;
+                            _offBloomVisual.Opacity = 0;
+                        });
+                }
             }
             else
             {
-                _baseColorBrush.Color = _baseDisabledColor;
-                _trackColorBrush.Color = _trackDisabledColor;
-                _dropShadow.Color = _trackDisabledColor.LighterBy(DisabledShadowLightFactor);
+                _baseSurface.Redraw(_baseDisabledColor);
+                _trackSurface.Redraw(_trackDisabledColor);
+                _dropShadow.Color = _trackDisabledColor.DarkerBy(DisabledShadowDarkFactor);
+                _dropShadow.Offset = DefaultShadowDisabledOffset;
             }
+
+            SetVisualState();
+
+            TargetVisibility = IsOn ? Visibility.Visible : Visibility.Collapsed;
+            InverseTargetVisibility = IsOn ? Visibility.Collapsed : Visibility.Visible;
+
+            // Invoke the Toggled event
+            Toggled?.Invoke(this, new RoutedEventArgs());
         }
 
         #endregion
 
         #region Helpers
+
+        /// <summary>
+        /// Sets the Visual state of the FluidToggleSwitch
+        /// </summary>
+        private void SetVisualState(bool animate = true)
+        {
+            if (_headerContentPresenter != null)
+            {
+                _headerContentPresenter.Visibility = Header == null ? Visibility.Collapsed : Visibility.Visible;
+            }
+
+            if (IsEnabled)
+            {
+                if (IsOn)
+                {
+                    VisualStateManager.GoToState(this, "On", animate);
+                    if (OnContent != null)
+                    {
+                        VisualStateManager.GoToState(this, "OnContent", animate);
+                    }
+                }
+                else
+                {
+                    VisualStateManager.GoToState(this, "Off", animate);
+                    if (OffContent != null)
+                    {
+                        VisualStateManager.GoToState(this, "OffContent", animate);
+                    }
+                }
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, "Disabled", animate);
+            }
+        }
 
         /// <summary>
         /// Updates the color components based on the Active, Inactive
@@ -527,17 +902,20 @@ namespace CompositionProToolkit.Controls
         private void UpdateColors()
         {
             // Active
-            _baseActiveColor = ActiveColor.DarkerBy(ActiveTrackDarkFactor);
+            _baseActiveColor = _isDarkTheme ? ActiveColor.LighterBy(ActiveTrackLightFactor) : ActiveColor.DarkerBy(ActiveTrackDarkFactor);
             _trackActiveColor = ActiveColor;
             _thumbActiveColor = Colors.White;
+            _innerThumbActiveColor = _innerThumbInactiveColor = Colors.White.DarkerBy(InnerThumbDarkFactor);
+
             // Inactive
-            _baseInactiveColor = InactiveColor.DarkerBy(InactiveTrackDarkFactor);
-            _trackInactiveColor = InactiveColor;
+            _baseInactiveColor = _isDarkTheme ? DarkThemeInactiveColor.LighterBy(InactiveTrackLightFactor) : InactiveColor.DarkerBy(InactiveTrackDarkFactor);
+            _trackInactiveColor = _isDarkTheme ? DarkThemeInactiveColor : InactiveColor;
             _thumbInactiveColor = _thumbActiveColor;
+
             // Disabled
-            _baseDisabledColor = DisabledColor.DarkerBy(DisabledTrackDarkFactor);
+            _baseDisabledColor = _isDarkTheme ? DisabledColor.LighterBy(DisabledTrackLightFactor) : DisabledColor.DarkerBy(DisabledTrackDarkFactor);
             _trackDisabledColor = DisabledColor;
-            _thumbDisabledColor = _baseDisabledColor.LighterBy(DisabledThumbLightFactor);
+            _thumbDisabledColor = Colors.White.DarkerBy(DisabledThumbDarkFactor);
         }
 
         /// <summary>
@@ -548,82 +926,82 @@ namespace CompositionProToolkit.Controls
             _compositor = Window.Current.Compositor;
             _generator = _compositor.CreateCompositionGenerator();
 
+            // Update the colors
+            UpdateColors();
+
+            //
+            // Root Visual
+            //
+            _rootVisual = _compositor.CreateSpriteVisual();
+            _rootVisual.Size = DefaultBaseSize;
+
             //
             // Base Visual
             //
             _baseVisual = _compositor.CreateSpriteVisual();
             _baseVisual.Size = DefaultBaseSize;
-            _baseColorBrush = _compositor.CreateColorBrush(IsChecked == true ? _baseActiveColor : _baseInactiveColor);
             _baseGeometry = CanvasGeometry.CreateRoundedRectangle(_generator.Device,
-                0,
-                0,
-                DefaultBaseWidth,
-                DefaultBaseHeight,
-                DefaultBaseCornerRadius,
-                DefaultBaseCornerRadius);
-            _baseMask = _generator.CreateMaskSurface(DefaultBaseSize.ToSize(), _baseGeometry);
-            var baseMaskBrush = _compositor.CreateMaskBrush();
-            baseMaskBrush.Mask = _compositor.CreateSurfaceBrush(_baseMask);
-            baseMaskBrush.Source = _baseColorBrush;
-            _baseVisual.Brush = baseMaskBrush;
-
-            //
-            // Base Bloom Visual
-            //
-            _baseBloomVisual = _compositor.CreateSpriteVisual();
-            _baseBloomVisual.Size = _baseVisual.Size;
-            var bloomColor = (IsChecked == true ? _baseInactiveColor : _baseActiveColor);
-            _baseBloomSurface = _generator.CreateGeometrySurface(_baseBloomVisual.Size.ToSize(),
-                _baseGeometry/*.Transform(Matrix3x2.CreateScale(BaseBloomScaleFactor, _baseBloomVisual.Size * 0.5f))*/,
-                //new CanvasStroke(generator.Device, bloomColor.DarkerBy(0.2f)),
-                bloomColor);
-            _baseBloomBrush = _compositor.CreateSurfaceBrush(_baseBloomSurface);
-            _baseBloomBrush.CenterPoint = _baseBloomVisual.Size * 0.5f;
-            _baseBloomMaskBrush = _compositor.CreateMaskBrush();
-            _baseBloomMaskBrush.Mask = baseMaskBrush.Mask;
-            _baseBloomMaskBrush.Source = _baseBloomBrush;
-
-            _baseVisual.Children.InsertAtTop(_baseBloomVisual);
+                                                                  0,
+                                                                  0,
+                                                                  DefaultBaseWidth,
+                                                                  DefaultBaseHeight,
+                                                                  DefaultBaseCornerRadius,
+                                                                  DefaultBaseCornerRadius);
+            _baseSurface = _generator.CreateGeometrySurface(DefaultBaseSize.ToSize(),
+                                                            _baseGeometry,
+                                                            IsOn ? _baseActiveColor : _baseInactiveColor);
+            _baseVisual.Brush = _compositor.CreateSurfaceBrush(_baseSurface);
 
             //
             // Track Visual
             //
             _trackVisual = _compositor.CreateSpriteVisual();
             _trackVisual.Size = DefaultTrackSize;
-            _trackColorBrush = _compositor.CreateColorBrush(IsChecked == true ? _trackActiveColor : _trackInactiveColor);
             _trackGeometry = CanvasGeometry.CreateRoundedRectangle(_generator.Device,
-                0,
-                0,
-                DefaultTrackWidth,
-                DefaultTrackHeight,
-                DefaultTrackCornerRadius,
-                DefaultTrackCornerRadius);
-            _trackMask = _generator.CreateMaskSurface(DefaultTrackSize.ToSize(), _trackGeometry);
-            var trackMaskBrush = _compositor.CreateMaskBrush();
-            trackMaskBrush.Mask = _compositor.CreateSurfaceBrush(_trackMask);
-            trackMaskBrush.Source = _trackColorBrush;
-            _trackVisual.Brush = trackMaskBrush;
+                                                                   0,
+                                                                   0,
+                                                                   DefaultTrackWidth,
+                                                                   DefaultTrackHeight,
+                                                                   DefaultTrackCornerRadius,
+                                                                   DefaultTrackCornerRadius);
+            _trackSurface = _generator.CreateGeometrySurface(DefaultTrackSize.ToSize(),
+                                                             _trackGeometry,
+                                                             IsOn ? _trackActiveColor : _trackInactiveColor);
+            _trackVisual.Brush = _compositor.CreateSurfaceBrush(_trackSurface);
             _trackVisual.Offset = DefaultTrackOffset;
 
             //
-            // Track Bloom Visual
+            // Bloom Visual
             //
-            _trackBloomVisual = _compositor.CreateSpriteVisual();
-            _trackBloomVisual.Size = _trackVisual.Size;
-            bloomColor = IsChecked == true ? _trackInactiveColor : _trackActiveColor;
-            _trackBloomSurface =
-                _generator.CreateGeometrySurface(_trackBloomVisual.Size.ToSize(),
-                    _trackGeometry/*.Transform(Matrix3x2.CreateScale(TrackBloomScaleFactor,
-                        _trackBloomVisual.Size * 0.5f))*/,
-                    //new CanvasStroke(_generator.Device, bloomColor.DarkerBy(BloomStrokeDarkFactor), 3f),
-                    bloomColor);
-            _trackBloomBrush = _compositor.CreateSurfaceBrush(_trackBloomSurface);
-            _trackBloomBrush.CenterPoint = _trackBloomVisual.Size * 0.5f;
-            _trackBloomMaskBrush = _compositor.CreateMaskBrush();
-            _trackBloomMaskBrush.Mask = trackMaskBrush.Mask;
-            _trackBloomMaskBrush.Source = _trackBloomBrush;
+            _bloomVisual = _compositor.CreateSpriteVisual();
+            _bloomVisual.Size = DefaultBaseSize;
+            _bloomVisual.Brush = _compositor.CreateColorBrush(DefaultActiveColor);
+            _bloomVisual.Clip = _compositor.CreateGeometricClip(_baseGeometry);
+            _bloomCenterOffset = DefaultThumbCheckedOffset + new Vector3(DefaultThumbRadius, DefaultThumbRadius, 0);
+            var radius = DefaultThumbCheckedOffset.X;
 
-            _trackVisual.Children.InsertAtTop(_trackBloomVisual);
+            _onBloomVisual = _compositor.CreateSpriteVisual();
+            _onBloomVisual.Size = new Vector2(radius * 2);
+            _onBloomVisual.AnchorPoint = Vector2.One * 0.5f;
+            _onBloomVisual.Offset = _bloomCenterOffset;
+            var onBloomGeometry = CanvasGeometry.CreateCircle(_generator.Device, _onBloomVisual.Size * 0.5f, radius);
+            _onBloomSurface = _generator.CreateGeometrySurface(_onBloomVisual.Size.ToSize(), onBloomGeometry, DefaultInactiveColor);
+            _onBloomVisual.Brush = _compositor.CreateSurfaceBrush(_onBloomSurface);
+
+            _offBloomVisual = _compositor.CreateSpriteVisual();
+            _offBloomVisual.Size = DefaultBaseSize * 1.2f;
+            _offBloomVisual.AnchorPoint = Vector2.One * 0.5f;
+            _offBloomVisual.Offset = new Vector3(DefaultBaseSize * 0.5f, 0);
+            var offBloomGeometry = _baseGeometry.Transform(Matrix3x2.CreateScale(1.2f));
+            _offBloomSurface = _generator.CreateGeometrySurface(_offBloomVisual.Size.ToSize(), offBloomGeometry, DefaultInactiveColor);
+            _offBloomVisual.Brush = _compositor.CreateSurfaceBrush(_offBloomSurface);
+
+            _bloomVisual.Children.InsertAtTop(_offBloomVisual);
+            _bloomVisual.Children.InsertAtTop(_onBloomVisual);
+            // Hide the bloom visual as it will be visible only during toggle
+            _onBloomVisual.Opacity = 0f;
+            _offBloomVisual.Opacity = 0f;
+            _bloomVisual.Opacity = 0f;
 
             //
             // Inner Thumb Visual
@@ -632,10 +1010,12 @@ namespace CompositionProToolkit.Controls
             _innerThumbVisual.Size = DefaultInnerThumbSize;
             _innerThumbSurface = _generator.CreateGeometrySurface(DefaultInnerThumbSize.ToSize(),
                 CanvasGeometry.CreateCircle(_generator.Device,
-                    DefaultInnerThumbRadius,
-                    DefaultInnerThumbRadius,
-                    DefaultInnerThumbRadius),
-                IsChecked == true ? _thumbActiveColor : _thumbInactiveColor);
+                                            DefaultInnerThumbRadius,
+                                            DefaultInnerThumbRadius,
+                                            DefaultInnerThumbRadius),
+                                            IsEnabled ? (IsOn ? _innerThumbActiveColor
+                                                              : _innerThumbInactiveColor)
+                                                      : _thumbDisabledColor);
             _innerThumbVisual.Brush = _compositor.CreateSurfaceBrush(_innerThumbSurface);
             _innerThumbVisual.Offset = DefaultInnerThumbOffset;
 
@@ -646,12 +1026,13 @@ namespace CompositionProToolkit.Controls
             _thumbVisual.Size = DefaultThumbSize;
             _thumbSurface = _generator.CreateGeometrySurface(DefaultThumbSize.ToSize(),
                 CanvasGeometry.CreateCircle(_generator.Device,
-                    DefaultThumbRadius,
-                    DefaultThumbRadius,
-                    DefaultThumbRadius),
-                IsChecked == true ? _thumbActiveColor : _thumbInactiveColor);
+                                            DefaultThumbRadius,
+                                            DefaultThumbRadius,
+                                            DefaultThumbRadius),
+                                            IsOn ? _thumbActiveColor
+                                                 : _thumbInactiveColor);
             _thumbVisual.Brush = _compositor.CreateSurfaceBrush(_thumbSurface);
-            _thumbVisual.Offset = IsChecked == true ? DefaultThumbCheckedOffset : DefaultThumbUncheckedOffset;
+            _thumbVisual.Offset = IsOn ? DefaultThumbCheckedOffset : DefaultThumbUncheckedOffset;
             _thumbVisual.Children.InsertAtTop(_innerThumbVisual);
 
             //
@@ -659,75 +1040,75 @@ namespace CompositionProToolkit.Controls
             //
             _dropShadow = _compositor.CreateDropShadow();
             _dropShadow.BlurRadius = DefaultShadowBlurRadius;
-            _dropShadow.Offset = IsChecked == true ? DefaultShadowCheckedOffset : DefaultShadowUncheckedOffset;
-            var currentTrackColor = (IsChecked == true ? _trackActiveColor : _trackInactiveColor);
-            _dropShadow.Color = IsEnabled
-                ? currentTrackColor.DarkerBy(EnabledShadowDarkFactor)
-                : currentTrackColor.LighterBy(DisabledShadowLightFactor);
+            _dropShadow.Offset = IsOn ? DefaultShadowCheckedOffset : DefaultShadowUncheckedOffset;
+            var currentTrackColor = IsOn ? _trackActiveColor : _trackInactiveColor;
+            _dropShadow.Color = IsEnabled ? currentTrackColor.DarkerBy(EnabledShadowDarkFactor) : currentTrackColor.LighterBy(DisabledShadowDarkFactor);
             _dropShadow.Opacity = DropShadowOpacity;
-            _dropShadow.Mask = _thumbVisual.Brush;
+            //_dropShadow.Mask = _thumbVisual.Brush;
+            _dropShadow.SourcePolicy = CompositionDropShadowSourcePolicy.InheritFromVisualContent;
             _thumbVisual.Shadow = _dropShadow;
 
-            // Add Track and Thumb to the Base
-            _baseVisual.Children.InsertAtTop(_trackVisual);
-            _baseVisual.Children.InsertAtTop(_thumbVisual);
 
-            ElementCompositionPreview.SetElementChildVisual(this, _baseVisual);
+            // Add Base,Track, Bloom and Thumb to the Root
+            _rootVisual.Children.InsertAtTop(_baseVisual);
+            _rootVisual.Children.InsertAtTop(_trackVisual);
+            _rootVisual.Children.InsertAtTop(_bloomVisual);
+            _rootVisual.Children.InsertAtTop(_thumbVisual);
+
+            // Attach Visual to the RenderGrid
+            if (_renderGrid != null)
+            {
+                ElementCompositionPreview.SetElementChildVisual(_renderGrid, _rootVisual);
+            }
 
             //
             // ImplicitAnimations
             //
 
             // For Thumb
-            var thumbOffsetAnimation = _compositor.GenerateVector3KeyFrameAnimation()
-                .ForTarget(() => _thumbVisual.Offset)
-                .HavingDuration(DefaultAnimationDuration);
+            var offsetAnimation = _compositor.GenerateVector3KeyFrameAnimation()
+                                             .ForTarget(() => _thumbVisual.Offset)
+                                             .HavingDuration(DefaultAnimationDuration);
 
-            thumbOffsetAnimation.InsertFinalValueKeyFrame(1f, _compositor.CreateEaseOutBackEasingFunction());
+            offsetAnimation.InsertFinalValueKeyFrame(1f, _compositor.CreateEaseOutExponentialEasingFunction());
             _thumbImplicitAnimation = _compositor.CreateImplicitAnimationCollection();
-            _thumbImplicitAnimation.Add(() => _thumbVisual.Offset, thumbOffsetAnimation);
+            _thumbImplicitAnimation.Add(() => _thumbVisual.Offset, offsetAnimation);
 
             _thumbVisual.ImplicitAnimations = _thumbImplicitAnimation;
 
             // For Thumb Shadow
             var shadowColorAnimation = _compositor.GenerateColorKeyFrameAnimation()
-                .ForTarget(() => _dropShadow.Color)
-                .HavingDuration(DefaultAnimationDuration);
+                                                  .ForTarget(() => _dropShadow.Color)
+                                                  .HavingDuration(DefaultAnimationDuration);
             shadowColorAnimation.InsertFinalValueKeyFrame(1f, _compositor.CreateEaseInCircleEasingFunction());
 
             _thumbShadowImplicitAnimation = _compositor.CreateImplicitAnimationCollection();
-            _thumbShadowImplicitAnimation.Add(() => _dropShadow.Offset, thumbOffsetAnimation);
+            _thumbShadowImplicitAnimation.Add(() => _dropShadow.Offset, offsetAnimation);
             _thumbShadowImplicitAnimation.Add(() => _dropShadow.Color, shadowColorAnimation);
             _dropShadow.ImplicitAnimations = _thumbShadowImplicitAnimation;
-
-            // For Base and Track Color
-            _colorImplicitAnimation = _compositor.CreateImplicitAnimationCollection();
-            var colorAnimation = _compositor.GenerateColorKeyFrameAnimation()
-                .ForTarget(() => _baseColorBrush.Color)
-                .HavingDuration(DefaultAnimationDuration);
-            colorAnimation.InsertFinalValueKeyFrame(1f, _compositor.CreateEaseInCubicEasingFunction());
-            _colorImplicitAnimation.Add(() => _baseColorBrush.Color, colorAnimation);
-
-            _baseColorBrush.ImplicitAnimations = _colorImplicitAnimation;
-            _trackColorBrush.ImplicitAnimations = _colorImplicitAnimation;
 
             //
             // Animations
             // 
 
-            // Base Color Bloom Animation
-            _bloomAnimation = _compositor.GenerateVector2KeyFrameAnimation()
-                .HavingDuration(DefaultAnimationDuration);
+            // On Bloom Animation
+            _onBloomAnimation = _compositor.GenerateVector2KeyFrameAnimation()
+                                           .HavingDuration(DefaultOnBloomAnimationDuration);
 
-            _bloomAnimation.InsertKeyFrames(new KeyFrame<Vector2>(0, Vector2.Zero),
-                new KeyFrame<Vector2>(1f, new Vector2(BaseBloomTargetScaleFactor), _compositor.CreateEaseInCubicEasingFunction()));
+            _onBloomAnimation.InsertKeyFrames(
+                new KeyFrame<Vector2>(0f, Vector2.One),
+                new KeyFrame<Vector2>(1f, Vector2.Zero, _compositor.CreateEaseOutSineEasingFunction()));
 
-            // Track Color Bloom Animation
-            _trackBloomAnimation = _compositor.GenerateVector2KeyFrameAnimation()
-                .HavingDuration(DefaultTrackBloomAnimationDuration);
+            // Off Bloom Animation
+            _offBloomAnimation = _compositor.GenerateVector2KeyFrameAnimation()
+                                            .HavingDuration(DefaultOffBloomAnimationDuration);
 
-            _trackBloomAnimation.InsertKeyFrames(new KeyFrame<Vector2>(0, Vector2.Zero),
-                new KeyFrame<Vector2>(1f, new Vector2(TrackBloomTargetScaleFactor), _compositor.CreateLinearEasingFunction()));
+            _offBloomAnimation.InsertKeyFrames(
+                new KeyFrame<Vector2>(0f, Vector2.Zero),
+                new KeyFrame<Vector2>(1f, Vector2.One, _compositor.CreateLinearEasingFunction()));
+
+            TargetVisibility = IsOn ? Visibility.Visible : Visibility.Collapsed;
+            InverseTargetVisibility = IsOn ? Visibility.Collapsed : Visibility.Visible;
         }
 
         #endregion

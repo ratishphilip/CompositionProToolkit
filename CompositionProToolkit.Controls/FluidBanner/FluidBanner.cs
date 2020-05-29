@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit.Controls v1.0.1
 // 
 
 using System;
@@ -700,6 +700,7 @@ namespace CompositionProToolkit.Controls
             _bgLayer.Children.RemoveAll();
             _topLayer.Children.RemoveAll();
             _selectedVisual = null;
+
             // Dispose the surface images
             for (var i = 0; i < _surfaceImages.Count; i++)
             {
@@ -861,7 +862,7 @@ namespace CompositionProToolkit.Controls
                     () =>
                     {
                         // Expand the visual to occupy the full size of the banner
-                        _selectedVisual.Clip.StartAnimation("RightInset", _expandInsetClip.Animation);
+                        _selectedVisual.Clip.StartAnimation("RightInset", _expandInsetClip);
                     },
                     () =>
                     {
@@ -875,8 +876,8 @@ namespace CompositionProToolkit.Controls
                     () =>
                     {
                         // Animate the visual to move to the left most position
-                        _selectedVisual.Clip.StartAnimation("LeftInset", _expandLeftInset.Animation);
-                        _selectedVisual.Clip.StartAnimation("RightInset", _expandRightInset.Animation);
+                        _selectedVisual.Clip.StartAnimation("LeftInset", _expandLeftInset);
+                        _selectedVisual.Clip.StartAnimation("RightInset", _expandRightInset);
                     },
                     () =>
                     {
@@ -884,7 +885,7 @@ namespace CompositionProToolkit.Controls
                             () =>
                             {
                                 // Expand the visual to occupy the full size of the banner
-                                _selectedVisual.Clip.StartAnimation("RightInset", _expandInsetClip.Animation);
+                                _selectedVisual.Clip.StartAnimation("RightInset", _expandInsetClip);
                             },
                             () =>
                             {
@@ -906,13 +907,11 @@ namespace CompositionProToolkit.Controls
             _isCollapsing = true;
 
             // Get the value to set for the LeftInset of the InsetClip
-            float left;
-            _selectedVisual.Properties.TryGetScalar("LeftInset", out left);
+            _selectedVisual.Properties.TryGetScalar("LeftInset", out var left);
             _collapseLeftInset.InsertKeyFrame(1f, left);
 
             // Get the value to set for the RightInset of the InsetClip
-            float right;
-            _selectedVisual.Properties.TryGetScalar("RightInset", out right);
+            _selectedVisual.Properties.TryGetScalar("RightInset", out var right);
             _collapseRightInset.InsertKeyFrame(1f, right);
 
             // Use a scoped batch helper to queue up animations one after the other
@@ -920,7 +919,7 @@ namespace CompositionProToolkit.Controls
             () =>
             {
                 // Collapse the visual
-                _selectedVisual.Clip.StartAnimation("RightInset", _collapseInsetClip.Animation);
+                _selectedVisual.Clip.StartAnimation("RightInset", _collapseInsetClip);
             },
             async () =>
             {
@@ -929,8 +928,8 @@ namespace CompositionProToolkit.Controls
                 if (!ReferenceEquals(_selectedVisual, _fluidItems.Keys.ElementAt(0)))
                 {
                     // Move the visual back to its original location in the banner
-                    _selectedVisual.Clip.StartAnimation("LeftInset", _collapseLeftInset.Animation);
-                    _selectedVisual.Clip.StartAnimation("RightInset", _collapseRightInset.Animation);
+                    _selectedVisual.Clip.StartAnimation("LeftInset", _collapseLeftInset);
+                    _selectedVisual.Clip.StartAnimation("RightInset", _collapseRightInset);
                 }
 
                 // Fade in the other visuals and scale them to normal size

@@ -1,0 +1,183 @@
+﻿<Page x:Class="ToolkitGallery.Views.ColorShadowPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:controls="using:CompositionProToolkit.Controls"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:ToolkitGallery.Views"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      Background="White"
+      mc:Ignorable="d">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" MinWidth="500"/>
+            <ColumnDefinition MinWidth="300"/>
+        </Grid.ColumnDefinitions>
+        <Grid Width="400"
+              Height="400"
+              Background="White">
+            <controls:ColorShadow x:Name="ColorShadowCtrl"
+                                  Width="400"
+                                  Height="400"
+                                  ColorMaskBlurRadius="{Binding ElementName=MaskBlurSlider, Path=Value, Mode=TwoWay}"
+                                  ColorMaskPadding="25"
+                                  ColorShadowBlurRadius="{Binding ElementName=BlendBlurSlider, Path=Value, Mode=TwoWay}"
+                                  ColorShadowOpacity="{Binding ElementName=BlendOpacitySlider, Path=Value, Mode=TwoWay}"
+                                  ColorShadowPadding="35"
+                                  IsShadowEnabled="{Binding ElementName=ShadowSwitch, Path=IsOn}"
+                                  ShadowBlurRadius="{Binding ElementName=ShadowBlurSlider, Path=Value}"
+                                  ShadowOffsetX="{Binding ElementName=ShadowOffsetX, Path=Value}"
+                                  ShadowOffsetY="{Binding ElementName=ShadowOffsetY, Path=Value}"
+                                  ShadowOpacity="{Binding ElementName=ShadowOpacitySlider, Path=Value}" />
+        </Grid>
+
+        <Grid Grid.Column="1" Background="#151515">
+            <StackPanel Margin="0,100,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top">
+                <TextBlock Margin="4"
+                           Text="Images"
+                           Visibility="Visible" />
+                <ComboBox x:Name="ImageList"
+                          Width="200"
+                          Height="34"
+                          CornerRadius="4"
+                          SelectedIndex="0"
+                          SelectionChanged="OnImageSelected" />
+                <TextBlock Margin="4" Text="ColorShadow Padding" />
+                <Slider x:Name="CSPaddingSlider"
+                        Width="100"
+                        Height="30"
+                        Margin="4"
+                        Maximum="100"
+                        Minimum="0"
+                        TickFrequency="1"
+                        ValueChanged="ColorShadowPaddingValueChanged"
+                        Value="35" />
+
+                <TextBlock Margin="4"
+                           Text="ColorShadow Blur Radius"
+                           Visibility="Visible" />
+                <Slider x:Name="BlendBlurSlider"
+                        Width="100"
+                        Height="30"
+                        Margin="4"
+                        Maximum="100"
+                        Minimum="0"
+                        TickFrequency="1"
+                        Visibility="Visible"
+                        Value="12" />
+                <TextBlock Margin="4"
+                           Text="ColorShadow Opacity"
+                           Visibility="Visible" />
+                <Slider x:Name="BlendOpacitySlider"
+                        Width="100"
+                        Height="30"
+                        Margin="4"
+                        Maximum="1"
+                        Minimum="0"
+                        StepFrequency="0.1"
+                        Visibility="Visible"
+                        Value="0.7" />
+                <TextBlock Margin="4"
+                           Text="ColorMask Padding"
+                           Visibility="Visible" />
+                <Slider x:Name="MaskPaddingSlider"
+                        Width="100"
+                        Height="30"
+                        Margin="4"
+                        Maximum="100"
+                        Minimum="0"
+                        TickFrequency="1"
+                        ValueChanged="ColorMaskPaddingValueChanged"
+                        Visibility="Visible"
+                        Value="25" />
+                <TextBlock Margin="4"
+                           Text="ColorMask BlurRadius"
+                           Visibility="Visible" />
+                <Slider x:Name="MaskBlurSlider"
+                        Width="100"
+                        Height="30"
+                        Margin="4"
+                        Maximum="100"
+                        Minimum="0"
+                        TickFrequency="1"
+                        Visibility="Visible"
+                        Value="11" />
+                <controls:FluidToggleSwitch x:Name="ShadowSwitch"
+                                            Margin="4"
+                                            HorizontalAlignment="Left"
+                                            Foreground="White"
+                                            Header="Is Shadow Enabled"
+                                            RequestedTheme="Dark"
+                                            OffContent="No"
+                                            OnContent="Yes"
+                                            Toggled="OnShadowToggled" />
+                <StackPanel x:Name="ShadowStack"
+                            Width="200"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Visibility="Collapsed">
+                    <TextBlock Margin="4"
+                               Text="Shadow Offset X"
+                               Visibility="Visible" />
+                    <Slider x:Name="ShadowOffsetX"
+                            Width="100"
+                            Height="30"
+                            Margin="4"
+                            Maximum="100"
+                            Minimum="-100"
+                            TickFrequency="1"
+                            Visibility="Visible"
+                            Value="4" />
+                    <TextBlock Margin="4"
+                               Text="Shadow Offset Y"
+                               Visibility="Visible" />
+                    <Slider x:Name="ShadowOffsetY"
+                            Width="100"
+                            Height="30"
+                            Margin="4"
+                            Maximum="100"
+                            Minimum="-100"
+                            TickFrequency="1"
+                            Visibility="Visible"
+                            Value="4" />
+                    <TextBlock Margin="4"
+                               Text="Shadow Blur Radius"
+                               Visibility="Visible" />
+                    <Slider x:Name="ShadowBlurSlider"
+                            Width="100"
+                            Height="30"
+                            Margin="4"
+                            Maximum="100"
+                            Minimum="0"
+                            TickFrequency="1"
+                            Visibility="Visible"
+                            Value="12" />
+                    <TextBlock Margin="4"
+                               Text="Shadow Opacity"
+                               Visibility="Visible" />
+                    <Slider x:Name="ShadowOpacitySlider"
+                            Width="100"
+                            Height="30"
+                            Margin="4"
+                            Maximum="1"
+                            Minimum="0"
+                            StepFrequency="0.1"
+                            Visibility="Visible"
+                            Value="0.5" />
+                    <TextBlock Margin="4"
+                               Text="Shadow Color"
+                               Visibility="Visible" />
+                    <ComboBox x:Name="ShadowColorList"
+                              Width="200"
+                              Height="34"
+                              CornerRadius="4"
+                              SelectedIndex="0"
+                              SelectionChanged="OnShadowColorChanged" />
+
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>

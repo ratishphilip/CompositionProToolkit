@@ -24,9 +24,13 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit.Controls v1.0.1
 // 
 
+using CompositionProToolkit;
+using CompositionProToolkit.Win2d;
+using CompositionProToolkit.Win2d.Core;
+using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
 using Windows.Foundation;
@@ -36,10 +40,6 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
-using CompositionProToolkit;
-using CompositionProToolkit.Win2d;
-using CompositionProToolkit.Win2d.Core;
-using Microsoft.Graphics.Canvas.Geometry;
 
 namespace CompositionProToolkit.Controls
 {

@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 // 
 
 namespace CompositionProToolkit.Win2d.Common
@@ -73,7 +73,7 @@ namespace CompositionProToolkit.Win2d.Common
 
     /// <summary>
     /// Enum for the various types of 
-    /// GradientStop attibutes
+    /// GradientStop attributes
     /// </summary>
     internal enum GradientStopAttributeType
     {

@@ -24,9 +24,12 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit.Controls v1.0.1
 // 
 
+using CompositionProToolkit.Expressions;
+using CompositionProToolkit.Expressions.Templates;
+using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -39,9 +42,6 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
-using CompositionProToolkit.Expressions;
-using CompositionProToolkit.Expressions.Templates;
-using Microsoft.Graphics.Canvas.Geometry;
 
 namespace CompositionProToolkit.Controls
 {

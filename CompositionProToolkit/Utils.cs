@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 // 
 
 using System;
@@ -452,7 +452,7 @@ namespace CompositionProToolkit
         /// NegativeInfinity, then Vector4.Zero will be returned.
         /// </summary>
         /// <param name="thickness">Thickness object</param>
-        /// <returns></returns>
+        /// <returns>Vector4</returns>
         public static Vector4 ToVector4(this Thickness thickness)
         {
             if (thickness.IsValid(true, false, false, false))
@@ -475,7 +475,7 @@ namespace CompositionProToolkit
         /// then Vector4.Zero will be returned.
         /// </summary>
         /// <param name="thickness">Thickness object</param>
-        /// <returns></returns>
+        /// <returns>Vector2</returns>
         public static Vector4 ToAbsVector4(this Thickness thickness)
         {
             if (thickness.IsValid(true, false, false, false))
@@ -488,6 +488,16 @@ namespace CompositionProToolkit
             }
 
             return Vector4.Zero;
+        }
+
+        /// <summary>
+        /// Gets the top left corner of the thickness structure.
+        /// </summary>
+        /// <param name="thickness">Thickness object</param>
+        /// <returns>Vector2</returns>
+        public static Vector2 GetOffset(this Thickness thickness)
+        {
+            return new Vector2(thickness.Left.ToSingle(), thickness.Top.ToSingle());
         }
 
         #endregion
@@ -876,6 +886,26 @@ namespace CompositionProToolkit
             return new Size(vector.X + vector.Z, vector.Y + vector.W);
         }
 
+        /// <summary>
+        /// Converts the Vector4 to Thickness - Left(X), Top(Y), Right(Z), Bottom(W)
+        /// </summary>
+        /// <param name="vector">Vector4</param>
+        /// <returns>Thickness</returns>
+        public static Thickness ToThickness(this Vector4 vector)
+        {
+            return new Thickness(vector.X, vector.Y, vector.Z, vector.W);
+        }
+
+        /// <summary>
+        /// Converts the Vector4 to CornerRadius - TopLeft(X), TopRight(Y), BottomRight(Z), BottomLeft(W)
+        /// </summary>
+        /// <param name="vector">Vector4</param>
+        /// <returns>CornerRadius</returns>
+        public static CornerRadius ToCornerRadius(this Vector4 vector)
+        {
+            return new CornerRadius(vector.X, vector.Y, vector.Z, vector.W);
+        }
+
         #endregion
 
         #region Color
@@ -946,6 +976,99 @@ namespace CompositionProToolkit
         public static Vector3 ToVector3(this Point p)
         {
             return new Vector3((float)p.X, (float)p.Y, 0f);
+        }
+
+        #endregion
+
+        #region Stretch and Fit
+
+        /// <summary>
+        /// Calculates the best size that can fit in the destination area based on the given stretch and
+        /// alignment options.
+        /// </summary>
+        /// <param name="srcWidth">Width of the source.</param>
+        /// <param name="srcHeight">Height of the source.</param>
+        /// <param name="destWidth">Width of the destination area.</param>
+        /// <param name="destHeight">Height of the destination area.</param>
+        /// <param name="stretch">Defines how the source should stretch to fit the destination.</param>
+        /// <param name="horizontalAlignment">Horizontal Alignment</param>
+        /// <param name="verticalAlignment">Vertical Alignment</param>
+        /// <returns>The best fitting Rectangle in the destination area.</returns>
+        public static Rect GetOptimumSize(double srcWidth, double srcHeight, double destWidth, double destHeight,
+            Stretch stretch, AlignmentX horizontalAlignment, AlignmentY verticalAlignment)
+        {
+            var ratio = srcWidth / srcHeight;
+            var targetWidth = 0d;
+            var targetHeight = 0d;
+
+            // Stretch Mode
+            switch (stretch)
+            {
+                case Stretch.None:
+                    targetWidth = srcWidth;
+                    targetHeight = srcHeight;
+                    break;
+                case Stretch.Fill:
+                    targetWidth = destWidth;
+                    targetHeight = destHeight;
+                    break;
+                case Stretch.Uniform:
+                    // If width is greater than height
+                    if (ratio > 1.0)
+                    {
+                        targetHeight = Math.Min(destWidth / ratio, destHeight);
+                        targetWidth = targetHeight * ratio;
+                    }
+                    else
+                    {
+                        targetWidth = Math.Min(destHeight * ratio, destWidth);
+                        targetHeight = targetWidth / ratio;
+                    }
+                    break;
+                case Stretch.UniformToFill:
+                    // If width is greater than height
+                    if (ratio > 1.0)
+                    {
+                        targetHeight = Math.Max(destWidth / ratio, destHeight);
+                        targetWidth = targetHeight * ratio;
+                    }
+                    else
+                    {
+                        targetWidth = Math.Max(destHeight * ratio, destWidth);
+                        targetHeight = targetWidth / ratio;
+                    }
+                    break;
+            }
+
+            var left = 0d;
+            switch (horizontalAlignment)
+            {
+                case AlignmentX.Left:
+                    left = 0;
+                    break;
+                case AlignmentX.Center:
+                    left = (destWidth - targetWidth) / 2.0;
+                    break;
+                case AlignmentX.Right:
+                    left = destWidth - targetWidth;
+                    break;
+            }
+
+            var top = 0d;
+            switch (verticalAlignment)
+            {
+                case AlignmentY.Top:
+                    top = 0;
+                    break;
+                case AlignmentY.Center:
+                    top = (destHeight - targetHeight) / 2.0;
+                    break;
+                case AlignmentY.Bottom:
+                    top = destHeight - targetHeight;
+                    break;
+            }
+
+            return new Rect(left, top, targetWidth, targetHeight);
         }
 
         #endregion

@@ -24,7 +24,7 @@
 // This file is part of the CompositionProToolkit project: 
 // https://github.com/ratishphilip/CompositionProToolkit
 //
-// CompositionProToolkit v0.9.5
+// CompositionProToolkit v1.0.1
 // 
 
 using System;
@@ -102,10 +102,7 @@ namespace CompositionProToolkit
         public GeometrySurface(ICompositionGeneratorInternal generator, Size size, CanvasGeometry geometry,
             ICanvasStroke stroke, Color fillColor, Color backgroundColor)
         {
-            if (generator == null)
-                throw new ArgumentNullException(nameof(generator), "CompositionGenerator cannot be null!");
-
-            _generator = generator;
+            _generator = generator ?? throw new ArgumentNullException(nameof(generator), "CompositionGenerator cannot be null!");
             _surfaceLock = new object();
             _geometry = geometry;
             _stroke = stroke;
@@ -133,10 +130,7 @@ namespace CompositionProToolkit
         public GeometrySurface(ICompositionGeneratorInternal generator, Size size, CanvasGeometry geometry,
             ICanvasStroke stroke, ICanvasBrush fill, ICanvasBrush backgroundBrush)
         {
-            if (generator == null)
-                throw new ArgumentNullException(nameof(generator), "CompositionGenerator cannot be null!");
-
-            _generator = generator;
+            _generator = generator ?? throw new ArgumentNullException(nameof(generator), "CompositionGenerator cannot be null!");
             _surfaceLock = new object();
             _geometry = geometry;
             _stroke = stroke;
@@ -160,7 +154,7 @@ namespace CompositionProToolkit
         public void Redraw()
         {
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -172,7 +166,7 @@ namespace CompositionProToolkit
             // Set the new geometry
             _geometry = geometry;
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -185,7 +179,7 @@ namespace CompositionProToolkit
             // Set the new stroke
             _stroke = stroke;
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -206,7 +200,7 @@ namespace CompositionProToolkit
             }
 
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -229,7 +223,7 @@ namespace CompositionProToolkit
                 _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
             }
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -260,7 +254,7 @@ namespace CompositionProToolkit
             }
 
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -293,7 +287,7 @@ namespace CompositionProToolkit
                 _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
             }
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -306,7 +300,7 @@ namespace CompositionProToolkit
             // Set the fill
             _fill = fillBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -322,7 +316,7 @@ namespace CompositionProToolkit
             // Set the fill
             _fill = fillBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -338,7 +332,7 @@ namespace CompositionProToolkit
             // Set the backgroundBrush
             _backgroundBrush = backgroundBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -357,7 +351,7 @@ namespace CompositionProToolkit
             // Set the backgroundBrush
             _backgroundBrush = backgroundBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -380,7 +374,7 @@ namespace CompositionProToolkit
             // Set the backgroundBrush
             _backgroundBrush = backgroundBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -406,7 +400,7 @@ namespace CompositionProToolkit
             // Set the backgroundBrush
             _backgroundBrush = backgroundBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -429,7 +423,7 @@ namespace CompositionProToolkit
                 _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
             }
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -455,7 +449,7 @@ namespace CompositionProToolkit
                 _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
             }
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -472,7 +466,7 @@ namespace CompositionProToolkit
             // Set the new geometry
             _geometry = geometry;
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -493,7 +487,7 @@ namespace CompositionProToolkit
             // Set the new stroke
             _stroke = stroke;
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -521,7 +515,7 @@ namespace CompositionProToolkit
                 _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
             }
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -553,7 +547,7 @@ namespace CompositionProToolkit
                 _fill = new CanvasSolidColorBrush(_generator.Device, fillColor);
             }
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -592,7 +586,7 @@ namespace CompositionProToolkit
                 _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
             }
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -635,7 +629,7 @@ namespace CompositionProToolkit
                 _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
             }
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -656,7 +650,7 @@ namespace CompositionProToolkit
             // Set the fill
             _fill = fillBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -681,7 +675,7 @@ namespace CompositionProToolkit
             // Set the backgroundBrush
             _backgroundBrush = backgroundBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -710,7 +704,7 @@ namespace CompositionProToolkit
             // Set the backgroundBrush
             _backgroundBrush = backgroundBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -742,7 +736,7 @@ namespace CompositionProToolkit
                 _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
             }
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -778,7 +772,7 @@ namespace CompositionProToolkit
                 _backgroundBrush = new CanvasSolidColorBrush(_generator.Device, backgroundColor);
             }
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -810,7 +804,7 @@ namespace CompositionProToolkit
             // Set the backgroundBrush
             _backgroundBrush = backgroundBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -846,7 +840,7 @@ namespace CompositionProToolkit
             // Set the backgroundBrush
             _backgroundBrush = backgroundBrush ?? new CanvasSolidColorBrush(_generator.Device, Colors.Transparent);
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -860,7 +854,7 @@ namespace CompositionProToolkit
             // Set the size
             Size = _surface?.Size ?? new Size(0, 0);
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         /// <summary>
@@ -898,7 +892,7 @@ namespace CompositionProToolkit
             // Recreate the GeometrySurface
             _surface = _generator.CreateDrawingSurface(_surfaceLock, Size);
             // Redraw the GeometrySurface
-            RedrawSurfaceInternal();
+            RedrawSurface();
         }
 
         #endregion
@@ -908,7 +902,7 @@ namespace CompositionProToolkit
         /// <summary>
         /// Helper class to redraw the surface
         /// </summary>
-        private void RedrawSurfaceInternal()
+        private void RedrawSurface()
         {
             _generator.RedrawGeometrySurface(_surfaceLock, _surface, Size, _geometry, _stroke, _fill, _backgroundBrush);
         }
